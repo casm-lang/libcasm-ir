@@ -10,7 +10,7 @@
 #ifndef _LIB_CASMIR_TYPE_H_
 #define _LIB_CASMIR_TYPE_H_
 
-// #include ""
+#include "stdhl/cpp/Type.h"
 
 /**
    @file     Type.h
