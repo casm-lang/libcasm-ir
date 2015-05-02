@@ -32,63 +32,77 @@
 //  WITH THE SOFTWARE.
 //  
 
-/**
-   @file     Value.h
-   @class    Value
-   
-   @brief    TODO
-   
-   TODO
-   
-   @author   Philipp Paulweber
-   @date     2015-02-20
-*/
+#ifndef _LIB_CASMIR_BLOCK_H_
+#define _LIB_CASMIR_BLOCK_H_
 
-#ifndef _LIB_CASMIR_VALUE_H_
-#define _LIB_CASMIR_VALUE_H_
-
-#include "Type.h"
-
+#include "Value.h"
 
 namespace libcasm_ir
 {
-	class Value  
-	{	
+	class Block : public Value
+	{
+	public:
+		Block( const char* name ) : Value( name )
+		{
+		}
+	};
+	
+	class ExecutionSemanticBlock : public Block
+	{
 	private:
-		const char* name;
-		Type* type;
+		const u1 is_parallel;
+		u64 pseudo_state;
+		ExecutionSemanticBlock* parent;
 		
 	public:
-		// Value( ValueId value_id )
-		// : value_id( value_id )
-		Value( const char* name )
-		: name( name )
+		ExecutionSemanticBlock( const u1 is_parallel, ExecutionSemanticBlock* parent = 0 )
+		: Block( "asdf" )
+		, is_parallel( is_parallel )
+		, pseudo_state( 0 )
+		, parent( parent )
 		{
+			setParent( parent );
 		}
 		
-		const char* getName( void ) const
+		const u1 isParallel( void ) const
 		{
-	    	return name;
+			return is_parallel;
 		}
 		
-		Type* getType( void ) const
+		const u64 getPseudoState( void ) const
 		{
-	    	return type;
+			return pseudo_state;
 		}
 		
-		// u8 getValueId( void ) const
-		// {
-		// 	return value_id;
-		// }
-		
-		void dump() const
+		const ExecutionSemanticBlock* getParent( void ) const
 		{
-			// GDB dbg function
+			return parent;
 		}
+		
+		void setParent( ExecutionSemanticBlock* parent_block )
+		{
+			parent = parent_block;
+			
+			if( parent )
+			{
+				pseudo_state = parent->getPseudoState() + 1;
+			}
+		}
+	};
+	
+	class ParallelBlock : public ExecutionSemanticBlock
+	{
+		
+	};
+
+	class SequentialBlock : public ExecutionSemanticBlock
+	{
+		
 	};
 }
 
-#endif /* _LIB_CASMIR_VALUE_H_ */
+
+#endif /* _LIB_CASMIR_BASICBLOCK_H_ */
 
 //  
 //  Local variables:

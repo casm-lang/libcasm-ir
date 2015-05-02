@@ -48,6 +48,10 @@ CPPFLAG += -Wall
 TARGET += libcasm-ir.a
 
 CPPOBJECTS += obj/Value.o
+CPPOBJECTS += obj/Block.o
+CPPOBJECTS += obj/Instruction.o
+CPPOBJECTS += obj/Type.o
+CPPOBJECTS += obj/User.o
 
 INCLUDE += -I ../
 

@@ -32,15 +32,16 @@
 //  WITH THE SOFTWARE.
 //  
 
-#include "Type.h"
-
 /**
    @file     Type.cpp
    @author   Philipp Paulweber
    @date     2015-02-20
 */
 
+#include "Type.h"
+
 // TODO
+
 
 //  
 //  Local variables:

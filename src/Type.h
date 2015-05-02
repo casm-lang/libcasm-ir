@@ -32,11 +32,6 @@
 //  WITH THE SOFTWARE.
 //  
 
-#ifndef _LIB_CASMIR_TYPE_H_
-#define _LIB_CASMIR_TYPE_H_
-
-#include "stdhl/cpp/Type.h"
-
 /**
    @file     Type.h
    @class    Type
@@ -48,6 +43,12 @@
    @author   Philipp Paulweber
    @date     2015-02-20
 */
+
+#ifndef _LIB_CASMIR_TYPE_H_
+#define _LIB_CASMIR_TYPE_H_
+
+#include "stdhl/cpp/Type.h"
+
 
 namespace libcasm_ir
 {

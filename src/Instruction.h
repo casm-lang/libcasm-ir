@@ -32,63 +32,22 @@
 //  WITH THE SOFTWARE.
 //  
 
-/**
-   @file     Value.h
-   @class    Value
-   
-   @brief    TODO
-   
-   TODO
-   
-   @author   Philipp Paulweber
-   @date     2015-02-20
-*/
+#ifndef _LIB_CASMIR_INSTRUCTION_H_
+#define _LIB_CASMIR_INSTRUCTION_H_
 
-#ifndef _LIB_CASMIR_VALUE_H_
-#define _LIB_CASMIR_VALUE_H_
-
-#include "Type.h"
+#include "User.h"
 
 
 namespace libcasm_ir
 {
-	class Value  
-	{	
-	private:
-		const char* name;
-		Type* type;
+	class Instruction : public User
+	{
 		
-	public:
-		// Value( ValueId value_id )
-		// : value_id( value_id )
-		Value( const char* name )
-		: name( name )
-		{
-		}
-		
-		const char* getName( void ) const
-		{
-	    	return name;
-		}
-		
-		Type* getType( void ) const
-		{
-	    	return type;
-		}
-		
-		// u8 getValueId( void ) const
-		// {
-		// 	return value_id;
-		// }
-		
-		void dump() const
-		{
-			// GDB dbg function
-		}
 	};
 }
 
-#endif /* _LIB_CASMIR_VALUE_H_ */
+
+#endif /* _LIB_CASMIR_INSTRUCTION_H_ */
 
 //  
 //  Local variables:

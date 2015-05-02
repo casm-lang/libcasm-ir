@@ -32,13 +32,14 @@
 //  WITH THE SOFTWARE.
 //  
 
-#include "Value.h"
-
 /**
    @file     Value.cpp
    @author   Philipp Paulweber
    @date     2015-02-20
 */
+
+#include "Value.h"
+
 
 // TODO
 
