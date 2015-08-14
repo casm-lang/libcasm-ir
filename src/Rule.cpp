@@ -32,98 +32,16 @@
 //  WITH THE SOFTWARE.
 //  
 
-#ifndef _LIB_CASMIR_BLOCK_H_
-#define _LIB_CASMIR_BLOCK_H_
+#include "Rule.h"
 
-#include "Value.h"
+using namespace libcasm_ir;
 
-namespace libcasm_ir
-{
-	class Block : public Value
-	{
-	public:
-		Block( const char* name ) : Value( name )
-		{
-		}
-	};
-	
-	class ExecutionSemanticsBlock : public Block
-	{
-	private:
-		const u1 is_parallel;
-		u64 pseudo_state;
-		ExecutionSemanticsBlock* parent;
-		std::vector< Block* > blocks;
-		
-	public:
-		ExecutionSemanticsBlock( const u1 is_parallel, ExecutionSemanticsBlock* parent = 0 )
-		: Block( "asdf" )
-		, is_parallel( is_parallel )
-		, pseudo_state( 0 )
-		, parent( parent )
-		{
-			setParent( parent );
-		}
-		
-		const u1 isParallel( void ) const
-		{
-			return is_parallel;
-		}
-		
-		const u64 getPseudoState( void ) const
-		{
-			return pseudo_state;
-		}
-		
-		const ExecutionSemanticsBlock* getParent( void ) const
-		{
-			return parent;
-		}
-		
-		void setParent( ExecutionSemanticsBlock* parent_block )
-		{
-			parent = parent_block;
-			
-			if( parent )
-			{
-				pseudo_state = parent->getPseudoState();
-
-				if( parent->isParallel() != this->isParallel() )
-				{
-					pseudo_state++;
-				}
-			}
-		}
-
-		void add( Block* block )
-		{
-			blocks.push_back( block );
-		}
-	};
-	
-	class ParallelBlock : public ExecutionSemanticsBlock
-	{
-	public:
-		ParallelBlock( ExecutionSemanticsBlock* parent = 0 )
-		: ExecutionSemanticsBlock( true, parent )
-		{
-			
-		}
-	};
-
-	class SequentialBlock : public ExecutionSemanticsBlock
-	{
-	public:
-		SequentialBlock( ExecutionSemanticsBlock* parent = 0 )
-		: ExecutionSemanticsBlock( false, parent )
-		{
-			
-		}		
-	};
-}
+vector< Rule* > Rule::objects;
 
 
-#endif /* _LIB_CASMIR_BASICBLOCK_H_ */
+// TODO
+
+
 
 //  
 //  Local variables:
