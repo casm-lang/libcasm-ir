@@ -40,8 +40,46 @@
 
 #include "Value.h"
 
+using namespace libcasm_ir;
 
-// TODO
+std::unordered_map< const char*, std::unordered_set< Value* > > Value::symbols;
+
+Value::Value( const char* name, Type* type, Value::ID id )
+: name( name )
+, type( type )
+, id( id )
+{
+	symbols[ name ].insert( this );
+	printf( "[Value] created '%s' @ %p of type %p\n", name, this, type );
+}
+
+Value::~Value()
+{
+	symbols[ name ].erase( this );
+	printf( "[Value] deleted '%s' @ %p of type %p\n", name, this, type );
+}
+
+const char* Value::getName( void ) const
+{
+	return name;
+}
+
+Type* Value::getType( void ) const
+{
+	return type;
+}
+
+// u8 getValueId( void ) const
+// {
+// 	return value_id;
+// }
+		
+void Value::dump( void ) const
+{
+	// GDB dbg function
+	printf( "%p\n", this );
+}
+
 
 
 

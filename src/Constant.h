@@ -32,52 +32,36 @@
 //  WITH THE SOFTWARE.
 //  
 
-#include "Statement.h"
+#ifndef _LIB_CASMIR_CONSTANT_H_
+#define _LIB_CASMIR_CONSTANT_H_
 
-using namespace libcasm_ir;
+#include "libcasm-ir.h"
 
-
-Statement::Statement( const char* name, Type* type, ExecutionSemanticsBlock* scope )
-: Block( name, type )
-, scope( scope )
+namespace libcasm_ir
 {
-	assert( scope );
+	class Statement;
+
+	template< typename V >
+	class Constant : public User
+	{
+	private:
+		V value;
+		
+	public:
+		Constant( const char* name, Type* type, V value );
+		
+		const V getValue( void ) const;
+	};
 	
-	scope->add( this );
-	
-	printf( "[Statement] '%s' at %lu\n", name, scope->getPseudoState() );
-}
-
-ExecutionSemanticsBlock* Statement::getScope( void ) const
-{
-	return scope;
-}
-
-void Statement::add( Instruction* instruction )
-{
-	assert( instruction );
-	// instructions.push_back( instruction );
-	// instruction->setStatement( this );
+	class IntegerConstant : public Constant< Type::Integer >
+	{
+	public:
+		IntegerConstant( Type::Integer value );
+	};
 }
 
 
-
-BlockStatement::BlockStatement( ExecutionSemanticsBlock* scope )
-: Statement( "block", 0, scope )
-{
-}
-
-BranchStatement::BranchStatement( const char* name, Type* type, ExecutionSemanticsBlock* scope )
-: Statement( name, type, scope )
-{
-}
-
-void BranchStatement::add( Block* block )
-{
-	blocks.push_back( block );
-}
-
-
+#endif /* _LIB_CASMIR_CONSTANT_H_ */
 
 //  
 //  Local variables:

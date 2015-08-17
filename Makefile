@@ -36,7 +36,7 @@ AR=ar
 
 CC=clang
 CCFLAG += -std=c11
-CCFLAG += -g
+CCFLAG += -g -O0
 CCFLAG += -Wall
 
 CPP=clang
@@ -54,6 +54,7 @@ CPPOBJECTS += obj/Type.o
 CPPOBJECTS += obj/User.o
 CPPOBJECTS += obj/Rule.o
 CPPOBJECTS += obj/Statement.o
+CPPOBJECTS += obj/Constant.o
 
 INCLUDE += -I ../
 

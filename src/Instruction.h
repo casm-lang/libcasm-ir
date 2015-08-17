@@ -36,14 +36,83 @@
 #define _LIB_CASMIR_INSTRUCTION_H_
 
 #include "User.h"
-
+#include "Statement.h"
 
 namespace libcasm_ir
 {
+	class Statement;
+	
 	class Instruction : public User
 	{
+	private:
+		Statement* statement;
+		std::vector< Value* > values;
+	    
+	public:
+		Instruction( const char* name, Type* type, Value::ID id = Value::INSTRUCTION );
+		void setStatement( Statement* stmt );
 		
+	    void add( Value* value );
+		Value* getValue( u8 index ) const;
+		
+		static inline bool classof( Instruction const* obj )
+		{
+			return true;
+		}
+		
+		static inline bool classof( Value const* obj )
+		{
+			return obj->getValueID() == Value::INSTRUCTION;
+		}
 	};
+	
+	class UnaryInstruction : public Instruction
+	{
+	private:
+		Value* value;
+	
+	public:
+		UnaryInstruction( const char* name, Type* type, Value* value
+						, Value::ID id = Value::UNARY_INSTRUCTION );
+		Value* get( void ) const;
+	};
+	
+	class BinaryInstruction : public Instruction
+	{
+	private:
+		Value* lhs;
+		Value* rhs;
+		
+	public:
+		BinaryInstruction( const char* name, Type* type, Value* lhs, Value* rhs
+						 , Value::ID id = Value::UNARY_INSTRUCTION );
+		
+		Value* getLHS( void ) const;
+		Value* getRHS( void ) const;
+	};
+	
+	
+	
+	
+	
+	class LookupInstruction : public UnaryInstruction
+	{
+	public :
+		LookupInstruction( Value* location );
+	};
+	
+	class UpdateInstruction : public BinaryInstruction
+	{
+	public:
+		UpdateInstruction( Value* func, Value* expr );
+	};
+	
+	class LocationInstruction : public Instruction
+	{
+	public:
+		LocationInstruction( Value* function );
+	};
+
 }
 
 

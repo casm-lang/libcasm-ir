@@ -32,52 +32,25 @@
 //  WITH THE SOFTWARE.
 //  
 
+#ifndef _LIB_CASMIR_H_
+#define _LIB_CASMIR_H_
+
+#include "Value.h"
+#include "Type.h"
+#include "User.h"
+#include "Rule.h"
+#include "Block.h"
+#include "Constant.h"
 #include "Statement.h"
+#include "Instruction.h"
 
-using namespace libcasm_ir;
-
-
-Statement::Statement( const char* name, Type* type, ExecutionSemanticsBlock* scope )
-: Block( name, type )
-, scope( scope )
+namespace libcasm_ir
 {
-	assert( scope );
-	
-	scope->add( this );
-	
-	printf( "[Statement] '%s' at %lu\n", name, scope->getPseudoState() );
-}
-
-ExecutionSemanticsBlock* Statement::getScope( void ) const
-{
-	return scope;
-}
-
-void Statement::add( Instruction* instruction )
-{
-	assert( instruction );
-	// instructions.push_back( instruction );
-	// instruction->setStatement( this );
+	class Value;
 }
 
 
-
-BlockStatement::BlockStatement( ExecutionSemanticsBlock* scope )
-: Statement( "block", 0, scope )
-{
-}
-
-BranchStatement::BranchStatement( const char* name, Type* type, ExecutionSemanticsBlock* scope )
-: Statement( name, type, scope )
-{
-}
-
-void BranchStatement::add( Block* block )
-{
-	blocks.push_back( block );
-}
-
-
+#endif /* _LIB_CASMIR_H_ */
 
 //  
 //  Local variables:

@@ -36,10 +36,36 @@
 
 using namespace libcasm_ir;
 
-vector< Rule* > Rule::objects;
 
+Rule::Rule( const char* name )
+: User( name, 0, Value::RULE )
+{			
+}
+		
+ParallelBlock* Rule::getContext( void ) const
+{
+	return context;
+}
 
-// TODO
+void Rule::setContext( ParallelBlock* scope )
+{
+	assert( scope );	
+	context = scope;
+}
+
+void Rule::dump( void ) const
+{
+	printf( "Rule:" );
+	
+	if( context )
+	{
+		context->dump();
+	}
+	else
+	{
+		printf( "('context' not set)\n" );
+	}
+}
 
 
 

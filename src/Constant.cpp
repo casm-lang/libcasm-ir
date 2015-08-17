@@ -32,50 +32,29 @@
 //  WITH THE SOFTWARE.
 //  
 
-#include "Statement.h"
+#include "Constant.h"
 
 using namespace libcasm_ir;
 
 
-Statement::Statement( const char* name, Type* type, ExecutionSemanticsBlock* scope )
-: Block( name, type )
-, scope( scope )
-{
-	assert( scope );
-	
-	scope->add( this );
-	
-	printf( "[Statement] '%s' at %lu\n", name, scope->getPseudoState() );
-}
-
-ExecutionSemanticsBlock* Statement::getScope( void ) const
-{
-	return scope;
-}
-
-void Statement::add( Instruction* instruction )
-{
-	assert( instruction );
-	// instructions.push_back( instruction );
-	// instruction->setStatement( this );
-}
-
-
-
-BlockStatement::BlockStatement( ExecutionSemanticsBlock* scope )
-: Statement( "block", 0, scope )
+template< typename V >
+Constant< V >::Constant( const char* name, Type* type, V value )
+: User( name, type )
+, value( value )
 {
 }
 
-BranchStatement::BranchStatement( const char* name, Type* type, ExecutionSemanticsBlock* scope )
-: Statement( name, type, scope )
+template< typename V >
+const V Constant< V >::getValue( void ) const
+{
+	return value;
+}
+
+IntegerConstant::IntegerConstant( Type::Integer value )
+: Constant< Type::Integer >( "integer", &Integer, value )
 {
 }
 
-void BranchStatement::add( Block* block )
-{
-	blocks.push_back( block );
-}
 
 
 

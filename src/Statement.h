@@ -36,19 +36,44 @@
 #define _LIB_CASMIR_STATEMENT_H_
 
 #include "Block.h"
+#include "Instruction.h"
 
 namespace libcasm_ir
 {
+	class Instruction;
+	
 	class Statement : public Block
 	{
-		Statement( ExecutionSemanticsBlock* scope )
-		: Block( "statement" )
-		{
-			assert( scope );
+	private:
+		ExecutionSemanticsBlock* scope;
 
-			scope->add( this );
-		}
+		std::vector< Instruction* > instructions;
+		
+	public:
+		Statement( const char* name, Type* type, ExecutionSemanticsBlock* scope );
+	    
+		ExecutionSemanticsBlock* getScope( void ) const;
+		
+		void add( Instruction* instruction );
 	};
+	
+	class BlockStatement : public Statement
+	{
+	public:
+		BlockStatement( ExecutionSemanticsBlock* scope );
+	};
+	
+	class BranchStatement : public Statement
+	{
+	private:
+		std::vector< Block* > blocks;
+		
+	public:
+		BranchStatement( const char* name, Type* type, ExecutionSemanticsBlock* scope );
+	    
+		void add( Block* block );
+	};
+
 }
 
 

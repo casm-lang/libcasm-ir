@@ -37,11 +37,26 @@
 
 #include "Value.h"
 
-
 namespace libcasm_ir
 {
 	class User : public Value
 	{
+	public:
+		User( const char* name, Type* type /*opt use and num*/, Value::ID id = Value::USER )
+			: Value( name, type, id )
+		{
+			
+		}
+		
+		static inline bool classof( User const* obj )
+		{
+			return true;
+		}
+		
+		static inline bool classof( Value const* obj )
+		{
+			return obj->getValueID() == Value::USER;
+		}
 	};
 }
 

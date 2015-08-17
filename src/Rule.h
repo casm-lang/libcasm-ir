@@ -35,34 +35,34 @@
 #ifndef _LIB_CASMIR_RULE_H_
 #define _LIB_CASMIR_RULE_H_
 
-#include "Value.h" // maybe use User here !!! TODO FIXME PPA 
-#include "Block.h"
+#include "libcasm-ir.h" // maybe use User here !!! TODO FIXME PPA 
 
 namespace libcasm_ir
 {
-	class Rule : public Value
+	class ParallelBlock;
+	
+	class Rule : public User
 	{
 	private:
-		static vector< Rule* > objects;
-		
 		ParallelBlock* context;
 		
 	public:
-		Rule( const char* name ) : Value( name )
+		Rule( const char* name );
+
+		ParallelBlock* getContext( void ) const;
+		
+		void setContext( ParallelBlock* scope );
+
+		void dump( void ) const;
+		
+		static inline bool classof( Rule const* obj )
 		{
-		    objects.push_back( this );
+			return true;
 		}
 		
-		ParallelBlock* getContext( void ) const
+		static inline bool classof( Value const* obj )
 		{
-			return context;
-		}
-
-		void setContext( ParallelBlock* scope )
-		{
-			assert( scope );
-			
-			context = scope;
+			return obj->getValueID() == Value::RULE;
 		}
 	};
 }

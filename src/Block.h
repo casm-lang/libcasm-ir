@@ -42,7 +42,8 @@ namespace libcasm_ir
 	class Block : public Value
 	{
 	public:
-		Block( const char* name ) : Value( name )
+		Block( const char* name, Type* type, Value::ID id = Value::BLOCK )
+		: Value( name, type, id )
 		{
 		}
 	};
@@ -56,8 +57,13 @@ namespace libcasm_ir
 		std::vector< Block* > blocks;
 		
 	public:
-		ExecutionSemanticsBlock( const u1 is_parallel, ExecutionSemanticsBlock* parent = 0 )
-		: Block( "asdf" )
+		ExecutionSemanticsBlock
+		( const char* name
+		, Type* type
+		, const u1 is_parallel
+		, ExecutionSemanticsBlock* parent = 0
+		)
+		: Block( name, type )
 		, is_parallel( is_parallel )
 		, pseudo_state( 0 )
 		, parent( parent )
@@ -75,7 +81,7 @@ namespace libcasm_ir
 			return pseudo_state;
 		}
 		
-		const ExecutionSemanticsBlock* getParent( void ) const
+	    ExecutionSemanticsBlock* getParent( void ) const
 		{
 			return parent;
 		}
@@ -94,10 +100,31 @@ namespace libcasm_ir
 				}
 			}
 		}
-
+		
 		void add( Block* block )
 		{
+			assert( block );
+			
+			
+			if( Value::isa< ExecutionSemanticsBlock >( block ) )
+			{
+				ExecutionSemanticsBlock* inner = static_cast< ExecutionSemanticsBlock* >( block );
+				inner->setParent( this );
+			}
+			
 			blocks.push_back( block );
+		}
+		
+	    void dump( void ) const
+		{
+			printf( "ExecutionSemanticsBlock: %u, %p, %p\n", isParallel(), this, parent );
+
+			for( Block* block : blocks )
+			{
+				assert( block );
+
+				block->dump();
+			}
 		}
 	};
 	
@@ -105,20 +132,18 @@ namespace libcasm_ir
 	{
 	public:
 		ParallelBlock( ExecutionSemanticsBlock* parent = 0 )
-		: ExecutionSemanticsBlock( true, parent )
+		: ExecutionSemanticsBlock( "par", 0, true, parent )
 		{
-			
-		}
+    	}
 	};
-
+	
 	class SequentialBlock : public ExecutionSemanticsBlock
 	{
 	public:
 		SequentialBlock( ExecutionSemanticsBlock* parent = 0 )
-		: ExecutionSemanticsBlock( false, parent )
+		: ExecutionSemanticsBlock( "seq", 0, false, parent )
 		{
-			
-		}		
+    	}
 	};
 }
 

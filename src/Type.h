@@ -49,26 +49,42 @@
 
 #include "stdhl/cpp/Type.h"
 
-
 namespace libcasm_ir
 {
-	class Type  
+	class Type
 	{
+	public:		
+		typedef i64 Integer;
+		
+		enum ID
+		{ RULE = 0
+		, BLOCK
+		, STATEMENT
+
+		, INTEGER
+		};
+	
+	private:
+		ID type_id;
+		
 	public:
+		Type( ID id )
+		{
+			setID( id );
+		}
 		
-		/**
-		   @brief    TODO
-		   
-		   TODO
-		   
-		   @param    arg0    TODO
-		   @return   TODO
-		   @retval   TODO
-		*/
+		void setID( ID id )
+		{
+			type_id = id;
+		}
 		
-		bool methodStub(bool arg0)
-		{ return false; };
+		const ID getID( void ) const
+		{
+			return type_id;
+		}
 	};
+	
+	static Type Integer = Type( Type::INTEGER );
 }
 
 #endif /* _LIB_CASMIR_TYPE_H_ */

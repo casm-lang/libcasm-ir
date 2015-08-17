@@ -49,41 +49,57 @@
 
 #include "Type.h"
 
-
 namespace libcasm_ir
 {
-	class Value  
-	{	
+	class Value
+	{
+	public:
+		enum ID
+		{ USER
+		, RULE
+		, BLOCK
+		
+		, INSTRUCTION
+		, UNARY_INSTRUCTION
+		, BINARY_INSTRUCTION
+		, LOOKUP_INSTRUCTION
+		, UPDATE_INSTRUCTION
+		, LOCATION_INSTRUCTION
+		};
+		
 	private:
+		static std::unordered_map< const char*, std::unordered_set< Value* > > symbols;
+		
 		const char* name;
 		Type* type;
 		
+		ID id;
+		
 	public:
-		// Value( ValueId value_id )
-		// : value_id( value_id )
-		Value( const char* name )
-		: name( name )
+		Value( const char* name, Type* type, ID id );
+	    
+		~Value();
+	    
+		const char* getName( void ) const;
+	    
+		Type* getType( void ) const;
+	    
+		void dump( void ) const;
+		
+		ID getValueID() const
 		{
+			return id;
 		}
 		
-		const char* getName( void ) const
+		static inline bool classof( Value const* )
 		{
-	    	return name;
+			return true;
 		}
 		
-		Type* getType( void ) const
+		template< class TO >
+		static inline bool isa( Value* value )
 		{
-	    	return type;
-		}
-		
-		// u8 getValueId( void ) const
-		// {
-		// 	return value_id;
-		// }
-		
-		void dump() const
-		{
-			// GDB dbg function
+			return TO::classof( value );
 		}
 	};
 }
