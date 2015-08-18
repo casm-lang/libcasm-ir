@@ -66,6 +66,7 @@ namespace libcasm_ir
 			    case Value::LOOKUP_INSTRUCTION:
 			    case Value::UPDATE_INSTRUCTION:
 			    case Value::LOCATION_INSTRUCTION:
+			    case Value::OPERATOR_INSTRUCTION:
 			    	return true;
 			    default:
 					return false;

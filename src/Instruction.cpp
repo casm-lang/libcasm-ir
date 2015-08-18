@@ -128,6 +128,10 @@ void UpdateInstruction::dump( void ) const
 }
 
 
+
+
+
+
 LookupInstruction::LookupInstruction( Value* location )
 : UnaryInstruction( "lookup", 0, location, Value::LOOKUP_INSTRUCTION )
 {
@@ -150,6 +154,26 @@ void LocationInstruction::dump( void ) const
 	printf( "[LocIn] %p\n", this );
 }
 
+
+
+
+
+OperatorInstruction::OperatorInstruction
+( const char* name, Type* type, Value* lhs, Value* rhs, Value::ID id )
+: BinaryInstruction( name, type, lhs, rhs, id )
+{
+}
+
+void OperatorInstruction::dump( void ) const
+{
+	printf( "[OpcIn] %p = %s %p, %p\n", this, getName(), getLHS(), getRHS() );	
+}
+
+
+AddInstruction::AddInstruction( Value* lhs, Value* rhs )
+: OperatorInstruction( "add", 0, lhs, rhs ) //, Value::ADD_INSTRUCTION )
+{	
+}
 
 
 

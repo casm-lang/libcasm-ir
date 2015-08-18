@@ -70,11 +70,14 @@ namespace libcasm_ir
 		, INSTRUCTION
 		, UNARY_INSTRUCTION
 		, BINARY_INSTRUCTION
+		
 		, LOOKUP_INSTRUCTION
 		, UPDATE_INSTRUCTION
 		, LOCATION_INSTRUCTION
-		};
 
+		, OPERATOR_INSTRUCTION
+		};
+		
 		typedef std::unordered_map< const char*, std::unordered_set< Value* >
 								  , libstdhl::Hash, libstdhl::Equal > SymbolTable;
 		

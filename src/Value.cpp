@@ -114,6 +114,8 @@ void Value::dump( void ) const
 		return ((ConstantValue*)this)->dump(); break;
 	case Value::INTEGER_CONSTANT:
 		return ((IntegerConstant*)this)->dump(); break;
+	case Value::OPERATOR_INSTRUCTION:
+		return ((OperatorInstruction*)this)->dump(); break;
 	default:
 		printf( "[Value] %p of %u\n", this, getValueID() );
 	}

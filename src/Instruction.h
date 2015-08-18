@@ -70,6 +70,7 @@ namespace libcasm_ir
 			    case Value::LOOKUP_INSTRUCTION:
 			    case Value::UPDATE_INSTRUCTION:
 			    case Value::LOCATION_INSTRUCTION:
+			    case Value::OPERATOR_INSTRUCTION:
 			    	return true;
 			    default:
 					return false;
@@ -121,6 +122,7 @@ namespace libcasm_ir
 			{
     		    case Value::BINARY_INSTRUCTION:
 			    case Value::UPDATE_INSTRUCTION:
+			    case Value::OPERATOR_INSTRUCTION:
 			    	return true;
 			    default:
 					return false;
@@ -171,6 +173,46 @@ namespace libcasm_ir
 		}
 	};
 
+
+	class OperatorInstruction : public BinaryInstruction
+	{
+	public:
+		OperatorInstruction( const char* name, Type* type, Value* lhs, Value* rhs
+						   , Value::ID id = Value::OPERATOR_INSTRUCTION );
+		
+		void dump( void ) const;
+	    
+		static inline bool classof( Value const* obj )
+		{
+			switch( obj->getValueID() )
+			{
+			    case Value::OPERATOR_INSTRUCTION:
+			    	return true;
+			    default:
+					return false;
+			}
+		}
+	};
+
+	class AddInstruction : public OperatorInstruction
+	{
+	public:
+		AddInstruction( Value* lhs, Value* rhs );
+		
+		// void dump( void ) const;
+	    
+		// static inline bool classof( Value const* obj )
+		// {
+		// 	switch( obj->getValueID() )
+		// 	{
+		// 	    case Value::OPERATOR_INSTRUCTION:
+		// 	    	return true;
+		// 	    default:
+		// 			return false;
+		// 	}
+		// }
+	};
+	
 	
 	class LocationInstruction : public Instruction
 	{
