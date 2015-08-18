@@ -67,6 +67,11 @@ void Rule::dump( void ) const
 	}
 }
 
+bool Rule::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::RULE;
+}
+
 
 
 //  

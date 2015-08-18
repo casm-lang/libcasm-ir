@@ -32,38 +32,47 @@
 //  WITH THE SOFTWARE.
 //  
 
-#ifndef _LIB_CASMIR_RULE_H_
-#define _LIB_CASMIR_RULE_H_
+#include "Derived.h"
 
-#include "Value.h"
-#include "User.h"
-#include "Block.h"
+using namespace libcasm_ir;
 
-namespace libcasm_ir
+
+Derived::Derived( const char* name )
+: User( name, 0, Value::DERIVED )
+{			
+}
+		
+TrivialStatement* Derived::getContext( void ) const
 {
-	class ParallelBlock;
+	return context;
+}
+
+void Derived::setContext( TrivialStatement* scope )
+{
+	assert( scope );
+	context = scope;
+}
+
+void Derived::dump( void ) const
+{
+	printf( "[Derived] %p\n", this );
 	
-	class Rule : public User
+	if( context )
 	{
-	private:
-		ParallelBlock* context;
-		
-	public:
-		Rule( const char* name );
+		context->dump();
+	}
+	else
+	{
+		printf( "('context' not set)\n" );
+	}
+}
 
-		ParallelBlock* getContext( void ) const;
-		
-		void setContext( ParallelBlock* scope );
-		
-		void dump( void ) const;
-
-		
-		static bool classof( Value const* obj );
-	};
+bool classof( Value const* obj )
+{
+	return obj->getValueID() == Value::DERIVED;
 }
 
 
-#endif /* _LIB_CASMIR_RULE_H_ */
 
 //  
 //  Local variables:

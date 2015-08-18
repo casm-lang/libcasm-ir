@@ -51,6 +51,7 @@ namespace libcasm_ir
 	class Type
 	{
 	public:		
+		typedef i1 Undef;
 		typedef i64 Integer;
 		
 		enum ID
@@ -58,6 +59,7 @@ namespace libcasm_ir
 		, BLOCK
 		, STATEMENT
 
+		, UNDEF
 		, INTEGER
 		};
 	
@@ -81,6 +83,7 @@ namespace libcasm_ir
 		}
 	};
 	
+	static Type Undef   = Type( Type::UNDEF );
 	static Type Integer = Type( Type::INTEGER );
 }
 

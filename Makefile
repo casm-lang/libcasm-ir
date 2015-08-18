@@ -55,6 +55,7 @@ CPPOBJECTS += obj/User.o
 CPPOBJECTS += obj/Rule.o
 CPPOBJECTS += obj/Statement.o
 CPPOBJECTS += obj/Constant.o
+CPPOBJECTS += obj/Derived.o
 
 INCLUDE += -I ../
 

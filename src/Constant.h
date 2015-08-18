@@ -55,9 +55,17 @@ namespace libcasm_ir
 		static bool classof( Value const* obj );
 	};
 	
-	class ConstantValue : public Constant< void* >
+	class ConstantValue : public Constant< Type::Undef >
 	{
 	public:
+		static bool classof( Value const* obj );
+	};
+	
+	class UndefConstant : public Constant< Type::Undef >
+	{
+	public:
+		UndefConstant();
+		
 		static bool classof( Value const* obj );
 	};
 	

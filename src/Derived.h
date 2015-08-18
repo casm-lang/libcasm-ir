@@ -32,28 +32,27 @@
 //  WITH THE SOFTWARE.
 //  
 
-#ifndef _LIB_CASMIR_RULE_H_
-#define _LIB_CASMIR_RULE_H_
+#ifndef _LIB_CASMIR_DERIVED_H_
+#define _LIB_CASMIR_DERIVED_H_
 
-#include "Value.h"
 #include "User.h"
-#include "Block.h"
+#include "Instruction.h"
 
 namespace libcasm_ir
 {
 	class ParallelBlock;
 	
-	class Rule : public User
+	class Derived : public User
 	{
 	private:
-		ParallelBlock* context;
+	    TrivialStatement* context;
 		
 	public:
-		Rule( const char* name );
-
-		ParallelBlock* getContext( void ) const;
+		Derived( const char* name );
 		
-		void setContext( ParallelBlock* scope );
+	    TrivialStatement* getContext( void ) const;
+		
+		void setContext( TrivialStatement* scope );
 		
 		void dump( void ) const;
 
@@ -63,7 +62,7 @@ namespace libcasm_ir
 }
 
 
-#endif /* _LIB_CASMIR_RULE_H_ */
+#endif /* _LIB_CASMIR_DERIVED_H_ */
 
 //  
 //  Local variables:

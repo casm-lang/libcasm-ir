@@ -54,7 +54,8 @@ namespace libcasm_ir
 		enum ID
 		{ USER
 		, RULE
-		  
+		, DERIVED
+		
 		, BLOCK
 		, EXECUTION_SEMANTICS_BLOCK
 		, PARALLEL_BLOCK
@@ -65,6 +66,7 @@ namespace libcasm_ir
 		, BRANCH_STATEMENT
 		
 		, CONSTANT
+		, UNDEF_CONSTANT
 		, INTEGER_CONSTANT
 		
 		, INSTRUCTION

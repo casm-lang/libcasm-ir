@@ -40,6 +40,7 @@
 #include "User.h"
 #include "Rule.h"
 #include "Block.h"
+#include "Derived.h"
 #include "Constant.h"
 #include "Statement.h"
 #include "Instruction.h"

@@ -66,6 +66,17 @@ bool ConstantValue::classof( Value const* obj )
 }
 
 
+UndefConstant::UndefConstant()
+: Constant< Type::Undef >( "undef", &Undef, 0, Value::UNDEF_CONSTANT )
+{
+}
+
+bool UndefConstant::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::UNDEF_CONSTANT;
+}
+
+
 
 IntegerConstant::IntegerConstant( Type::Integer value )
 : Constant< Type::Integer >( "integer", &Integer, value, Value::INTEGER_CONSTANT )

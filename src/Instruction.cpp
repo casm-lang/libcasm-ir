@@ -60,12 +60,12 @@ void Instruction::setStatement( Statement* stmt )
 void Instruction::add( Value* value )
 {
 	assert( value );
-
-	if( Value::isa< UnaryInstruction >( value ) )
+	
+	if( Value::isa< UnaryInstruction >( this ) )
 	{
 		assert( values.size() < 1 );	
 	}
-	else if( Value::isa< BinaryInstruction >( value ) )
+	else if( Value::isa< BinaryInstruction >( this ) )
 	{
 		assert( values.size() < 2 );		
 	}
