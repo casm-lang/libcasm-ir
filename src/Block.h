@@ -39,12 +39,32 @@
 
 namespace libcasm_ir
 {
+	class Statement;
+	
 	class Block : public Value
 	{
 	public:
-		Block( const char* name, Type* type, Value::ID id = Value::BLOCK )
-		: Value( name, type, id )
+		Block( const char* name, Type* type, Value::ID id = Value::BLOCK );
+	    
+		void dump( void ) const;
+		
+		static inline bool classof( Value const* obj )
 		{
+			switch( obj->getValueID() )
+			{
+			    case Value::BLOCK:
+				
+			    case Value::EXECUTION_SEMANTICS_BLOCK:
+			    case Value::PARALLEL_BLOCK:
+			    case Value::SEQUENTIAL_BLOCK:
+				
+ 			    case Value::STATEMENT:
+			    case Value::TRIVIAL_STATEMENT:
+			    case Value::BRANCH_STATEMENT:
+					return true;
+			    default:
+					return false;
+			}
 		}
 	};
 	
@@ -62,68 +82,31 @@ namespace libcasm_ir
 		, Type* type
 		, const u1 is_parallel
 		, ExecutionSemanticsBlock* parent = 0
-		)
-		: Block( name, type )
-		, is_parallel( is_parallel )
-		, pseudo_state( 0 )
-		, parent( parent )
-		{
-			setParent( parent );
-		}
+		, Value::ID id = Value::EXECUTION_SEMANTICS_BLOCK
+		);
 		
-		const u1 isParallel( void ) const
-		{
-			return is_parallel;
-		}
+		const u1 isParallel( void ) const;
 		
-		const u64 getPseudoState( void ) const
-		{
-			return pseudo_state;
-		}
+		const u64 getPseudoState( void ) const;
 		
-	    ExecutionSemanticsBlock* getParent( void ) const
-		{
-			return parent;
-		}
-		
-		void setParent( ExecutionSemanticsBlock* parent_block )
-		{
-			parent = parent_block;
-			
-			if( parent )
-			{
-				pseudo_state = parent->getPseudoState();
+	    ExecutionSemanticsBlock* getParent( void ) const;
 
-				if( parent->isParallel() != this->isParallel() )
-				{
-					pseudo_state++;
-				}
-			}
-		}
+		void setParent( ExecutionSemanticsBlock* parent_block );
 		
-		void add( Block* block )
-		{
-			assert( block );
-			
-			
-			if( Value::isa< ExecutionSemanticsBlock >( block ) )
-			{
-				ExecutionSemanticsBlock* inner = static_cast< ExecutionSemanticsBlock* >( block );
-				inner->setParent( this );
-			}
-			
-			blocks.push_back( block );
-		}
+		void add( Block* block );
 		
-	    void dump( void ) const
+	    void dump( void ) const;
+		
+		static inline bool classof( Value const* obj )
 		{
-			printf( "ExecutionSemanticsBlock: %u, %p, %p\n", isParallel(), this, parent );
-
-			for( Block* block : blocks )
+			switch( obj->getValueID() )
 			{
-				assert( block );
-
-				block->dump();
+			    case Value::EXECUTION_SEMANTICS_BLOCK:
+			    case Value::PARALLEL_BLOCK:
+			    case Value::SEQUENTIAL_BLOCK:
+					return true;
+			    default:
+					return false;
 			}
 		}
 	};
@@ -131,19 +114,39 @@ namespace libcasm_ir
 	class ParallelBlock : public ExecutionSemanticsBlock
 	{
 	public:
-		ParallelBlock( ExecutionSemanticsBlock* parent = 0 )
-		: ExecutionSemanticsBlock( "par", 0, true, parent )
+		ParallelBlock( ExecutionSemanticsBlock* parent = 0 );
+
+		void dump( void ) const;
+		
+		static inline bool classof( Value const* obj )
 		{
-    	}
+			switch( obj->getValueID() )
+			{
+			    case Value::PARALLEL_BLOCK:
+					return true;
+			    default:
+					return false;
+			}
+		}
 	};
 	
 	class SequentialBlock : public ExecutionSemanticsBlock
 	{
 	public:
-		SequentialBlock( ExecutionSemanticsBlock* parent = 0 )
-		: ExecutionSemanticsBlock( "seq", 0, false, parent )
+		SequentialBlock( ExecutionSemanticsBlock* parent = 0 );
+	    
+		void dump( void ) const;
+		
+		static inline bool classof( Value const* obj )
 		{
-    	}
+			switch( obj->getValueID() )
+			{
+			    case Value::SEQUENTIAL_BLOCK:
+					return true;
+			    default:
+					return false;
+			}
+		}
 	};
 }
 

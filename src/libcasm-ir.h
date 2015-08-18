@@ -46,7 +46,7 @@
 
 namespace libcasm_ir
 {
-	class Value;
+//	class Value;
 }
 
 

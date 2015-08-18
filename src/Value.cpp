@@ -39,22 +39,24 @@
 */
 
 #include "Value.h"
+#include "libcasm-ir.h"
 
 using namespace libcasm_ir;
 
-std::unordered_map< const char*, std::unordered_set< Value* > > Value::symbols;
 
 Value::Value( const char* name, Type* type, Value::ID id )
 : name( name )
 , type( type )
 , id( id )
 {
+	SymbolTable& symbols = *getSymbols();
 	symbols[ name ].insert( this );
 	printf( "[Value] created '%s' @ %p of type %p\n", name, this, type );
 }
 
 Value::~Value()
 {
+	SymbolTable& symbols = *getSymbols();
 	symbols[ name ].erase( this );
 	printf( "[Value] deleted '%s' @ %p of type %p\n", name, this, type );
 }
@@ -69,15 +71,52 @@ Type* Value::getType( void ) const
 	return type;
 }
 
-// u8 getValueId( void ) const
-// {
-// 	return value_id;
-// }
-		
+
+Value::ID Value::getValueID() const
+{
+	return id;
+}
+
+
 void Value::dump( void ) const
 {
-	// GDB dbg function
-	printf( "%p\n", this );
+	switch( this->getValueID() )
+	{
+	case Value::RULE:
+		return ((Rule*)this)->dump(); break;
+	case Value::BLOCK:
+		return ((Block*)this)->dump(); break;
+	case Value::EXECUTION_SEMANTICS_BLOCK:
+		return ((ExecutionSemanticsBlock*)this)->dump(); break;
+	case Value::PARALLEL_BLOCK:
+		return ((ParallelBlock*)this)->dump(); break;
+	case Value::SEQUENTIAL_BLOCK:
+		return ((SequentialBlock*)this)->dump(); break;
+	case Value::STATEMENT:
+		return ((Statement*)this)->dump(); break;
+	case Value::TRIVIAL_STATEMENT:
+		return ((TrivialStatement*)this)->dump(); break;
+	case Value::BRANCH_STATEMENT:
+		return ((BranchStatement*)this)->dump(); break;
+	case Value::INSTRUCTION:
+		return ((Instruction*)this)->dump(); break;
+	case Value::UNARY_INSTRUCTION:
+		return ((UnaryInstruction*)this)->dump(); break;
+	case Value::BINARY_INSTRUCTION:
+		return ((BinaryInstruction*)this)->dump(); break;
+	case Value::LOOKUP_INSTRUCTION:
+		return ((LookupInstruction*)this)->dump(); break;
+	case Value::UPDATE_INSTRUCTION:
+		return ((UpdateInstruction*)this)->dump(); break;
+	case Value::LOCATION_INSTRUCTION:
+		return ((LocationInstruction*)this)->dump(); break;
+	case Value::CONSTANT:
+		return ((ConstantValue*)this)->dump(); break;
+	case Value::INTEGER_CONSTANT:
+		return ((IntegerConstant*)this)->dump(); break;
+	default:
+		printf( "[Value] %p of %u\n", this, getValueID() );
+	}
 }
 
 

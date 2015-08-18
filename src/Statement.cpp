@@ -34,11 +34,14 @@
 
 #include "Statement.h"
 
+#include "Constant.h"
+#include "Instruction.h"
+
 using namespace libcasm_ir;
 
 
-Statement::Statement( const char* name, Type* type, ExecutionSemanticsBlock* scope )
-: Block( name, type )
+Statement::Statement( const char* name, Type* type, ExecutionSemanticsBlock* scope, Value::ID id )
+: Block( name, type, id )
 , scope( scope )
 {
 	assert( scope );
@@ -53,28 +56,71 @@ ExecutionSemanticsBlock* Statement::getScope( void ) const
 	return scope;
 }
 
-void Statement::add( Instruction* instruction )
+void Statement::add( Value* instruction )
 {
+	printf( "%s: %p\n", __FUNCTION__, instruction );
 	assert( instruction );
-	// instructions.push_back( instruction );
-	// instruction->setStatement( this );
+
+	if( Value::isa< ConstantValue >( instruction ) )
+	{
+		printf( "%s: %p --> Constant, omitted\n", __FUNCTION__, instruction );
+		return;
+	}
+	
+	if( Value::isa< Instruction >( instruction ) )
+	{
+		printf( "%s: %p --> Instruction\n", __FUNCTION__, instruction );
+	    static_cast< Instruction* >( instruction )->setStatement( this );
+	}
+	
+	instructions.push_back( instruction );
+	printf( "[Stmt] add: %p\n", instruction );	
+}
+
+void Statement::dump( void ) const
+{
+	for( auto instr : instructions )
+	{
+		static_cast< Value* >( instr )->dump();
+	}
 }
 
 
 
-BlockStatement::BlockStatement( ExecutionSemanticsBlock* scope )
-: Statement( "block", 0, scope )
+
+
+TrivialStatement::TrivialStatement( ExecutionSemanticsBlock* scope )
+: Statement( "block", 0, scope, Value::TRIVIAL_STATEMENT )
 {
 }
+
+void TrivialStatement::dump( void ) const
+{
+	printf( "[TrStm] %p @ %lu\n", this, scope->getPseudoState() );
+	((Statement*)this)->dump();	
+}
+
+
+
+
 
 BranchStatement::BranchStatement( const char* name, Type* type, ExecutionSemanticsBlock* scope )
-: Statement( name, type, scope )
+: Statement( name, type, scope, Value::BRANCH_STATEMENT )
 {
 }
 
 void BranchStatement::add( Block* block )
 {
 	blocks.push_back( block );
+}
+
+void BranchStatement::dump( void ) const
+{
+	printf( "[BranchStatement] %p\n", this );
+	
+	((Statement*)this)->dump();
+	
+	// TODO: here the branches etc.
 }
 
 

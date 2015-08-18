@@ -55,7 +55,7 @@ void Rule::setContext( ParallelBlock* scope )
 
 void Rule::dump( void ) const
 {
-	printf( "Rule:" );
+	printf( "[Rule] %p\n", this );
 	
 	if( context )
 	{

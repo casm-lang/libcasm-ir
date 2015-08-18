@@ -36,32 +36,61 @@
 #define _LIB_CASMIR_STATEMENT_H_
 
 #include "Block.h"
-#include "Instruction.h"
 
 namespace libcasm_ir
 {
-	class Instruction;
-	
 	class Statement : public Block
 	{
-	private:
+    protected:
 		ExecutionSemanticsBlock* scope;
-
-		std::vector< Instruction* > instructions;
+		
+	private:
+		std::vector< Value* > instructions;
 		
 	public:
-		Statement( const char* name, Type* type, ExecutionSemanticsBlock* scope );
+		Statement( const char* name, Type* type, ExecutionSemanticsBlock* scope
+				 , Value::ID id = Value::STATEMENT );
 	    
 		ExecutionSemanticsBlock* getScope( void ) const;
 		
-		void add( Instruction* instruction );
+		void add( Value* instruction );
+
+		void dump( void ) const;
+		
+		static inline bool classof( Value const* obj )
+		{
+			switch( obj->getValueID() )
+			{
+			    case Value::STATEMENT:
+			    case Value::TRIVIAL_STATEMENT:
+			    case Value::BRANCH_STATEMENT:
+					return true;
+			    default:
+					return false;
+			}
+		}
 	};
 	
-	class BlockStatement : public Statement
+	class TrivialStatement : public Statement
 	{
 	public:
-		BlockStatement( ExecutionSemanticsBlock* scope );
+		TrivialStatement( ExecutionSemanticsBlock* scope );
+
+		void dump( void ) const;
+		
+		static inline bool classof( Value const* obj )
+		{
+			switch( obj->getValueID() )
+			{
+			    case Value::TRIVIAL_STATEMENT:
+					return true;
+			    default:
+					return false;
+			}
+		}
 	};
+
+
 	
 	class BranchStatement : public Statement
 	{
@@ -72,6 +101,19 @@ namespace libcasm_ir
 		BranchStatement( const char* name, Type* type, ExecutionSemanticsBlock* scope );
 	    
 		void add( Block* block );
+
+		void dump( void ) const;
+		
+		static inline bool classof( Value const* obj )
+		{
+			switch( obj->getValueID() )
+			{
+			    case Value::BRANCH_STATEMENT:
+					return true;
+			    default:
+					return false;
+			}
+		}
 	};
 
 }

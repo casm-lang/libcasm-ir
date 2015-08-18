@@ -48,14 +48,28 @@ namespace libcasm_ir
 			
 		}
 		
-		static inline bool classof( User const* obj )
-		{
-			return true;
-		}
 		
 		static inline bool classof( Value const* obj )
 		{
-			return obj->getValueID() == Value::USER;
+			switch( obj->getValueID() )
+			{
+			    case Value::USER:
+
+				case Value::RULE:
+			    
+			    case Value::CONSTANT:
+			    case Value::INTEGER_CONSTANT:
+				
+			    case Value::INSTRUCTION:
+			    case Value::UNARY_INSTRUCTION:
+			    case Value::BINARY_INSTRUCTION:
+			    case Value::LOOKUP_INSTRUCTION:
+			    case Value::UPDATE_INSTRUCTION:
+			    case Value::LOCATION_INSTRUCTION:
+			    	return true;
+			    default:
+					return false;
+			}
 		}
 	};
 }

@@ -46,14 +46,15 @@ Instruction::Instruction( const char* name, Type* type, Value::ID id )
 void Instruction::setStatement( Statement* stmt )
 {
 	statement = stmt;
-
-	// for( auto* value : values )
-	// {
-	// 	if( libstdhl::isa< Instruction >( value ) )
-	// 	{
-	// 		stmt->add( static_cast< Instruction* >( value ) );
-	// 	}
-	// }
+	
+	for( auto value : values )
+	{
+		if( Value::isa< Instruction >( value ) )
+		{
+			printf( "[Instr] %s: %p, %p\n", __FUNCTION__, stmt, value );
+			stmt->add( static_cast< Instruction* >( value ) );
+		}
+	}
 }
 
 void Instruction::add( Value* value )
@@ -121,10 +122,22 @@ UpdateInstruction::UpdateInstruction( Value* func, Value* expr )
 {
 }
 
+void UpdateInstruction::dump( void ) const
+{
+	printf( "[UpdIn] %p\n", this );
+}
+
+
 LookupInstruction::LookupInstruction( Value* location )
 : UnaryInstruction( "lookup", 0, location, Value::LOOKUP_INSTRUCTION )
 {
 }
+
+void LookupInstruction::dump( void ) const
+{
+	printf( "[LupIn] %p\n", this );
+}
+
 
 LocationInstruction::LocationInstruction( Value* function )
 : Instruction( "location", 0, Value::LOCATION_INSTRUCTION )
@@ -132,6 +145,10 @@ LocationInstruction::LocationInstruction( Value* function )
 	add( function );
 }
 
+void LocationInstruction::dump( void ) const
+{
+	printf( "[LocIn] %p\n", this );
+}
 
 
 

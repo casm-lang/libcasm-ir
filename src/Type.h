@@ -33,9 +33,6 @@
 //  
 
 /**
-   @file     Type.h
-   @class    Type
-   
    @brief    TODO
    
    TODO

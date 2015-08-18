@@ -41,7 +41,7 @@ CCFLAG += -Wall
 
 CPP=clang
 CPPFLAG += -std=c++11
-CPPFLAG += -g
+CPPFLAG += -g -O0
 CPPFLAG += -Wall
 #CPPFLAG += -Wextra
 

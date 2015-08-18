@@ -33,9 +33,6 @@
 //  
 
 /**
-   @file     Value.h
-   @class    Value
-   
    @brief    TODO
    
    TODO
@@ -50,14 +47,25 @@
 #include "Type.h"
 
 namespace libcasm_ir
-{
+{	
 	class Value
 	{
 	public:
 		enum ID
 		{ USER
 		, RULE
+		  
 		, BLOCK
+		, EXECUTION_SEMANTICS_BLOCK
+		, PARALLEL_BLOCK
+		, SEQUENTIAL_BLOCK
+		
+		, STATEMENT
+		, TRIVIAL_STATEMENT
+		, BRANCH_STATEMENT
+		
+		, CONSTANT
+		, INTEGER_CONSTANT
 		
 		, INSTRUCTION
 		, UNARY_INSTRUCTION
@@ -66,10 +74,17 @@ namespace libcasm_ir
 		, UPDATE_INSTRUCTION
 		, LOCATION_INSTRUCTION
 		};
+
+		typedef std::unordered_map< const char*, std::unordered_set< Value* >
+								  , libstdhl::Hash, libstdhl::Equal > SymbolTable;
+		
+		static SymbolTable* getSymbols( void )
+		{
+			static SymbolTable symbols;
+			return &symbols;
+		}
 		
 	private:
-		static std::unordered_map< const char*, std::unordered_set< Value* > > symbols;
-		
 		const char* name;
 		Type* type;
 		
@@ -84,12 +99,9 @@ namespace libcasm_ir
 	    
 		Type* getType( void ) const;
 	    
-		void dump( void ) const;
+		ID getValueID() const;
 		
-		ID getValueID() const
-		{
-			return id;
-		}
+		void dump( void ) const;
 		
 		static inline bool classof( Value const* )
 		{
@@ -100,6 +112,12 @@ namespace libcasm_ir
 		static inline bool isa( Value* value )
 		{
 			return TO::classof( value );
+		}
+		
+		template< class TO >
+		static inline bool isa( const Value* value )
+		{
+			return isa< TO >( (Value*)value );
 		}
 	};
 }

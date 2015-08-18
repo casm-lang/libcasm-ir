@@ -38,8 +38,8 @@ using namespace libcasm_ir;
 
 
 template< typename V >
-Constant< V >::Constant( const char* name, Type* type, V value )
-: User( name, type )
+Constant< V >::Constant( const char* name, Type* type, V value, Value::ID id )
+: User( name, type, id )
 , value( value )
 {
 }
@@ -51,7 +51,7 @@ const V Constant< V >::getValue( void ) const
 }
 
 IntegerConstant::IntegerConstant( Type::Integer value )
-: Constant< Type::Integer >( "integer", &Integer, value )
+: Constant< Type::Integer >( "integer", &Integer, value, Value::INTEGER_CONSTANT )
 {
 }
 

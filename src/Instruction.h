@@ -55,14 +55,25 @@ namespace libcasm_ir
 	    void add( Value* value );
 		Value* getValue( u8 index ) const;
 		
-		static inline bool classof( Instruction const* obj )
+		void dump( void ) const
 		{
-			return true;
+			((Value*)this)->dump();
 		}
 		
 		static inline bool classof( Value const* obj )
 		{
-			return obj->getValueID() == Value::INSTRUCTION;
+			switch( obj->getValueID() )
+			{
+			    case Value::INSTRUCTION:
+			    case Value::UNARY_INSTRUCTION:
+			    case Value::BINARY_INSTRUCTION:
+			    case Value::LOOKUP_INSTRUCTION:
+			    case Value::UPDATE_INSTRUCTION:
+			    case Value::LOCATION_INSTRUCTION:
+			    	return true;
+			    default:
+					return false;
+			}
 		}
 	};
 	
@@ -75,6 +86,19 @@ namespace libcasm_ir
 		UnaryInstruction( const char* name, Type* type, Value* value
 						, Value::ID id = Value::UNARY_INSTRUCTION );
 		Value* get( void ) const;
+
+		
+		static inline bool classof( Value const* obj )
+		{
+			switch( obj->getValueID() )
+			{
+			    case Value::UNARY_INSTRUCTION:
+			    case Value::LOOKUP_INSTRUCTION:
+			    	return true;
+			    default:
+					return false;
+			}
+		}
 	};
 	
 	class BinaryInstruction : public Instruction
@@ -85,10 +109,23 @@ namespace libcasm_ir
 		
 	public:
 		BinaryInstruction( const char* name, Type* type, Value* lhs, Value* rhs
-						 , Value::ID id = Value::UNARY_INSTRUCTION );
+						 , Value::ID id = Value::BINARY_INSTRUCTION );
 		
 		Value* getLHS( void ) const;
 		Value* getRHS( void ) const;
+		
+		
+		static inline bool classof( Value const* obj )
+		{
+			switch( obj->getValueID() )
+			{
+    		    case Value::BINARY_INSTRUCTION:
+			    case Value::UPDATE_INSTRUCTION:
+			    	return true;
+			    default:
+					return false;
+			}
+		}
 	};
 	
 	
@@ -99,18 +136,59 @@ namespace libcasm_ir
 	{
 	public :
 		LookupInstruction( Value* location );
+
+		void dump( void ) const;
+		
+		static inline bool classof( Value const* obj )
+		{
+			switch( obj->getValueID() )
+			{
+			    case Value::LOOKUP_INSTRUCTION:
+			    	return true;
+			    default:
+					return false;
+			}
+		}
 	};
+	
 	
 	class UpdateInstruction : public BinaryInstruction
 	{
 	public:
 		UpdateInstruction( Value* func, Value* expr );
+
+		void dump( void ) const;
+	    
+		static inline bool classof( Value const* obj )
+		{
+			switch( obj->getValueID() )
+			{
+			    case Value::UPDATE_INSTRUCTION:
+			    	return true;
+			    default:
+					return false;
+			}
+		}
 	};
+
 	
 	class LocationInstruction : public Instruction
 	{
 	public:
 		LocationInstruction( Value* function );
+
+		void dump( void ) const;
+		
+		static inline bool classof( Value const* obj )
+		{
+			switch( obj->getValueID() )
+			{
+			    case Value::LOCATION_INSTRUCTION:
+			    	return true;
+			    default:
+					return false;
+			}
+		}
 	};
 
 }
