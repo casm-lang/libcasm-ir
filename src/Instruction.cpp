@@ -79,6 +79,14 @@ Value* Instruction::getValue( u8 index ) const
 	return values[ index ];
 }
 
+bool Instruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::INSTRUCTION
+		or BinaryInstruction::classof( obj )
+		or UnaryInstruction::classof( obj )
+		or LocationInstruction::classof( obj );
+}
+
 
 
 UnaryInstruction::UnaryInstruction( const char* name, Type* type, Value* value, Value::ID id )
@@ -92,6 +100,13 @@ Value* UnaryInstruction::get( void ) const
 {
 	return getValue( 0 );
 }
+
+bool UnaryInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::UNARY_INSTRUCTION
+		or LookupInstruction::classof( obj );
+}
+
 
 
 BinaryInstruction::BinaryInstruction( const char* name, Type* type, Value* lhs, Value* rhs, Value::ID id )
@@ -111,6 +126,13 @@ Value* BinaryInstruction::getRHS( void ) const
 	return getValue( 1 );
 }
 
+bool BinaryInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::BINARY_INSTRUCTION
+		or UpdateInstruction::classof( obj )
+		or OperatorInstruction::classof( obj );
+}
+
 
 
 
@@ -127,7 +149,10 @@ void UpdateInstruction::dump( void ) const
 	printf( "[UpdIn] %p\n", this );
 }
 
-
+bool UpdateInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::UPDATE_INSTRUCTION;
+}
 
 
 
@@ -142,6 +167,13 @@ void LookupInstruction::dump( void ) const
 	printf( "[LupIn] %p\n", this );
 }
 
+bool LookupInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::LOOKUP_INSTRUCTION;
+}
+
+
+
 
 LocationInstruction::LocationInstruction( Value* function )
 : Instruction( "location", 0, Value::LOCATION_INSTRUCTION )
@@ -152,6 +184,11 @@ LocationInstruction::LocationInstruction( Value* function )
 void LocationInstruction::dump( void ) const
 {
 	printf( "[LocIn] %p\n", this );
+}
+
+bool LocationInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::LOCATION_INSTRUCTION;
 }
 
 
@@ -169,11 +206,17 @@ void OperatorInstruction::dump( void ) const
 	printf( "[OpcIn] %p = %s %p, %p\n", this, getName(), getLHS(), getRHS() );	
 }
 
+bool OperatorInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::OPERATOR_INSTRUCTION;
+}
+
 
 AddInstruction::AddInstruction( Value* lhs, Value* rhs )
 : OperatorInstruction( "add", 0, lhs, rhs ) //, Value::ADD_INSTRUCTION )
 {	
 }
+
 
 
 

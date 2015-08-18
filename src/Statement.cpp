@@ -85,6 +85,13 @@ void Statement::dump( void ) const
 	}
 }
 
+bool Statement::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::STATEMENT
+		or TrivialStatement::classof( obj )
+		or BranchStatement::classof( obj );
+}
+
 
 
 
@@ -98,6 +105,11 @@ void TrivialStatement::dump( void ) const
 {
 	printf( "[TrStm] %p @ %lu\n", this, scope->getPseudoState() );
 	((Statement*)this)->dump();	
+}
+
+bool TrivialStatement::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::TRIVIAL_STATEMENT;
 }
 
 
@@ -122,6 +134,13 @@ void BranchStatement::dump( void ) const
 	
 	// TODO: here the branches etc.
 }
+
+bool BranchStatement::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::BRANCH_STATEMENT;
+}
+
+
 
 
 

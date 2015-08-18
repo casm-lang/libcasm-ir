@@ -60,13 +60,7 @@ namespace libcasm_ir
 		
 		static inline bool classof( Value const* obj )
 		{
-			switch( obj->getValueID() )
-			{
-				case Value::RULE:
-			    	return true;
-			    default:
-					return false;
-			}
+			return obj->getValueID() == Value::RULE;
 		}
 	};
 }

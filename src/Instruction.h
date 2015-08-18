@@ -60,22 +60,7 @@ namespace libcasm_ir
 			((Value*)this)->dump();
 		}
 		
-		static inline bool classof( Value const* obj )
-		{
-			switch( obj->getValueID() )
-			{
-			    case Value::INSTRUCTION:
-			    case Value::UNARY_INSTRUCTION:
-			    case Value::BINARY_INSTRUCTION:
-			    case Value::LOOKUP_INSTRUCTION:
-			    case Value::UPDATE_INSTRUCTION:
-			    case Value::LOCATION_INSTRUCTION:
-			    case Value::OPERATOR_INSTRUCTION:
-			    	return true;
-			    default:
-					return false;
-			}
-		}
+		static bool classof( Value const* obj );
 	};
 	
 	class UnaryInstruction : public Instruction
@@ -89,17 +74,7 @@ namespace libcasm_ir
 		Value* get( void ) const;
 
 		
-		static inline bool classof( Value const* obj )
-		{
-			switch( obj->getValueID() )
-			{
-			    case Value::UNARY_INSTRUCTION:
-			    case Value::LOOKUP_INSTRUCTION:
-			    	return true;
-			    default:
-					return false;
-			}
-		}
+		static bool classof( Value const* obj );
 	};
 	
 	class BinaryInstruction : public Instruction
@@ -116,18 +91,7 @@ namespace libcasm_ir
 		Value* getRHS( void ) const;
 		
 		
-		static inline bool classof( Value const* obj )
-		{
-			switch( obj->getValueID() )
-			{
-    		    case Value::BINARY_INSTRUCTION:
-			    case Value::UPDATE_INSTRUCTION:
-			    case Value::OPERATOR_INSTRUCTION:
-			    	return true;
-			    default:
-					return false;
-			}
-		}
+		static bool classof( Value const* obj );
 	};
 	
 	
@@ -141,16 +105,7 @@ namespace libcasm_ir
 
 		void dump( void ) const;
 		
-		static inline bool classof( Value const* obj )
-		{
-			switch( obj->getValueID() )
-			{
-			    case Value::LOOKUP_INSTRUCTION:
-			    	return true;
-			    default:
-					return false;
-			}
-		}
+		static bool classof( Value const* obj );
 	};
 	
 	
@@ -161,19 +116,10 @@ namespace libcasm_ir
 
 		void dump( void ) const;
 	    
-		static inline bool classof( Value const* obj )
-		{
-			switch( obj->getValueID() )
-			{
-			    case Value::UPDATE_INSTRUCTION:
-			    	return true;
-			    default:
-					return false;
-			}
-		}
+		static bool classof( Value const* obj );
 	};
-
-
+	
+	
 	class OperatorInstruction : public BinaryInstruction
 	{
 	public:
@@ -182,18 +128,9 @@ namespace libcasm_ir
 		
 		void dump( void ) const;
 	    
-		static inline bool classof( Value const* obj )
-		{
-			switch( obj->getValueID() )
-			{
-			    case Value::OPERATOR_INSTRUCTION:
-			    	return true;
-			    default:
-					return false;
-			}
-		}
+		static bool classof( Value const* obj );
 	};
-
+	
 	class AddInstruction : public OperatorInstruction
 	{
 	public:
@@ -201,16 +138,7 @@ namespace libcasm_ir
 		
 		// void dump( void ) const;
 	    
-		// static inline bool classof( Value const* obj )
-		// {
-		// 	switch( obj->getValueID() )
-		// 	{
-		// 	    case Value::OPERATOR_INSTRUCTION:
-		// 	    	return true;
-		// 	    default:
-		// 			return false;
-		// 	}
-		// }
+		// static bool classof( Value const* obj );
 	};
 	
 	
@@ -221,16 +149,7 @@ namespace libcasm_ir
 
 		void dump( void ) const;
 		
-		static inline bool classof( Value const* obj )
-		{
-			switch( obj->getValueID() )
-			{
-			    case Value::LOCATION_INSTRUCTION:
-			    	return true;
-			    default:
-					return false;
-			}
-		}
+		static bool classof( Value const* obj );
 	};
 
 }

@@ -33,10 +33,18 @@
 //  
 
 #include "User.h"
+#include "libcasm-ir.h"
+
+using namespace libcasm_ir;
 
 
-// TODO
-
+bool User::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::USER
+		or Rule::classof( obj )
+		or ConstantValue::classof( obj )
+		or Instruction::classof( obj );
+}
 
 
 //  

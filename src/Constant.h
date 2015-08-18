@@ -51,28 +51,14 @@ namespace libcasm_ir
 		Constant( const char* name, Type* type, V value, Value::ID id = Value::CONSTANT );
 		
 		const V getValue( void ) const;
-
 		
-		static inline bool classof( Value const* obj )
-		{
-			return false;
-		}
+		static bool classof( Value const* obj );
 	};
-
-	class ConstantValue : public Constant< u8 >
+	
+	class ConstantValue : public Constant< void* >
 	{
 	public:
-		static inline bool classof( Value const* obj )
-		{
-			switch( obj->getValueID() )
-			{
-			    case Value::CONSTANT:
-			    case Value::INTEGER_CONSTANT:
-					return true;
-			    default:
-					return false;
-			}
-		}
+		static bool classof( Value const* obj );
 	};
 	
 	class IntegerConstant : public Constant< Type::Integer >
@@ -80,16 +66,7 @@ namespace libcasm_ir
 	public:
 		IntegerConstant( Type::Integer value );
 		
-		static inline bool classof( Value const* obj )
-		{
-			switch( obj->getValueID() )
-			{
-			    case Value::INTEGER_CONSTANT:
-					return true;
-			    default:
-					return false;
-			}
-		}
+		static bool classof( Value const* obj );
 	};
 }
 

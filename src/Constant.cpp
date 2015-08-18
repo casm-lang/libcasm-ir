@@ -44,18 +44,38 @@ Constant< V >::Constant( const char* name, Type* type, V value, Value::ID id )
 {
 }
 
+template< typename T >
+bool Constant< T >::classof( Value const* obj )
+{
+	assert( 0 && "invalid to check 'classof' Constant< V >, use ConstantValue" );
+	return false;
+}
+
+
+
 template< typename V >
 const V Constant< V >::getValue( void ) const
 {
 	return value;
 }
 
+bool ConstantValue::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::CONSTANT
+		or IntegerConstant::classof( obj );
+}
+
+
+
 IntegerConstant::IntegerConstant( Type::Integer value )
 : Constant< Type::Integer >( "integer", &Integer, value, Value::INTEGER_CONSTANT )
 {
 }
 
-
+bool IntegerConstant::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::INTEGER_CONSTANT;
+}
 
 
 //  

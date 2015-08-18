@@ -48,24 +48,7 @@ namespace libcasm_ir
 	    
 		void dump( void ) const;
 		
-		static inline bool classof( Value const* obj )
-		{
-			switch( obj->getValueID() )
-			{
-			    case Value::BLOCK:
-				
-			    case Value::EXECUTION_SEMANTICS_BLOCK:
-			    case Value::PARALLEL_BLOCK:
-			    case Value::SEQUENTIAL_BLOCK:
-				
- 			    case Value::STATEMENT:
-			    case Value::TRIVIAL_STATEMENT:
-			    case Value::BRANCH_STATEMENT:
-					return true;
-			    default:
-					return false;
-			}
-		}
+		static bool classof( Value const* obj );
 	};
 	
 	class ExecutionSemanticsBlock : public Block
@@ -97,18 +80,7 @@ namespace libcasm_ir
 		
 	    void dump( void ) const;
 		
-		static inline bool classof( Value const* obj )
-		{
-			switch( obj->getValueID() )
-			{
-			    case Value::EXECUTION_SEMANTICS_BLOCK:
-			    case Value::PARALLEL_BLOCK:
-			    case Value::SEQUENTIAL_BLOCK:
-					return true;
-			    default:
-					return false;
-			}
-		}
+		static bool classof( Value const* obj );
 	};
 	
 	class ParallelBlock : public ExecutionSemanticsBlock
@@ -118,16 +90,7 @@ namespace libcasm_ir
 
 		void dump( void ) const;
 		
-		static inline bool classof( Value const* obj )
-		{
-			switch( obj->getValueID() )
-			{
-			    case Value::PARALLEL_BLOCK:
-					return true;
-			    default:
-					return false;
-			}
-		}
+		static bool classof( Value const* obj );
 	};
 	
 	class SequentialBlock : public ExecutionSemanticsBlock
@@ -137,16 +100,7 @@ namespace libcasm_ir
 	    
 		void dump( void ) const;
 		
-		static inline bool classof( Value const* obj )
-		{
-			switch( obj->getValueID() )
-			{
-			    case Value::SEQUENTIAL_BLOCK:
-					return true;
-			    default:
-					return false;
-			}
-		}
+		static bool classof( Value const* obj );
 	};
 }
 

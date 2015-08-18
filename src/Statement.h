@@ -57,18 +57,7 @@ namespace libcasm_ir
 
 		void dump( void ) const;
 		
-		static inline bool classof( Value const* obj )
-		{
-			switch( obj->getValueID() )
-			{
-			    case Value::STATEMENT:
-			    case Value::TRIVIAL_STATEMENT:
-			    case Value::BRANCH_STATEMENT:
-					return true;
-			    default:
-					return false;
-			}
-		}
+		static bool classof( Value const* obj );
 	};
 	
 	class TrivialStatement : public Statement
@@ -78,16 +67,7 @@ namespace libcasm_ir
 
 		void dump( void ) const;
 		
-		static inline bool classof( Value const* obj )
-		{
-			switch( obj->getValueID() )
-			{
-			    case Value::TRIVIAL_STATEMENT:
-					return true;
-			    default:
-					return false;
-			}
-		}
+		static bool classof( Value const* obj );
 	};
 
 
@@ -104,16 +84,7 @@ namespace libcasm_ir
 
 		void dump( void ) const;
 		
-		static inline bool classof( Value const* obj )
-		{
-			switch( obj->getValueID() )
-			{
-			    case Value::BRANCH_STATEMENT:
-					return true;
-			    default:
-					return false;
-			}
-		}
+		static bool classof( Value const* obj );
 	};
 
 }
