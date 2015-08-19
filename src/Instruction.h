@@ -55,10 +55,7 @@ namespace libcasm_ir
 	    void add( Value* value );
 		Value* getValue( u8 index ) const;
 		
-		void dump( void ) const
-		{
-			((Value*)this)->dump();
-		}
+		void dump( void ) const;
 		
 		static bool classof( Value const* obj );
 	};
@@ -103,7 +100,7 @@ namespace libcasm_ir
 	public :
 		LookupInstruction( Value* location );
 
-		void dump( void ) const;
+		//void dump( void ) const;
 		
 		static bool classof( Value const* obj );
 	};
@@ -114,7 +111,7 @@ namespace libcasm_ir
 	public:
 		UpdateInstruction( Value* func, Value* expr );
 
-		void dump( void ) const;
+		//void dump( void ) const;
 	    
 		static bool classof( Value const* obj );
 	};
@@ -126,7 +123,7 @@ namespace libcasm_ir
 		OperatorInstruction( const char* name, Type* type, Value* lhs, Value* rhs
 						   , Value::ID id = Value::OPERATOR_INSTRUCTION );
 		
-		void dump( void ) const;
+		//void dump( void ) const;
 	    
 		static bool classof( Value const* obj );
 	};
@@ -147,11 +144,28 @@ namespace libcasm_ir
 	public:
 		LocationInstruction( Value* function );
 
-		void dump( void ) const;
+		//void dump( void ) const;
+		
+		static bool classof( Value const* obj );
+	};
+	
+	class CallInstruction : public Instruction
+	{
+	public:
+		CallInstruction( Value* symbol );
+		
+		//void dump( void ) const;
 		
 		static bool classof( Value const* obj );
 	};
 
+	class PrintInstruction : public Instruction
+	{
+	public:
+		PrintInstruction( Value* channel = 0 );
+		static bool classof( Value const* obj );
+	};
+	
 }
 
 

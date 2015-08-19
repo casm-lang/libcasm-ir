@@ -79,12 +79,26 @@ Value* Instruction::getValue( u8 index ) const
 	return values[ index ];
 }
 
+void Instruction::dump( void ) const
+{
+	//((Value*)this)->dump();
+	printf( "[Instr] %p %s", this, getName() );
+	for( auto instr : values )
+	{
+		printf( ", %p", instr );
+	}
+	printf( "\n" );
+}
+
 bool Instruction::classof( Value const* obj )
 {
 	return obj->getValueID() == Value::INSTRUCTION
 		or BinaryInstruction::classof( obj )
 		or UnaryInstruction::classof( obj )
-		or LocationInstruction::classof( obj );
+		or LocationInstruction::classof( obj )
+		or CallInstruction::classof( obj )
+		or PrintInstruction::classof( obj )
+		;
 }
 
 
@@ -144,10 +158,10 @@ UpdateInstruction::UpdateInstruction( Value* func, Value* expr )
 {
 }
 
-void UpdateInstruction::dump( void ) const
-{
-	printf( "[UpdIn] %p\n", this );
-}
+// void UpdateInstruction::dump( void ) const
+// {
+// 	printf( "[UpdIn] %p\n", this );
+// }
 
 bool UpdateInstruction::classof( Value const* obj )
 {
@@ -162,36 +176,15 @@ LookupInstruction::LookupInstruction( Value* location )
 {
 }
 
-void LookupInstruction::dump( void ) const
-{
-	printf( "[LupIn] %p\n", this );
-}
+// void LookupInstruction::dump( void ) const
+// {
+// 	printf( "[LupIn] %p\n", this );
+// }
 
 bool LookupInstruction::classof( Value const* obj )
 {
 	return obj->getValueID() == Value::LOOKUP_INSTRUCTION;
 }
-
-
-
-
-LocationInstruction::LocationInstruction( Value* function )
-: Instruction( "location", 0, Value::LOCATION_INSTRUCTION )
-{
-	add( function );
-}
-
-void LocationInstruction::dump( void ) const
-{
-	printf( "[LocIn] %p\n", this );
-}
-
-bool LocationInstruction::classof( Value const* obj )
-{
-	return obj->getValueID() == Value::LOCATION_INSTRUCTION;
-}
-
-
 
 
 
@@ -201,10 +194,10 @@ OperatorInstruction::OperatorInstruction
 {
 }
 
-void OperatorInstruction::dump( void ) const
-{
-	printf( "[OpcIn] %p = %s %p, %p\n", this, getName(), getLHS(), getRHS() );	
-}
+// void OperatorInstruction::dump( void ) const
+// {
+// 	printf( "[OpcIn] %p = %s %p, %p\n", this, getName(), getLHS(), getRHS() );	
+// }
 
 bool OperatorInstruction::classof( Value const* obj )
 {
@@ -217,6 +210,52 @@ AddInstruction::AddInstruction( Value* lhs, Value* rhs )
 {	
 }
 
+
+
+
+LocationInstruction::LocationInstruction( Value* function )
+: Instruction( "location", 0, Value::LOCATION_INSTRUCTION )
+{
+	add( function );
+}
+
+// void LocationInstruction::dump( void ) const
+// {
+// 	printf( "[LocIn] %p\n", this );
+// }
+
+bool LocationInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::LOCATION_INSTRUCTION;
+}
+
+
+CallInstruction::CallInstruction( Value* symbol )
+: Instruction( "call", 0, Value::CALL_INSTRUCTION )
+{
+	add( symbol );
+}
+
+bool CallInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::CALL_INSTRUCTION;
+}
+
+
+
+PrintInstruction::PrintInstruction( Value* channel )
+: Instruction( "print", 0, Value::PRINT_INSTRUCTION )
+{
+	if( channel )
+	{
+		assert( 0 && "debug channel not implemented yet!" );
+	}
+}
+
+bool PrintInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::PRINT_INSTRUCTION;
+}
 
 
 

@@ -55,14 +55,13 @@ namespace libcasm_ir
 		typedef i64 Integer;
 		
 		enum ID
-		{ RULE = 0
-		, BLOCK
-		, STATEMENT
-
-		, UNDEF
+		{ UNDEF = 0
 		, INTEGER
+		  
+		, DERIVED
+		, FUNCTION
 		};
-	
+		
 	private:
 		ID type_id;
 		
@@ -83,8 +82,12 @@ namespace libcasm_ir
 		}
 	};
 	
-	static Type Undef   = Type( Type::UNDEF );
-	static Type Integer = Type( Type::INTEGER );
+	static Type UndefType   = Type( Type::UNDEF );
+	static Type IntegerType = Type( Type::INTEGER );
+	
+	static Type DerivedType  = Type( Type::DERIVED );
+	static Type FunctionType = Type( Type::FUNCTION );
+	
 }
 
 #endif /* _LIB_CASMIR_TYPE_H_ */

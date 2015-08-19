@@ -63,7 +63,7 @@ namespace libcasm_ir
 	class TrivialStatement : public Statement
 	{
 	public:
-		TrivialStatement( ExecutionSemanticsBlock* scope );
+		TrivialStatement( ExecutionSemanticsBlock* scope = 0 );
 
 		void dump( void ) const;
 		

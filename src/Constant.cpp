@@ -62,12 +62,15 @@ const V Constant< V >::getValue( void ) const
 bool ConstantValue::classof( Value const* obj )
 {
 	return obj->getValueID() == Value::CONSTANT
-		or IntegerConstant::classof( obj );
+		or UndefConstant::classof( obj )
+		or SelfConstant::classof( obj )
+		or IntegerConstant::classof( obj )
+		;
 }
 
 
 UndefConstant::UndefConstant()
-: Constant< Type::Undef >( "undef", &Undef, 0, Value::UNDEF_CONSTANT )
+: Constant< Type::Undef >( "undef", &UndefType, 0, Value::UNDEF_CONSTANT )
 {
 }
 
@@ -76,16 +79,42 @@ bool UndefConstant::classof( Value const* obj )
 	return obj->getValueID() == Value::UNDEF_CONSTANT;
 }
 
+SelfConstant::SelfConstant()
+: Constant< Type::Undef >( "self", &UndefType, 0, Value::SELF_CONSTANT ) // PPA: FIXME: TODO: types are not ready yet!!!
+{
+}
+
+bool SelfConstant::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::SELF_CONSTANT;
+}
+
 
 
 IntegerConstant::IntegerConstant( Type::Integer value )
-: Constant< Type::Integer >( "integer", &Integer, value, Value::INTEGER_CONSTANT )
+: Constant< Type::Integer >( "integer", &IntegerType, value, Value::INTEGER_CONSTANT )
 {
 }
 
 bool IntegerConstant::classof( Value const* obj )
 {
 	return obj->getValueID() == Value::INTEGER_CONSTANT;
+}
+
+
+Identifier::Identifier( Type* type, const char* value )
+: Constant< const char* >( "identifier", type, value, Value::IDENTIFIER )
+{
+}
+
+void Identifier::dump( void ) const
+{
+	printf( "[Ident] %p, %s of type %u\n", this, getValue(), getType()->getID() );
+}
+
+bool Identifier::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::IDENTIFIER;
 }
 
 

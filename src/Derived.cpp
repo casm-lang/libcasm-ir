@@ -67,7 +67,7 @@ void Derived::dump( void ) const
 	}
 }
 
-bool classof( Value const* obj )
+bool Derived::classof( Value const* obj )
 {
 	return obj->getValueID() == Value::DERIVED;
 }

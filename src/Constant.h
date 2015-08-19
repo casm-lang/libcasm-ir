@@ -64,7 +64,15 @@ namespace libcasm_ir
 	class UndefConstant : public Constant< Type::Undef >
 	{
 	public:
-		UndefConstant();
+		UndefConstant( void );
+		
+		static bool classof( Value const* obj );
+	};
+	
+	class SelfConstant : public Constant< Type::Undef >
+	{
+	public:
+		SelfConstant( void );
 		
 		static bool classof( Value const* obj );
 	};
@@ -74,6 +82,16 @@ namespace libcasm_ir
 	public:
 		IntegerConstant( Type::Integer value );
 		
+		static bool classof( Value const* obj );
+	};
+
+	class Identifier : public Constant< const char* >
+	{
+	public:
+		Identifier( Type* type, const char* value );
+
+		void dump( void ) const;
+
 		static bool classof( Value const* obj );
 	};
 }

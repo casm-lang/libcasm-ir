@@ -36,7 +36,7 @@
 #define _LIB_CASMIR_DERIVED_H_
 
 #include "User.h"
-#include "Instruction.h"
+#include "Statement.h"
 
 namespace libcasm_ir
 {

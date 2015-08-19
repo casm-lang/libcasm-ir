@@ -44,7 +44,8 @@ Statement::Statement( const char* name, Type* type, ExecutionSemanticsBlock* sco
 : Block( name, type, id )
 , scope( scope )
 {
-	assert( scope );
+	//assert( scope );
+	if( !scope ) return;
 	
 	scope->add( this );
 	
@@ -103,7 +104,13 @@ TrivialStatement::TrivialStatement( ExecutionSemanticsBlock* scope )
 
 void TrivialStatement::dump( void ) const
 {
-	printf( "[TrStm] %p @ %lu\n", this, scope->getPseudoState() );
+	printf( "[TrStm] %p" );
+	if( scope )
+	{
+		printf( " @ %lu (%p)", this, scope->getPseudoState(), scope );
+	}
+	printf( "\n" );
+	
 	((Statement*)this)->dump();	
 }
 

@@ -84,6 +84,8 @@ void Value::dump( void ) const
 	{
 	case Value::RULE:
 		return ((Rule*)this)->dump(); break;
+	case Value::DERIVED:
+		return ((Derived*)this)->dump(); break;
 	case Value::BLOCK:
 		return ((Block*)this)->dump(); break;
 	case Value::EXECUTION_SEMANTICS_BLOCK:
@@ -112,6 +114,8 @@ void Value::dump( void ) const
 		return ((LocationInstruction*)this)->dump(); break;
 	case Value::CONSTANT:
 		return ((ConstantValue*)this)->dump(); break;
+	case Value::IDENTIFIER:
+		return ((Identifier*)this)->dump(); break;
 	case Value::INTEGER_CONSTANT:
 		return ((IntegerConstant*)this)->dump(); break;
 	case Value::OPERATOR_INSTRUCTION:

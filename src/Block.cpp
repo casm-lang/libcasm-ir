@@ -49,7 +49,7 @@ void Block::dump( void ) const
 	((Value*)this)->dump();
 }
 
-bool classof( Value const* obj )
+bool Block::classof( Value const* obj )
 {
 	return obj->getValueID() == Value::BLOCK
 		or ExecutionSemanticsBlock::classof( obj )
