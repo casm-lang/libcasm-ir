@@ -104,10 +104,10 @@ TrivialStatement::TrivialStatement( ExecutionSemanticsBlock* scope )
 
 void TrivialStatement::dump( void ) const
 {
-	printf( "[TrStm] %p" );
+	printf( "[TrStm] %p", this );
 	if( scope )
 	{
-		printf( " @ %lu (%p)", this, scope->getPseudoState(), scope );
+		printf( " @ %lu (%p)", scope->getPseudoState(), scope );
 	}
 	printf( "\n" );
 	

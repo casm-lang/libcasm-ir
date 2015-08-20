@@ -115,29 +115,15 @@ namespace libcasm_ir
 	    
 		static bool classof( Value const* obj );
 	};
+
 	
-	
-	class OperatorInstruction : public BinaryInstruction
+	class LetInstruction : public BinaryInstruction
 	{
 	public:
-		OperatorInstruction( const char* name, Type* type, Value* lhs, Value* rhs
-						   , Value::ID id = Value::OPERATOR_INSTRUCTION );
-		
-		//void dump( void ) const;
-	    
+	    LetInstruction( Value* lhs, Value* rhs );
+        
 		static bool classof( Value const* obj );
 	};
-	
-	class AddInstruction : public OperatorInstruction
-	{
-	public:
-		AddInstruction( Value* lhs, Value* rhs );
-		
-		// void dump( void ) const;
-	    
-		// static bool classof( Value const* obj );
-	};
-	
 	
 	class LocationInstruction : public Instruction
 	{
@@ -163,6 +149,131 @@ namespace libcasm_ir
 	{
 	public:
 		PrintInstruction( Value* channel = 0 );
+		static bool classof( Value const* obj );
+	};
+
+
+	
+	class OperatorInstruction : public BinaryInstruction
+	{
+	public:
+		OperatorInstruction( const char* name, Type* type, Value* lhs, Value* rhs
+						   , Value::ID id = Value::OPERATOR_INSTRUCTION );
+		
+		//void dump( void ) const;
+	    
+		static bool classof( Value const* obj );
+	};
+
+	class AddInstruction : public OperatorInstruction
+	{
+	public:
+		AddInstruction( Value* lhs, Value* rhs );
+		static bool classof( Value const* obj );
+	};
+
+	class SubInstruction : public OperatorInstruction
+	{
+	public:
+		SubInstruction( Value* lhs, Value* rhs );
+		static bool classof( Value const* obj );
+	};
+
+	class MulInstruction : public OperatorInstruction
+	{
+	public:
+		MulInstruction( Value* lhs, Value* rhs );
+		static bool classof( Value const* obj );
+	};
+
+	class DivInstruction : public OperatorInstruction
+	{
+	public:
+		DivInstruction( Value* lhs, Value* rhs );
+		static bool classof( Value const* obj );
+	};
+
+	class RivInstruction : public OperatorInstruction
+	{
+	public:
+		RivInstruction( Value* lhs, Value* rhs );
+		static bool classof( Value const* obj );
+	};
+
+	class ModInstruction : public OperatorInstruction
+	{
+	public:
+		ModInstruction( Value* lhs, Value* rhs );
+		static bool classof( Value const* obj );
+	};
+
+	class EquInstruction : public OperatorInstruction
+	{
+	public:
+		EquInstruction( Value* lhs, Value* rhs );
+		static bool classof( Value const* obj );
+	};
+
+	class NeqInstruction : public OperatorInstruction
+	{
+	public:
+		NeqInstruction( Value* lhs, Value* rhs );
+		static bool classof( Value const* obj );
+	};
+
+	class LesInstruction : public OperatorInstruction
+	{
+	public:
+		LesInstruction( Value* lhs, Value* rhs );
+		static bool classof( Value const* obj );
+	};
+
+	class LeqInstruction : public OperatorInstruction
+	{
+	public:
+		LeqInstruction( Value* lhs, Value* rhs );
+		static bool classof( Value const* obj );
+	};
+
+	class GreInstruction : public OperatorInstruction
+	{
+	public:
+		GreInstruction( Value* lhs, Value* rhs );
+		static bool classof( Value const* obj );
+	};
+
+	class GeqInstruction : public OperatorInstruction
+	{
+	public:
+		GeqInstruction( Value* lhs, Value* rhs );
+		static bool classof( Value const* obj );
+	};
+
+	class OrInstruction : public OperatorInstruction
+	{
+	public:
+		OrInstruction( Value* lhs, Value* rhs );
+		static bool classof( Value const* obj );
+	};
+
+	class XorInstruction : public OperatorInstruction
+	{
+	public:
+		XorInstruction( Value* lhs, Value* rhs );
+		static bool classof( Value const* obj );
+	};
+
+	class AndInstruction : public OperatorInstruction
+	{
+	public:
+		AndInstruction( Value* lhs, Value* rhs );
+		static bool classof( Value const* obj );
+	};
+	
+	class NotInstruction : public UnaryInstruction
+	{
+	public:
+		NotInstruction( Value* lhs );
 		static bool classof( Value const* obj );
 	};
 	

@@ -65,6 +65,7 @@ bool ConstantValue::classof( Value const* obj )
 		or UndefConstant::classof( obj )
 		or SelfConstant::classof( obj )
 		or IntegerConstant::classof( obj )
+		or Identifier::classof( obj )
 		;
 }
 
@@ -96,15 +97,53 @@ IntegerConstant::IntegerConstant( Type::Integer value )
 {
 }
 
+void IntegerConstant::dump( void ) const
+{
+	printf( "[Const] %p = int %li\n", this, getValue() );
+}
+
 bool IntegerConstant::classof( Value const* obj )
 {
 	return obj->getValueID() == Value::INTEGER_CONSTANT;
 }
 
 
+
+
 Identifier::Identifier( Type* type, const char* value )
 : Constant< const char* >( "identifier", type, value, Value::IDENTIFIER )
 {
+	SymbolTable& symbols = *getSymbols();
+	symbols[ value ] = this;
+}
+
+Identifier::~Identifier( void )
+{
+	SymbolTable& symbols = *getSymbols();
+	symbols.erase( getValue() );	
+}
+
+Identifier* Identifier::create( Type* type, const char* value )
+{
+	SymbolTable& symbols = *getSymbols();
+	auto result = symbols.find( value );
+	if( result != symbols.end() )
+	{
+		assert( result->second );
+		assert( result->second->getType() == type );
+		
+		printf( "[Ident] found '%s' of type %u @ %p\n", value, type->getID(), result->second );
+		return result->second;
+	}
+	
+	printf( "[Ident] creating '%s' of type %u\n", value, type->getID() );
+	return new Identifier( type, value );
+}
+
+void Identifier::forgetSymbol( const char* value )
+{
+	printf( "[Ident] forgetting '%s'\n", value );
+	getSymbols()->erase( value );
 }
 
 void Identifier::dump( void ) const

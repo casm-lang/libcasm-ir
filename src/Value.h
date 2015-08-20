@@ -47,7 +47,7 @@
 #include "Type.h"
 
 namespace libcasm_ir
-{	
+{		
 	class Value
 	{
 	public:
@@ -80,12 +80,33 @@ namespace libcasm_ir
 		, LOCATION_INSTRUCTION
 		, CALL_INSTRUCTION
 		, PRINT_INSTRUCTION
-		
+		, LET_INSTRUCTION
+
 		, OPERATOR_INSTRUCTION
+		, ADD_INSTRUCTION
+		, SUB_INSTRUCTION
+		, MUL_INSTRUCTION
+		, DIV_INSTRUCTION
+		, RIV_INSTRUCTION
+		, MOD_INSTRUCTION
+		, EQU_INSTRUCTION
+		, NEQ_INSTRUCTION
+		, LES_INSTRUCTION
+		, LEQ_INSTRUCTION
+		, GRE_INSTRUCTION
+		, GEQ_INSTRUCTION
+		,  OR_INSTRUCTION
+		, XOR_INSTRUCTION
+		, AND_INSTRUCTION
+		, NOT_INSTRUCTION
 		};
 		
-		typedef std::unordered_map< const char*, std::unordered_set< Value* >
-								  , libstdhl::Hash, libstdhl::Equal > SymbolTable;
+		typedef std::unordered_map
+		< const char*
+		, std::unordered_set< Value* >
+		, libstdhl::Hash
+		, libstdhl::Equal
+		> SymbolTable;
 		
 		static SymbolTable* getSymbols( void )
 		{
@@ -98,10 +119,10 @@ namespace libcasm_ir
 		Type* type;
 		
 		ID id;
-		
+
 	public:
 		Value( const char* name, Type* type, ID id );
-	    
+
 		~Value();
 	    
 		const char* getName( void ) const;
@@ -127,7 +148,7 @@ namespace libcasm_ir
 		static inline bool isa( const Value* value )
 		{
 			return isa< TO >( (Value*)value );
-		}
+		}		
 	};
 }
 

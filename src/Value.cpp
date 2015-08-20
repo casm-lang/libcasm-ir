@@ -83,45 +83,42 @@ void Value::dump( void ) const
 	switch( this->getValueID() )
 	{
 	case Value::RULE:
-		return ((Rule*)this)->dump(); break;
+		((Rule*)this)->dump(); break;
 	case Value::DERIVED:
-		return ((Derived*)this)->dump(); break;
+		((Derived*)this)->dump(); break;
+		
 	case Value::BLOCK:
-		return ((Block*)this)->dump(); break;
+		((Block*)this)->dump(); break;
 	case Value::EXECUTION_SEMANTICS_BLOCK:
-		return ((ExecutionSemanticsBlock*)this)->dump(); break;
+		((ExecutionSemanticsBlock*)this)->dump(); break;
 	case Value::PARALLEL_BLOCK:
-		return ((ParallelBlock*)this)->dump(); break;
+		((ParallelBlock*)this)->dump(); break;
 	case Value::SEQUENTIAL_BLOCK:
-		return ((SequentialBlock*)this)->dump(); break;
+		((SequentialBlock*)this)->dump(); break;
+		
 	case Value::STATEMENT:
-		return ((Statement*)this)->dump(); break;
+		((Statement*)this)->dump(); break;
 	case Value::TRIVIAL_STATEMENT:
-		return ((TrivialStatement*)this)->dump(); break;
+		((TrivialStatement*)this)->dump(); break;
 	case Value::BRANCH_STATEMENT:
-		return ((BranchStatement*)this)->dump(); break;
-	case Value::INSTRUCTION:
-		return ((Instruction*)this)->dump(); break;
-	case Value::UNARY_INSTRUCTION:
-		return ((UnaryInstruction*)this)->dump(); break;
-	case Value::BINARY_INSTRUCTION:
-		return ((BinaryInstruction*)this)->dump(); break;
-	case Value::LOOKUP_INSTRUCTION:
-		return ((LookupInstruction*)this)->dump(); break;
-	case Value::UPDATE_INSTRUCTION:
-		return ((UpdateInstruction*)this)->dump(); break;
-	case Value::LOCATION_INSTRUCTION:
-		return ((LocationInstruction*)this)->dump(); break;
+		((BranchStatement*)this)->dump(); break;
+		
 	case Value::CONSTANT:
-		return ((ConstantValue*)this)->dump(); break;
+		((ConstantValue*)this)->dump(); break;
 	case Value::IDENTIFIER:
-		return ((Identifier*)this)->dump(); break;
+		((Identifier*)this)->dump(); break;
 	case Value::INTEGER_CONSTANT:
-		return ((IntegerConstant*)this)->dump(); break;
-	case Value::OPERATOR_INSTRUCTION:
-		return ((OperatorInstruction*)this)->dump(); break;
+		((IntegerConstant*)this)->dump(); break;
+	
 	default:
-		printf( "[Value] %p of %u\n", this, getValueID() );
+		if( Value::isa< Instruction >( this ) )
+		{
+			((Instruction*)this)->dump();
+		}
+		else
+		{
+			printf( "[Value] %p of %u\n", this, getValueID() );
+		}
 	}
 }
 

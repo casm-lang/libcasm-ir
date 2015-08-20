@@ -144,7 +144,9 @@ bool BinaryInstruction::classof( Value const* obj )
 {
 	return obj->getValueID() == Value::BINARY_INSTRUCTION
 		or UpdateInstruction::classof( obj )
-		or OperatorInstruction::classof( obj );
+		or LetInstruction::classof( obj )
+		or OperatorInstruction::classof( obj )
+		;
 }
 
 
@@ -169,6 +171,17 @@ bool UpdateInstruction::classof( Value const* obj )
 }
 
 
+LetInstruction::LetInstruction( Value* func, Value* expr )
+: BinaryInstruction( "let", 0, func, expr, Value::LET_INSTRUCTION )
+{
+}
+
+bool LetInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::LET_INSTRUCTION;
+}
+
+
 
 
 LookupInstruction::LookupInstruction( Value* location )
@@ -185,31 +198,6 @@ bool LookupInstruction::classof( Value const* obj )
 {
 	return obj->getValueID() == Value::LOOKUP_INSTRUCTION;
 }
-
-
-
-OperatorInstruction::OperatorInstruction
-( const char* name, Type* type, Value* lhs, Value* rhs, Value::ID id )
-: BinaryInstruction( name, type, lhs, rhs, id )
-{
-}
-
-// void OperatorInstruction::dump( void ) const
-// {
-// 	printf( "[OpcIn] %p = %s %p, %p\n", this, getName(), getLHS(), getRHS() );	
-// }
-
-bool OperatorInstruction::classof( Value const* obj )
-{
-	return obj->getValueID() == Value::OPERATOR_INSTRUCTION;
-}
-
-
-AddInstruction::AddInstruction( Value* lhs, Value* rhs )
-: OperatorInstruction( "add", 0, lhs, rhs ) //, Value::ADD_INSTRUCTION )
-{	
-}
-
 
 
 
@@ -257,6 +245,181 @@ bool PrintInstruction::classof( Value const* obj )
 	return obj->getValueID() == Value::PRINT_INSTRUCTION;
 }
 
+
+
+
+OperatorInstruction::OperatorInstruction
+( const char* name, Type* type, Value* lhs, Value* rhs, Value::ID id )
+: BinaryInstruction( name, type, lhs, rhs, id )
+{
+}
+
+bool OperatorInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::OPERATOR_INSTRUCTION
+		or AddInstruction::classof( obj )
+		or SubInstruction::classof( obj )
+		or MulInstruction::classof( obj )
+		or DivInstruction::classof( obj )
+		or RivInstruction::classof( obj )
+		or ModInstruction::classof( obj )
+		or EquInstruction::classof( obj )
+		or NeqInstruction::classof( obj )
+		or LesInstruction::classof( obj )
+		or LeqInstruction::classof( obj )
+		or GreInstruction::classof( obj )
+		or GeqInstruction::classof( obj )
+		or  OrInstruction::classof( obj )
+		or XorInstruction::classof( obj )
+		or AndInstruction::classof( obj )
+		or NotInstruction::classof( obj )
+		;
+}
+
+
+AddInstruction::AddInstruction( Value* lhs, Value* rhs )
+: OperatorInstruction( "add", 0, lhs, rhs, Value::ADD_INSTRUCTION )
+{	
+}
+bool AddInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::ADD_INSTRUCTION;
+}
+
+SubInstruction::SubInstruction( Value* lhs, Value* rhs )
+: OperatorInstruction( "sub", 0, lhs, rhs, Value::SUB_INSTRUCTION )
+{	
+}
+bool SubInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::SUB_INSTRUCTION;
+}
+
+MulInstruction::MulInstruction( Value* lhs, Value* rhs )
+: OperatorInstruction( "mul", 0, lhs, rhs, Value::MUL_INSTRUCTION )
+{	
+}
+bool MulInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::MUL_INSTRUCTION;
+}
+
+DivInstruction::DivInstruction( Value* lhs, Value* rhs )
+: OperatorInstruction( "div", 0, lhs, rhs, Value::DIV_INSTRUCTION )
+{	
+}
+bool DivInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::DIV_INSTRUCTION;
+}
+
+RivInstruction::RivInstruction( Value* lhs, Value* rhs )
+: OperatorInstruction( "riv", 0, lhs, rhs, Value::RIV_INSTRUCTION )
+{	
+}
+bool RivInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::RIV_INSTRUCTION;
+}
+
+ModInstruction::ModInstruction( Value* lhs, Value* rhs )
+: OperatorInstruction( "mod", 0, lhs, rhs, Value::MOD_INSTRUCTION )
+{	
+}
+bool ModInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::MOD_INSTRUCTION;
+}
+
+EquInstruction::EquInstruction( Value* lhs, Value* rhs )
+: OperatorInstruction( "equ", 0, lhs, rhs, Value::EQU_INSTRUCTION )
+{	
+}
+bool EquInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::EQU_INSTRUCTION;
+}
+
+NeqInstruction::NeqInstruction( Value* lhs, Value* rhs )
+: OperatorInstruction( "neq", 0, lhs, rhs, Value::NEQ_INSTRUCTION )
+{	
+}
+bool NeqInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::NEQ_INSTRUCTION;
+}
+
+LesInstruction::LesInstruction( Value* lhs, Value* rhs )
+: OperatorInstruction( "les", 0, lhs, rhs, Value::LES_INSTRUCTION )
+{	
+}
+bool LesInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::LES_INSTRUCTION;
+}
+
+LeqInstruction::LeqInstruction( Value* lhs, Value* rhs )
+: OperatorInstruction( "leq", 0, lhs, rhs, Value::LEQ_INSTRUCTION )
+{	
+}
+bool LeqInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::LEQ_INSTRUCTION;
+}
+
+GreInstruction::GreInstruction( Value* lhs, Value* rhs )
+: OperatorInstruction( "gre", 0, lhs, rhs, Value::GRE_INSTRUCTION )
+{	
+}
+bool GreInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::GRE_INSTRUCTION;
+}
+
+GeqInstruction::GeqInstruction( Value* lhs, Value* rhs )
+: OperatorInstruction( "geq", 0, lhs, rhs, Value::GEQ_INSTRUCTION )
+{	
+}
+bool GeqInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::GEQ_INSTRUCTION;
+}
+
+OrInstruction::OrInstruction( Value* lhs, Value* rhs )
+: OperatorInstruction( "or", 0, lhs, rhs, Value::OR_INSTRUCTION )
+{	
+}
+bool OrInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::OR_INSTRUCTION;
+}
+
+XorInstruction::XorInstruction( Value* lhs, Value* rhs )
+: OperatorInstruction( "xor", 0, lhs, rhs, Value::XOR_INSTRUCTION )
+{	
+}
+bool XorInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::XOR_INSTRUCTION;
+}
+
+AndInstruction::AndInstruction( Value* lhs, Value* rhs )
+: OperatorInstruction( "and", 0, lhs, rhs, Value::AND_INSTRUCTION )
+{	
+}
+bool AndInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::AND_INSTRUCTION;
+}
+
+NotInstruction::NotInstruction( Value* lhs )
+: UnaryInstruction( "not", 0, lhs, Value::NOT_INSTRUCTION )
+{	
+}
+bool NotInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::NOT_INSTRUCTION;
+}
 
 
 //  

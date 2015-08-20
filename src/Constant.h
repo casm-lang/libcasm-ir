@@ -81,15 +81,37 @@ namespace libcasm_ir
 	{
 	public:
 		IntegerConstant( Type::Integer value );
+
+		void dump( void ) const;
 		
 		static bool classof( Value const* obj );
 	};
 
 	class Identifier : public Constant< const char* >
 	{
-	public:
+	private:
+		typedef std::unordered_map
+		< const char*
+		, Identifier*
+		, libstdhl::Hash
+		, libstdhl::Equal
+		> SymbolTable;
+		
+		static SymbolTable* getSymbols( void )
+		{
+			static SymbolTable symbols;
+			return &symbols;
+		}
+		
 		Identifier( Type* type, const char* value );
 
+	public:
+	    ~Identifier( void );
+
+		static Identifier* create( Type* type, const char* value );
+
+		static void forgetSymbol( const char* value );
+		
 		void dump( void ) const;
 
 		static bool classof( Value const* obj );
