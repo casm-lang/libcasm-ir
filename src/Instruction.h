@@ -221,10 +221,10 @@ namespace libcasm_ir
 		static bool classof( Value const* obj );
 	};
 
-	class LesInstruction : public OperatorInstruction
+	class LthInstruction : public OperatorInstruction
 	{
 	public:
-		LesInstruction( Value* lhs, Value* rhs );
+		LthInstruction( Value* lhs, Value* rhs );
 		static bool classof( Value const* obj );
 	};
 
@@ -235,10 +235,10 @@ namespace libcasm_ir
 		static bool classof( Value const* obj );
 	};
 
-	class GreInstruction : public OperatorInstruction
+	class GthInstruction : public OperatorInstruction
 	{
 	public:
-		GreInstruction( Value* lhs, Value* rhs );
+		GthInstruction( Value* lhs, Value* rhs );
 		static bool classof( Value const* obj );
 	};
 

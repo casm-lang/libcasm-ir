@@ -273,9 +273,9 @@ bool OperatorInstruction::classof( Value const* obj )
 		or ModInstruction::classof( obj )
 		or EquInstruction::classof( obj )
 		or NeqInstruction::classof( obj )
-		or LesInstruction::classof( obj )
+		or LthInstruction::classof( obj )
 		or LeqInstruction::classof( obj )
-		or GreInstruction::classof( obj )
+		or GthInstruction::classof( obj )
 		or GeqInstruction::classof( obj )
 		or  OrInstruction::classof( obj )
 		or XorInstruction::classof( obj )
@@ -357,13 +357,13 @@ bool NeqInstruction::classof( Value const* obj )
 	return obj->getValueID() == Value::NEQ_INSTRUCTION;
 }
 
-LesInstruction::LesInstruction( Value* lhs, Value* rhs )
-: OperatorInstruction( ".les", 0, lhs, rhs, Value::LES_INSTRUCTION )
+LthInstruction::LthInstruction( Value* lhs, Value* rhs )
+: OperatorInstruction( ".lth", 0, lhs, rhs, Value::LTH_INSTRUCTION )
 {	
 }
-bool LesInstruction::classof( Value const* obj )
+bool LthInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::LES_INSTRUCTION;
+	return obj->getValueID() == Value::LTH_INSTRUCTION;
 }
 
 LeqInstruction::LeqInstruction( Value* lhs, Value* rhs )
@@ -375,13 +375,13 @@ bool LeqInstruction::classof( Value const* obj )
 	return obj->getValueID() == Value::LEQ_INSTRUCTION;
 }
 
-GreInstruction::GreInstruction( Value* lhs, Value* rhs )
-: OperatorInstruction( ".gre", 0, lhs, rhs, Value::GRE_INSTRUCTION )
+GthInstruction::GthInstruction( Value* lhs, Value* rhs )
+: OperatorInstruction( ".gth", 0, lhs, rhs, Value::GTH_INSTRUCTION )
 {	
 }
-bool GreInstruction::classof( Value const* obj )
+bool GthInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::GRE_INSTRUCTION;
+	return obj->getValueID() == Value::GTH_INSTRUCTION;
 }
 
 GeqInstruction::GeqInstruction( Value* lhs, Value* rhs )
