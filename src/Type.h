@@ -48,43 +48,65 @@ namespace libcasm_ir
 	class Type
 	{
 	public:		
-		typedef i1  Undef;
+		typedef u1  Undef;
+		typedef u1  Boolean;
 		typedef i64 Integer;
 		
 		enum ID
 		{ UNDEF = 0
+		, BOOLEAN
 		, INTEGER
-		  
-		, DERIVED
-		, FUNCTION
-		};
-	
-	private:
-		ID type_id;
-		
-	public:
-		Type( ID id )
-		{
-			setID( id );
-		}
-		
-		const ID getID( void ) const
-		{
-			return type_id;
-		}
 
+		  // , STRING
+		  // , FLOAT
+		  // , BIT
+
+		  // , TUPLE
+		  // , LIST
+		  
+		// , DERIVED
+		// , FUNCTION
+		
+		, _TOP_
+		};
+
+		enum STATE
+		{ UNCHANGED
+		, CHANGED
+		, LOCKED
+		};
+		
+	private:		
+		ID type_id;
+		u64 type_uid_hash;
+		STATE type_state;
+		std::string description;
+		std::vector< Type* > parameters;
+		std::vector< Type* > subtypes;
+		
+		static const char* ID2str[ ID::_TOP_ ];
+
+	public:
+		Type( ID id, STATE state = STATE::UNCHANGED );
+		const u64 getID( void ) const;
+		const char* getName( void );
+		
+		const std::vector< Type* >& getParameters( void ) const;
+	    const std::vector< Type* >& getSubTypes( void ) const;
+	    
+		void addParameter( Type* parameter );
+		void addSubType( Type* subtype );
+		
 	private:
-		void setID( ID id )
-		{
-			type_id = id;
-		}
+		void setID( ID id );	
 	};
 	
-	static Type UndefType   = Type( Type::UNDEF );
-	static Type IntegerType = Type( Type::INTEGER );
+	static Type UndefType   = Type( Type::UNDEF,   Type::STATE::LOCKED );
+	static Type BooleanType = Type( Type::INTEGER, Type::STATE::LOCKED );
+	static Type IntegerType = Type( Type::INTEGER, Type::STATE::LOCKED );
 	
-	static Type DerivedType  = Type( Type::DERIVED );
-	static Type FunctionType = Type( Type::FUNCTION );
+	// static Type DerivedType  = Type( Type::DERIVED,  "Derived" );
+	// static Type FunctionType = Type( Type::FUNCTION, "Function");
 }
 
 #endif /* _LIB_CASMIR_TYPE_H_ */

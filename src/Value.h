@@ -69,6 +69,7 @@ namespace libcasm_ir
 		, CONSTANT
 		, UNDEF_CONSTANT
 		, SELF_CONSTANT
+		, BOOLEAN_CONSTANT
 		, INTEGER_CONSTANT
 		, IDENTIFIER
 		
@@ -118,21 +119,23 @@ namespace libcasm_ir
 		
 	private:
 		const char* name;
-		Type* type;
-		
+		Type* type;		
 		ID id;
-
+		
+		std::vector< Type* > parameters;
+		
 	public:
 		Value( const char* name, Type* type, ID id );
 
 		~Value();
-	    
+
 		const char* getName( void ) const;
 	    
 		Type* getType( void ) const;
-	    
+
 		ID getValueID() const;
 		
+		void debug( void ) const;
 		void dump( void ) const;
 		
 		static inline bool classof( Value const* )

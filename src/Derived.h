@@ -50,8 +50,8 @@ namespace libcasm_ir
 	    TrivialStatement* context;
 		
 	public:
-		Derived( const char* name );
-
+		Derived( const char* name, Type* result );
+		
 		~Derived( void );
 		
 	    TrivialStatement* getContext( void ) const;
@@ -59,7 +59,6 @@ namespace libcasm_ir
 		void setContext( TrivialStatement* scope );
 		
 		void dump( void ) const;
-
 		
 		static bool classof( Value const* obj );
 	};

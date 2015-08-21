@@ -51,7 +51,12 @@ Value::Value( const char* name, Type* type, Value::ID id )
 {
 	SymbolTable& symbols = *getSymbols();
 	symbols[ name ].insert( this );
-	printf( "[Value] created '%s' @ %p of type %p\n", name, this, type );
+	printf( "[Value] created '%s' @ %p", name, this );
+	if( type )
+	{
+		printf( " of type '%s' (=0x%lx)", type->getName(), type->getID() );
+	}
+	printf( "\n" );
 }
 
 Value::~Value()
@@ -77,15 +82,26 @@ Value::ID Value::getValueID() const
 	return id;
 }
 
+void Value::debug( void ) const
+{
+	printf( "%p '%s' : ", this, getName() );
+	if( getType() )
+	{
+		printf( "%s", getType()->getName() );
+	}
+	printf( "\n" );
+}
 
 void Value::dump( void ) const
-{
+{    
 	switch( this->getValueID() )
 	{
 	case Value::RULE:
 		((Rule*)this)->dump(); break;
 	case Value::DERIVED:
 		((Derived*)this)->dump(); break;
+	case Value::FUNCTION:
+		((Function*)this)->dump(); break;
 		
 	case Value::BLOCK:
 		((Block*)this)->dump(); break;
@@ -117,7 +133,7 @@ void Value::dump( void ) const
 		}
 		else
 		{
-			printf( "[Value] %p of %u\n", this, getValueID() );
+			debug();
 		}
 	}
 }

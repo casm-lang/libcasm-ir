@@ -32,15 +32,115 @@
 //  WITH THE SOFTWARE.
 //  
 
-/**
-   @file     Type.cpp
-   @author   Philipp Paulweber
-   @date     2015-02-20
-*/
-
 #include "Type.h"
 
-// TODO
+using namespace libcasm_ir;
+
+const char* Type::ID2str[ Type::ID::_TOP_ ] =
+{ "Undef"    // UNDEF = 0
+, "Boolean"  // BOOLEAN
+, "Integer"  // INTEGER
+};
+
+
+Type::Type( Type::ID id, Type::STATE state )
+: type_id( id )
+, type_uid_hash( 0 )
+, type_state( Type::STATE::CHANGED )
+{
+	getName();
+	type_state = state;
+}
+
+const u64 Type::getID( void ) const
+{
+	return type_uid_hash;
+}
+
+const char* Type::getName( void )
+{
+	if( type_state != Type::STATE::CHANGED )
+	{
+		return description.c_str();
+	}
+	
+	description.clear();
+	if( parameters.size() > 0 )
+	{
+		u1 flag = 0;
+		for( auto parameter : parameters )
+		{
+			if( flag )
+			{
+				description.append( " x " );
+			}
+			else
+			{
+				flag = 1;
+			}
+			description.append( parameter->getName() );
+		}
+		description.append( " -> " );
+	}
+	
+	description.append( ID2str[ type_id ] );
+	
+	if( subtypes.size() > 0 )
+	{
+		u1 flag = 0;
+		description.append( "( " );
+		for( auto subtype : subtypes )
+		{
+			if( flag )
+			{
+				description.append( ", " );
+			}
+			else
+			{
+				flag = 1;
+			}
+			description.append( subtype->getName() );
+		}
+		description.append( " )" );
+	}
+	
+	type_uid_hash = std::hash< std::string >()( description );
+	
+	return description.c_str();
+}
+
+
+const std::vector< Type* >& Type::getParameters( void ) const
+{
+	return parameters;
+}
+
+const std::vector< Type* >& Type::getSubTypes( void ) const
+{
+	return subtypes;
+}
+
+void Type::addParameter( Type* parameter )
+{
+	assert( parameter );
+	assert( type_state != Type::STATE::LOCKED );
+	parameters.push_back( parameter );
+	
+	type_state = Type::STATE::CHANGED;
+	getName();
+	type_state = Type::STATE::UNCHANGED;
+}
+
+void Type::addSubType( Type* subtype )
+{
+	assert( subtype );
+	assert( type_state != Type::STATE::LOCKED );
+	subtypes.push_back( subtype );
+
+	type_state = Type::STATE::CHANGED;
+	getName();
+	type_state = Type::STATE::UNCHANGED;
+}
 
 
 //  

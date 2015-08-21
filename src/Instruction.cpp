@@ -81,11 +81,19 @@ Value* Instruction::getValue( u8 index ) const
 
 void Instruction::dump( void ) const
 {
-	//((Value*)this)->dump();
-	printf( "[Instr] %p %s", this, getName() );
+	printf( "[Instr] %p %s ", this, &getName()[1] );
+	u1 flag = 0;
 	for( auto instr : values )
 	{
-		printf( ", %p", instr );
+		if( flag )
+		{
+			printf( ", " );
+		}
+		else
+		{
+			flag = 1;
+		}
+		printf( "%p", instr );
 	}
 	printf( "\n" );
 }
@@ -156,7 +164,7 @@ bool BinaryInstruction::classof( Value const* obj )
 
 
 UpdateInstruction::UpdateInstruction( Value* func, Value* expr )
-: BinaryInstruction( "update", 0, func, expr, Value::UPDATE_INSTRUCTION )
+: BinaryInstruction( ".update", 0, func, expr, Value::UPDATE_INSTRUCTION )
 {
 }
 
@@ -172,7 +180,7 @@ bool UpdateInstruction::classof( Value const* obj )
 
 
 LetInstruction::LetInstruction( Value* func, Value* expr )
-: BinaryInstruction( "let", 0, func, expr, Value::LET_INSTRUCTION )
+: BinaryInstruction( ".let", 0, func, expr, Value::LET_INSTRUCTION )
 {
 }
 
@@ -185,7 +193,7 @@ bool LetInstruction::classof( Value const* obj )
 
 
 LookupInstruction::LookupInstruction( Value* location )
-: UnaryInstruction( "lookup", 0, location, Value::LOOKUP_INSTRUCTION )
+: UnaryInstruction( ".lookup", 0, location, Value::LOOKUP_INSTRUCTION )
 {
 }
 
@@ -202,7 +210,7 @@ bool LookupInstruction::classof( Value const* obj )
 
 
 LocationInstruction::LocationInstruction( Value* function )
-: Instruction( "location", 0, Value::LOCATION_INSTRUCTION )
+: Instruction( ".location", 0, Value::LOCATION_INSTRUCTION )
 {
 	add( function );
 }
@@ -219,7 +227,7 @@ bool LocationInstruction::classof( Value const* obj )
 
 
 CallInstruction::CallInstruction( Value* symbol )
-: Instruction( "call", 0, Value::CALL_INSTRUCTION )
+: Instruction( ".call", 0, Value::CALL_INSTRUCTION )
 {
 	add( symbol );
 }
@@ -232,7 +240,7 @@ bool CallInstruction::classof( Value const* obj )
 
 
 PrintInstruction::PrintInstruction( Value* channel )
-: Instruction( "print", 0, Value::PRINT_INSTRUCTION )
+: Instruction( ".print", 0, Value::PRINT_INSTRUCTION )
 {
 	if( channel )
 	{
@@ -278,7 +286,7 @@ bool OperatorInstruction::classof( Value const* obj )
 
 
 AddInstruction::AddInstruction( Value* lhs, Value* rhs )
-: OperatorInstruction( "add", 0, lhs, rhs, Value::ADD_INSTRUCTION )
+: OperatorInstruction( ".add", 0, lhs, rhs, Value::ADD_INSTRUCTION )
 {	
 }
 bool AddInstruction::classof( Value const* obj )
@@ -287,7 +295,7 @@ bool AddInstruction::classof( Value const* obj )
 }
 
 SubInstruction::SubInstruction( Value* lhs, Value* rhs )
-: OperatorInstruction( "sub", 0, lhs, rhs, Value::SUB_INSTRUCTION )
+: OperatorInstruction( ".sub", 0, lhs, rhs, Value::SUB_INSTRUCTION )
 {	
 }
 bool SubInstruction::classof( Value const* obj )
@@ -296,7 +304,7 @@ bool SubInstruction::classof( Value const* obj )
 }
 
 MulInstruction::MulInstruction( Value* lhs, Value* rhs )
-: OperatorInstruction( "mul", 0, lhs, rhs, Value::MUL_INSTRUCTION )
+: OperatorInstruction( ".mul", 0, lhs, rhs, Value::MUL_INSTRUCTION )
 {	
 }
 bool MulInstruction::classof( Value const* obj )
@@ -305,7 +313,7 @@ bool MulInstruction::classof( Value const* obj )
 }
 
 DivInstruction::DivInstruction( Value* lhs, Value* rhs )
-: OperatorInstruction( "div", 0, lhs, rhs, Value::DIV_INSTRUCTION )
+: OperatorInstruction( ".div", 0, lhs, rhs, Value::DIV_INSTRUCTION )
 {	
 }
 bool DivInstruction::classof( Value const* obj )
@@ -314,7 +322,7 @@ bool DivInstruction::classof( Value const* obj )
 }
 
 RivInstruction::RivInstruction( Value* lhs, Value* rhs )
-: OperatorInstruction( "riv", 0, lhs, rhs, Value::RIV_INSTRUCTION )
+: OperatorInstruction( ".riv", 0, lhs, rhs, Value::RIV_INSTRUCTION )
 {	
 }
 bool RivInstruction::classof( Value const* obj )
@@ -323,7 +331,7 @@ bool RivInstruction::classof( Value const* obj )
 }
 
 ModInstruction::ModInstruction( Value* lhs, Value* rhs )
-: OperatorInstruction( "mod", 0, lhs, rhs, Value::MOD_INSTRUCTION )
+: OperatorInstruction( ".mod", 0, lhs, rhs, Value::MOD_INSTRUCTION )
 {	
 }
 bool ModInstruction::classof( Value const* obj )
@@ -332,7 +340,7 @@ bool ModInstruction::classof( Value const* obj )
 }
 
 EquInstruction::EquInstruction( Value* lhs, Value* rhs )
-: OperatorInstruction( "equ", 0, lhs, rhs, Value::EQU_INSTRUCTION )
+: OperatorInstruction( ".equ", 0, lhs, rhs, Value::EQU_INSTRUCTION )
 {	
 }
 bool EquInstruction::classof( Value const* obj )
@@ -341,7 +349,7 @@ bool EquInstruction::classof( Value const* obj )
 }
 
 NeqInstruction::NeqInstruction( Value* lhs, Value* rhs )
-: OperatorInstruction( "neq", 0, lhs, rhs, Value::NEQ_INSTRUCTION )
+: OperatorInstruction( ".neq", 0, lhs, rhs, Value::NEQ_INSTRUCTION )
 {	
 }
 bool NeqInstruction::classof( Value const* obj )
@@ -350,7 +358,7 @@ bool NeqInstruction::classof( Value const* obj )
 }
 
 LesInstruction::LesInstruction( Value* lhs, Value* rhs )
-: OperatorInstruction( "les", 0, lhs, rhs, Value::LES_INSTRUCTION )
+: OperatorInstruction( ".les", 0, lhs, rhs, Value::LES_INSTRUCTION )
 {	
 }
 bool LesInstruction::classof( Value const* obj )
@@ -359,7 +367,7 @@ bool LesInstruction::classof( Value const* obj )
 }
 
 LeqInstruction::LeqInstruction( Value* lhs, Value* rhs )
-: OperatorInstruction( "leq", 0, lhs, rhs, Value::LEQ_INSTRUCTION )
+: OperatorInstruction( ".leq", 0, lhs, rhs, Value::LEQ_INSTRUCTION )
 {	
 }
 bool LeqInstruction::classof( Value const* obj )
@@ -368,7 +376,7 @@ bool LeqInstruction::classof( Value const* obj )
 }
 
 GreInstruction::GreInstruction( Value* lhs, Value* rhs )
-: OperatorInstruction( "gre", 0, lhs, rhs, Value::GRE_INSTRUCTION )
+: OperatorInstruction( ".gre", 0, lhs, rhs, Value::GRE_INSTRUCTION )
 {	
 }
 bool GreInstruction::classof( Value const* obj )
@@ -377,7 +385,7 @@ bool GreInstruction::classof( Value const* obj )
 }
 
 GeqInstruction::GeqInstruction( Value* lhs, Value* rhs )
-: OperatorInstruction( "geq", 0, lhs, rhs, Value::GEQ_INSTRUCTION )
+: OperatorInstruction( ".geq", 0, lhs, rhs, Value::GEQ_INSTRUCTION )
 {	
 }
 bool GeqInstruction::classof( Value const* obj )
@@ -386,7 +394,7 @@ bool GeqInstruction::classof( Value const* obj )
 }
 
 OrInstruction::OrInstruction( Value* lhs, Value* rhs )
-: OperatorInstruction( "or", 0, lhs, rhs, Value::OR_INSTRUCTION )
+: OperatorInstruction( ".or", 0, lhs, rhs, Value::OR_INSTRUCTION )
 {	
 }
 bool OrInstruction::classof( Value const* obj )
@@ -395,7 +403,7 @@ bool OrInstruction::classof( Value const* obj )
 }
 
 XorInstruction::XorInstruction( Value* lhs, Value* rhs )
-: OperatorInstruction( "xor", 0, lhs, rhs, Value::XOR_INSTRUCTION )
+: OperatorInstruction( ".xor", 0, lhs, rhs, Value::XOR_INSTRUCTION )
 {	
 }
 bool XorInstruction::classof( Value const* obj )
@@ -404,7 +412,7 @@ bool XorInstruction::classof( Value const* obj )
 }
 
 AndInstruction::AndInstruction( Value* lhs, Value* rhs )
-: OperatorInstruction( "and", 0, lhs, rhs, Value::AND_INSTRUCTION )
+: OperatorInstruction( ".and", 0, lhs, rhs, Value::AND_INSTRUCTION )
 {	
 }
 bool AndInstruction::classof( Value const* obj )
@@ -413,7 +421,7 @@ bool AndInstruction::classof( Value const* obj )
 }
 
 NotInstruction::NotInstruction( Value* lhs )
-: UnaryInstruction( "not", 0, lhs, Value::NOT_INSTRUCTION )
+: UnaryInstruction( ".not", 0, lhs, Value::NOT_INSTRUCTION )
 {	
 }
 bool NotInstruction::classof( Value const* obj )
@@ -422,7 +430,7 @@ bool NotInstruction::classof( Value const* obj )
 }
 
 MovInstruction::MovInstruction( Value* lhs )
-: UnaryInstruction( "mov", 0, lhs, Value::MOV_INSTRUCTION )
+: UnaryInstruction( ".mov", 0, lhs, Value::MOV_INSTRUCTION )
 {	
 }
 bool MovInstruction::classof( Value const* obj )

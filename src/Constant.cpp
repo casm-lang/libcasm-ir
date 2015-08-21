@@ -42,6 +42,13 @@ Constant< V >::Constant( const char* name, Type* type, V value, Value::ID id )
 : User( name, type, id )
 , value( value )
 {
+	(*Value::getSymbols())[ ".constant" ].insert( this );
+}
+
+template< typename V >
+Constant< V >::~Constant( void )
+{
+	(*Value::getSymbols())[ ".constant" ].erase( this );	
 }
 
 template< typename T >
@@ -64,6 +71,7 @@ bool ConstantValue::classof( Value const* obj )
 	return obj->getValueID() == Value::CONSTANT
 		or UndefConstant::classof( obj )
 		or SelfConstant::classof( obj )
+		or BooleanConstant::classof( obj )
 		or IntegerConstant::classof( obj )
 		or Identifier::classof( obj )
 		;
@@ -71,7 +79,7 @@ bool ConstantValue::classof( Value const* obj )
 
 
 UndefConstant::UndefConstant()
-: Constant< Type::Undef >( "undef", &UndefType, 0, Value::UNDEF_CONSTANT )
+: Constant< Type::Undef >( ".undef", &UndefType, 0, Value::UNDEF_CONSTANT )
 {
 }
 
@@ -81,7 +89,7 @@ bool UndefConstant::classof( Value const* obj )
 }
 
 SelfConstant::SelfConstant()
-: Constant< Type::Undef >( "self", &UndefType, 0, Value::SELF_CONSTANT )
+: Constant< Type::Undef >( ".self", &UndefType, 0, Value::SELF_CONSTANT )
 // PPA: FIXME: TODO: types are not ready yet!!!
 {
 }
@@ -93,8 +101,25 @@ bool SelfConstant::classof( Value const* obj )
 
 
 
+BooleanConstant::BooleanConstant( Type::Boolean value )
+: Constant< Type::Boolean >( ".boolean", &BooleanType, value, Value::BOOLEAN_CONSTANT )
+{
+}
+
+void BooleanConstant::dump( void ) const
+{
+	printf( "[Const] %p = bool %li\n", this, getValue() );
+}
+
+bool BooleanConstant::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::BOOLEAN_CONSTANT;
+}
+
+
+
 IntegerConstant::IntegerConstant( Type::Integer value )
-: Constant< Type::Integer >( "integer", &IntegerType, value, Value::INTEGER_CONSTANT )
+: Constant< Type::Integer >( ".integer", &IntegerType, value, Value::INTEGER_CONSTANT )
 {
 }
 
@@ -115,17 +140,11 @@ Identifier::Identifier( Type* type, const char* value )
 : Constant< const char* >( value, type, value, Value::IDENTIFIER )
 {
 	(*Value::getSymbols())[ ".identifier" ].insert( this );
-	
-	// SymbolTable& symbols = *getSymbols();
-	// symbols[ value ] = this;
 }
 
 Identifier::~Identifier( void )
 {
 	(*Value::getSymbols())[ ".identifier" ].erase( this );
-	
-	// SymbolTable& symbols = *getSymbols();
-	// symbols.erase( getValue() );	
 }
 
 Identifier* Identifier::create( Type* type, const char* value )
@@ -136,7 +155,7 @@ Identifier* Identifier::create( Type* type, const char* value )
 	{
 		assert( result->second.size() == 1 );
 		Value* x = *result->second.begin();
-	 	//assert( x->getType()->getID() == type->getID() );
+	 	assert( x->getType()->getID() == type->getID() );
 		printf( "[Ident] found '%s' of type %u @ %p\n", value, type->getID(), x );
 		return (Identifier*)x;
 	}
@@ -153,7 +172,8 @@ void Identifier::forgetSymbol( const char* value )
 
 void Identifier::dump( void ) const
 {
-	printf( "[Ident] %p, %s of type %u\n", this, getValue(), getType()->getID() );
+	printf( "[Ident] " );
+	debug();
 }
 
 bool Identifier::classof( Value const* obj )

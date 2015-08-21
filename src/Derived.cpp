@@ -37,17 +37,19 @@
 using namespace libcasm_ir;
 
 
-Derived::Derived( const char* name )
-: User( "derived", 0, Value::DERIVED )
+Derived::Derived( const char* name, Type* result )
+: User( name, result, Value::DERIVED )
 {			
-	(*Value::getSymbols())[ ".derived" ].insert( this );
+    ident = Identifier::create( result, name );
 	
-	ident = Identifier::create( &DerivedType, name );
+	(*Value::getSymbols())[ ".derived" ].insert( this );
+	(*Value::getSymbols())[ ".identifier" ].insert( this );
 }
 
 Derived::~Derived( void )
 {
 	(*Value::getSymbols())[ ".derived" ].erase( this );
+	(*Value::getSymbols())[ ".identifier" ].erase( ident );
 }
 
 TrivialStatement* Derived::getContext( void ) const
@@ -63,7 +65,8 @@ void Derived::setContext( TrivialStatement* scope )
 
 void Derived::dump( void ) const
 {
-	printf( "[Derived] %p\n", this );
+	printf( "[Derived] " );
+    debug();
 	
 	if( context )
 	{

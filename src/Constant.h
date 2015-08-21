@@ -49,6 +49,8 @@ namespace libcasm_ir
 		
 	public:
 		Constant( const char* name, Type* type, V value, Value::ID id = Value::CONSTANT );
+
+		~Constant( void );
 		
 		const V getValue( void ) const;
 		
@@ -76,7 +78,17 @@ namespace libcasm_ir
 		
 		static bool classof( Value const* obj );
 	};
-	
+
+	class BooleanConstant : public Constant< Type::Boolean >
+	{
+	public:
+		BooleanConstant( Type::Boolean value );
+		
+		void dump( void ) const;
+		
+		static bool classof( Value const* obj );
+	};
+
 	class IntegerConstant : public Constant< Type::Integer >
 	{
 	public:

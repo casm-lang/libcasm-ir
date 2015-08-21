@@ -37,6 +37,7 @@
 
 #include "User.h"
 #include "Constant.h"
+#include "Type.h"
 
 namespace libcasm_ir
 {
@@ -48,12 +49,12 @@ namespace libcasm_ir
 		Identifier* ident;
 		
 	public:
-		Function( const char* name );
-
+		Function( const char* name, Type* result );
+		
 		~Function( void );
 		
 		void dump( void ) const;
-
+		
 		static bool classof( Value const* obj );
 	};
 }
