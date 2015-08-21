@@ -41,6 +41,7 @@
 #include "Rule.h"
 #include "Block.h"
 #include "Derived.h"
+#include "Function.h"
 #include "Constant.h"
 #include "Statement.h"
 #include "Instruction.h"

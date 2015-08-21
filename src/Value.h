@@ -55,6 +55,7 @@ namespace libcasm_ir
 		{ USER
 		, RULE
 		, DERIVED
+		, FUNCTION
 		
 		, BLOCK
 		, EXECUTION_SEMANTICS_BLOCK
@@ -99,6 +100,7 @@ namespace libcasm_ir
 		, XOR_INSTRUCTION
 		, AND_INSTRUCTION
 		, NOT_INSTRUCTION
+		, MOV_INSTRUCTION
 		};
 		
 		typedef std::unordered_map

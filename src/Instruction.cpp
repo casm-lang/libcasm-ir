@@ -421,6 +421,15 @@ bool NotInstruction::classof( Value const* obj )
 	return obj->getValueID() == Value::NOT_INSTRUCTION;
 }
 
+MovInstruction::MovInstruction( Value* lhs )
+: UnaryInstruction( "mov", 0, lhs, Value::MOV_INSTRUCTION )
+{	
+}
+bool MovInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::MOV_INSTRUCTION;
+}
+
 
 //  
 //  Local variables:

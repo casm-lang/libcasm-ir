@@ -51,6 +51,8 @@ namespace libcasm_ir
 	public:
 		Rule( const char* name );
 
+		~Rule( void );
+		
 		ParallelBlock* getContext( void ) const;
 		
 		void setContext( ParallelBlock* scope );

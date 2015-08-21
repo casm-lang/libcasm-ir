@@ -81,7 +81,8 @@ bool UndefConstant::classof( Value const* obj )
 }
 
 SelfConstant::SelfConstant()
-: Constant< Type::Undef >( "self", &UndefType, 0, Value::SELF_CONSTANT ) // PPA: FIXME: TODO: types are not ready yet!!!
+: Constant< Type::Undef >( "self", &UndefType, 0, Value::SELF_CONSTANT )
+// PPA: FIXME: TODO: types are not ready yet!!!
 {
 }
 
@@ -111,16 +112,20 @@ bool IntegerConstant::classof( Value const* obj )
 
 
 Identifier::Identifier( Type* type, const char* value )
-: Constant< const char* >( "identifier", type, value, Value::IDENTIFIER )
+: Constant< const char* >( value, type, value, Value::IDENTIFIER )
 {
-	SymbolTable& symbols = *getSymbols();
-	symbols[ value ] = this;
+	(*Value::getSymbols())[ ".identifier" ].insert( this );
+	
+	// SymbolTable& symbols = *getSymbols();
+	// symbols[ value ] = this;
 }
 
 Identifier::~Identifier( void )
 {
-	SymbolTable& symbols = *getSymbols();
-	symbols.erase( getValue() );	
+	(*Value::getSymbols())[ ".identifier" ].erase( this );
+	
+	// SymbolTable& symbols = *getSymbols();
+	// symbols.erase( getValue() );	
 }
 
 Identifier* Identifier::create( Type* type, const char* value )
@@ -129,11 +134,11 @@ Identifier* Identifier::create( Type* type, const char* value )
 	auto result = symbols.find( value );
 	if( result != symbols.end() )
 	{
-		assert( result->second );
-		assert( result->second->getType() == type );
-		
-		printf( "[Ident] found '%s' of type %u @ %p\n", value, type->getID(), result->second );
-		return result->second;
+		assert( result->second.size() == 1 );
+		Value* x = *result->second.begin();
+	 	//assert( x->getType()->getID() == type->getID() );
+		printf( "[Ident] found '%s' of type %u @ %p\n", value, type->getID(), x );
+		return (Identifier*)x;
 	}
 	
 	printf( "[Ident] creating '%s' of type %u\n", value, type->getID() );

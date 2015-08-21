@@ -32,94 +32,37 @@
 //  WITH THE SOFTWARE.
 //  
 
-#ifndef _LIB_CASMIR_CONSTANT_H_
-#define _LIB_CASMIR_CONSTANT_H_
+#include "Function.h"
 
-#include "libcasm-ir.h"
+using namespace libcasm_ir;
 
-namespace libcasm_ir
+
+Function::Function( const char* name )
+: User( name, 0, Value::FUNCTION )
+, ident( 0 )
 {
-	class Statement;
+	ident = Identifier::create( &FunctionType, name );	
+	(*Value::getSymbols())[ ".function" ].insert( this );
+}
 
-	template< typename V >
-	class Constant : public User
-	{
-	private:
-		V value;
-		
-	public:
-		Constant( const char* name, Type* type, V value, Value::ID id = Value::CONSTANT );
-		
-		const V getValue( void ) const;
-		
-		static bool classof( Value const* obj );
-	};
+Function::~Function( void )
+{
+	(*Value::getSymbols())[ ".function" ].erase( this );
+}
+
+void Function::dump( void ) const
+{
+	printf( "[Function] %p\n", this );
 	
-	class ConstantValue : public Constant< Type::Undef >
-	{
-	public:
-		static bool classof( Value const* obj );
-	};
-	
-	class UndefConstant : public Constant< Type::Undef >
-	{
-	public:
-		UndefConstant( void );
-		
-		static bool classof( Value const* obj );
-	};
-	
-	class SelfConstant : public Constant< Type::Undef >
-	{
-	public:
-		SelfConstant( void );
-		
-		static bool classof( Value const* obj );
-	};
-	
-	class IntegerConstant : public Constant< Type::Integer >
-	{
-	public:
-		IntegerConstant( Type::Integer value );
+}
 
-		void dump( void ) const;
 		
-		static bool classof( Value const* obj );
-	};
-
-	class Identifier : public Constant< const char* >
-	{
-	private:
-		// typedef std::unordered_map
-		// < const char*
-		// , Identifier*
-		// , libstdhl::Hash
-		// , libstdhl::Equal
-		// > SymbolTable;
-		
-		// static SymbolTable* getSymbols( void )
-		// {
-		// 	static SymbolTable symbols;
-		// 	return &symbols;
-		// }
-		
-		Identifier( Type* type, const char* value );
-
-	public:
-	    ~Identifier( void );
-
-		static Identifier* create( Type* type, const char* value );
-
-		static void forgetSymbol( const char* value );
-		
-		void dump( void ) const;
-
-		static bool classof( Value const* obj );
-	};
+bool Function::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::FUNCTION;
 }
 
 
-#endif /* _LIB_CASMIR_CONSTANT_H_ */
 
 //  
 //  Local variables:

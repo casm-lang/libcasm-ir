@@ -38,10 +38,18 @@ using namespace libcasm_ir;
 
 
 Derived::Derived( const char* name )
-: User( name, 0, Value::DERIVED )
+: User( "derived", 0, Value::DERIVED )
 {			
+	(*Value::getSymbols())[ ".derived" ].insert( this );
+	
+	ident = Identifier::create( &DerivedType, name );
 }
-		
+
+Derived::~Derived( void )
+{
+	(*Value::getSymbols())[ ".derived" ].erase( this );
+}
+
 TrivialStatement* Derived::getContext( void ) const
 {
 	return context;

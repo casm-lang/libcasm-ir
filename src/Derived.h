@@ -36,19 +36,23 @@
 #define _LIB_CASMIR_DERIVED_H_
 
 #include "User.h"
+#include "Constant.h"
 #include "Statement.h"
 
 namespace libcasm_ir
 {
-	class ParallelBlock;
+	class Identifier;
 	
 	class Derived : public User
 	{
 	private:
+		Identifier* ident;
 	    TrivialStatement* context;
 		
 	public:
 		Derived( const char* name );
+
+		~Derived( void );
 		
 	    TrivialStatement* getContext( void ) const;
 		

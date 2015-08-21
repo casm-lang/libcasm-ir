@@ -32,85 +32,25 @@
 //  WITH THE SOFTWARE.
 //  
 
-#ifndef _LIB_CASMIR_CONSTANT_H_
-#define _LIB_CASMIR_CONSTANT_H_
+#ifndef _LIB_CASMIR_FUNCTION_H_
+#define _LIB_CASMIR_FUNCTION_H_
 
-#include "libcasm-ir.h"
+#include "User.h"
+#include "Constant.h"
 
 namespace libcasm_ir
 {
-	class Statement;
-
-	template< typename V >
-	class Constant : public User
+	class Identifier;
+	
+	class Function : public User
 	{
 	private:
-		V value;
+		Identifier* ident;
 		
 	public:
-		Constant( const char* name, Type* type, V value, Value::ID id = Value::CONSTANT );
-		
-		const V getValue( void ) const;
-		
-		static bool classof( Value const* obj );
-	};
-	
-	class ConstantValue : public Constant< Type::Undef >
-	{
-	public:
-		static bool classof( Value const* obj );
-	};
-	
-	class UndefConstant : public Constant< Type::Undef >
-	{
-	public:
-		UndefConstant( void );
-		
-		static bool classof( Value const* obj );
-	};
-	
-	class SelfConstant : public Constant< Type::Undef >
-	{
-	public:
-		SelfConstant( void );
-		
-		static bool classof( Value const* obj );
-	};
-	
-	class IntegerConstant : public Constant< Type::Integer >
-	{
-	public:
-		IntegerConstant( Type::Integer value );
+		Function( const char* name );
 
-		void dump( void ) const;
-		
-		static bool classof( Value const* obj );
-	};
-
-	class Identifier : public Constant< const char* >
-	{
-	private:
-		// typedef std::unordered_map
-		// < const char*
-		// , Identifier*
-		// , libstdhl::Hash
-		// , libstdhl::Equal
-		// > SymbolTable;
-		
-		// static SymbolTable* getSymbols( void )
-		// {
-		// 	static SymbolTable symbols;
-		// 	return &symbols;
-		// }
-		
-		Identifier( Type* type, const char* value );
-
-	public:
-	    ~Identifier( void );
-
-		static Identifier* create( Type* type, const char* value );
-
-		static void forgetSymbol( const char* value );
+		~Function( void );
 		
 		void dump( void ) const;
 
@@ -119,7 +59,7 @@ namespace libcasm_ir
 }
 
 
-#endif /* _LIB_CASMIR_CONSTANT_H_ */
+#endif /* _LIB_CASMIR_FUNCTION_H_ */
 
 //  
 //  Local variables:

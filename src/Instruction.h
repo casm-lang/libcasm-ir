@@ -276,6 +276,13 @@ namespace libcasm_ir
 		NotInstruction( Value* lhs );
 		static bool classof( Value const* obj );
 	};
+
+	class MovInstruction : public UnaryInstruction
+	{
+	public:
+		MovInstruction( Value* lhs );
+		static bool classof( Value const* obj );
+	};
 	
 }
 

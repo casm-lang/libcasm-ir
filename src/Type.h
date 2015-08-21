@@ -36,9 +36,6 @@
    @brief    TODO
    
    TODO
-   
-   @author   Philipp Paulweber
-   @date     2015-02-20
 */
 
 #ifndef _LIB_CASMIR_TYPE_H_
@@ -51,7 +48,7 @@ namespace libcasm_ir
 	class Type
 	{
 	public:		
-		typedef i1 Undef;
+		typedef i1  Undef;
 		typedef i64 Integer;
 		
 		enum ID
@@ -61,7 +58,7 @@ namespace libcasm_ir
 		, DERIVED
 		, FUNCTION
 		};
-		
+	
 	private:
 		ID type_id;
 		
@@ -71,14 +68,15 @@ namespace libcasm_ir
 			setID( id );
 		}
 		
-		void setID( ID id )
-		{
-			type_id = id;
-		}
-		
 		const ID getID( void ) const
 		{
 			return type_id;
+		}
+
+	private:
+		void setID( ID id )
+		{
+			type_id = id;
 		}
 	};
 	
@@ -87,7 +85,6 @@ namespace libcasm_ir
 	
 	static Type DerivedType  = Type( Type::DERIVED );
 	static Type FunctionType = Type( Type::FUNCTION );
-	
 }
 
 #endif /* _LIB_CASMIR_TYPE_H_ */
