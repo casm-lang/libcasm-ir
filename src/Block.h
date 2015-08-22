@@ -73,9 +73,11 @@ namespace libcasm_ir
 		const u64 getPseudoState( void ) const;
 		
 	    ExecutionSemanticsBlock* getParent( void ) const;
-
-		void setParent( ExecutionSemanticsBlock* parent_block );
 		
+		void setParent( ExecutionSemanticsBlock* parent_block );
+
+		const std::vector< Block* >& getBlocks( void ) const;
+
 		void add( Block* block );
 		
 	    void dump( void ) const;

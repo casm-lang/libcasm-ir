@@ -52,6 +52,8 @@ namespace libcasm_ir
 				 , Value::ID id = Value::STATEMENT );
 	    
 		ExecutionSemanticsBlock* getScope( void ) const;
+
+		const std::vector< Value* >& getInstructions( void ) const;
 		
 		void add( Value* instruction );
 

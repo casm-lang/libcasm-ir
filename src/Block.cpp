@@ -102,6 +102,11 @@ void ExecutionSemanticsBlock::setParent( ExecutionSemanticsBlock* parent_block )
 		}
 	}
 }
+
+const std::vector< Block* >& ExecutionSemanticsBlock::getBlocks( void ) const
+{
+	return blocks;
+}
 		
 void ExecutionSemanticsBlock::add( Block* block )
 {

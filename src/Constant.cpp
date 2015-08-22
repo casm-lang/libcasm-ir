@@ -66,6 +66,7 @@ const V Constant< V >::getValue( void ) const
 	return value;
 }
 
+
 bool ConstantValue::classof( Value const* obj )
 {
 	return obj->getValueID() == Value::CONSTANT
@@ -83,15 +84,29 @@ UndefConstant::UndefConstant()
 {
 }
 
+UndefConstant* UndefConstant::create()
+{
+	static UndefConstant* cache = new UndefConstant();
+	return cache;
+}
+
 bool UndefConstant::classof( Value const* obj )
 {
 	return obj->getValueID() == Value::UNDEF_CONSTANT;
 }
 
+
+
 SelfConstant::SelfConstant()
 : Constant< Type::Undef >( ".self", &UndefType, 0, Value::SELF_CONSTANT )
 // PPA: FIXME: TODO: types are not ready yet!!!
 {
+}
+
+SelfConstant* SelfConstant::create()
+{
+	static SelfConstant* cache = new SelfConstant();
+	return cache;
 }
 
 bool SelfConstant::classof( Value const* obj )
@@ -106,9 +121,19 @@ BooleanConstant::BooleanConstant( Type::Boolean value )
 {
 }
 
+BooleanConstant* BooleanConstant::create( Type::Boolean value )
+{
+	static BooleanConstant* cache[ 2 ] =
+	{ new BooleanConstant( false )
+	, new BooleanConstant( true )
+	};
+
+	return cache[ value ];
+}
+
 void BooleanConstant::dump( void ) const
 {
-	printf( "[Const] %p = bool %li\n", this, getValue() );
+	printf( "[Const] %p = bool %u\n", this, getValue() );
 }
 
 bool BooleanConstant::classof( Value const* obj )
@@ -121,6 +146,23 @@ bool BooleanConstant::classof( Value const* obj )
 IntegerConstant::IntegerConstant( Type::Integer value )
 : Constant< Type::Integer >( ".integer", &IntegerType, value, Value::INTEGER_CONSTANT )
 {
+}
+
+IntegerConstant* IntegerConstant::create( Type::Integer value )
+{
+	static std::unordered_map< Type::Integer, IntegerConstant* > cache;
+	
+	auto result = cache.find( value );
+	if( result != cache.end() )
+	{
+		assert( result->second );
+		printf( "[Const] found %p\n", result->second );
+		return result->second;
+	}
+	
+	IntegerConstant* obj = new IntegerConstant( value );
+	cache[ value ] = obj;
+	return obj;
 }
 
 void IntegerConstant::dump( void ) const
@@ -156,11 +198,11 @@ Identifier* Identifier::create( Type* type, const char* value )
 		assert( result->second.size() == 1 );
 		Value* x = *result->second.begin();
 	 	assert( x->getType()->getID() == type->getID() );
-		printf( "[Ident] found '%s' of type %u @ %p\n", value, type->getID(), x );
+		printf( "[Ident] found '%s' of type %lu @ %p\n", value, type->getID(), x );
 		return (Identifier*)x;
 	}
 	
-	printf( "[Ident] creating '%s' of type %u\n", value, type->getID() );
+	printf( "[Ident] creating '%s' of type %lu\n", value, type->getID() );
 	return new Identifier( type, value );
 }
 

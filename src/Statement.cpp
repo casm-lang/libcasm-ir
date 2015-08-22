@@ -57,6 +57,11 @@ ExecutionSemanticsBlock* Statement::getScope( void ) const
 	return scope;
 }
 
+const std::vector< Value* >& Statement::getInstructions( void ) const
+{
+	return instructions;
+}
+
 void Statement::add( Value* instruction )
 {
 	printf( "%s: %p\n", __FUNCTION__, instruction );

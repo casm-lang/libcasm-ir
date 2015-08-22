@@ -47,13 +47,14 @@ namespace libcasm_ir
 	private:
 		V value;
 		
-	public:
+    protected:
 		Constant( const char* name, Type* type, V value, Value::ID id = Value::CONSTANT );
 
+	public:
 		~Constant( void );
 		
 		const V getValue( void ) const;
-		
+
 		static bool classof( Value const* obj );
 	};
 	
@@ -65,24 +66,33 @@ namespace libcasm_ir
 	
 	class UndefConstant : public Constant< Type::Undef >
 	{
-	public:
+	private:
 		UndefConstant( void );
+
+	public:
+		static UndefConstant* create ( void );
 		
 		static bool classof( Value const* obj );
 	};
 	
 	class SelfConstant : public Constant< Type::Undef >
 	{
-	public:
+	private:
 		SelfConstant( void );
+
+	public:
+		static SelfConstant* create( void );
 		
 		static bool classof( Value const* obj );
 	};
 
 	class BooleanConstant : public Constant< Type::Boolean >
 	{
-	public:
+	private:
 		BooleanConstant( Type::Boolean value );
+
+	public:
+		static BooleanConstant* create( Type::Boolean value );
 		
 		void dump( void ) const;
 		
@@ -91,9 +101,12 @@ namespace libcasm_ir
 
 	class IntegerConstant : public Constant< Type::Integer >
 	{
-	public:
+	private:
 		IntegerConstant( Type::Integer value );
 
+	public:
+		static IntegerConstant* create( Type::Integer value );
+		
 		void dump( void ) const;
 		
 		static bool classof( Value const* obj );
