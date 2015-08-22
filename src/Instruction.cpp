@@ -124,7 +124,6 @@ bool Instruction::classof( Value const* obj )
 
 UnaryInstruction::UnaryInstruction( const char* name, Type* type, Value* value, Value::ID id )
 : Instruction( name, type, id )
-, value( value )
 {
 	add( value );
 }	  

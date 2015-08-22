@@ -64,9 +64,6 @@ namespace libcasm_ir
 	
 	class UnaryInstruction : public Instruction
 	{
-	private:
-		Value* value;
-	
 	public:
 		UnaryInstruction( const char* name, Type* type, Value* value
 						, Value::ID id = Value::UNARY_INSTRUCTION );
@@ -78,18 +75,13 @@ namespace libcasm_ir
 	
 	class BinaryInstruction : public Instruction
 	{
-	private:
-		Value* lhs;
-		Value* rhs;
-		
 	public:
 		BinaryInstruction( const char* name, Type* type, Value* lhs, Value* rhs
 						 , Value::ID id = Value::BINARY_INSTRUCTION );
 		
 		Value* getLHS( void ) const;
 		Value* getRHS( void ) const;
-		
-		
+				
 		static bool classof( Value const* obj );
 	};
 	

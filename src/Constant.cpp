@@ -38,9 +38,10 @@ using namespace libcasm_ir;
 
 
 template< typename V >
-Constant< V >::Constant( const char* name, Type* type, V value, Value::ID id )
+Constant< V >::Constant( const char* name, Type* type, V value, u1 defined, Value::ID id )
 : User( name, type, id )
 , value( value )
+, defined( defined )
 {
 	(*Value::getSymbols())[ ".constant" ].insert( this );
 }
@@ -66,6 +67,18 @@ const V Constant< V >::getValue( void ) const
 	return value;
 }
 
+// template< typename V >
+// const u1 Constant< V >::isDefined( void ) const
+// {
+// 	return defined;
+// }
+
+// template< typename V >
+// const u1 Constant< V >::isUndef( void ) const
+// {
+// 	return not defined;
+// }
+
 
 bool ConstantValue::classof( Value const* obj )
 {
@@ -80,7 +93,7 @@ bool ConstantValue::classof( Value const* obj )
 
 
 UndefConstant::UndefConstant()
-: Constant< Type::Undef >( ".undef", &UndefType, 0, Value::UNDEF_CONSTANT )
+: Constant< Type::Undef >( ".undef", &UndefType, 0, false, Value::UNDEF_CONSTANT )
 {
 }
 
@@ -98,7 +111,7 @@ bool UndefConstant::classof( Value const* obj )
 
 
 SelfConstant::SelfConstant()
-: Constant< Type::Undef >( ".self", &UndefType, 0, Value::SELF_CONSTANT )
+: Constant< Type::Undef >( ".self", &UndefType, 0, true, Value::SELF_CONSTANT )
 // PPA: FIXME: TODO: types are not ready yet!!!
 {
 }
@@ -116,19 +129,26 @@ bool SelfConstant::classof( Value const* obj )
 
 
 
-BooleanConstant::BooleanConstant( Type::Boolean value )
-: Constant< Type::Boolean >( ".boolean", &BooleanType, value, Value::BOOLEAN_CONSTANT )
+BooleanConstant::BooleanConstant( Type::Boolean value, u1 defined )
+: Constant< Type::Boolean >( ".boolean", &BooleanType, value, defined, Value::BOOLEAN_CONSTANT )
 {
 }
+
 
 BooleanConstant* BooleanConstant::create( Type::Boolean value )
 {
 	static BooleanConstant* cache[ 2 ] =
-	{ new BooleanConstant( false )
-	, new BooleanConstant( true )
+	{ new BooleanConstant( false, true )
+    , new BooleanConstant( true,  true )
 	};
 
 	return cache[ value ];
+}
+
+BooleanConstant* BooleanConstant::create( void )
+{
+	static BooleanConstant* cache = new BooleanConstant( 0, false );
+	return cache;
 }
 
 void BooleanConstant::dump( void ) const
@@ -143,8 +163,8 @@ bool BooleanConstant::classof( Value const* obj )
 
 
 
-IntegerConstant::IntegerConstant( Type::Integer value )
-: Constant< Type::Integer >( ".integer", &IntegerType, value, Value::INTEGER_CONSTANT )
+IntegerConstant::IntegerConstant( Type::Integer value, u1 defined )
+: Constant< Type::Integer >( ".integer", &IntegerType, value, defined, Value::INTEGER_CONSTANT )
 {
 }
 
@@ -160,9 +180,15 @@ IntegerConstant* IntegerConstant::create( Type::Integer value )
 		return result->second;
 	}
 	
-	IntegerConstant* obj = new IntegerConstant( value );
+	IntegerConstant* obj = new IntegerConstant( value, true );
 	cache[ value ] = obj;
 	return obj;
+}
+
+IntegerConstant* IntegerConstant::create( void )
+{
+	static IntegerConstant* cache = new IntegerConstant( 0, false );
+	return cache;
 }
 
 void IntegerConstant::dump( void ) const
@@ -179,7 +205,7 @@ bool IntegerConstant::classof( Value const* obj )
 
 
 Identifier::Identifier( Type* type, const char* value )
-: Constant< const char* >( value, type, value, Value::IDENTIFIER )
+: Constant< const char* >( value, type, value, true, Value::IDENTIFIER )
 {
 	(*Value::getSymbols())[ ".identifier" ].insert( this );
 }

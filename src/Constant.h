@@ -46,15 +46,25 @@ namespace libcasm_ir
 	{
 	private:
 		V value;
+		u1 defined;
 		
     protected:
-		Constant( const char* name, Type* type, V value, Value::ID id = Value::CONSTANT );
+		Constant( const char* name, Type* type, V value, u1 defined, Value::ID id = Value::CONSTANT );
 
 	public:
 		~Constant( void );
 		
 		const V getValue( void ) const;
-
+		const u1 isDefined( void ) const
+		{
+			return defined;
+		}
+		
+		const u1 isUndef( void ) const
+		{
+			return not defined;
+		}
+		
 		static bool classof( Value const* obj );
 	};
 	
@@ -85,14 +95,15 @@ namespace libcasm_ir
 		
 		static bool classof( Value const* obj );
 	};
-
+	
 	class BooleanConstant : public Constant< Type::Boolean >
 	{
 	private:
-		BooleanConstant( Type::Boolean value );
-
+		BooleanConstant( Type::Boolean value, u1 defined );
+		
 	public:
 		static BooleanConstant* create( Type::Boolean value );
+		static BooleanConstant* create( void );
 		
 		void dump( void ) const;
 		
@@ -102,10 +113,11 @@ namespace libcasm_ir
 	class IntegerConstant : public Constant< Type::Integer >
 	{
 	private:
-		IntegerConstant( Type::Integer value );
+		IntegerConstant( Type::Integer value, u1 defined );
 
 	public:
 		static IntegerConstant* create( Type::Integer value );
+		static IntegerConstant* create( void );
 		
 		void dump( void ) const;
 		
