@@ -56,7 +56,7 @@ namespace libcasm_ir
 		{ UNDEF = 0
 		, BOOLEAN
 		, INTEGER
-
+		
 		  // , STRING
 		  // , FLOAT
 		  // , BIT
@@ -66,10 +66,9 @@ namespace libcasm_ir
 		  
 		// , DERIVED
 		// , FUNCTION
-		
 		, _TOP_
 		};
-
+		
 		enum STATE
 		{ UNCHANGED
 		, CHANGED
@@ -97,14 +96,16 @@ namespace libcasm_ir
 		void addParameter( Type* parameter );
 		void addSubType( Type* subtype );
 		
+		Type* getResultType( void );
+		
 	private:
 		void setID( ID id );	
 	};
 	
 	static Type UndefType   = Type( Type::UNDEF,   Type::STATE::LOCKED );
-	static Type BooleanType = Type( Type::INTEGER, Type::STATE::LOCKED );
+	static Type BooleanType = Type( Type::BOOLEAN, Type::STATE::LOCKED );
 	static Type IntegerType = Type( Type::INTEGER, Type::STATE::LOCKED );
-	
+
 	// static Type DerivedType  = Type( Type::DERIVED,  "Derived" );
 	// static Type FunctionType = Type( Type::FUNCTION, "Function");
 }

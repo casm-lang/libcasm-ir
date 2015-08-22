@@ -51,9 +51,11 @@ namespace libcasm_ir
 	public:
 		Instruction( const char* name, Type* type, Value::ID id = Value::INSTRUCTION );
 		void setStatement( Statement* stmt );
+		const Statement* getStatement( void ) const;
 		
 	    void add( Value* value );
 		Value* getValue( u8 index ) const;
+		const std::vector< Value* >& getValues( void ) const;
 		
 		void dump( void ) const;
 		
@@ -109,7 +111,7 @@ namespace libcasm_ir
 	class UpdateInstruction : public BinaryInstruction
 	{
 	public:
-		UpdateInstruction( Value* func, Value* expr );
+		UpdateInstruction( Value* location, Value* expr );
 
 		//void dump( void ) const;
 	    
@@ -120,7 +122,7 @@ namespace libcasm_ir
 	class LetInstruction : public BinaryInstruction
 	{
 	public:
-	    LetInstruction( Value* lhs, Value* rhs );
+	    LetInstruction( Value* ident, Value* expr );
         
 		static bool classof( Value const* obj );
 	};

@@ -121,6 +121,7 @@ namespace libcasm_ir
 		const char* name;
 		Type* type;		
 		ID id;
+		u1 type_lock;
 		
 		std::vector< Type* > parameters;
 		
@@ -132,7 +133,10 @@ namespace libcasm_ir
 		const char* getName( void ) const;
 	    
 		Type* getType( void ) const;
-
+	protected:
+		void setType( Type* type );
+		
+	public:
 		ID getValueID() const;
 		
 		void debug( void ) const;

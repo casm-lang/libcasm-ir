@@ -48,6 +48,7 @@ Value::Value( const char* name, Type* type, Value::ID id )
 : name( name )
 , type( type )
 , id( id )
+, type_lock( false )
 {
 	SymbolTable& symbols = *getSymbols();
 	symbols[ name ].insert( this );
@@ -74,6 +75,14 @@ const char* Value::getName( void ) const
 Type* Value::getType( void ) const
 {
 	return type;
+}
+
+void Value::setType( Type* type )
+{
+    assert( !type_lock );
+	type_lock = true;
+	
+	this->type = type;
 }
 
 

@@ -142,6 +142,35 @@ void Type::addSubType( Type* subtype )
 	type_state = Type::STATE::UNCHANGED;
 }
 
+Type* Type::getResultType( void )
+{
+	if( subtypes.size() == 0 )
+	{
+		if( type_id == Type::BOOLEAN )
+		{
+			return &BooleanType;
+		}
+		else if( type_id == Type::INTEGER )
+		{
+			 return &IntegerType;
+		}
+		else
+		{
+			assert( !"asdf" );
+			return 0;
+		}
+	}
+	else
+	{
+		Type* t = new Type( type_id );
+		for( auto subtype : subtypes )
+		{
+			t->addSubType( subtype );
+		}
+		return t;
+	}
+}
+
 
 //  
 //  Local variables:
