@@ -103,7 +103,7 @@ bool Statement::classof( Value const* obj )
 
 
 TrivialStatement::TrivialStatement( ExecutionSemanticsBlock* scope )
-: Statement( "block", 0, scope, Value::TRIVIAL_STATEMENT )
+: Statement( ".block", 0, scope, Value::TRIVIAL_STATEMENT )
 {
 }
 
@@ -128,14 +128,21 @@ bool TrivialStatement::classof( Value const* obj )
 
 
 
-BranchStatement::BranchStatement( const char* name, Type* type, ExecutionSemanticsBlock* scope )
-: Statement( name, type, scope, Value::BRANCH_STATEMENT )
+BranchStatement::BranchStatement( ExecutionSemanticsBlock* scope )
+: Statement( ".block", 0, scope, Value::BRANCH_STATEMENT )
 {
 }
 
-void BranchStatement::add( Block* block )
+void BranchStatement::addBlock( Value* block )
 {
-	blocks.push_back( block );
+	assert( Value::isa< Block >( block ) );
+	
+	blocks.push_back( (Block*)block );
+}
+
+const std::vector< Block* >& BranchStatement::getBlocks( void ) const
+{
+	return blocks;
 }
 
 void BranchStatement::dump( void ) const

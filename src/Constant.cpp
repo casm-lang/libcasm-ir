@@ -85,8 +85,10 @@ bool ConstantValue::classof( Value const* obj )
 	return obj->getValueID() == Value::CONSTANT
 		or UndefConstant::classof( obj )
 		or SelfConstant::classof( obj )
+		or AgentConstant::classof( obj )
 		or BooleanConstant::classof( obj )
 		or IntegerConstant::classof( obj )
+		or RulePointerConstant::classof( obj )
 		or Identifier::classof( obj )
 		;
 }
@@ -125,6 +127,46 @@ SelfConstant* SelfConstant::create()
 bool SelfConstant::classof( Value const* obj )
 {
 	return obj->getValueID() == Value::SELF_CONSTANT;
+}
+
+
+
+AgentConstant::AgentConstant( Type::Agent value, u1 defined )
+: Constant< Type::Agent >( ".agent", &AgentType, value, defined, Value::AGENT_CONSTANT )
+{
+}
+
+AgentConstant* AgentConstant::create( Type::Agent value )
+{
+	static std::unordered_map< Type::Agent, AgentConstant* > cache;
+	
+	auto result = cache.find( value );
+	if( result != cache.end() )
+	{
+		assert( result->second );
+		printf( "[Const] found %p\n", result->second );
+		return result->second;
+	}
+	
+	AgentConstant* obj = new AgentConstant( value, true );
+	cache[ value ] = obj;
+	return obj;
+}
+
+AgentConstant* AgentConstant::create( void )
+{
+	static AgentConstant* cache = new AgentConstant( 0, false );
+	return cache;
+}
+
+void AgentConstant::dump( void ) const
+{
+	printf( "[Const] %p = agent %p\n", this, getValue() );
+}
+
+bool AgentConstant::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::AGENT_CONSTANT;
 }
 
 
@@ -204,6 +246,47 @@ bool IntegerConstant::classof( Value const* obj )
 
 
 
+RulePointerConstant::RulePointerConstant( Type::RulePointer value, u1 defined )
+: Constant< Type::RulePointer >( ".rulepointer", &RulePointerType, value, defined, Value::RULE_POINTER_CONSTANT )
+{
+}
+
+RulePointerConstant* RulePointerConstant::create( Type::RulePointer value )
+{
+	static std::unordered_map< Type::RulePointer, RulePointerConstant* > cache;
+	
+	auto result = cache.find( value );
+	if( result != cache.end() )
+	{
+		assert( result->second );
+		printf( "[Const] found %p\n", result->second );
+		return result->second;
+	}
+	
+	RulePointerConstant* obj = new RulePointerConstant( value, true );
+	cache[ value ] = obj;
+	return obj;
+}
+
+RulePointerConstant* RulePointerConstant::create( void )
+{
+	static RulePointerConstant* cache = new RulePointerConstant( 0, false );
+	return cache;
+}
+
+void RulePointerConstant::dump( void ) const
+{
+	printf( "[Const] %p = rule %p\n", this, getValue() );
+}
+
+bool RulePointerConstant::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::RULE_POINTER_CONSTANT;
+}
+
+
+
+
 Identifier::Identifier( Type* type, const char* value )
 : Constant< const char* >( value, type, value, true, Value::IDENTIFIER )
 {
@@ -231,6 +314,26 @@ Identifier* Identifier::create( Type* type, const char* value )
 	printf( "[Ident] creating '%s' of type %lu\n", value, type->getID() );
 	return new Identifier( type, value );
 }
+
+// Identifier* Identifier::create( Type* type )
+// {
+// 	static std::unordered_map< u64, Identifier* > cache;
+// 	auto result = cache.find( type->getID() );
+// 	Identifier* x = 0;
+	
+// 	if( result != cache.end() )
+// 	{
+// 		x = result->second;
+// 	 	assert( x->getType()->getID() == type->getID() );
+// 		printf( "[Ident] found 'undef' of type %lu @ %p\n", type->getID(), x );
+// 		return x;
+// 	}
+	
+// 	x = new Identifier( type, 0, false );
+	
+// 	printf( "[Ident] creating '%s' of type %lu\n", value, type->getID() );
+// 	return 
+// }
 
 void Identifier::forgetSymbol( const char* value )
 {

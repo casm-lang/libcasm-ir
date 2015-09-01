@@ -43,19 +43,26 @@
 
 #include "stdhl/cpp/Type.h"
 
+
 namespace libcasm_ir
 {
-	class Type
+	class Rule;
+	
+	class Type // : public Value
 	{
 	public:		
-		typedef u1  Undef;
-		typedef u1  Boolean;
-		typedef i64 Integer;
+		typedef u1     Undef;
+		typedef u1     Boolean;
+		typedef i64    Integer;
+		typedef Rule*  RulePointer;
+		typedef void*  Agent;
 		
 		enum ID
 		{ UNDEF = 0
+		, AGENT
 		, BOOLEAN
 		, INTEGER
+		, RULE_POINTER
 		
 		  // , STRING
 		  // , FLOAT
@@ -102,10 +109,12 @@ namespace libcasm_ir
 		void setID( ID id );	
 	};
 	
-	static Type UndefType   = Type( Type::UNDEF,   Type::STATE::LOCKED );
-	static Type BooleanType = Type( Type::BOOLEAN, Type::STATE::LOCKED );
-	static Type IntegerType = Type( Type::INTEGER, Type::STATE::LOCKED );
-
+	static Type UndefType       = Type( Type::UNDEF,        Type::STATE::LOCKED );
+	static Type AgentType       = Type( Type::AGENT,        Type::STATE::LOCKED );
+	static Type BooleanType     = Type( Type::BOOLEAN,      Type::STATE::LOCKED );
+	static Type IntegerType     = Type( Type::INTEGER,      Type::STATE::LOCKED );
+	static Type RulePointerType = Type( Type::RULE_POINTER, Type::STATE::LOCKED );
+	
 	// static Type DerivedType  = Type( Type::DERIVED,  "Derived" );
 	// static Type FunctionType = Type( Type::FUNCTION, "Function");
 }

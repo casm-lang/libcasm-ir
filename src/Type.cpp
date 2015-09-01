@@ -38,12 +38,15 @@ using namespace libcasm_ir;
 
 const char* Type::ID2str[ Type::ID::_TOP_ ] =
 { "Undef"    // UNDEF = 0
+, "Agent"    // AGENT
 , "Boolean"  // BOOLEAN
 , "Integer"  // INTEGER
+, "Rule*"    // RULEPOINTER
 };
 
 
 Type::Type( Type::ID id, Type::STATE state )
+//: Value( ".type", self, Value::TYPE );
 : type_id( id )
 , type_uid_hash( 0 )
 , type_state( Type::STATE::CHANGED )
@@ -146,7 +149,11 @@ Type* Type::getResultType( void )
 {
 	if( subtypes.size() == 0 )
 	{
-		if( type_id == Type::BOOLEAN )
+		if( type_id == Type::AGENT )
+		{
+			 return &AgentType;
+		}
+		else if( type_id == Type::BOOLEAN )
 		{
 			return &BooleanType;
 		}
@@ -154,9 +161,13 @@ Type* Type::getResultType( void )
 		{
 			 return &IntegerType;
 		}
+		else if( type_id == Type::RULE_POINTER )
+		{
+			 return &RulePointerType;
+		}
 		else
 		{
-			assert( !"asdf" );
+			assert( 0 && "unimplemented result type with subtypes size zero!" );
 			return 0;
 		}
 	}

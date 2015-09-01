@@ -136,9 +136,10 @@ Value* UnaryInstruction::get( void ) const
 bool UnaryInstruction::classof( Value const* obj )
 {
 	return obj->getValueID() == Value::UNARY_INSTRUCTION
-		or LookupInstruction::classof( obj );
+		or LookupInstruction::classof( obj )
+		or BranchInstruction::classof( obj )
+		;
 }
-
 
 
 BinaryInstruction::BinaryInstruction( const char* name, Type* type, Value* lhs, Value* rhs, Value::ID id )
@@ -258,6 +259,34 @@ bool PrintInstruction::classof( Value const* obj )
 	return obj->getValueID() == Value::PRINT_INSTRUCTION;
 }
 
+
+
+BranchInstruction::BranchInstruction( Value* condition, Value* case_true, Value* case_false )
+: UnaryInstruction( ".branch", 0, condition, Value::BRANCH_INSTRUCTION )
+, case_true ( case_true  )
+, case_false( case_false )
+{
+	assert( condition->getType() );
+	setType( condition->getType()->getResultType() );
+	assert( getType()->getID() == BooleanType.getID() );
+
+	assert( case_true );
+}
+
+bool BranchInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::BRANCH_INSTRUCTION;
+}
+
+Value* BranchInstruction::getTrue ( void ) const
+{
+	return case_true;
+}
+
+Value* BranchInstruction::getFalse( void ) const
+{
+	return case_false;	
+}
 
 
 

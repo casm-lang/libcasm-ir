@@ -80,10 +80,12 @@ namespace libcasm_ir
 		std::vector< Block* > blocks;
 		
 	public:
-		BranchStatement( const char* name, Type* type, ExecutionSemanticsBlock* scope );
+		BranchStatement( ExecutionSemanticsBlock* scope = 0 );
 	    
-		void add( Block* block );
+		void addBlock( Value* block );
 
+		const std::vector< Block* >& getBlocks( void ) const;
+		
 		void dump( void ) const;
 		
 		static bool classof( Value const* obj );

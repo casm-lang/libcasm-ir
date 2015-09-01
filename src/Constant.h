@@ -95,6 +95,22 @@ namespace libcasm_ir
 		
 		static bool classof( Value const* obj );
 	};
+
+	
+	class AgentConstant : public Constant< Type::Agent >
+	{
+	private:
+		AgentConstant( Type::Agent value, u1 defined );
+
+	public:
+		static AgentConstant* create( Type::Agent value );
+		static AgentConstant* create( void );
+		
+		void dump( void ) const;
+		
+		static bool classof( Value const* obj );
+	};
+	
 	
 	class BooleanConstant : public Constant< Type::Boolean >
 	{
@@ -124,22 +140,23 @@ namespace libcasm_ir
 		static bool classof( Value const* obj );
 	};
 
+	class RulePointerConstant : public Constant< Type::RulePointer >
+	{
+	private:
+		RulePointerConstant( Type::RulePointer value, u1 defined );
+
+	public:
+		static RulePointerConstant* create( Type::RulePointer value );
+		static RulePointerConstant* create( void );
+		
+		void dump( void ) const;
+		
+		static bool classof( Value const* obj );
+	};
+
 	class Identifier : public Constant< const char* >
 	{
 	private:
-		// typedef std::unordered_map
-		// < const char*
-		// , Identifier*
-		// , libstdhl::Hash
-		// , libstdhl::Equal
-		// > SymbolTable;
-		
-		// static SymbolTable* getSymbols( void )
-		// {
-		// 	static SymbolTable symbols;
-		// 	return &symbols;
-		// }
-		
 		Identifier( Type* type, const char* value );
 
 	public:

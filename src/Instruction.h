@@ -109,7 +109,7 @@ namespace libcasm_ir
 	    
 		static bool classof( Value const* obj );
 	};
-
+	
 	
 	class LetInstruction : public BinaryInstruction
 	{
@@ -147,6 +147,22 @@ namespace libcasm_ir
 	};
 
 
+	class BranchInstruction : public UnaryInstruction
+	{
+	private:
+		Value* case_true;
+	    Value* case_false;
+		
+	public :
+	    BranchInstruction( Value* condition, Value* case_true, Value* case_false = 0 );
+		
+		static bool classof( Value const* obj );
+
+		Value* getTrue ( void ) const;
+		Value* getFalse( void ) const;
+	};
+
+	
 	
 	class OperatorInstruction : public BinaryInstruction
 	{
