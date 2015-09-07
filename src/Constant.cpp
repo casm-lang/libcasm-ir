@@ -67,68 +67,18 @@ const V Constant< V >::getValue( void ) const
 	return value;
 }
 
-// template< typename V >
-// const u1 Constant< V >::isDefined( void ) const
-// {
-// 	return defined;
-// }
-
-// template< typename V >
-// const u1 Constant< V >::isUndef( void ) const
-// {
-// 	return not defined;
-// }
-
 
 bool ConstantValue::classof( Value const* obj )
 {
 	return obj->getValueID() == Value::CONSTANT
-		or UndefConstant::classof( obj )
-		or SelfConstant::classof( obj )
-		or AgentConstant::classof( obj )
+	    or AgentConstant::classof( obj )
+		or RulePointerConstant::classof( obj )
 		or BooleanConstant::classof( obj )
 		or IntegerConstant::classof( obj )
-		or RulePointerConstant::classof( obj )
+		or StringConstant::classof( obj )
 		or Identifier::classof( obj )
 		;
 }
-
-
-UndefConstant::UndefConstant()
-: Constant< Type::Undef >( ".undef", &UndefType, 0, false, Value::UNDEF_CONSTANT )
-{
-}
-
-UndefConstant* UndefConstant::create()
-{
-	static UndefConstant* cache = new UndefConstant();
-	return cache;
-}
-
-bool UndefConstant::classof( Value const* obj )
-{
-	return obj->getValueID() == Value::UNDEF_CONSTANT;
-}
-
-
-
-SelfConstant::SelfConstant()
-: Constant< Type::Undef >( ".self", &UndefType, 0, true, Value::SELF_CONSTANT )
-// PPA: FIXME: TODO: types are not ready yet!!!
-{
-}
-
-SelfConstant* SelfConstant::create()
-{
-	static SelfConstant* cache = new SelfConstant();
-	return cache;
-}
-
-bool SelfConstant::classof( Value const* obj )
-{
-	return obj->getValueID() == Value::SELF_CONSTANT;
-}
-
 
 
 AgentConstant::AgentConstant( Type::Agent value, u1 defined )
@@ -235,13 +185,59 @@ IntegerConstant* IntegerConstant::create( void )
 
 void IntegerConstant::dump( void ) const
 {
-	printf( "[Const] %p = int %li\n", this, getValue() );
+	printf( "[Const] %p = integer %li\n", this, getValue() );
 }
 
 bool IntegerConstant::classof( Value const* obj )
 {
 	return obj->getValueID() == Value::INTEGER_CONSTANT;
 }
+
+
+
+StringConstant::StringConstant( Type::String value, u1 defined )
+: Constant< Type::String >( ".string", &StringType, value, defined, Value::STRING_CONSTANT )
+{
+}
+
+StringConstant* StringConstant::create( Type::String value )
+{
+	static std::unordered_map< Type::String, StringConstant* > cache;
+	
+	auto result = cache.find( value );
+	if( result != cache.end() )
+	{
+		assert( result->second );
+		printf( "[Const] found %p\n", result->second );
+		return result->second;
+	}
+	
+	StringConstant* obj = new StringConstant( value, true );
+	cache[ value ] = obj;
+	return obj;
+}
+
+StringConstant* StringConstant::create( const char* value )
+{
+	return create( (char*)value );
+}
+
+StringConstant* StringConstant::create( void )
+{
+	static StringConstant* cache = new StringConstant( 0, false );
+	return cache;
+}
+
+void StringConstant::dump( void ) const
+{
+	printf( "[Const] %p = string %s\n", this, getValue() );
+}
+
+bool StringConstant::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::STRING_CONSTANT;
+}
+
 
 
 
@@ -265,6 +261,30 @@ RulePointerConstant* RulePointerConstant::create( Type::RulePointer value )
 	
 	RulePointerConstant* obj = new RulePointerConstant( value, true );
 	cache[ value ] = obj;
+	return obj;
+}
+
+// use this ruleconstpointer for not finished resolved rule*'s
+RulePointerConstant* RulePointerConstant::create( const char* name )
+{
+	static std::unordered_map< const char*, RulePointerConstant* > cache;
+	
+	auto rsym = (*Value::getSymbols()).find( name );
+	if( rsym != (*Value::getSymbols()).end() )
+	{
+		return create( ((Rule*)(*rsym->second.begin())) );
+	}
+	
+	auto result = cache.find( name );
+	if( result != cache.end() )
+	{
+		assert( result->second );
+		printf( "[Const] found %p\n", result->second );
+		return result->second;
+	}
+	
+	RulePointerConstant* obj = new RulePointerConstant( 0, true );
+	cache[ name ] = obj;
 	return obj;
 }
 

@@ -51,28 +51,26 @@ namespace libcasm_ir
 	class Type // : public Value
 	{
 	public:		
-		typedef u1     Undef;
+		typedef u1     Undef; // PPA: this is obsolete ??? FIXME: TODO:
+		typedef void*  Agent;
+		typedef Rule*  RulePointer;
 		typedef u1     Boolean;
 		typedef i64    Integer;
-		typedef Rule*  RulePointer;
-		typedef void*  Agent;
+		typedef char*  String;
 		
 		enum ID
 		{ UNDEF = 0
 		, AGENT
+		, RULE_POINTER
 		, BOOLEAN
 		, INTEGER
-		, RULE_POINTER
+		, STRING
 		
-		  // , STRING
 		  // , FLOAT
 		  // , BIT
 
 		  // , TUPLE
 		  // , LIST
-		  
-		// , DERIVED
-		// , FUNCTION
 		, _TOP_
 		};
 		
@@ -111,12 +109,10 @@ namespace libcasm_ir
 	
 	static Type UndefType       = Type( Type::UNDEF,        Type::STATE::LOCKED );
 	static Type AgentType       = Type( Type::AGENT,        Type::STATE::LOCKED );
+	static Type RulePointerType = Type( Type::RULE_POINTER, Type::STATE::LOCKED );
 	static Type BooleanType     = Type( Type::BOOLEAN,      Type::STATE::LOCKED );
 	static Type IntegerType     = Type( Type::INTEGER,      Type::STATE::LOCKED );
-	static Type RulePointerType = Type( Type::RULE_POINTER, Type::STATE::LOCKED );
-	
-	// static Type DerivedType  = Type( Type::DERIVED,  "Derived" );
-	// static Type FunctionType = Type( Type::FUNCTION, "Function");
+	static Type StringType      = Type( Type::STRING,       Type::STATE::LOCKED );
 }
 
 #endif /* _LIB_CASMIR_TYPE_H_ */

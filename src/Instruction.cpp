@@ -246,7 +246,7 @@ bool CallInstruction::classof( Value const* obj )
 
 
 PrintInstruction::PrintInstruction( Value* channel )
-: Instruction( ".print", 0, Value::PRINT_INSTRUCTION )
+: Instruction( ".print", &StringType, Value::PRINT_INSTRUCTION )
 {
 	if( channel )
 	{

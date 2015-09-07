@@ -74,28 +74,6 @@ namespace libcasm_ir
 		static bool classof( Value const* obj );
 	};
 	
-	class UndefConstant : public Constant< Type::Undef >
-	{
-	private:
-		UndefConstant( void );
-
-	public:
-		static UndefConstant* create ( void );
-		
-		static bool classof( Value const* obj );
-	};
-	
-	class SelfConstant : public Constant< Type::Undef >
-	{
-	private:
-		SelfConstant( void );
-
-	public:
-		static SelfConstant* create( void );
-		
-		static bool classof( Value const* obj );
-	};
-
 	
 	class AgentConstant : public Constant< Type::Agent >
 	{
@@ -105,6 +83,22 @@ namespace libcasm_ir
 	public:
 		static AgentConstant* create( Type::Agent value );
 		static AgentConstant* create( void );
+		
+		void dump( void ) const;
+		
+		static bool classof( Value const* obj );
+	};
+	
+	
+	class RulePointerConstant : public Constant< Type::RulePointer >
+	{
+	private:
+		RulePointerConstant( Type::RulePointer value, u1 defined );
+
+	public:
+		static RulePointerConstant* create( Type::RulePointer value );
+		static RulePointerConstant* create( const char* name );
+		static RulePointerConstant* create( void );
 		
 		void dump( void ) const;
 		
@@ -139,21 +133,22 @@ namespace libcasm_ir
 		
 		static bool classof( Value const* obj );
 	};
-
-	class RulePointerConstant : public Constant< Type::RulePointer >
+	
+	class StringConstant : public Constant< Type::String >
 	{
 	private:
-		RulePointerConstant( Type::RulePointer value, u1 defined );
+		StringConstant( Type::String value, u1 defined );
 
 	public:
-		static RulePointerConstant* create( Type::RulePointer value );
-		static RulePointerConstant* create( void );
+		static StringConstant* create( Type::String value );
+		static StringConstant* create( const char* value );
+		static StringConstant* create( void );
 		
 		void dump( void ) const;
 		
 		static bool classof( Value const* obj );
 	};
-
+	
 	class Identifier : public Constant< const char* >
 	{
 	private:

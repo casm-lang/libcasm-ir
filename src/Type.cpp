@@ -39,9 +39,10 @@ using namespace libcasm_ir;
 const char* Type::ID2str[ Type::ID::_TOP_ ] =
 { "Undef"    // UNDEF = 0
 , "Agent"    // AGENT
+, "Rule*"    // RULEPOINTER
 , "Boolean"  // BOOLEAN
 , "Integer"  // INTEGER
-, "Rule*"    // RULEPOINTER
+, "String"   // STRING
 };
 
 
@@ -153,6 +154,10 @@ Type* Type::getResultType( void )
 		{
 			 return &AgentType;
 		}
+		else if( type_id == Type::RULE_POINTER )
+		{
+			 return &RulePointerType;
+		}
 		else if( type_id == Type::BOOLEAN )
 		{
 			return &BooleanType;
@@ -161,9 +166,9 @@ Type* Type::getResultType( void )
 		{
 			 return &IntegerType;
 		}
-		else if( type_id == Type::RULE_POINTER )
+		else if( type_id == Type::STRING )
 		{
-			 return &RulePointerType;
+			 return &StringType;
 		}
 		else
 		{
