@@ -45,10 +45,11 @@
 #define _LIB_CASMIR_VALUE_H_
 
 #include "Type.h"
+#include "CasmIR.h"
 
 namespace libcasm_ir
 {		
-	class Value
+	class Value : public CasmIR
 	{
 	public:
 		enum ID

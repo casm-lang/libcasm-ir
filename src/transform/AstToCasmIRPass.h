@@ -59,7 +59,7 @@ namespace libcasm_ir
 		virtual bool run( libpass::PassResult& pr );
 	
 	private:
-		std::unordered_map< AstNode*, libcasm_ir::Value* >   ast2casmir;
+		std::unordered_map< AstNode*, Value* >   ast2casmir;
 		std::unordered_map< AstNode*, AstNode* > ast2parent;
 		
 	public:

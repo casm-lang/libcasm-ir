@@ -74,7 +74,7 @@ INCLUDE += -I ../pass/src
 
 LIBRARY += ../casm-fe/build/libfrontend.a
 
-default: obj $(TARGET)
+default: $(LIBRARY) obj $(TARGET)
 
 ../casm-fe/build/libfrontend.a:
 	$(MAKE) -C ../casm-fe
@@ -106,4 +106,4 @@ clean:
 	@rm -rf obj
 	@echo "RM  " $(TARGET)
 	@rm -f $(TARGET)
-
+	$(MAKE) clean -C ../casm-fe/

@@ -40,6 +40,8 @@
 #include "libsyntax/visitor.h"
 #include "libsyntax/ast_dump_visitor.h"
 
+#include "CasmIR.h"
+
 /**
    @file     AstInterface.h
    @class    AstInterface
@@ -53,7 +55,7 @@
 */
 namespace libcasm_ir
 {
-	template<class T> class AstInterface  
+	template<class T> class AstInterface : public CasmIR
 	{
 	public:
 		

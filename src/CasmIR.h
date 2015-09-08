@@ -32,27 +32,26 @@
 //  WITH THE SOFTWARE.
 //  
 
-#ifndef _LIB_CASMIR_H_
-#define _LIB_CASMIR_H_
+/**
+   @brief    TODO
+   
+   TODO
+*/
 
-#include "Value.h"
-#include "Type.h"
-#include "User.h"
-#include "Agent.h"
-#include "Rule.h"
-#include "Block.h"
-#include "Derived.h"
-#include "Function.h"
-#include "Constant.h"
-#include "Statement.h"
-#include "Instruction.h"
+#ifndef _LIB_CASMIR_CASMIR_H_
+#define _LIB_CASMIR_CASMIR_H_
+
+#include "CasmIR.h"
 
 namespace libcasm_ir
 {
+    class CasmIR
+    {
+    };
 }
 
+#endif /* _LIB_CASMIR_CASMIR_H_ */
 
-#endif /* _LIB_CASMIR_H_ */
 
 //  
 //  Local variables:

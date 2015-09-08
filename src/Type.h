@@ -43,12 +43,13 @@
 
 #include "stdhl/cpp/Type.h"
 
+#include "CasmIR.h"
 
 namespace libcasm_ir
 {
 	class Rule;
 	
-	class Type // : public Value
+	class Type : public CasmIR
 	{
 	public:		
 		typedef u1     Undef; // PPA: this is obsolete ??? FIXME: TODO:
