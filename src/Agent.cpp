@@ -32,28 +32,54 @@
 //  WITH THE SOFTWARE.
 //  
 
-#ifndef _LIB_CASMIR_H_
-#define _LIB_CASMIR_H_
-
-#include "Value.h"
-#include "Type.h"
-#include "User.h"
 #include "Agent.h"
-#include "Rule.h"
-#include "Block.h"
-#include "Derived.h"
-#include "Function.h"
-#include "Constant.h"
-#include "Statement.h"
-#include "Instruction.h"
 
-namespace libcasm_ir
+using namespace libcasm_ir;
+
+
+Agent::Agent()
+: User( ".agent", 0, Value::AGENT )
+{			
+    // (*Value::getSymbols())[ ".agent" ].insert( this );
+}
+
+// Agent::~Agent( void )
+// {			
+//     // (*Value::getSymbols())[ ".agent" ].erase( this );
+// }
+
+RulePointerConstant* Agent::getInitRulePointer( void ) const
 {
-//	class Value;
+    return rule_ptr_init;
+}
+
+void Agent::setInitRulePointer( RulePointerConstant* init )
+{
+    assert( init );	
+    rule_ptr_init = init;
+}
+
+void Agent::dump( void ) const
+{
+    printf( "[Agent] " );
+    debug();
+    
+    if( rule_ptr_init )
+    {
+        printf( "@%p\n", rule_ptr_init );
+    }
+    else
+    {
+        printf( "('rule_ptr_init' not set)\n" );
+    }
+}
+
+bool Agent::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::AGENT;
 }
 
 
-#endif /* _LIB_CASMIR_H_ */
 
 //  
 //  Local variables:

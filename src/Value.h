@@ -53,6 +53,7 @@ namespace libcasm_ir
 	public:
 		enum ID
 		{ USER
+		, AGENT
 		, RULE
 		, DERIVED
 		, FUNCTION

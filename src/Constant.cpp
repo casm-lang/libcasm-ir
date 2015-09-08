@@ -67,6 +67,12 @@ const V Constant< V >::getValue( void ) const
 	return value;
 }
 
+template< typename V >
+void Constant< V >::setValue( V val )
+{
+	value = val;
+}
+
 
 bool ConstantValue::classof( Value const* obj )
 {
@@ -244,6 +250,7 @@ bool StringConstant::classof( Value const* obj )
 
 RulePointerConstant::RulePointerConstant( Type::RulePointer value, u1 defined )
 : Constant< Type::RulePointer >( ".rulepointer", &RulePointerType, value, defined, Value::RULE_POINTER_CONSTANT )
+, resolve_identifier( 0 )
 {
 }
 
@@ -284,6 +291,8 @@ RulePointerConstant* RulePointerConstant::create( const char* name )
 	}
 	
 	RulePointerConstant* obj = new RulePointerConstant( 0, true );
+	assert( obj );
+	obj->setResolveIdentifier( name );
 	cache[ name ] = obj;
 	return obj;
 }
@@ -292,6 +301,28 @@ RulePointerConstant* RulePointerConstant::create( void )
 {
 	static RulePointerConstant* cache = new RulePointerConstant( 0, false );
 	return cache;
+}
+
+void RulePointerConstant::setResolveIdentifier( const char* name  )
+{
+    resolve_identifier = name;
+}
+
+void RulePointerConstant::resolve( void )
+{
+	if( !resolve_identifier )
+	{
+		return;
+	}
+	
+	auto result = (*Value::getSymbols()).find( resolve_identifier );
+	if( result != (*Value::getSymbols()).end() )
+	{
+		assert( result->second.size() == 1 );
+		Value* val = *(result->second.begin());
+		assert( Value::isa< Rule >( val ) );
+		setValue( (Rule*)val );
+	}
 }
 
 void RulePointerConstant::dump( void ) const

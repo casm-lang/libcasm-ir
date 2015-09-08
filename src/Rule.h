@@ -58,7 +58,6 @@ namespace libcasm_ir
 		void setContext( ParallelBlock* scope );
 		
 		void dump( void ) const;
-
 		
 		static bool classof( Value const* obj );
 	};

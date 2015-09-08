@@ -105,13 +105,15 @@ void Value::dump( void ) const
 {    
 	switch( this->getValueID() )
 	{
+	case Value::AGENT:
+		((Rule*)this)->dump(); break;
 	case Value::RULE:
 		((Rule*)this)->dump(); break;
 	case Value::DERIVED:
 		((Derived*)this)->dump(); break;
 	case Value::FUNCTION:
 		((Function*)this)->dump(); break;
-		
+	
 	case Value::BLOCK:
 		((Block*)this)->dump(); break;
 	case Value::EXECUTION_SEMANTICS_BLOCK:
@@ -146,8 +148,6 @@ void Value::dump( void ) const
 		}
 	}
 }
-
-
 
 
 //  

@@ -32,28 +32,39 @@
 //  WITH THE SOFTWARE.
 //  
 
-#ifndef _LIB_CASMIR_H_
-#define _LIB_CASMIR_H_
+#ifndef _LIB_CASMIR_AGENT_H_
+#define _LIB_CASMIR_AGENT_H_
 
 #include "Value.h"
-#include "Type.h"
 #include "User.h"
-#include "Agent.h"
-#include "Rule.h"
-#include "Block.h"
-#include "Derived.h"
-#include "Function.h"
 #include "Constant.h"
-#include "Statement.h"
-#include "Instruction.h"
 
 namespace libcasm_ir
 {
-//	class Value;
+	class RulePointerConstant;
+	
+    class Agent : public User
+    {
+    private:
+        RulePointerConstant* rule_ptr_init;
+		
+    public:
+        Agent( void );
+
+        // ~Agent( void );
+	
+        RulePointerConstant* getInitRulePointer( void ) const;
+	
+        void setInitRulePointer( RulePointerConstant* init );
+        
+        void dump( void ) const;
+		
+        static bool classof( Value const* obj );
+    };
 }
 
 
-#endif /* _LIB_CASMIR_H_ */
+#endif /* _LIB_CASMIR_AGENT_H_ */
 
 //  
 //  Local variables:

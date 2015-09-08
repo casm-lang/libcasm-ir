@@ -55,6 +55,7 @@ namespace libcasm_ir
 		~Constant( void );
 		
 		const V getValue( void ) const;
+		
 		const u1 isDefined( void ) const
 		{
 			return defined;
@@ -66,6 +67,9 @@ namespace libcasm_ir
 		}
 		
 		static bool classof( Value const* obj );
+
+	protected:
+	    void setValue( V val );
 	};
 	
 	class ConstantValue : public Constant< Type::Undef >
@@ -93,12 +97,17 @@ namespace libcasm_ir
 	class RulePointerConstant : public Constant< Type::RulePointer >
 	{
 	private:
+		const char* resolve_identifier;
+		
 		RulePointerConstant( Type::RulePointer value, u1 defined );
-
+	    
 	public:
 		static RulePointerConstant* create( Type::RulePointer value );
 		static RulePointerConstant* create( const char* name );
 		static RulePointerConstant* create( void );
+
+		void setResolveIdentifier( const char* name );
+		void resolve( void );
 		
 		void dump( void ) const;
 		
