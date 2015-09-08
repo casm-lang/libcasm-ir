@@ -59,9 +59,25 @@ CPPOBJECTS += obj/Derived.o
 CPPOBJECTS += obj/Function.o
 CPPOBJECTS += obj/Agent.o
 
+CPPOBJECTS += obj/AstDumpPass.o
+CPPOBJECTS += obj/TypeCheckPass.o
+CPPOBJECTS += obj/SourceToAstPass.o
+CPPOBJECTS += obj/AstToCasmIRPass.o
+
+INCLUDE += -I ./src
+INCLUDE += -I ./src/analyze
+INCLUDE += -I ./src/transform
 INCLUDE += -I ../
+INCLUDE += -I ../casm-fe/src
+INCLUDE += -I ../casm-fe/build/src
+INCLUDE += -I ../pass/src
+
+LIBRARY += ../casm-fe/build/libfrontend.a
 
 default: obj $(TARGET)
+
+../casm-fe/build/libfrontend.a:
+	$(MAKE) -C ../casm-fe
 
 obj:
 	mkdir -p obj
@@ -70,10 +86,20 @@ obj/%.o: src/%.cpp
 	@echo "CPP " $<
 	@$(CPP) $(CPPFLAG) $(INCLUDE) -c $< -o $@
 
-libcasm-ir.a: $(CPPOBJECTS)
+obj/%.o: src/analyze/%.cpp
+	@echo "CPP " $<
+	@$(CPP) $(CPPFLAG) $(INCLUDE) -c $< -o $@
+
+obj/%.o: src/transform/%.cpp
+	@echo "CPP " $<
+	@$(CPP) $(CPPFLAG) $(INCLUDE) -c $< -o $@
+
+libcasm-ir.a: $(CPPOBJECTS) $(LIBRARY)
 	@echo "AR  " $@
-	@$(AR) rsc $@ $(filter %.o,$^)
+	@$(AR) rsc $@.a $(filter %.o,$^)
+	@$(AR) -rcT $@ $@.a $(filter %.a,$^)
 	@ranlib $@
+#	@rm -f $@.a
 
 clean:
 	@echo "RM  " obj
