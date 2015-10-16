@@ -146,6 +146,15 @@ namespace libcasm_ir
 		static bool classof( Value const* obj );
 	};
 
+	class SwitchInstruction : public Instruction
+	{
+	public:
+		SwitchInstruction( Value* expression );
+		
+		//void dump( void ) const;
+		
+		static bool classof( Value const* obj );
+	};
 
 	class BranchInstruction : public UnaryInstruction
 	{

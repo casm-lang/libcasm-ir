@@ -57,6 +57,7 @@ namespace libcasm_ir
 		typedef Rule*  RulePointer;
 		typedef u1     Boolean;
 		typedef i64    Integer;
+		typedef u8*    Bit;
 		typedef char*  String;
 		
 		enum ID
@@ -65,13 +66,8 @@ namespace libcasm_ir
 		, RULE_POINTER
 		, BOOLEAN
 		, INTEGER
+		, BIT
 		, STRING
-		
-		  // , FLOAT
-		  // , BIT
-
-		  // , TUPLE
-		  // , LIST
 		, _TOP_
 		};
 		
@@ -85,17 +81,19 @@ namespace libcasm_ir
 		ID type_id;
 		u64 type_uid_hash;
 		STATE type_state;
+		i16 bitsize;
 		std::string description;
 		std::vector< Type* > parameters;
 		std::vector< Type* > subtypes;
 		
 		static const char* ID2str[ ID::_TOP_ ];
-
+		
 	public:
-		Type( ID id, STATE state = STATE::UNCHANGED );
+		Type( ID id, i16 bitsize = -1, STATE state = STATE::UNCHANGED );
 		const u64 getID( void ) const;
 		const char* getName( void );
-		
+		const i16 getBitsize( void );
+
 		const std::vector< Type* >& getParameters( void ) const;
 	    const std::vector< Type* >& getSubTypes( void ) const;
 	    
@@ -113,7 +111,8 @@ namespace libcasm_ir
 	static Type RulePointerType = Type( Type::RULE_POINTER, Type::STATE::LOCKED );
 	static Type BooleanType     = Type( Type::BOOLEAN,      Type::STATE::LOCKED );
 	static Type IntegerType     = Type( Type::INTEGER,      Type::STATE::LOCKED );
-	static Type StringType      = Type( Type::STRING,       Type::STATE::LOCKED );
+	static Type StringType      = Type( Type::STRING,       Type::STATE::LOCKED );	
+	
 }
 
 #endif /* _LIB_CASMIR_TYPE_H_ */

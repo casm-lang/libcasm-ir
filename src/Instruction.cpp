@@ -117,6 +117,7 @@ bool Instruction::classof( Value const* obj )
 		or LocationInstruction::classof( obj )
 		or CallInstruction::classof( obj )
 		or PrintInstruction::classof( obj )
+		or SwitchInstruction::classof( obj )
 		;
 }
 
@@ -257,6 +258,17 @@ PrintInstruction::PrintInstruction( Value* channel )
 bool PrintInstruction::classof( Value const* obj )
 {
 	return obj->getValueID() == Value::PRINT_INSTRUCTION;
+}
+
+
+SwitchInstruction::SwitchInstruction( Value* expression )
+: Instruction( ".switch", 0, Value::SWITCH_INSTRUCTION )
+{
+}
+
+bool SwitchInstruction::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::SWITCH_INSTRUCTION;
 }
 
 

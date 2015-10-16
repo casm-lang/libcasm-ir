@@ -183,10 +183,14 @@ namespace libcasm_ir
 		{
 		}
 	
+		void visit_case_pre( CaseNode* node, T val )
+		{
+		}
+		
 		void visit_case( CaseNode* node, T val, const std::vector< T >& case_labels )
 		{
 		}
-	
+		
 		T visit_expression( Expression* node, T lhs, T rhs )
 		{
 			return 0;

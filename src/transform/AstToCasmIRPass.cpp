@@ -62,9 +62,15 @@ static libcasm_ir::Type* getType( Type* type )
 			return new libcasm_ir::Type( libcasm_ir::Type::ID::BOOLEAN );
 	    case TypeType::INTEGER:
 			return new libcasm_ir::Type( libcasm_ir::Type::ID::INTEGER );
+	    case TypeType::BIT:
+			assert( type->bitsize > 0
+				 && type->bitsize <= 256
+				 && "invalid Bit size for Bit type" );
+			return new libcasm_ir::Type( libcasm_ir::Type::ID::BIT, type->bitsize );
 	    case TypeType::STRING:
 			return new libcasm_ir::Type( libcasm_ir::Type::ID::STRING );
 	    default:
+			std::cerr << type->to_str() << "\n";
 			assert( 0 && "not implemented function atom identifier type" );
 			return 0;
 	}
@@ -558,6 +564,22 @@ void libcasm_ir::AstToCasmIRPass::visit_ifthenelse( IfThenElseNode* node, T cond
 	ir_stmt->add( new BranchInstruction( ir_cond, ir_case_true, ir_case_false ) );
 	ir_stmt->addBlock( ir_case_true  );
 	ir_stmt->addBlock( ir_case_false );
+}
+
+void libcasm_ir::AstToCasmIRPass::visit_case_pre( CaseNode* node, T val )
+{
+	VISIT;
+	printf( "%p -> %p\n",      node, node->expr );
+	
+	ExecutionSemanticsBlock* ir_scope =
+		lookupParent< ExecutionSemanticsBlock >( node );
+	assert( ir_scope );
+	
+	BranchStatement* ir_stmt = new BranchStatement( ir_scope );
+	assert( ir_stmt );
+	
+	
+	FIXME;
 }
 
 void libcasm_ir::AstToCasmIRPass::visit_case( CaseNode* node, T val, const std::vector< T >& case_labels )

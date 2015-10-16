@@ -42,15 +42,17 @@ const char* Type::ID2str[ Type::ID::_TOP_ ] =
 , "Rule*"    // RULEPOINTER
 , "Boolean"  // BOOLEAN
 , "Integer"  // INTEGER
+, "Bit"      // BIT
 , "String"   // STRING
 };
 
 
-Type::Type( Type::ID id, Type::STATE state )
+Type::Type( Type::ID id, i16 bitsize, Type::STATE state )
 //: Value( ".type", self, Value::TYPE );
 : type_id( id )
 , type_uid_hash( 0 )
 , type_state( Type::STATE::CHANGED )
+, bitsize( bitsize )
 {
 	getName();
 	type_state = state;
@@ -88,6 +90,12 @@ const char* Type::getName( void )
 	}
 	
 	description.append( ID2str[ type_id ] );
+	if( type_id == Type::BIT )
+	{
+		description.append( "(" );
+		description.append( std::to_string( bitsize ) );
+		description.append( ")" );
+	}
 	
 	if( subtypes.size() > 0 )
 	{
@@ -113,6 +121,10 @@ const char* Type::getName( void )
 	return description.c_str();
 }
 
+const i16 Type::getBitsize( void )
+{
+	return bitsize;
+}
 
 const std::vector< Type* >& Type::getParameters( void ) const
 {
