@@ -90,6 +90,10 @@ namespace libcasm_ir
 		void visit_rule( RuleNode* node )
 		{
 		}
+
+		void visit_skip(AstNode* node)
+		{
+		}
 		
 		void visit_statements( AstNode* node )
 		{

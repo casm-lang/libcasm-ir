@@ -32,22 +32,33 @@
 //  WITH THE SOFTWARE.
 //  
 
-#include "User.h"
-#include "libcasm-ir.h"
+#include "Builtin.h"
 
 using namespace libcasm_ir;
 
 
-bool User::classof( Value const* obj )
+Builtin::Builtin( const char* name, Type* result )
+    : User( name, result, Value::BUILTIN )
 {
-	return obj->getValueID() == Value::USER
-		or Rule::classof( obj )
-		or Derived::classof( obj )
-		or Function::classof( obj )
-		or Builtin::classof( obj )
-		or ConstantValue::classof( obj )
-		or Instruction::classof( obj );
+    (*Value::getSymbols())[ ".builtin" ].insert( this );
 }
+
+Builtin::~Builtin( void )
+{
+    (*Value::getSymbols())[ ".builtin" ].erase( this );
+}
+
+void Builtin::dump( void ) const
+{
+    printf( "[Builtin] " );
+    debug();
+}
+
+bool Builtin::classof( Value const* obj )
+{
+    return obj->getValueID() == Value::BUILTIN;
+}
+
 
 
 //  

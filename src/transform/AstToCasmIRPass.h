@@ -71,6 +71,7 @@ namespace libcasm_ir
 		void visit_derived_def_pre( FunctionDefNode* node );
 		void visit_derived_def( FunctionDefNode* node, T expr );
 		void visit_rule( RuleNode* node );
+		void visit_skip(AstNode* node);
 		void visit_statements( AstListNode* node );
 		void visit_parblock( UnaryNode* node );
 		void visit_seqblock( UnaryNode* node );

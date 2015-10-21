@@ -63,6 +63,12 @@ static libcasm_ir::Type* getType( Type* type )
 	    case TypeType::INTEGER:
 			return new libcasm_ir::Type( libcasm_ir::Type::ID::INTEGER );
 	    case TypeType::BIT:
+			if( not( type->bitsize > 0
+				  && type->bitsize <= 256
+			))
+			{
+				std::cout << std::string( __FUNCTION__ ) << ": " << type->to_str() << "\n";
+			}
 			assert( type->bitsize > 0
 				 && type->bitsize <= 256
 				 && "invalid Bit size for Bit type" );
@@ -228,6 +234,24 @@ void libcasm_ir::AstToCasmIRPass::visit_derived_def( FunctionDefNode* node, T ex
 	ir_derived->setContext( ir_stmt );
 }
 
+void libcasm_ir::AstToCasmIRPass::visit_skip( AstNode* node )
+{
+	VISIT;
+
+	ExecutionSemanticsBlock* ir_scope =
+		lookupParent< ExecutionSemanticsBlock >( node );
+	assert( ir_scope );
+	
+	TrivialStatement* ir_stmt = new TrivialStatement( ir_scope );
+	assert( ir_stmt );
+    ast2casmir[ node ] = ir_stmt;
+    
+	SkipInstruction* ir_skip = new SkipInstruction();
+    assert( ir_skip );
+	
+	ir_stmt->add( ir_skip );
+}
+
 void libcasm_ir::AstToCasmIRPass::visit_rule( RuleNode* node )
 {
 	printf( "\n\n" );
@@ -238,13 +262,21 @@ void libcasm_ir::AstToCasmIRPass::visit_rule( RuleNode* node )
 		x.append( a->to_str() );
 	}
 	printf( "%p -> %p\n", node, node->child_ );
-	
-	assert( node );
+    assert( node );
 	
 	Rule* ir_rule = new Rule( node->name.c_str() );
     assert( ir_rule );
     ast2casmir[ node ]        = ir_rule;
 	ast2parent[ node->child_ ] = node;
+
+	if( node->child_->node_type_ != NodeType::PARBLOCK )
+	{
+		ParallelBlock* ir_scope = new ParallelBlock();
+		assert( ir_scope );
+		ast2casmir[ node ] = ir_scope;
+
+		ir_rule->setContext( ir_scope );
+	}
 }
 
 void libcasm_ir::AstToCasmIRPass::visit_parblock( UnaryNode* node )
@@ -297,7 +329,14 @@ void libcasm_ir::AstToCasmIRPass::visit_seqblock( UnaryNode* node )
 	Value* parent = lookupParent< Value >( node );
 	assert( parent );
 	
-    if( Value::isa< ExecutionSemanticsBlock >( parent ) )
+	// if( Value::isa< Rule >( parent ) )
+	// {
+	// 	ParallelBlock* ir_par = new ParallelBlock();
+	// 	ir_par->add( ir_scope );
+	// 	((Rule*)parent)->setContext( ir_par );
+	// }
+    // else
+	if( Value::isa< ExecutionSemanticsBlock >( parent ) )
 	{
 		((ExecutionSemanticsBlock*)parent)->add( ir_scope );
 	}
@@ -402,10 +441,35 @@ void libcasm_ir::AstToCasmIRPass::visit_call_pre( CallNode* node, T expr )
 void libcasm_ir::AstToCasmIRPass::visit_call( CallNode* node, std::vector< T >& args )
 {
 	VISIT;
+	
+	printf( "FIXME: call: %s, %p, %p\n", node->rule_name.c_str(), node->rule, node->ruleref );
+	
+	// ExecutionSemanticsBlock* ir_scope =
+	// 	lookupParent< ExecutionSemanticsBlock >( node );
+	// assert( ir_scope );
+	
+	// TrivialStatement* ir_stmt = new TrivialStatement( ir_scope );
+	// assert( ir_stmt );
+    // ast2casmir[ node ]         = ir_stmt;
+	// // ast2parent[ node->func ]   = node;
+	// // ast2parent[ node->expr_ ]  = node;
+	
+	// Value* instr = lookup< Value >( a );
+	
+	// CallInstruction* ir_call = new CallInstruction();
+    // assert( ir_call );
+	
+	// for( auto a : node->atoms )
+	// {
+	// 	Value* instr = lookup< Value >( a );
+	// 	ir_print->add( instr );
+	// }
+	// ir_print->add( StringConstant::create( (const char*)"\n" ) );
+	
+	// ir_stmt->add( ir_print );
 
-	printf( "call: %s\n", node->rule_name.c_str() );
-
-	FIXME;
+	
+	//FIXME;
 }
 
 void libcasm_ir::AstToCasmIRPass::visit_call_post( CallNode* node )
@@ -424,9 +488,7 @@ void libcasm_ir::AstToCasmIRPass::visit_print( PrintNode* node, std::vector< T >
 	TrivialStatement* ir_stmt = new TrivialStatement( ir_scope );
 	assert( ir_stmt );
     ast2casmir[ node ]         = ir_stmt;
-	// ast2parent[ node->func ]   = node;
-	// ast2parent[ node->expr_ ]  = node;
-    
+	
 	PrintInstruction* ir_print = new PrintInstruction();
     assert( ir_print );
 	for( auto a : node->atoms )
@@ -454,7 +516,22 @@ void libcasm_ir::AstToCasmIRPass::visit_impossible( AstNode* node )
 void libcasm_ir::AstToCasmIRPass::visit_assert( UnaryNode* node, T expr )
 {
 	VISIT;
-	FIXME;
+
+	ExecutionSemanticsBlock* ir_scope =
+		lookupParent< ExecutionSemanticsBlock >( node );
+	assert( ir_scope );
+	
+	TrivialStatement* ir_stmt = new TrivialStatement( ir_scope );
+	assert( ir_stmt );
+    ast2casmir[ node ]         = ir_stmt;
+	
+	Value* ir_cond = lookup< Value >( node->child_ );
+	assert( ir_cond );
+	
+	Instruction* ir_instr = new AssertInstruction( ir_cond );
+    assert( ir_instr );
+	
+	ir_stmt->add( ir_instr );
 }
 	
 void libcasm_ir::AstToCasmIRPass::visit_assure( UnaryNode* node, T expr )
@@ -547,7 +624,7 @@ void libcasm_ir::AstToCasmIRPass::visit_ifthenelse( IfThenElseNode* node, T cond
 	Value* ir_cond = lookup< Value >( node->condition_ );
 	assert( ir_cond );
 	assert
-	(  Value::isa< Instruction >( ir_cond )
+	(  Value::isa< Instruction     >( ir_cond )
 	or Value::isa< BooleanConstant >( ir_cond )
 	);
 	
@@ -570,6 +647,25 @@ void libcasm_ir::AstToCasmIRPass::visit_case_pre( CaseNode* node, T val )
 {
 	VISIT;
 	printf( "%p -> %p\n",      node, node->expr );
+
+	ExecutionSemanticsBlock* ir_scope =
+		lookupParent< ExecutionSemanticsBlock >( node );
+	assert( ir_scope );
+	
+    for( auto& a : node->case_list )
+    {
+		printf( "%p: %p -> %p\n", &node->case_list, a.first, a.second );
+		
+		Value* ir_case = new ParallelBlock( ir_scope );
+		assert( ir_case );
+		ast2casmir[ (AstNode*)&a ] = ir_case;
+		ast2parent[ a.second ] = (AstNode*)&a;
+	}
+}
+
+void libcasm_ir::AstToCasmIRPass::visit_case( CaseNode* node, T val, const std::vector< T >& case_labels )
+{
+	VISIT;
 	
 	ExecutionSemanticsBlock* ir_scope =
 		lookupParent< ExecutionSemanticsBlock >( node );
@@ -578,14 +674,46 @@ void libcasm_ir::AstToCasmIRPass::visit_case_pre( CaseNode* node, T val )
 	BranchStatement* ir_stmt = new BranchStatement( ir_scope );
 	assert( ir_stmt );
 	
-	
-	FIXME;
-}
+	Value* ir_expr = lookup< Value >( node->expr );
+	assert( ir_expr );
+	assert
+	(  Value::isa< Instruction   >( ir_expr )
+	or Value::isa< ConstantValue >( ir_expr )
+	or Value::isa< Identifier    >( ir_expr )
+	);
 
-void libcasm_ir::AstToCasmIRPass::visit_case( CaseNode* node, T val, const std::vector< T >& case_labels )
-{
-	VISIT;
-	FIXME;
+	Instruction* ir_switch = new SwitchInstruction( ir_expr );
+	assert( ir_switch );
+	
+	ir_stmt->add( ir_switch );
+	
+	ExecutionSemanticsBlock* default_case = 0;
+	
+	for( auto& a : node->case_list )
+    {
+		printf( "%p: %p -> %p\n", &node->case_list, a.first, a.second );
+
+		ExecutionSemanticsBlock* ir_case =
+			lookupParent< ExecutionSemanticsBlock >( a.second );
+		assert( ir_case );
+		
+		if( !a.first )
+		{
+			default_case = ir_case;
+			continue;
+		}
+		
+		Value* ir_label = lookup< Value >( a.first  );
+		assert( ir_label );
+		
+		ir_switch->add( ir_label );
+		ir_stmt->addBlock( ir_case );
+	}
+	
+	if( default_case )
+	{
+		ir_stmt->addBlock( default_case );
+	}
 }
 
 T libcasm_ir::AstToCasmIRPass::visit_expression( Expression* node, T lhs, T rhs )
@@ -909,8 +1037,34 @@ T libcasm_ir::AstToCasmIRPass::visit_number_range_atom( NumberRangeAtom* node )
 T libcasm_ir::AstToCasmIRPass::visit_builtin_atom( BuiltinAtom* node, T args[], uint16_t argc ) 
 {
 	VISIT;
-	FIXME;
-	return 0;
+
+	printf( "builtin: %s\n", node->to_string().c_str() );
+	
+	Type* ty_ident = getType( node->return_type );
+    if( node->arguments )
+    {
+        for( auto a : *(node->arguments) )
+        {
+			ty_ident->addParameter( getType( &(a->type_) ) );
+        }
+    }
+	
+	Value* ir_ident = new libcasm_ir::Builtin( node->to_string().c_str(), ty_ident );
+    assert( ir_ident );
+	
+	CallInstruction* ir_call = new CallInstruction( ir_ident );
+    assert( ir_call );
+    ast2casmir[ node ] = ir_call;
+    if( node->arguments )
+    {
+        for( auto a : *(node->arguments) )
+        {
+            Value* instr = lookup< Value >( a );
+            ir_call->add( instr );		
+        }
+    }
+	
+    return 0;
 }
 
 

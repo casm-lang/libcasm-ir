@@ -90,6 +90,7 @@ namespace libcasm_ir
 		
 	public:
 		Type( ID id, i16 bitsize = -1, STATE state = STATE::UNCHANGED );
+		const ID getIDKind( void ) const;
 		const u64 getID( void ) const;
 		const char* getName( void );
 		const i16 getBitsize( void );

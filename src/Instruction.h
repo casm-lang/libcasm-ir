@@ -36,6 +36,8 @@
 #define _LIB_CASMIR_INSTRUCTION_H_
 
 #include "User.h"
+#include "Builtin.h"
+#include "Constant.h"
 #include "Statement.h"
 
 namespace libcasm_ir
@@ -87,6 +89,16 @@ namespace libcasm_ir
 	
 	
 	
+	class SkipInstruction : public Instruction
+	{
+	public:
+		SkipInstruction( void );
+		
+		//void dump( void ) const;
+		
+		static bool classof( Value const* obj );
+	};
+
 	
 	
 	class LookupInstruction : public UnaryInstruction
@@ -146,6 +158,18 @@ namespace libcasm_ir
 		static bool classof( Value const* obj );
 	};
 
+
+	class AssertInstruction : public UnaryInstruction
+	{
+	public :
+		AssertInstruction( Value* condition );
+
+		//void dump( void ) const;
+		
+		static bool classof( Value const* obj );
+	};
+	
+	
 	class SwitchInstruction : public Instruction
 	{
 	public:
@@ -154,8 +178,8 @@ namespace libcasm_ir
 		//void dump( void ) const;
 		
 		static bool classof( Value const* obj );
-	};
-
+	};	
+	
 	class BranchInstruction : public UnaryInstruction
 	{
 	private:
@@ -295,7 +319,7 @@ namespace libcasm_ir
 		NotInstruction( Value* lhs );
 		static bool classof( Value const* obj );
 	};
-
+	
 	class MovInstruction : public UnaryInstruction
 	{
 	public:

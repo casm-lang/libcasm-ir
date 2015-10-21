@@ -32,23 +32,34 @@
 //  WITH THE SOFTWARE.
 //  
 
+#ifndef _LIB_CASMIR_BUILTIN_H_
+#define _LIB_CASMIR_BUILTIN_H_
+
 #include "User.h"
-#include "libcasm-ir.h"
+#include "Constant.h"
+#include "Type.h"
 
-using namespace libcasm_ir;
-
-
-bool User::classof( Value const* obj )
+namespace libcasm_ir
 {
-	return obj->getValueID() == Value::USER
-		or Rule::classof( obj )
-		or Derived::classof( obj )
-		or Function::classof( obj )
-		or Builtin::classof( obj )
-		or ConstantValue::classof( obj )
-		or Instruction::classof( obj );
+    class Identifier;
+	
+    class Builtin : public User
+    {
+		//private:
+        
+    public:
+        Builtin( const char* name, Type* result );
+		
+        ~Builtin( void );
+		
+        void dump( void ) const;
+		
+        static bool classof( Value const* obj );
+    };
 }
 
+
+#endif /* _LIB_CASMIR_BUILTIN_H_ */
 
 //  
 //  Local variables:

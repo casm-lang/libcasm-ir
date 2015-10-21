@@ -58,6 +58,11 @@ Type::Type( Type::ID id, i16 bitsize, Type::STATE state )
 	type_state = state;
 }
 
+const Type::ID Type::getIDKind( void ) const
+{
+	return type_id;
+}
+
 const u64 Type::getID( void ) const
 {
 	return type_uid_hash;
@@ -164,11 +169,11 @@ Type* Type::getResultType( void )
 	{
 		if( type_id == Type::AGENT )
 		{
-			 return &AgentType;
+			return &AgentType;
 		}
 		else if( type_id == Type::RULE_POINTER )
 		{
-			 return &RulePointerType;
+			return &RulePointerType;
 		}
 		else if( type_id == Type::BOOLEAN )
 		{
@@ -176,11 +181,15 @@ Type* Type::getResultType( void )
 		}
 		else if( type_id == Type::INTEGER )
 		{
-			 return &IntegerType;
+			return &IntegerType;
 		}
 		else if( type_id == Type::STRING )
 		{
-			 return &StringType;
+			return &StringType;
+		}
+		else if( type_id == Type::BIT )
+		{
+			return new Type( type_id, bitsize );
 		}
 		else
 		{
