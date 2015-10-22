@@ -249,10 +249,12 @@ CallInstruction::CallInstruction( Value* symbol )
 {
 	add( symbol );
 	
-	if( Value::isa< Builtin >( symbol ) )
+	if( Value::isa< Builtin >( symbol )
+	 or Value::isa< Derived >( symbol )
+	)
 	{
 		assert( symbol->getType() );
-		setType( symbol->getType() );
+		setType( symbol->getType()->getResultType() );
 	}
 }
 
@@ -296,6 +298,10 @@ bool AssertInstruction::classof( Value const* obj )
 SwitchInstruction::SwitchInstruction( Value* expression )
 : Instruction( ".switch", 0, Value::SWITCH_INSTRUCTION )
 {
+	add( expression );
+	
+	assert( expression->getType() );
+	setType( expression->getType()->getResultType() );
 }
 
 bool SwitchInstruction::classof( Value const* obj )

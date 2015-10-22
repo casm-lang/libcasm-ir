@@ -563,14 +563,14 @@ void libcasm_ir::AstToCasmIRPass::visit_let( LetNode* node, T var )
 	if( Value::isa< ExecutionSemanticsBlock >( parent ) )
 	{
 		ir_scope = (ExecutionSemanticsBlock*)parent;
-		if( ir_scope->isParallel() )
-		{
-			ExecutionSemanticsBlock* ir_scope_top = ir_scope;
-		    ir_scope = new SequentialBlock();
-			assert( ir_scope );
-			ir_scope->setParent( ir_scope_top );
-			ir_scope_top->add( ir_scope );
-		}		
+		// if( ir_scope->isParallel() )
+		// {
+		// 	ExecutionSemanticsBlock* ir_scope_top = ir_scope;
+		//     ir_scope = new SequentialBlock();
+		// 	assert( ir_scope );
+		// 	ir_scope->setParent( ir_scope_top );
+		// 	ir_scope_top->add( ir_scope );
+		// }		
 	}
 	else if( Value::isa< Statement >( parent ) )
 	{
@@ -582,12 +582,19 @@ void libcasm_ir::AstToCasmIRPass::visit_let( LetNode* node, T var )
 		assert( 0 );
 	}
 	
-	TrivialStatement* ir_stmt = new TrivialStatement( ir_scope );
+    BranchStatement* ir_stmt = new BranchStatement( ir_scope );
 	assert( ir_stmt );
 	ast2casmir[ node ] = ir_stmt;
 	
-	//ir_scope->add( ir_stmt );
 	ir_stmt->add( ir_let );
+	
+	if( node->stmt->node_type_ != NodeType::PARBLOCK )
+	{
+		ParallelBlock* ir_blk = new ParallelBlock();
+		assert( ir_blk );
+		ast2casmir[ node ] = ir_blk;
+		ir_stmt->addBlock( ir_blk );
+	}
 }
 
 void libcasm_ir::AstToCasmIRPass::visit_let_post( LetNode* node )
