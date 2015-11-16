@@ -48,6 +48,7 @@ namespace libcasm_ir
 	private:
 		Identifier* ident;
 	    TrivialStatement* context;
+		std::vector< Value* > parameter;
 		
 	public:
 		Derived( const char* name, Type* result );

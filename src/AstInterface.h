@@ -224,7 +224,9 @@ namespace libcasm_ir
 		{
 			return 0;
 		}
-	
+
+		virtual T visit_bit_atom( IntegerAtom* node ) = 0;
+		
 		T visit_float_atom( FloatAtom* node )
 		{
 			return 0;

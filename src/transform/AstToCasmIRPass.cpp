@@ -232,6 +232,12 @@ void libcasm_ir::AstToCasmIRPass::visit_derived_def( FunctionDefNode* node, T ex
 		new Derived( node->sym->name.c_str(), ftype );
 	assert( ir_derived );
 	ir_derived->setContext( ir_stmt );
+	
+	// TODO: PPA: CONT'D HERE!!!
+	// for( i32 i = 0; i < node->sym-> arguments_.size(); i++ )
+	// {
+	// 	ir_derived->add( Identifier::create( getType( node->sym->arguments[i] ), node->sy ) );
+	// }
 }
 
 void libcasm_ir::AstToCasmIRPass::visit_skip( AstNode* node )
@@ -698,8 +704,8 @@ void libcasm_ir::AstToCasmIRPass::visit_case( CaseNode* node, T val, const std::
 	
 	for( auto& a : node->case_list )
     {
-		printf( "%p: %p -> %p\n", &node->case_list, a.first, a.second );
-
+		printf( "case: %p: %p -> %p\n", &node->case_list, a.first, a.second );
+		
 		ExecutionSemanticsBlock* ir_case =
 			lookupParent< ExecutionSemanticsBlock >( a.second );
 		assert( ir_case );
@@ -937,6 +943,8 @@ T libcasm_ir::AstToCasmIRPass::visit_undef_atom( UndefAtom* node )
 			ir_const = BooleanConstant::create(); break;
 	    case TypeType::INTEGER:
 			ir_const = IntegerConstant::create(); break;
+	    case TypeType::BIT:
+			ir_const = BitConstant::create( node->type_.bitsize ); break;
 	    case TypeType::RULEREF:
 			ir_const = RulePointerConstant::create(); break;
 	    default:
@@ -975,7 +983,19 @@ T libcasm_ir::AstToCasmIRPass::visit_int_atom( IntegerAtom* node )
 	
 	return 0;
 }
+
+T libcasm_ir::AstToCasmIRPass::visit_bit_atom( IntegerAtom* node )
+{
+	VISIT;
+	printf( "%lu (0x%lx)\n", node->val_, node->val_	);
 	
+	BitConstant* ir_const = BitConstant::create( (u64)node->val_, node->type_.bitsize );	
+	assert( ir_const );
+    ast2casmir[ node ] = ir_const;
+	
+	return 0;
+}
+
 T libcasm_ir::AstToCasmIRPass::visit_float_atom( FloatAtom* node )
 {
 	VISIT;

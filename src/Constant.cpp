@@ -81,6 +81,7 @@ bool ConstantValue::classof( Value const* obj )
 		or RulePointerConstant::classof( obj )
 		or BooleanConstant::classof( obj )
 		or IntegerConstant::classof( obj )
+		or BitConstant::classof( obj )
 		or StringConstant::classof( obj )
 		or Identifier::classof( obj )
 		;
@@ -197,6 +198,49 @@ void IntegerConstant::dump( void ) const
 bool IntegerConstant::classof( Value const* obj )
 {
 	return obj->getValueID() == Value::INTEGER_CONSTANT;
+}
+
+
+
+BitConstant::BitConstant( Type* type, u64 value, u1 defined )
+: Constant< Type::Bit >( ".bit", type, this->value, defined, Value::BIT_CONSTANT )
+{
+	this->value[0] = value;
+}
+
+BitConstant* BitConstant::create( u64 value, u16 bitsize )
+{
+	static std::unordered_map< u64, BitConstant* > cache[256];
+	
+	assert( bitsize > 0 and bitsize <= 256 and "invalid 'Bit' constant bit size" );
+	
+	auto result = cache[bitsize].find( value );
+	if( result != cache[bitsize].end() )
+	{
+		assert( result->second );
+		printf( "[Const] found %p\n", result->second );
+		return result->second;
+	}
+	
+	BitConstant* obj = new BitConstant( new Type( Type::ID::BIT, bitsize ), value, true );
+	cache[bitsize][ value ] = obj;
+	return obj;
+}
+
+BitConstant* BitConstant::create( u16 bitsize )
+{
+	static BitConstant* cache = new BitConstant( new Type( Type::ID::BIT, bitsize ), 0, false );
+	return cache;
+}
+
+void BitConstant::dump( void ) const
+{
+	printf( "[Const] %p = bit %li\n", this, getValue()[0] );
+}
+
+bool BitConstant::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::BIT_CONSTANT;
 }
 
 

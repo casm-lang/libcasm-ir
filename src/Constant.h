@@ -143,6 +143,21 @@ namespace libcasm_ir
 		static bool classof( Value const* obj );
 	};
 	
+	class BitConstant : public Constant< Type::Bit >
+	{
+	private:
+		u64 value[1];
+		BitConstant( Type* type, u64 value, u1 defined );
+
+	public:
+		static BitConstant* create( u64 value, u16 bitsize );
+		static BitConstant* create( u16 bitsize );
+		
+		void dump( void ) const;
+		
+		static bool classof( Value const* obj );
+	};
+	
 	class StringConstant : public Constant< Type::String >
 	{
 	private:
