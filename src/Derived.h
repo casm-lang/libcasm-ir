@@ -58,6 +58,10 @@ namespace libcasm_ir
 	    TrivialStatement* getContext( void ) const;
 		
 		void setContext( TrivialStatement* scope );
+
+		void addParameter( Value* value );
+
+		const std::vector< Value* >& getParameters( void ) const;
 		
 		void dump( void ) const;
 		

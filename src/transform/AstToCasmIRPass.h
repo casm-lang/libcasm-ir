@@ -61,6 +61,8 @@ namespace libcasm_ir
 	private:
 		std::unordered_map< AstNode*, Value* >   ast2casmir;
 		std::unordered_map< AstNode*, AstNode* > ast2parent;
+
+		std::vector< Value* > current_scope;
 		
 	public:
 		void visit_init( UnaryNode* node );
@@ -71,6 +73,7 @@ namespace libcasm_ir
 		void visit_derived_def_pre( FunctionDefNode* node );
 		void visit_derived_def( FunctionDefNode* node, T expr );
 		void visit_rule( RuleNode* node );
+		void visit_rule_post( RuleNode* node );
 		void visit_skip(AstNode* node);
 		void visit_statements( AstListNode* node );
 		void visit_parblock( UnaryNode* node );

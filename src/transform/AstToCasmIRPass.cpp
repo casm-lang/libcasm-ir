@@ -200,8 +200,37 @@ void libcasm_ir::AstToCasmIRPass::visit_function_def
 void libcasm_ir::AstToCasmIRPass::visit_derived_def_pre( FunctionDefNode* node )
 {
 	VISIT;
-}
+
+	Type* ftype = getType( node->sym->return_type_ );
+
+	std::vector< Type* > param_types;
 	
+	for( auto argument : node->sym->arguments_ )
+	{
+		param_types.push_back( getType( argument ) );
+		ftype->addParameter( param_types.back() );
+	}
+	
+	Derived* ir_derived = new Derived( node->sym->name.c_str(), ftype );
+	assert( ir_derived );
+
+	for( i32 i = 0; i < node->sym->arguments_.size(); i++ )
+	{
+		const char* param_ident = node->sym->parameter[i];
+		printf( "param %s\n", param_ident );
+		
+		ir_derived->addParameter
+		( Identifier::create
+		  ( param_types[i]
+		  , param_ident
+		//, ir_derived
+		  )
+		);
+	}
+	
+	current_scope.push_back( ir_derived );
+}
+
 void libcasm_ir::AstToCasmIRPass::visit_derived_def( FunctionDefNode* node, T expr )
 {
 	VISIT;
@@ -221,23 +250,17 @@ void libcasm_ir::AstToCasmIRPass::visit_derived_def( FunctionDefNode* node, T ex
 	assert( ir_stmt );
 	ir_stmt->add( ir_expr );
 
-	
-	Type* ftype = getType( node->sym->return_type_ );
-	for( auto argument : node->sym->arguments_ )
+    
+	assert( Value::isa< Derived >( current_scope.back() ) and "invalid scope!" );
+	Derived* ir_derived = (Derived*)current_scope.back();	
+	ir_derived->setContext( ir_stmt );
+		
+	for( auto param : ir_derived->getParameters() )
 	{
-		ftype->addParameter( getType( argument ) );
+		Identifier::forgetSymbol( param->getName() );
 	}
 	
-	Derived* ir_derived =
-		new Derived( node->sym->name.c_str(), ftype );
-	assert( ir_derived );
-	ir_derived->setContext( ir_stmt );
-	
-	// TODO: PPA: CONT'D HERE!!!
-	// for( i32 i = 0; i < node->sym-> arguments_.size(); i++ )
-	// {
-	// 	ir_derived->add( Identifier::create( getType( node->sym->arguments[i] ), node->sy ) );
-	// }
+	current_scope.pop_back();	
 }
 
 void libcasm_ir::AstToCasmIRPass::visit_skip( AstNode* node )
@@ -283,6 +306,37 @@ void libcasm_ir::AstToCasmIRPass::visit_rule( RuleNode* node )
 
 		ir_rule->setContext( ir_scope );
 	}
+
+	// for( i32 i = 0; i < node->sym->arguments_.size(); i++ )
+	// {
+	// 	const char* param_ident = node->sym->parameter[i];
+	// 	printf( "param %s\n", param_ident );
+		
+	// 	ir_derived->addParameter
+	// 	( Identifier::create
+	// 	  ( param_types[i]
+	// 	  , param_ident
+	// 	//, ir_derived
+	// 	  )
+	// 	);
+	// }
+
+	current_scope.push_back( ir_rule );
+}
+
+void libcasm_ir::AstToCasmIRPass::visit_rule_post( RuleNode* node )
+{
+	VISIT;
+
+	assert( Value::isa< Rule >( current_scope.back() ) and "invalid scope!" );
+	Rule* ir_rule = (Rule*)current_scope.back();	
+	
+	// for( auto param : ir_derived->getParameters() )
+	// {
+	// 	Identifier::forgetSymbol( param->getName() );
+	// }
+	
+	current_scope.pop_back();
 }
 
 void libcasm_ir::AstToCasmIRPass::visit_parblock( UnaryNode* node )
@@ -836,7 +890,14 @@ T libcasm_ir::AstToCasmIRPass::visit_function_atom( FunctionAtom* node, T args[]
 	
 	if( node->symbol_type == FunctionAtom::SymbolType::PARAMETER )
 	{
-		Value* ir_ident = Identifier::create( getType( &node->type_ ), node->name.c_str() );
+		Value* scope = 0;
+		if( current_scope.size() > 0 )
+		{
+			scope = current_scope.back();
+		}
+		
+		Value* ir_ident = Identifier::create( getType( &node->type_ ), node->name.c_str(), scope );
+		
 		assert( ir_ident );		
 		ast2casmir[ node ] = ir_ident;
 		return 0;

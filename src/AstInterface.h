@@ -87,10 +87,9 @@ namespace libcasm_ir
 		{
 		}
 		
-		void visit_rule( RuleNode* node )
-		{
-		}
-
+		virtual void visit_rule( RuleNode* node ) = 0;
+		virtual void visit_rule_post( RuleNode* node ) = 0;
+		
 		void visit_skip(AstNode* node)
 		{
 		}

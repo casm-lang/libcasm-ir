@@ -181,8 +181,8 @@ namespace libcasm_ir
 	public:
 	    ~Identifier( void );
 
-		static Identifier* create( Type* type, const char* value );
-
+		static Identifier* create( Type* type, const char* value, Value* scope = 0 );
+		
 		static void forgetSymbol( const char* value );
 		
 		void dump( void ) const;

@@ -63,6 +63,18 @@ void Derived::setContext( TrivialStatement* scope )
 	context = scope;
 }
 
+void Derived::addParameter( Value* value )
+{
+	assert( Value::isa< Identifier >( value ) and "parameter must be an identifier" );
+    
+	parameter.push_back( value );
+}
+
+const std::vector< Value* >& Derived::getParameters( void ) const
+{
+	return parameter;
+}
+
 void Derived::dump( void ) const
 {
 	printf( "[Derived] " );

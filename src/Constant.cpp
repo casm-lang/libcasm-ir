@@ -385,7 +385,7 @@ bool RulePointerConstant::classof( Value const* obj )
 Identifier::Identifier( Type* type, const char* value )
 : Constant< const char* >( value, type, value, true, Value::IDENTIFIER )
 {
-	(*Value::getSymbols())[ ".identifier" ].insert( this );
+    (*Value::getSymbols())[ ".identifier" ].insert( this );
 }
 
 Identifier::~Identifier( void )
@@ -393,9 +393,20 @@ Identifier::~Identifier( void )
 	(*Value::getSymbols())[ ".identifier" ].erase( this );
 }
 
-Identifier* Identifier::create( Type* type, const char* value )
+Identifier* Identifier::create( Type* type, const char* value, Value* scope )
 {
 	SymbolTable& symbols = *getSymbols();
+	//const char* tmp_scope = value;
+		
+	if( scope )
+	{
+		// std::string tmp;
+		// tmp.append( scope->getName() );
+		// tmp.append( "::" );
+		// tmp.append( value );
+		// tmp_scope = tmp.c_str();
+	}
+	
 	auto result = symbols.find( value );
 	if( result != symbols.end() )
 	{
