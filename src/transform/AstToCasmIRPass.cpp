@@ -329,7 +329,7 @@ void libcasm_ir::AstToCasmIRPass::visit_rule_post( RuleNode* node )
 	VISIT;
 
 	assert( Value::isa< Rule >( current_scope.back() ) and "invalid scope!" );
-	Rule* ir_rule = (Rule*)current_scope.back();	
+	//Rule* ir_rule = (Rule*)current_scope.back();	 // PPA: CONT' HERE !!!
 	
 	// for( auto param : ir_derived->getParameters() )
 	// {
