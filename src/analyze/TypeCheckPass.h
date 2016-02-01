@@ -39,6 +39,7 @@
 #include "libcasm-ir.h"
 
 #include "SourceToAstPass.h"
+#include "AstDumpPass.h"
 
 /**
    @brief    TODO

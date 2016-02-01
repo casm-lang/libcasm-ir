@@ -64,7 +64,7 @@ bool SourceToAstPass::run( libpass::PassResult& pr )
     }
 	
 	pr.setResult< SourceToAstPass >( node );
-	
+    
 	return true;
 }
 

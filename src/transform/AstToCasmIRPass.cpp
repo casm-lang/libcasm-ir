@@ -86,7 +86,7 @@ bool libcasm_ir::AstToCasmIRPass::run( libpass::PassResult& pr )
 {
 	specification = 0;
     
-	AstNode* node = (AstNode*)pr.getResult< TypeCheckPass >();
+	AstNode* node = (AstNode*)pr.getResult< AstDumpPass >();
 	
 	AstWalker< AstToCasmIRPass, bool > walker( *this );
 	
@@ -106,7 +106,8 @@ bool libcasm_ir::AstToCasmIRPass::run( libpass::PassResult& pr )
 	
 	
 	pr.setResult< AstToCasmIRPass >( specification );
-	
+	pr.setResult< CasmIRDumpPass >( specification );
+    
 	return true;
 	
 	// std::string input = "";

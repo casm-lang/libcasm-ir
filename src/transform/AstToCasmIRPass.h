@@ -40,6 +40,7 @@
 
 #include "AstInterface.h"
 #include "TypeCheckPass.h"
+#include "CasmIRDumpPass.h"
 
 /**
    @brief    TODO

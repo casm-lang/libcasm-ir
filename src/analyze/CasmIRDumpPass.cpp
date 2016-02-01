@@ -65,8 +65,10 @@ bool CasmIRDumpPass::run( libpass::PassResult& pr )
 	// dotfile.close();
 	
 	
-	Specification* value = (Specification*)pr.getResult< AstToCasmIRPass >();
-    value->iterate
+	Specification* value = (Specification*)pr.getResult< CasmIRDumpPass >();
+	assert( value );
+	
+	value->iterate
 	( Traversal::PREORDER
 	, this
 	);
