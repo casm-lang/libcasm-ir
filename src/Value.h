@@ -36,9 +36,6 @@
    @brief    TODO
    
    TODO
-   
-   @author   Philipp Paulweber
-   @date     2015-02-20
 */
 
 #ifndef _LIB_CASMIR_VALUE_H_
@@ -46,6 +43,7 @@
 
 #include "Type.h"
 #include "CasmIR.h"
+#include "Visitor.h"
 
 namespace libcasm_ir
 {		
@@ -54,6 +52,8 @@ namespace libcasm_ir
 	public:
 		enum ID
 		{ USER
+
+		, SPECIFICATION
 		, AGENT
 		, RULE
 		, DERIVED
@@ -169,7 +169,10 @@ namespace libcasm_ir
 		static inline bool isa( const Value* value )
 		{
 			return isa< TO >( (Value*)value );
-		}		
+		}
+
+	    virtual void iterate
+		( Traversal order, Visitor* visitor = 0, std::function< void( Value* ) > action  = []( Value* ){ } ) final;		
 	};
 }
 

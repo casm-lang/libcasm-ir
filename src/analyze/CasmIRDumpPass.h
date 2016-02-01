@@ -3,7 +3,7 @@
 //  All rights reserved.
 //  
 //  Developed by: Philipp Paulweber
-//                https://github.com/ppaulweber/libcasm-ir
+//                https://github.com/ppaulweber/casm-ir
 //  
 //  Permission is hereby granted, free of charge, to any person obtaining a 
 //  copy of this software and associated documentation files (the "Software"), 
@@ -28,32 +28,38 @@
 //  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
 //  CONTRIBUTORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
 //  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
-//  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS 
+//  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 //  WITH THE SOFTWARE.
 //  
 
-#ifndef _LIB_CASMIR_H_
-#define _LIB_CASMIR_H_
+#ifndef _LIB_CASMIR_CASM_IR_DUMP_PASS_H_
+#define _LIB_CASMIR_CASM_IR_DUMP_PASS_H_
 
-#include "Value.h"
-#include "Type.h"
-#include "User.h"
-#include "Agent.h"
-#include "Rule.h"
-#include "Block.h"
-#include "Derived.h"
-#include "Function.h"
-#include "Constant.h"
-#include "Statement.h"
-#include "Instruction.h"
-#include "Specification.h"
+#include "Pass.h"
+#include "libcasm-ir.h"
+#include "AstToCasmIRPass.h"
+
+/**
+   @brief    TODO
+   
+   TODO
+*/
 
 namespace libcasm_ir
 {
+	class CasmIRDumpPass : public libpass::Pass, Visitor
+	{
+	public:
+		static char id;
+		
+		virtual bool run( libpass::PassResult& pr );
+
+		LIB_CASMIR_VISITOR_INTERFACE;
+	};
 }
+	
+#endif /* _LIB_CASMIR_CASM_IR_DUMP_PASS_H_ */
 
-
-#endif /* _LIB_CASMIR_H_ */
 
 //  
 //  Local variables:

@@ -59,6 +59,10 @@ CPPOBJECTS += obj/Derived.o
 CPPOBJECTS += obj/Function.o
 CPPOBJECTS += obj/Builtin.o
 CPPOBJECTS += obj/Agent.o
+CPPOBJECTS += obj/Visitor.o
+CPPOBJECTS += obj/Specification.o
+
+CPPOBJECTS += obj/CasmIRDumpPass.o
 
 CPPOBJECTS += obj/AstDumpPass.o
 CPPOBJECTS += obj/TypeCheckPass.o
@@ -97,8 +101,8 @@ obj/%.o: src/transform/%.cpp
 
 libcasm-ir.a: $(CPPOBJECTS) $(LIBRARY)
 	@echo "AR  " $@
-	@$(AR) rsc $@.a $(filter %.o,$^)
-	@$(AR) -rcT $@ $@.a $(filter %.a,$^)
+	@$(AR) rsc $@ $(filter %.o,$^)
+#	@$(AR) -rcT $@ $@.a $(filter %.a,$^)
 	@ranlib $@
 #	@rm -f $@.a
 

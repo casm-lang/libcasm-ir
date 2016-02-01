@@ -32,28 +32,39 @@
 //  WITH THE SOFTWARE.
 //  
 
-#ifndef _LIB_CASMIR_H_
-#define _LIB_CASMIR_H_
+#ifndef _LIB_CASMIR_SPECIFICATION_H_
+#define _LIB_CASMIR_SPECIFICATION_H_
 
 #include "Value.h"
-#include "Type.h"
 #include "User.h"
-#include "Agent.h"
-#include "Rule.h"
 #include "Block.h"
-#include "Derived.h"
-#include "Function.h"
-#include "Constant.h"
-#include "Statement.h"
-#include "Instruction.h"
-#include "Specification.h"
 
 namespace libcasm_ir
 {
+	class ParallelBlock;
+	
+	class Specification : public User
+	{
+	private:
+		std::vector< Value* > content;
+		
+	public:
+		Specification( const char* name );
+		
+		~Specification( void );
+		
+	    const std::vector< Value* >& getContent( void ) const;
+		
+		void add( Value* value );
+		
+		void dump( void ) const;
+		
+		static bool classof( Value const* obj );
+	};
 }
 
 
-#endif /* _LIB_CASMIR_H_ */
+#endif /* _LIB_CASMIR_SPECIFICATION_H_ */
 
 //  
 //  Local variables:

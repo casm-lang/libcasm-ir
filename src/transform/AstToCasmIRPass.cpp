@@ -84,6 +84,8 @@ static libcasm_ir::Type* getType( Type* type )
 
 bool libcasm_ir::AstToCasmIRPass::run( libpass::PassResult& pr )
 {
+	specification = 0;
+    
 	AstNode* node = (AstNode*)pr.getResult< TypeCheckPass >();
 	
 	AstWalker< AstToCasmIRPass, bool > walker( *this );
@@ -101,31 +103,44 @@ bool libcasm_ir::AstToCasmIRPass::run( libpass::PassResult& pr )
 	
 	
 	casm_frontend_destroy();
+	
+	
+	pr.setResult< AstToCasmIRPass >( specification );
+	
 	return true;
 	
-	std::string input = "";
+	// std::string input = "";
 	
-	while( input.compare( "q" ) != 0 )
-	{
-		std::getline( cin, input );
+	// while( input.compare( "q" ) != 0 )
+	// {
+	// 	std::getline( cin, input );
 
-		if( input.compare( "#" ) == 0 )
-		{
-			assert( 0 );
-			return false;
-		}
-		else
-		{
-			for( auto r : (*Value::getSymbols())[ input.c_str() ] )
-			{
-				printf( "dumping '%s':\n", input.c_str() );
-				r->dump();
-			}
-		}
-	}
+	// 	if( input.compare( "#" ) == 0 )
+	// 	{
+	// 		assert( 0 );
+	// 		return false;
+	// 	}
+	// 	else
+	// 	{
+	// 		for( auto r : (*Value::getSymbols())[ input.c_str() ] )
+	// 		{
+	// 			printf( "dumping '%s':\n", input.c_str() );
+	// 			r->dump();
+	// 		}
+	// 	}
+	// }
 	
-    return true;
+    // return true;
 }
+
+
+
+libcasm_ir::Specification* libcasm_ir::AstToCasmIRPass::getSpecification( void ) const
+{
+	assert( specification );
+	return specification;
+}
+
 
 #define VISIT printf( "===--- %s:%i: %s: %p: %s\n", \
 __FILE__, __LINE__, __FUNCTION__, node, node->to_str().c_str() )
@@ -141,21 +156,21 @@ __FILE__, __LINE__, __FUNCTION__, node, node->to_str().c_str() )
 void libcasm_ir::AstToCasmIRPass::visit_specification( AstNode* node )
 {
 	// VISIT;
-	// printf( "CASM specification\n" );
-	// //FIXME;
+	assert( !specification );
+    specification = new Specification( global_driver->spec_name.c_str() );
 }
 
 void libcasm_ir::AstToCasmIRPass::visit_init( UnaryNode* node )
 {
 	// VISIT;
-	// printf( "init %s\n", global_driver->init_name.c_str() );
 	RulePointerConstant* ir_init =
 		RulePointerConstant::create( global_driver->init_name.c_str() );
 	
 	Agent* ir_agent = new Agent();
 	assert( ir_agent );
-	
 	ir_agent->setInitRulePointer( ir_init );
+	
+	getSpecification()->add( ir_agent );	
 }
 
 void libcasm_ir::AstToCasmIRPass::visit_body_elements( AstNode* node )
@@ -194,6 +209,8 @@ void libcasm_ir::AstToCasmIRPass::visit_function_def
 	Function* ir_function =
 		new Function( node->sym->name.c_str(), ftype );
 	assert( ir_function );
+	
+	getSpecification()->add( ir_function );
 }
 
     
@@ -261,6 +278,8 @@ void libcasm_ir::AstToCasmIRPass::visit_derived_def( FunctionDefNode* node, T ex
 	}
 	
 	current_scope.pop_back();	
+
+	getSpecification()->add( ir_derived );
 }
 
 void libcasm_ir::AstToCasmIRPass::visit_skip( AstNode* node )
@@ -322,6 +341,8 @@ void libcasm_ir::AstToCasmIRPass::visit_rule( RuleNode* node )
 	// }
 
 	current_scope.push_back( ir_rule );
+
+	getSpecification()->add( ir_rule );
 }
 
 void libcasm_ir::AstToCasmIRPass::visit_rule_post( RuleNode* node )

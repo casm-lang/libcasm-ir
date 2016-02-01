@@ -103,7 +103,7 @@ bool Statement::classof( Value const* obj )
 
 
 TrivialStatement::TrivialStatement( ExecutionSemanticsBlock* scope )
-: Statement( ".block", 0, scope, Value::TRIVIAL_STATEMENT )
+: Statement( ".statement", 0, scope, Value::TRIVIAL_STATEMENT )
 {
 }
 
@@ -129,7 +129,7 @@ bool TrivialStatement::classof( Value const* obj )
 
 
 BranchStatement::BranchStatement( ExecutionSemanticsBlock* scope )
-: Statement( ".block", 0, scope, Value::BRANCH_STATEMENT )
+: Statement( ".branch", 0, scope, Value::BRANCH_STATEMENT )
 {
 }
 

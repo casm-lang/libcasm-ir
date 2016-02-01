@@ -40,6 +40,7 @@
 
 #include "Value.h"
 #include "libcasm-ir.h"
+#include "Specification.h"
 
 using namespace libcasm_ir;
 
@@ -148,6 +149,87 @@ void Value::dump( void ) const
 		}
 	}
 }
+
+
+void Value::iterate( Traversal order, Visitor* visitor, std::function< void( Value* ) > action )
+{
+	if( order == Traversal::PREORDER )
+	{
+	    action( /*order, */ this );
+	}
+	
+	if( visitor )
+	{
+		visitor->dispatch( Visitor::Stage::PROLOG, this );
+	}
+
+	if( Value::isa< Specification >( this ) )
+	{
+	    Specification* obj = ((Specification*)this);
+		
+		for( Value* p : obj->getContent() )
+		{
+			p->iterate( order, visitor, action );
+		}
+	}
+	else if( Value::isa< Rule >( this ) )
+	{
+	    Rule* obj = ((Rule*)this);
+		
+		// for( Value* p : obj->getParameters() )
+		// {
+		// 	p->iterate( order, visitor, action );
+		// }
+				
+		if( visitor )
+		{
+			visitor->dispatch( Visitor::Stage::INTERLOG, this );
+		}
+
+		Value* context = obj->getContext();
+		assert( context );
+		
+	    context->iterate( order, visitor, action );
+	}
+	else if( Value::isa< ExecutionSemanticsBlock >( this ) )
+	{
+		for( Value* block : ((ExecutionSemanticsBlock*)this)->getBlocks() )
+		{
+			assert( block );
+			block->iterate( order, visitor, action );
+		}
+	}
+	else if( Value::isa< TrivialStatement >( this ) )
+	{
+		for( Value* instr : ((TrivialStatement*)this)->getInstructions() )
+		{
+			assert( instr );
+			instr->iterate( order, visitor, action );
+		}
+	}
+	
+	
+	// else if( Value::isa< Scope >( this ) )
+	// {
+	// 	for( Block* block : ((Scope*)this)->getBlocks() )
+	// 	{
+	// 		assert( block );
+	// 		block->iterate( order, visitor, action );
+	// 	}
+	// }
+	
+	if( visitor )
+	{
+		visitor->dispatch( Visitor::Stage::EPILOG, this );
+	}
+	
+	if( order == Traversal::POSTORDER )
+	{
+	    action( /*order, */ this );
+	}
+}
+
+
 
 
 //  

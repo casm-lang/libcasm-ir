@@ -32,28 +32,55 @@
 //  WITH THE SOFTWARE.
 //  
 
-#ifndef _LIB_CASMIR_H_
-#define _LIB_CASMIR_H_
-
-#include "Value.h"
-#include "Type.h"
-#include "User.h"
-#include "Agent.h"
-#include "Rule.h"
-#include "Block.h"
-#include "Derived.h"
-#include "Function.h"
-#include "Constant.h"
-#include "Statement.h"
-#include "Instruction.h"
 #include "Specification.h"
+#include "libcasm-ir.h"
 
-namespace libcasm_ir
+using namespace libcasm_ir;
+
+
+Specification::Specification( const char* name )
+: User( name, 0, Value::SPECIFICATION )
+{			
+	(*Value::getSymbols())[ ".specification" ].insert( this );
+}
+
+Specification::~Specification( void )
+{			
+	(*Value::getSymbols())[ ".specification" ].erase( this );
+}
+
+const std::vector< Value* >& Specification::getContent( void ) const
 {
+	return content;
+}
+		
+void Specification::add( Value* value )
+{
+	assert( value );
+	
+	assert
+	(  Value::isa< Rule >( value )
+	or Value::isa< Derived >( value )
+	or Value::isa< Function >( value )
+	or Value::isa< Agent >( value )
+	);
+	
+	content.push_back( value );
+}
+
+void Specification::dump( void ) const
+{
+	printf( "[Specification ] " );
+	debug();
+	printf( "<<not implemented due to new dump pass>>\n" );
+}
+
+bool Specification::classof( Value const* obj )
+{
+	return obj->getValueID() == Value::SPECIFICATION;
 }
 
 
-#endif /* _LIB_CASMIR_H_ */
 
 //  
 //  Local variables:

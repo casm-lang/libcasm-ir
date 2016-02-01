@@ -63,8 +63,12 @@ namespace libcasm_ir
 		std::unordered_map< AstNode*, AstNode* > ast2parent;
 
 		std::vector< Value* > current_scope;
+
+		Specification* specification;
 		
 	public:
+		Specification* getSpecification( void ) const;
+		
 		void visit_init( UnaryNode* node );
 		void visit_specification( AstNode* node );	
 		void visit_body_elements( AstNode* node );
