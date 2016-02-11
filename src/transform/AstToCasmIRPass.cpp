@@ -326,7 +326,7 @@ void libcasm_ir::AstToCasmIRPass::visit_rule( RuleNode* node )
 
 		ir_rule->setContext( ir_scope );
 	}
-
+	
 	// for( i32 i = 0; i < node->sym->arguments_.size(); i++ )
 	// {
 	// 	const char* param_ident = node->sym->parameter[i];
@@ -379,7 +379,9 @@ void libcasm_ir::AstToCasmIRPass::visit_parblock( UnaryNode* node )
 	
 	if( Value::isa< Rule >( parent ) )
 	{
-		((Rule*)parent)->setContext( ir_scope );
+		Rule* ir_rule = ((Rule*)parent);
+		ir_rule->setContext( ir_scope );
+		ir_scope->bind( ir_rule );
 	}
 	else if( Value::isa< ExecutionSemanticsBlock >( parent ) )
 	{

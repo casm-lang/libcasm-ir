@@ -85,11 +85,43 @@ namespace libcasm_ir
 		static bool classof( Value const* obj );
 	};
 	
-	class ParallelBlock : public ExecutionSemanticsBlock
+	template< class C >
+	class Binding
+	{
+	private:
+		C* reference;
+
+	public:
+		void bind( C* object )
+		{
+			assert( !reference && "already bounded to a reference" );
+			assert( object && "invalid object reference to bind" );
+
+			reference = object;
+		}
+		
+		C* unbind( void )
+		{
+			assert( reference && "object reference was never bound" );
+
+			C* tmp = reference;
+			reference = 0;
+			return tmp;
+		}
+
+	    C* getBound( void ) const
+		{
+			assert( reference && "object reference was never bound" );
+			return reference;
+		}
+	};
+	
+	
+	class ParallelBlock : public ExecutionSemanticsBlock, public Binding< Rule >
 	{
 	public:
 		ParallelBlock( ExecutionSemanticsBlock* parent = 0 );
-
+		
 		void dump( void ) const;
 		
 		static bool classof( Value const* obj );
