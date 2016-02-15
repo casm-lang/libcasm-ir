@@ -63,6 +63,7 @@ void Specification::add( Value* value )
 	or Value::isa< Derived >( value )
 	or Value::isa< Function >( value )
 	or Value::isa< Agent >( value )
+	or Value::isa< ConstantValue >( value )
 	);
 	
 	content.push_back( value );

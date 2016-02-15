@@ -342,8 +342,6 @@ void libcasm_ir::AstToCasmIRPass::visit_rule( RuleNode* node )
 	// }
 
 	current_scope.push_back( ir_rule );
-
-	getSpecification()->add( ir_rule );
 }
 
 void libcasm_ir::AstToCasmIRPass::visit_rule_post( RuleNode* node )
@@ -351,8 +349,11 @@ void libcasm_ir::AstToCasmIRPass::visit_rule_post( RuleNode* node )
 	VISIT;
 
 	assert( Value::isa< Rule >( current_scope.back() ) and "invalid scope!" );
-	//Rule* ir_rule = (Rule*)current_scope.back();	 // PPA: CONT' HERE !!!
+	Rule* ir_rule = (Rule*)current_scope.back();
 	
+	getSpecification()->add( ir_rule );
+	
+    // PPA: CONT' HERE !!!
 	// for( auto param : ir_derived->getParameters() )
 	// {
 	// 	Identifier::forgetSymbol( param->getName() );
@@ -1039,6 +1040,7 @@ T libcasm_ir::AstToCasmIRPass::visit_undef_atom( UndefAtom* node )
 	assert( ir_const );
     ast2casmir[ node ] = ir_const;
 	
+	getSpecification()->add( ir_const );
 	return 0;
 }
 
@@ -1053,6 +1055,7 @@ T libcasm_ir::AstToCasmIRPass::visit_boolean_atom( BooleanAtom* node )
 	assert( ir_const );
     ast2casmir[ node ] = ir_const;
 
+	getSpecification()->add( ir_const );
 	return 0;
 }
 
@@ -1066,6 +1069,7 @@ T libcasm_ir::AstToCasmIRPass::visit_int_atom( IntegerAtom* node )
 	assert( ir_const );
     ast2casmir[ node ] = ir_const;
 	
+	getSpecification()->add( ir_const );
 	return 0;
 }
 
@@ -1078,6 +1082,7 @@ T libcasm_ir::AstToCasmIRPass::visit_bit_atom( IntegerAtom* node )
 	assert( ir_const );
     ast2casmir[ node ] = ir_const;
 	
+	getSpecification()->add( ir_const );
 	return 0;
 }
 
@@ -1104,6 +1109,8 @@ T libcasm_ir::AstToCasmIRPass::visit_string_atom( StringAtom* node )
     ast2casmir[ node ] = ir_const;
 	
 	printf( "%s\n", node->string.c_str() );
+
+	getSpecification()->add( ir_const );
 	return 0;
 }
 
@@ -1116,6 +1123,7 @@ T libcasm_ir::AstToCasmIRPass::visit_self_atom( SelfAtom* node )
     assert( ir_const );
     ast2casmir[ node ] = ir_const;
 	
+	getSpecification()->add( ir_const );
 	return 0;
 }
 
@@ -1129,6 +1137,7 @@ T libcasm_ir::AstToCasmIRPass::visit_rule_atom( RuleAtom* node )
 	
 	printf( "rule: @%s\n", node->name.c_str() );
 	
+	getSpecification()->add( ir_const );
 	return 0;
 }
 	
@@ -1176,6 +1185,7 @@ T libcasm_ir::AstToCasmIRPass::visit_builtin_atom( BuiltinAtom* node, T args[], 
         }
     }
 	
+	getSpecification()->add( ir_call );
     return 0;
 }
 

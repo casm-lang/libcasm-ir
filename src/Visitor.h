@@ -67,6 +67,8 @@ namespace libcasm_ir
 	class AddInstruction;
 	class DivInstruction;
 	class AndInstruction;
+
+	class IntegerConstant;
 	
 	enum class Traversal
 	{ PREORDER
@@ -123,7 +125,10 @@ namespace libcasm_ir
 		PREFIX void visit_epilog( libcasm_ir::DivInstruction& value ) POSTFIX; \
 																		\
 		PREFIX void visit_prolog( libcasm_ir::AndInstruction& value ) POSTFIX; \
-		PREFIX void visit_epilog( libcasm_ir::AndInstruction& value ) POSTFIX
+		PREFIX void visit_epilog( libcasm_ir::AndInstruction& value ) POSTFIX; \
+																		\
+		PREFIX void visit_prolog( libcasm_ir::IntegerConstant& value ) POSTFIX; \
+		PREFIX void visit_epilog( libcasm_ir::IntegerConstant& value ) POSTFIX
 		
 		LIB_CASMIR_VISITOR_INTERFACE_( virtual, = 0 );
 	};

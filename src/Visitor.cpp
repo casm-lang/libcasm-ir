@@ -76,15 +76,22 @@ void Visitor::dispatch( Stage stage, Value* value )
 		CASE_VALUE( DIV_INSTRUCTION,      DivInstruction );
 		
 		CASE_VALUE( AND_INSTRUCTION,      AndInstruction );
+
+		CASE_VALUE( INTEGER_CONSTANT,     IntegerConstant );
 		
 	    default:
-			printf
-			( "%s:%i: warning: unimplemented value name '%s' with id '%i' to dispatch\n"
+		{
+			fprintf
+			( stderr
+			, "%s:%i: error: unimplemented value name '%s' with id '%i' to dispatch\n"
 			, __FILE__
 			, __LINE__
 			, value->getName()
 			, value->getValueID()
 			);
+			assert(0);
+			break;
+		}
 	}
 }
 

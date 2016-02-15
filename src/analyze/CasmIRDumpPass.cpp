@@ -203,6 +203,14 @@ void CasmIRDumpPass::visit_epilog( AndInstruction& value )
 	DUMP_PREFIX; DUMP_POSTFIX;
 }
 
+void CasmIRDumpPass::visit_prolog( IntegerConstant& value )
+{
+	DUMP_PREFIX; DUMP_POSTFIX;
+}
+void CasmIRDumpPass::visit_epilog( IntegerConstant& value )
+{
+	DUMP_PREFIX; DUMP_POSTFIX;
+}
 
 
 //  
