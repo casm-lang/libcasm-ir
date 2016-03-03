@@ -80,137 +80,48 @@ bool CasmIRDumpPass::run( libpass::PassResult& pr )
 #define DUMP_PREFIX  printf( "%-14s: %p, %s ", __FUNCTION__, &value, value.getName() )
 #define DUMP_POSTFIX printf( "\n" );
 
-void CasmIRDumpPass::visit_prolog( Specification& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
-void CasmIRDumpPass::visit_epilog( Specification& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
+void CasmIRDumpPass::visit_prolog( Specification& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
+void CasmIRDumpPass::visit_epilog( Specification& value ) {}
 
-void CasmIRDumpPass::visit_prolog( Agent& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
-void CasmIRDumpPass::visit_epilog( Agent& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
+void CasmIRDumpPass::visit_prolog( Agent& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
+void CasmIRDumpPass::visit_epilog( Agent& value ) {}
 
-void CasmIRDumpPass::visit_prolog( Function& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
-void CasmIRDumpPass::visit_epilog( Function& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
+void CasmIRDumpPass::visit_prolog( Function& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
+void CasmIRDumpPass::visit_epilog( Function& value ) {}
 
-void CasmIRDumpPass::visit_prolog( Rule& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
-void CasmIRDumpPass::visit_interlog( Rule& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
-void CasmIRDumpPass::visit_epilog( Rule& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
+void CasmIRDumpPass::visit_prolog( Rule& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
+void CasmIRDumpPass::visit_interlog( Rule& value ) {}
+void CasmIRDumpPass::visit_epilog( Rule& value ) {}
 
+void CasmIRDumpPass::visit_prolog( ParallelBlock& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
+void CasmIRDumpPass::visit_epilog( ParallelBlock& value ) {}
 
-void CasmIRDumpPass::visit_prolog( ParallelBlock& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
-void CasmIRDumpPass::visit_epilog( ParallelBlock& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
+void CasmIRDumpPass::visit_prolog( SequentialBlock& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
+void CasmIRDumpPass::visit_epilog( SequentialBlock& value ) {}
 
-void CasmIRDumpPass::visit_prolog( SequentialBlock& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
-void CasmIRDumpPass::visit_epilog( SequentialBlock& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
-
-void CasmIRDumpPass::visit_prolog( TrivialStatement& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
-void CasmIRDumpPass::visit_epilog( TrivialStatement& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
-
+void CasmIRDumpPass::visit_prolog( TrivialStatement& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
+void CasmIRDumpPass::visit_epilog( TrivialStatement& value ) {}
 		
-void CasmIRDumpPass::visit_prolog( LocationInstruction& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
-void CasmIRDumpPass::visit_epilog( LocationInstruction& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
+void CasmIRDumpPass::visit_prolog( LocationInstruction& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
+void CasmIRDumpPass::visit_epilog( LocationInstruction& value ) {}
 
-void CasmIRDumpPass::visit_prolog( LookupInstruction& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
-void CasmIRDumpPass::visit_epilog( LookupInstruction& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
+void CasmIRDumpPass::visit_prolog( LookupInstruction& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
+void CasmIRDumpPass::visit_epilog( LookupInstruction& value ) {}
 
-void CasmIRDumpPass::visit_prolog( UpdateInstruction& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
-void CasmIRDumpPass::visit_epilog( UpdateInstruction& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
+void CasmIRDumpPass::visit_prolog( UpdateInstruction& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
+void CasmIRDumpPass::visit_epilog( UpdateInstruction& value ) {}
 
-void CasmIRDumpPass::visit_prolog( AddInstruction& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
-void CasmIRDumpPass::visit_epilog( AddInstruction& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
+void CasmIRDumpPass::visit_prolog( AddInstruction& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
+void CasmIRDumpPass::visit_epilog( AddInstruction& value ) {}
 
-void CasmIRDumpPass::visit_prolog( DivInstruction& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
-void CasmIRDumpPass::visit_epilog( DivInstruction& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
+void CasmIRDumpPass::visit_prolog( DivInstruction& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
+void CasmIRDumpPass::visit_epilog( DivInstruction& value ) {}
 
-void CasmIRDumpPass::visit_prolog( AndInstruction& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
-void CasmIRDumpPass::visit_epilog( AndInstruction& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
+void CasmIRDumpPass::visit_prolog( AndInstruction& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
+void CasmIRDumpPass::visit_epilog( AndInstruction& value ) {}
 
-void CasmIRDumpPass::visit_prolog( IntegerConstant& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
-void CasmIRDumpPass::visit_epilog( IntegerConstant& value )
-{
-	DUMP_PREFIX; DUMP_POSTFIX;
-}
+void CasmIRDumpPass::visit_prolog( IntegerConstant& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
+void CasmIRDumpPass::visit_epilog( IntegerConstant& value ) {}
 
 
 //  

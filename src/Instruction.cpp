@@ -51,15 +51,27 @@ void Instruction::setStatement( Statement* stmt )
 	{
 		if( Value::isa< Instruction >( value ) )
 		{
-			printf( "[Instr] %s: %p, %p\n", __FUNCTION__, stmt, value );
-			stmt->add( static_cast< Instruction* >( value ) );
+			Instruction* instr = (Instruction*)value;
+			if( instr->getStatement() == 0 )
+			{			
+				stmt->add( ( value ) );
+			}
+			else if( instr->getStatement() != stmt )
+			{
+				fprintf
+				( stderr
+				, "error: %s:%i: Instruction %p does belong to a different Statement block\n"
+				, __FUNCTION__, __LINE__, value
+				);
+				assert(0);
+			}
 		}
 	}
 }
 
 const Statement* Instruction::getStatement( void ) const
 {
-	assert( statement );
+	//assert( statement );
 	return statement;
 }
 		
