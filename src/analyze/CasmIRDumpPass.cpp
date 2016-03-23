@@ -77,7 +77,7 @@ bool CasmIRDumpPass::run( libpass::PassResult& pr )
 }
 
 
-#define DUMP_PREFIX  printf( "%-14s: %p, %s ", __FUNCTION__, &value, value.getName() )
+#define DUMP_PREFIX  printf( "%-14s: %p, %s, %s ", __FUNCTION__, &value, value.getLabel(), value.getName() )
 #define DUMP_POSTFIX printf( "\n" );
 
 void CasmIRDumpPass::visit_prolog( Specification& value ) { DUMP_PREFIX; DUMP_POSTFIX; }

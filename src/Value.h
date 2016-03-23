@@ -45,9 +45,11 @@
 #include "CasmIR.h"
 #include "Visitor.h"
 
+#include "stdhl/cpp/Labeling.h"
+
 namespace libcasm_ir
 {		
-	class Value : public CasmIR
+	class Value : public CasmIR, public libstdhl::Labeling
 	{
 	public:
 		enum ID
@@ -172,7 +174,14 @@ namespace libcasm_ir
 		}
 
 	    virtual void iterate
-		( Traversal order, Visitor* visitor = 0, std::function< void( Value* ) > action  = []( Value* ){ } ) final;		
+		( Traversal order, Visitor* visitor = 0, std::function< void( Value* ) > action  = []( Value* ){ } ) final;
+
+		virtual u64 getLabelID( void )
+		{
+			static u64 cnt = -1;
+			cnt++;
+			return cnt;
+		}
 	};
 }
 
