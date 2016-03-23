@@ -48,6 +48,8 @@
 #include "Instruction.h"
 #include "Specification.h"
 
+#include "stdhl/cpp/Allocator.h"
+
 namespace libcasm_ir
 {
 }

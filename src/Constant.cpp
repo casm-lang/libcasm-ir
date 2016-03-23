@@ -396,25 +396,31 @@ Identifier::~Identifier( void )
 Identifier* Identifier::create( Type* type, const char* value, Value* scope )
 {
 	SymbolTable& symbols = *getSymbols();
-	//const char* tmp_scope = value;
-		
-	if( scope )
-	{
-		// std::string tmp;
-		// tmp.append( scope->getName() );
-		// tmp.append( "::" );
-		// tmp.append( value );
-		// tmp_scope = tmp.c_str();
-	}
+
+	const char* tmp = value;
 	
-	auto result = symbols.find( value );
+	// if( scope )
+	// {
+	// 	tmp = libstdhl::Allocator::string( string(scope->getName()) + "::" + string(tmp) );
+	// 	// std::string tmp;
+	// 	// tmp.append( scope->getName() );
+	// 	// tmp.append( "::" );
+	// 	// tmp.append( value );
+	// 	// tmp_scope = tmp.c_str();
+	// }
+	
+	auto result = symbols.find( tmp );
 	if( result != symbols.end() )
 	{
 		assert( result->second.size() == 1 );
 		Value* x = *result->second.begin();
-	 	assert( x->getType()->getID() == type->getID() );
+		
+		assert( x->getType()->getID() == type->getID() );
+		//if( x->getType()->getID() == type->getID() )
+		//{
 		printf( "[Ident] found '%s' of type %lu @ %p\n", value, type->getID(), x );
 		return (Identifier*)x;
+		//}
 	}
 	
 	printf( "[Ident] creating '%s' of type %lu\n", value, type->getID() );

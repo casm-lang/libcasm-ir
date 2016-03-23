@@ -158,20 +158,28 @@ void libcasm_ir::AstToCasmIRPass::visit_specification( AstNode* node )
 {
 	// VISIT;
 	assert( !specification );
-    specification = new Specification( global_driver->spec_name.c_str() );
+    specification = new libcasm_ir::Specification( global_driver->spec_name.c_str() );
 }
 
 void libcasm_ir::AstToCasmIRPass::visit_init( UnaryNode* node )
 {
 	// VISIT;
-	RulePointerConstant* ir_init =
-		RulePointerConstant::create( global_driver->init_name.c_str() );
+	RulePointerConstant* ir_init = RulePointerConstant::create( global_driver->init_name.c_str() );
 	
+	// single execution agent!
 	Agent* ir_agent = new Agent();
 	assert( ir_agent );
-	ir_agent->setInitRulePointer( ir_init );
+	ir_agent->setInitRulePointer( ir_init );	
+	getSpecification()->add( ir_agent );
 	
-	getSpecification()->add( ir_agent );	
+	// 'program' function!
+	libcasm_ir::Type* ftype = new libcasm_ir::Type( libcasm_ir::Type::ID::RULE_POINTER );
+	assert( ftype );
+	ftype->addParameter( &libcasm_ir::AgentType );	
+	libcasm_ir::Function* ir_function = new libcasm_ir::Function( libstdhl::Allocator::string( "program" ), ftype );
+	assert( ir_function );	
+	getSpecification()->add( ir_function );
+	
 }
 
 void libcasm_ir::AstToCasmIRPass::visit_body_elements( AstNode* node )
@@ -624,7 +632,7 @@ void libcasm_ir::AstToCasmIRPass::visit_assure( UnaryNode* node, T expr )
 	VISIT;
 	FIXME;
 }
-    
+
 void libcasm_ir::AstToCasmIRPass::visit_let( LetNode* node, T var )
 {
 	VISIT;
