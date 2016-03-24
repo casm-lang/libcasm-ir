@@ -158,7 +158,7 @@ void libcasm_ir::AstToCasmIRPass::visit_specification( AstNode* node )
 {
 	// VISIT;
 	assert( !specification );
-    specification = new libcasm_ir::Specification( global_driver->spec_name.c_str() );
+    specification = new libcasm_ir::Specification( libstdhl::Allocator::string( global_driver->spec_name ) );
 }
 
 void libcasm_ir::AstToCasmIRPass::visit_init( UnaryNode* node )
