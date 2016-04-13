@@ -61,14 +61,14 @@ INCLUDE += -I ./src/analyze
 INCLUDE += -I ./src/transform
 INCLUDE += -I ../
 INCLUDE += -I ../casm-fe/src
-INCLUDE += -I ../casm-fe/build/src
+INCLUDE += -I ../casm-fe/obj/src
 INCLUDE += -I ../pass/src
 
-LIBRARY += ../casm-fe/build/libfrontend.a
+LIBRARY += ../casm-fe/obj/libfrontend.a
 
 default: $(LIBRARY) obj $(TARGET)
 
-../casm-fe/build/libfrontend.a:
+../casm-fe/obj/libfrontend.a:
 	$(MAKE) -C ../casm-fe
 
 obj:
