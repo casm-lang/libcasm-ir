@@ -155,11 +155,32 @@ void Value::iterate( Traversal order, Visitor* visitor, std::function< void( Val
 	if( Value::isa< Specification >( this ) )
 	{
 	    Specification* obj = ((Specification*)this);
+		const std::vector< Value* > empty = {};
 		
-		for( Value* p : obj->getContent() )
+		for( Value* p : (obj->has< Agent >() ? obj->get< Agent >() : empty ) )
 		{
 			p->iterate( order, visitor, action );
 		}
+
+		for( Value* p : (obj->has< Function >() ? obj->get< Function >() : empty ) )
+		{
+			p->iterate( order, visitor, action );
+		}
+
+		for( Value* p : (obj->has< Derived >() ? obj->get< Derived >() : empty ) )
+		{
+			p->iterate( order, visitor, action );
+		}
+
+		for( Value* p : (obj->has< ConstantValue >() ? obj->get< ConstantValue >() : empty ) )
+		{
+			p->iterate( order, visitor, action );
+		}
+		
+		for( Value* p : (obj->has< Rule >() ? obj->get< Rule >() : empty ) )
+		{
+			p->iterate( order, visitor, action );
+		}		
 	}
 	else if( Value::isa< Rule >( this ) )
 	{

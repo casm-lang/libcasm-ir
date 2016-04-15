@@ -112,7 +112,7 @@ void Instruction::dump( void ) const
 
 bool Instruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::INSTRUCTION
+	return obj->getValueID() == classid()
 		or BinaryInstruction::classof( obj )
 		or UnaryInstruction::classof( obj )
 		or SkipInstruction::classof( obj )
@@ -138,7 +138,7 @@ Value* UnaryInstruction::get( void ) const
 
 bool UnaryInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::UNARY_INSTRUCTION
+	return obj->getValueID() == classid()
 		or AssertInstruction::classof( obj )
 		or LookupInstruction::classof( obj )
 		or BranchInstruction::classof( obj )
@@ -165,7 +165,7 @@ Value* BinaryInstruction::getRHS( void ) const
 
 bool BinaryInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::BINARY_INSTRUCTION
+	return obj->getValueID() == classid()
 		or UpdateInstruction::classof( obj )
 		or LetInstruction::classof( obj )
 		or OperatorInstruction::classof( obj )
@@ -182,7 +182,7 @@ SkipInstruction::SkipInstruction( void )
 
 bool SkipInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::SKIP_INSTRUCTION;
+	return obj->getValueID() == classid();
 }
 
 
@@ -197,7 +197,7 @@ UpdateInstruction::UpdateInstruction( Value* location, Value* expr )
 
 bool UpdateInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::UPDATE_INSTRUCTION;
+	return obj->getValueID() == classid();
 }
 
 
@@ -210,7 +210,7 @@ LetInstruction::LetInstruction( Value* ident, Value* expr )
 
 bool LetInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::LET_INSTRUCTION;
+	return obj->getValueID() == classid();
 }
 
 
@@ -225,7 +225,7 @@ LookupInstruction::LookupInstruction( Value* location )
 
 bool LookupInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::LOOKUP_INSTRUCTION;
+	return obj->getValueID() == classid();
 }
 
 
@@ -241,7 +241,7 @@ LocationInstruction::LocationInstruction( Value* function )
 
 bool LocationInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::LOCATION_INSTRUCTION;
+	return obj->getValueID() == classid();
 }
 
 
@@ -261,7 +261,7 @@ CallInstruction::CallInstruction( Value* symbol )
 
 bool CallInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::CALL_INSTRUCTION;
+	return obj->getValueID() == classid();
 }
 
 
@@ -277,7 +277,7 @@ PrintInstruction::PrintInstruction( Value* channel )
 
 bool PrintInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::PRINT_INSTRUCTION;
+	return obj->getValueID() == classid();
 }
 
 
@@ -291,7 +291,7 @@ AssertInstruction::AssertInstruction( Value* condition )
 
 bool AssertInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::ASSERT_INSTRUCTION;
+	return obj->getValueID() == classid();
 }
 
 
@@ -307,7 +307,7 @@ SwitchInstruction::SwitchInstruction( Value* expression )
 
 bool SwitchInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::SWITCH_INSTRUCTION;
+	return obj->getValueID() == classid();
 }
 
 
@@ -326,7 +326,7 @@ BranchInstruction::BranchInstruction( Value* condition, Value* case_true, Value*
 
 bool BranchInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::BRANCH_INSTRUCTION;
+	return obj->getValueID() == classid();
 }
 
 Value* BranchInstruction::getTrue ( void ) const
@@ -401,7 +401,7 @@ OperatorInstruction::OperatorInstruction
 
 bool OperatorInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::OPERATOR_INSTRUCTION
+	return obj->getValueID() == classid()
 		or AddInstruction::classof( obj )
 		or SubInstruction::classof( obj )
 		or MulInstruction::classof( obj )
@@ -428,7 +428,7 @@ AddInstruction::AddInstruction( Value* lhs, Value* rhs )
 }
 bool AddInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::ADD_INSTRUCTION;
+	return obj->getValueID() == classid();
 }
 
 SubInstruction::SubInstruction( Value* lhs, Value* rhs )
@@ -437,7 +437,7 @@ SubInstruction::SubInstruction( Value* lhs, Value* rhs )
 }
 bool SubInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::SUB_INSTRUCTION;
+	return obj->getValueID() == classid();
 }
 
 MulInstruction::MulInstruction( Value* lhs, Value* rhs )
@@ -446,7 +446,7 @@ MulInstruction::MulInstruction( Value* lhs, Value* rhs )
 }
 bool MulInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::MUL_INSTRUCTION;
+	return obj->getValueID() == classid();
 }
 
 DivInstruction::DivInstruction( Value* lhs, Value* rhs )
@@ -455,7 +455,7 @@ DivInstruction::DivInstruction( Value* lhs, Value* rhs )
 }
 bool DivInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::DIV_INSTRUCTION;
+	return obj->getValueID() == classid();
 }
 
 RivInstruction::RivInstruction( Value* lhs, Value* rhs )
@@ -464,7 +464,7 @@ RivInstruction::RivInstruction( Value* lhs, Value* rhs )
 }
 bool RivInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::RIV_INSTRUCTION;
+	return obj->getValueID() == classid();
 }
 
 ModInstruction::ModInstruction( Value* lhs, Value* rhs )
@@ -473,7 +473,7 @@ ModInstruction::ModInstruction( Value* lhs, Value* rhs )
 }
 bool ModInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::MOD_INSTRUCTION;
+	return obj->getValueID() == classid();
 }
 
 
@@ -484,7 +484,7 @@ EquInstruction::EquInstruction( Value* lhs, Value* rhs )
 }
 bool EquInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::EQU_INSTRUCTION;
+	return obj->getValueID() == classid();
 }
 
 NeqInstruction::NeqInstruction( Value* lhs, Value* rhs )
@@ -493,7 +493,7 @@ NeqInstruction::NeqInstruction( Value* lhs, Value* rhs )
 }
 bool NeqInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::NEQ_INSTRUCTION;
+	return obj->getValueID() == classid();
 }
 
 LthInstruction::LthInstruction( Value* lhs, Value* rhs )
@@ -502,7 +502,7 @@ LthInstruction::LthInstruction( Value* lhs, Value* rhs )
 }
 bool LthInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::LTH_INSTRUCTION;
+	return obj->getValueID() == classid();
 }
 
 LeqInstruction::LeqInstruction( Value* lhs, Value* rhs )
@@ -511,7 +511,7 @@ LeqInstruction::LeqInstruction( Value* lhs, Value* rhs )
 }
 bool LeqInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::LEQ_INSTRUCTION;
+	return obj->getValueID() == classid();
 }
 
 GthInstruction::GthInstruction( Value* lhs, Value* rhs )
@@ -520,7 +520,7 @@ GthInstruction::GthInstruction( Value* lhs, Value* rhs )
 }
 bool GthInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::GTH_INSTRUCTION;
+	return obj->getValueID() == classid();
 }
 
 GeqInstruction::GeqInstruction( Value* lhs, Value* rhs )
@@ -529,7 +529,7 @@ GeqInstruction::GeqInstruction( Value* lhs, Value* rhs )
 }
 bool GeqInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::GEQ_INSTRUCTION;
+	return obj->getValueID() == classid();
 }
 
 OrInstruction::OrInstruction( Value* lhs, Value* rhs )
@@ -538,7 +538,7 @@ OrInstruction::OrInstruction( Value* lhs, Value* rhs )
 }
 bool OrInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::OR_INSTRUCTION;
+	return obj->getValueID() == classid();
 }
 
 XorInstruction::XorInstruction( Value* lhs, Value* rhs )
@@ -547,7 +547,7 @@ XorInstruction::XorInstruction( Value* lhs, Value* rhs )
 }
 bool XorInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::XOR_INSTRUCTION;
+	return obj->getValueID() == classid();
 }
 
 AndInstruction::AndInstruction( Value* lhs, Value* rhs )
@@ -556,7 +556,7 @@ AndInstruction::AndInstruction( Value* lhs, Value* rhs )
 }
 bool AndInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::AND_INSTRUCTION;
+	return obj->getValueID() == classid();
 }
 
 
@@ -581,7 +581,7 @@ NotInstruction::NotInstruction( Value* lhs )
 }
 bool NotInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::NOT_INSTRUCTION;
+	return obj->getValueID() == classid();
 }
 
 MovInstruction::MovInstruction( Value* lhs )
@@ -592,7 +592,7 @@ MovInstruction::MovInstruction( Value* lhs )
 }
 bool MovInstruction::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::MOV_INSTRUCTION;
+	return obj->getValueID() == classid();
 }
 
 

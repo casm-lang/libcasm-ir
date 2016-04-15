@@ -54,6 +54,7 @@ namespace libcasm_ir
 		
 		void dump( void ) const;
 		
+		static inline Value::ID classid( void ) { return Value::DERIVED; };
 		static bool classof( Value const* obj );
 	};
 }

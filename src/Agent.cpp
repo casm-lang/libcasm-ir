@@ -65,7 +65,7 @@ void Agent::dump( void ) const
 
 bool Agent::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::AGENT;
+	return obj->getValueID() == classid();
 }
 
 

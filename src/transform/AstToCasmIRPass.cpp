@@ -727,6 +727,7 @@ void libcasm_ir::AstToCasmIRPass::visit_ifthenelse( IfThenElseNode* node, T cond
 	ast2casmir[ node->condition_ ] = ir_case_false;
 	ast2parent[ node->else_ ]      = node->condition_;
 	
+	assert( !" DEPRECATED IMPLEMENTATION, PPA FIXME!!! BranchInstr is DEPRECATED!!! " );
 	ir_stmt->add( new BranchInstruction( ir_cond, ir_case_true, ir_case_false ) );
 	ir_stmt->addBlock( ir_case_true  );
 	ir_stmt->addBlock( ir_case_false );

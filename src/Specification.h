@@ -35,19 +35,33 @@ namespace libcasm_ir
 	class Specification : public User
 	{
 	private:
-		std::vector< Value* > content;
+		std::unordered_map< u32, std::vector< Value* > > content;
+		std::vector< Value* > content_list;
 		
 	public:
 		Specification( const char* name );
 		
 		~Specification( void );
-		
-	    const std::vector< Value* >& getContent( void ) const;
-		
+	    
 		void add( Value* value );
+
+		template< class C >
+		bool has( void ) const
+		{
+			return content.count( C::classid() ) > 0;
+		}
+		
+		template< class C >
+		const std::vector< Value* >& get( void ) const
+		{
+			auto result = content.find( C::classid() );
+			assert( result != content.end() );
+			return result->second;
+		}
 		
 		void dump( void ) const;
 		
+		static inline Value::ID classid( void ) { return Value::SPECIFICATION; };
 		static bool classof( Value const* obj );
 	};
 }

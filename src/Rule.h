@@ -48,6 +48,7 @@ namespace libcasm_ir
 		
 		void dump( void ) const;
 		
+		static inline Value::ID classid( void ) { return Value::RULE; };
 		static bool classof( Value const* obj );
 	};
 }

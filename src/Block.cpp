@@ -40,7 +40,7 @@ void Block::dump( void ) const
 
 bool Block::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::BLOCK
+	return obj->getValueID() == classid()
 		or ExecutionSemanticsBlock::classof( obj )
 		or Statement::classof( obj );
 }
@@ -156,19 +156,19 @@ void SequentialBlock::dump( void ) const
 
 bool ExecutionSemanticsBlock::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::EXECUTION_SEMANTICS_BLOCK
+	return obj->getValueID() == classid()
 		or ParallelBlock::classof( obj )
 		or SequentialBlock::classof( obj );
 }
 
 bool ParallelBlock::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::PARALLEL_BLOCK;
+	return obj->getValueID() == classid();
 }
 
 bool SequentialBlock::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::SEQUENTIAL_BLOCK;
+	return obj->getValueID() == classid();
 }
 
 

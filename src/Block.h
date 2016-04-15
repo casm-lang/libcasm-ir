@@ -39,6 +39,7 @@ namespace libcasm_ir
 	    
 		void dump( void ) const;
 		
+		static inline Value::ID classid( void ) { return Value::BLOCK; };
 		static bool classof( Value const* obj );
 	};
 	
@@ -73,6 +74,7 @@ namespace libcasm_ir
 		
 	    void dump( void ) const;
 		
+		static inline Value::ID classid( void ) { return Value::EXECUTION_SEMANTICS_BLOCK; };
 		static bool classof( Value const* obj );
 	};
 
@@ -84,6 +86,7 @@ namespace libcasm_ir
 		
 		void dump( void ) const;
 		
+		static inline Value::ID classid( void ) { return Value::PARALLEL_BLOCK; };
 		static bool classof( Value const* obj );
 	};
 	
@@ -94,6 +97,7 @@ namespace libcasm_ir
 	    
 		void dump( void ) const;
 		
+		static inline Value::ID classid( void ) { return Value::SEQUENTIAL_BLOCK; };
 		static bool classof( Value const* obj );
 	};
 }

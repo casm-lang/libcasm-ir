@@ -42,8 +42,9 @@ namespace libcasm_ir
 	{
 	public:
 		enum ID
-		{ USER
-
+		{ VALUE
+		, USER
+		  
 		, SPECIFICATION
 		, AGENT
 		, RULE
@@ -144,6 +145,11 @@ namespace libcasm_ir
 		
 		void debug( void ) const;
 		void dump( void ) const;
+		
+		
+        // TODO: FIXME: PPA: setRef/getRef interface will be added soon!
+		
+		static inline ID classid( void ) { return Value::VALUE; };
 		
 		static inline bool classof( Value const* )
 		{

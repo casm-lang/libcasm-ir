@@ -45,7 +45,7 @@ void Builtin::dump( void ) const
 
 bool Builtin::classof( Value const* obj )
 {
-    return obj->getValueID() == Value::BUILTIN;
+    return obj->getValueID() == classid();
 }
 
 

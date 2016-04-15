@@ -55,6 +55,7 @@ namespace libcasm_ir
 			return not defined;
 		}
 		
+		static inline Value::ID classid( void ) { return Value::CONSTANT; };
 		static bool classof( Value const* obj );
 
 	protected:
@@ -64,6 +65,7 @@ namespace libcasm_ir
 	class ConstantValue : public Constant< Type::Undef >
 	{
 	public:
+		static inline Value::ID classid( void ) { return Value::CONSTANT; };
 		static bool classof( Value const* obj );
 	};
 	
@@ -79,6 +81,7 @@ namespace libcasm_ir
 		
 		void dump( void ) const;
 		
+		static inline Value::ID classid( void ) { return Value::AGENT_CONSTANT; };
 		static bool classof( Value const* obj );
 	};
 	
@@ -100,6 +103,7 @@ namespace libcasm_ir
 		
 		void dump( void ) const;
 		
+		static inline Value::ID classid( void ) { return Value::RULE_POINTER_CONSTANT; };
 		static bool classof( Value const* obj );
 	};
 	
@@ -115,6 +119,7 @@ namespace libcasm_ir
 		
 		void dump( void ) const;
 		
+		static inline Value::ID classid( void ) { return Value::BOOLEAN_CONSTANT; };
 		static bool classof( Value const* obj );
 	};
 
@@ -129,6 +134,7 @@ namespace libcasm_ir
 		
 		void dump( void ) const;
 		
+		static inline Value::ID classid( void ) { return Value::INTEGER_CONSTANT; };
 		static bool classof( Value const* obj );
 	};
 	
@@ -144,6 +150,7 @@ namespace libcasm_ir
 		
 		void dump( void ) const;
 		
+		static inline Value::ID classid( void ) { return Value::BIT_CONSTANT; };
 		static bool classof( Value const* obj );
 	};
 	
@@ -159,6 +166,7 @@ namespace libcasm_ir
 		
 		void dump( void ) const;
 		
+		static inline Value::ID classid( void ) { return Value::STRING_CONSTANT; };
 		static bool classof( Value const* obj );
 	};
 	
@@ -176,6 +184,7 @@ namespace libcasm_ir
 		
 		void dump( void ) const;
 
+		static inline Value::ID classid( void ) { return Value::IDENTIFIER; };
 		static bool classof( Value const* obj );
 	};
 }

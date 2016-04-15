@@ -65,7 +65,7 @@ void Constant< V >::setValue( V val )
 
 bool ConstantValue::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::CONSTANT
+	return obj->getValueID() == classid()
 	    or AgentConstant::classof( obj )
 		or RulePointerConstant::classof( obj )
 		or BooleanConstant::classof( obj )
@@ -112,7 +112,7 @@ void AgentConstant::dump( void ) const
 
 bool AgentConstant::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::AGENT_CONSTANT;
+	return obj->getValueID() == classid();
 }
 
 
@@ -146,7 +146,7 @@ void BooleanConstant::dump( void ) const
 
 bool BooleanConstant::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::BOOLEAN_CONSTANT;
+	return obj->getValueID() == classid();
 }
 
 
@@ -186,7 +186,7 @@ void IntegerConstant::dump( void ) const
 
 bool IntegerConstant::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::INTEGER_CONSTANT;
+	return obj->getValueID() == classid();
 }
 
 
@@ -229,7 +229,7 @@ void BitConstant::dump( void ) const
 
 bool BitConstant::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::BIT_CONSTANT;
+	return obj->getValueID() == classid();
 }
 
 
@@ -274,7 +274,7 @@ void StringConstant::dump( void ) const
 
 bool StringConstant::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::STRING_CONSTANT;
+	return obj->getValueID() == classid();
 }
 
 
@@ -365,7 +365,7 @@ void RulePointerConstant::dump( void ) const
 
 bool RulePointerConstant::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::RULE_POINTER_CONSTANT;
+	return obj->getValueID() == classid();
 }
 
 
@@ -450,7 +450,7 @@ void Identifier::dump( void ) const
 
 bool Identifier::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::IDENTIFIER;
+	return obj->getValueID() == classid();
 }
 
 

@@ -48,6 +48,7 @@ namespace libcasm_ir
 
 		void dump( void ) const;
 		
+		static inline Value::ID classid( void ) { return Value::STATEMENT; };
 		static bool classof( Value const* obj );
 	};
 	
@@ -58,6 +59,7 @@ namespace libcasm_ir
 
 		void dump( void ) const;
 		
+		static inline Value::ID classid( void ) { return Value::TRIVIAL_STATEMENT; };
 		static bool classof( Value const* obj );
 	};
 
@@ -77,9 +79,11 @@ namespace libcasm_ir
 		
 		void dump( void ) const;
 		
+		static inline Value::ID classid( void ) { return Value::BRANCH_STATEMENT; };
 		static bool classof( Value const* obj );
 	};
-
+	
+	// TODO: FIXME: PPA: add ForallStatement and IterateStatement etc.
 }
 
 

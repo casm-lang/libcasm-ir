@@ -37,25 +37,35 @@ Specification::~Specification( void )
 {			
 	(*Value::getSymbols())[ ".specification" ].erase( this );
 }
-
-const std::vector< Value* >& Specification::getContent( void ) const
-{
-	return content;
-}
 		
 void Specification::add( Value* value )
 {
 	assert( value );
-	
-	assert
-	(  Value::isa< Rule >( value )
-	or Value::isa< Derived >( value )
-	or Value::isa< Function >( value )
-	or Value::isa< Agent >( value )
-	or Value::isa< ConstantValue >( value )
-	);
-	
-	content.push_back( value );
+    
+	if( Value::isa< Rule >( value ) )
+	{
+		content[ Rule::classid() ].push_back( value );
+	}
+	else if( Value::isa< Derived >( value ) )
+	{
+		content[ Derived::classid() ].push_back( value );
+	}
+	else if( Value::isa< Function >( value ) )
+	{
+		content[ Function::classid() ].push_back( value );
+	}
+	else if( Value::isa< Agent >( value ) )
+	{
+		content[ Agent::classid() ].push_back( value );
+	}
+	else if( Value::isa< ConstantValue >( value ) )
+	{
+		content[ ConstantValue::classid() ].push_back( value );
+	}
+	else
+	{
+		assert( !"unsupported Specification content Value found!" );
+	}
 }
 
 void Specification::dump( void ) const
@@ -67,7 +77,7 @@ void Specification::dump( void ) const
 
 bool Specification::classof( Value const* obj )
 {
-	return obj->getValueID() == Value::SPECIFICATION;
+	return obj->getValueID() == classid();
 }
 
 
