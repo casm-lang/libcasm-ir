@@ -30,6 +30,7 @@ using namespace libcasm_ir;
 bool User::classof( Value const* obj )
 {
 	return obj->getValueID() == classid()
+		or Agent::classof( obj )
 		or Rule::classof( obj )
 		or Derived::classof( obj )
 		or Function::classof( obj )

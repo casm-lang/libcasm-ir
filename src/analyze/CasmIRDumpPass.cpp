@@ -112,6 +112,12 @@ void CasmIRDumpPass::visit_epilog( AndInstruction& value ) {}
 void CasmIRDumpPass::visit_prolog( IntegerConstant& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
 void CasmIRDumpPass::visit_epilog( IntegerConstant& value ) {}
 
+void CasmIRDumpPass::visit_prolog( RulePointerConstant& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
+void CasmIRDumpPass::visit_epilog( RulePointerConstant& value ) {}
+
+void CasmIRDumpPass::visit_prolog( AgentConstant& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
+void CasmIRDumpPass::visit_epilog( AgentConstant& value ) {}
+
 
 //  
 //  Local variables:
