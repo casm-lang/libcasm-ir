@@ -28,8 +28,14 @@
 */
 
 #include "Value.h"
-#include "libcasm-ir.h"
 #include "Specification.h"
+#include "Rule.h"
+#include "Function.h"
+#include "Statement.h"
+#include "Derived.h"
+#include "Constant.h"
+#include "Instruction.h"
+#include "Agent.h"
 
 using namespace libcasm_ir;
 

@@ -24,7 +24,6 @@
 #include "AstToCasmIRPass.h"
 
 
-
 char libcasm_ir::AstToCasmIRPass::id = 0;
 
 static libpass::PassRegistration< libcasm_ir::AstToCasmIRPass > PASS
@@ -75,7 +74,7 @@ bool libcasm_ir::AstToCasmIRPass::run( libpass::PassResult& pr )
 {
 	specification = 0;
     
-	AstNode* node = (AstNode*)pr.getResult< AstDumpPass >();
+	AstNode* node = (AstNode*)pr.getResult< libcasm_fe::AstDumpPass >();
 	
 	AstWalker< AstToCasmIRPass, bool > walker( *this );
 	

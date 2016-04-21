@@ -22,7 +22,12 @@
 //  
 
 #include "User.h"
-#include "libcasm-ir.h"
+#include "Rule.h"
+#include "Derived.h"
+#include "Function.h"
+#include "Builtin.h"
+#include "Constant.h"
+#include "Instruction.h"
 
 using namespace libcasm_ir;
 

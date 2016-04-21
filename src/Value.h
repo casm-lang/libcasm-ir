@@ -30,14 +30,14 @@
 #ifndef _LIB_CASMIR_VALUE_H_
 #define _LIB_CASMIR_VALUE_H_
 
-#include "Type.h"
 #include "CasmIR.h"
+#include "Type.h"
 #include "Visitor.h"
 
 #include "stdhl/cpp/Labeling.h"
 
 namespace libcasm_ir
-{		
+{
 	class Value : public CasmIR, public libstdhl::Labeling
 	{
 	public:

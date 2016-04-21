@@ -22,7 +22,10 @@
 //  
 
 #include "Specification.h"
-#include "libcasm-ir.h"
+#include "Rule.h"
+#include "Derived.h"
+#include "Function.h"
+#include "Agent.h"
 
 using namespace libcasm_ir;
 

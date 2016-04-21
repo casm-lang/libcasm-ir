@@ -26,7 +26,6 @@
 
 #include "Pass.h"
 #include "libcasm-ir.h"
-#include "AstToCasmIRPass.h"
 
 /**
    @brief    TODO

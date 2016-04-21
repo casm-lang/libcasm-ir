@@ -24,7 +24,7 @@
 #ifndef _LIB_CASMIR_CONSTANT_H_
 #define _LIB_CASMIR_CONSTANT_H_
 
-#include "libcasm-ir.h"
+#include "User.h"
 
 namespace libcasm_ir
 {

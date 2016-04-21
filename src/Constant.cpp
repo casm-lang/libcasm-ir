@@ -22,6 +22,7 @@
 //  
 
 #include "Constant.h"
+#include "Rule.h"
 
 using namespace libcasm_ir;
 

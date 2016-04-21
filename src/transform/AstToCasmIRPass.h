@@ -26,10 +26,7 @@
 
 #include "Pass.h"
 #include "libcasm-ir.h"
-
-#include "AstInterface.h"
-#include "TypeCheckPass.h"
-#include "CasmIRDumpPass.h"
+#include "libcasm-fe.h"
 
 /**
    @brief    TODO
@@ -41,7 +38,7 @@
 
 namespace libcasm_ir
 {
-	class AstToCasmIRPass : public libpass::Pass, AstInterface< bool >
+	class AstToCasmIRPass : public libpass::Pass, libcasm_fe::AstInterface< bool >
 	{
 	public:
 		static char id;

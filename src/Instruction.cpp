@@ -22,6 +22,7 @@
 //  
 
 #include "Instruction.h"
+#include "Derived.h"
 
 using namespace libcasm_ir;
 
