@@ -61,7 +61,7 @@ INCLUDE += -I ./src/transform
 INCLUDE += -I ./
 INCLUDE += -I ../
 INCLUDE += -I ../casm-fe
-INCLUDE += -I ../pass/src
+INCLUDE += -I ../pass
 
 default: obj $(TARGET)
 
