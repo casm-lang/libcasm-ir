@@ -18,7 +18,7 @@
 //  GNU General Public License for more details.
 //  
 //  You should have received a copy of the GNU General Public License
-//  along with this program. If not, see <http://www.gnu.org/licenses/>.
+//  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //  
 
 /**
@@ -30,14 +30,14 @@
 #ifndef _LIB_CASMIR_VALUE_H_
 #define _LIB_CASMIR_VALUE_H_
 
-#include "Type.h"
 #include "CasmIR.h"
+#include "Type.h"
 #include "Visitor.h"
 
 #include "stdhl/cpp/Labeling.h"
 
 namespace libcasm_ir
-{		
+{
 	class Value : public CasmIR, public libstdhl::Labeling
 	{
 	public:

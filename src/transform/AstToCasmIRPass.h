@@ -18,18 +18,15 @@
 //  GNU General Public License for more details.
 //  
 //  You should have received a copy of the GNU General Public License
-//  along with this program. If not, see <http://www.gnu.org/licenses/>.
+//  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //  
 
 #ifndef _LIB_CASMIR_ASTTOCASMIRPASS_H_
 #define _LIB_CASMIR_ASTTOCASMIRPASS_H_
 
-#include "Pass.h"
+#include "libpass.h"
 #include "libcasm-ir.h"
-
-#include "AstInterface.h"
-#include "TypeCheckPass.h"
-#include "CasmIRDumpPass.h"
+#include "libcasm-fe.h"
 
 /**
    @brief    TODO
@@ -41,7 +38,7 @@
 
 namespace libcasm_ir
 {
-	class AstToCasmIRPass : public libpass::Pass, AstInterface< bool >
+	class AstToCasmIRPass : public libpass::Pass, libcasm_fe::AstInterface< bool >
 	{
 	public:
 		static char id;

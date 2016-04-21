@@ -18,34 +18,35 @@
 //  GNU General Public License for more details.
 //  
 //  You should have received a copy of the GNU General Public License
-//  along with this program. If not, see <http://www.gnu.org/licenses/>.
+//  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //  
 
-#ifndef _LIB_CASMIR_SOURCETOASTPASS_H_
-#define _LIB_CASMIR_SOURCETOASTPASS_H_
+#ifndef _LIB_CASMIR_H_
+#define _LIB_CASMIR_H_
 
-#include "Pass.h"
-#include "AstInterface.h"
 
-/**
-   @brief    TODO
-   
-   TODO
-*/
 
-namespace libcasm_ir
-{
-	class SourceToAstPass : public libpass::Pass
-	{
-	public:
-		static char id;
-		
-		virtual bool run( libpass::PassResult& pr );
-	};
-}
+#include "src/Value.h"
+#include "src/User.h"
+#include "src/Agent.h"
+#include "src/Rule.h"
+#include "src/Block.h"
+#include "src/Derived.h"
+#include "src/Function.h"
+#include "src/Constant.h"
+#include "src/Statement.h"
+#include "src/Instruction.h"
+#include "src/Specification.h"
 
-#endif /* _LIB_CASMIR_SOURCETOASTPASS_H_ */
+#include "src/Visitor.h"
+#include "src/Type.h"
 
+// #include "stdhl/cpp/Allocator.h"
+
+#include "src/analyze/CasmIRDumpPass.h"
+#include "src/transform/AstToCasmIRPass.h"
+
+#endif /* _LIB_CASMIR_H_ */
 
 //  
 //  Local variables:

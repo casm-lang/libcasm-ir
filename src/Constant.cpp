@@ -18,10 +18,11 @@
 //  GNU General Public License for more details.
 //  
 //  You should have received a copy of the GNU General Public License
-//  along with this program. If not, see <http://www.gnu.org/licenses/>.
+//  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //  
 
 #include "Constant.h"
+#include "Rule.h"
 
 using namespace libcasm_ir;
 

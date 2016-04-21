@@ -18,7 +18,7 @@
 #   GNU General Public License for more details.
 #   
 #   You should have received a copy of the GNU General Public License
-#   along with this program. If not, see <http://www.gnu.org/licenses/>.
+#   along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 #   
 
 AR=ar
@@ -52,26 +52,18 @@ CPPOBJECTS += obj/Visitor.o
 CPPOBJECTS += obj/Specification.o
 
 CPPOBJECTS += obj/CasmIRDumpPass.o
-
-CPPOBJECTS += obj/AstDumpPass.o
-CPPOBJECTS += obj/TypeCheckPass.o
-CPPOBJECTS += obj/SourceToAstPass.o
 CPPOBJECTS += obj/AstToCasmIRPass.o
 
 INCLUDE += -I ./src
 INCLUDE += -I ./src/analyze
 INCLUDE += -I ./src/transform
+
+INCLUDE += -I ./
 INCLUDE += -I ../
-INCLUDE += -I ../casm-fe/src
-INCLUDE += -I ../casm-fe/obj/src
-INCLUDE += -I ../pass/src
+INCLUDE += -I ../casm-fe
+INCLUDE += -I ../pass
 
-LIBRARY += ../casm-fe/obj/libfrontend.a
-
-default: $(LIBRARY) obj $(TARGET)
-
-../casm-fe/obj/libfrontend.a:
-	$(MAKE) -C ../casm-fe
+default: obj $(TARGET)
 
 obj:
 	mkdir -p obj
@@ -88,16 +80,13 @@ obj/%.o: src/transform/%.cpp
 	@echo "CPP " $<
 	@$(CPP) $(CPPFLAG) $(INCLUDE) -c $< -o $@
 
-libcasm-ir.a: $(CPPOBJECTS) $(LIBRARY)
+libcasm-ir.a: $(CPPOBJECTS)
 	@echo "AR  " $@
 	@$(AR) rsc $@ $(filter %.o,$^)
-#	@$(AR) -rcT $@ $@.a $(filter %.a,$^)
 	@ranlib $@
-#	@rm -f $@.a
 
 clean:
 	@echo "RM  " obj
 	@rm -rf obj
 	@echo "RM  " $(TARGET)
 	@rm -f $(TARGET)
-	$(MAKE) clean -C ../casm-fe/

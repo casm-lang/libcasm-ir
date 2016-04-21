@@ -18,13 +18,13 @@
 //  GNU General Public License for more details.
 //  
 //  You should have received a copy of the GNU General Public License
-//  along with this program. If not, see <http://www.gnu.org/licenses/>.
+//  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //  
 
 #ifndef _LIB_CASMIR_CONSTANT_H_
 #define _LIB_CASMIR_CONSTANT_H_
 
-#include "libcasm-ir.h"
+#include "User.h"
 
 namespace libcasm_ir
 {

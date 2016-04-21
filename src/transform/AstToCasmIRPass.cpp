@@ -18,11 +18,10 @@
 //  GNU General Public License for more details.
 //  
 //  You should have received a copy of the GNU General Public License
-//  along with this program. If not, see <http://www.gnu.org/licenses/>.
+//  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //  
 
 #include "AstToCasmIRPass.h"
-
 
 
 char libcasm_ir::AstToCasmIRPass::id = 0;
@@ -75,7 +74,7 @@ bool libcasm_ir::AstToCasmIRPass::run( libpass::PassResult& pr )
 {
 	specification = 0;
     
-	AstNode* node = (AstNode*)pr.getResult< AstDumpPass >();
+	AstNode* node = (AstNode*)pr.getResult< libcasm_fe::AstDumpPass >();
 	
 	AstWalker< AstToCasmIRPass, bool > walker( *this );
 	
