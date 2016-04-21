@@ -23,6 +23,7 @@
 
 #include "User.h"
 #include "Rule.h"
+#include "Agent.h"
 #include "Derived.h"
 #include "Function.h"
 #include "Builtin.h"
