@@ -25,7 +25,7 @@
 #define _LIB_CASMIR_CASM_IR_DUMP_PASS_H_
 
 #include "libpass.h"
-#include "libcasm-ir.h"
+#include "libcasm-ir.all.h"
 
 /**
    @brief    TODO

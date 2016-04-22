@@ -25,7 +25,7 @@
 #define _LIB_CASMIR_ASTTOCASMIRPASS_H_
 
 #include "libpass.h"
-#include "libcasm-ir.h"
+#include "libcasm-ir.all.h"
 #include "libcasm-fe.all.h"
 
 /**

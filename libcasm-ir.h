@@ -24,8 +24,6 @@
 #ifndef _LIB_CASMIR_H_
 #define _LIB_CASMIR_H_
 
-
-
 #include "src/Value.h"
 #include "src/User.h"
 #include "src/Agent.h"
@@ -41,10 +39,12 @@
 #include "src/Visitor.h"
 #include "src/Type.h"
 
-// #include "stdhl/cpp/Allocator.h"
-
-#include "src/analyze/CasmIRDumpPass.h"
-#include "src/transform/AstToCasmIRPass.h"
+namespace libcasm_ir
+{
+	// class CasmIR // TODO: FIXME: PPA: this should be the right class not src/CasmIR.h !!!
+	// {
+	// };
+}
 
 #endif /* _LIB_CASMIR_H_ */
 
