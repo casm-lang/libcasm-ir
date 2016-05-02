@@ -60,6 +60,8 @@ void Visitor::dispatch( Stage stage, Value* value )
 		CASE_VALUE( LOCATION_INSTRUCTION, LocationInstruction );
 		CASE_VALUE( LOOKUP_INSTRUCTION,   LookupInstruction );
 		CASE_VALUE( UPDATE_INSTRUCTION,   UpdateInstruction );
+
+		CASE_VALUE( PRINT_INSTRUCTION,    PrintInstruction );
 		
 		CASE_VALUE( ADD_INSTRUCTION,      AddInstruction );
 		CASE_VALUE( DIV_INSTRUCTION,      DivInstruction );
@@ -67,6 +69,7 @@ void Visitor::dispatch( Stage stage, Value* value )
 		CASE_VALUE( AND_INSTRUCTION,      AndInstruction );
 
 		CASE_VALUE( INTEGER_CONSTANT,     IntegerConstant );
+		CASE_VALUE( STRING_CONSTANT,      StringConstant );
 		CASE_VALUE( RULE_POINTER_CONSTANT,RulePointerConstant );
 		CASE_VALUE( AGENT_CONSTANT,       AgentConstant );
 		

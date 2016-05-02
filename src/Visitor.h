@@ -29,7 +29,6 @@
 
 // #include "Instruction.h"
 // #include "Scope.h"
-
 // #include "Module.h"
 // #include "Component.h"
 // #include "Function.h"
@@ -53,13 +52,15 @@ namespace libcasm_ir
 	class LocationInstruction;
 	class LookupInstruction;
 	class UpdateInstruction;
+	class PrintInstruction;
 	class AddInstruction;
 	class DivInstruction;
 	class AndInstruction;
 
-	class IntegerConstant;
-	class RulePointerConstant;
 	class AgentConstant;
+	class RulePointerConstant;
+	class IntegerConstant;
+	class StringConstant;
 	
 	enum class Traversal
 	{ PREORDER
@@ -109,6 +110,9 @@ namespace libcasm_ir
 		PREFIX void visit_prolog( libcasm_ir::UpdateInstruction& value ) POSTFIX; \
 		PREFIX void visit_epilog( libcasm_ir::UpdateInstruction& value ) POSTFIX; \
 																		\
+		PREFIX void visit_prolog( libcasm_ir::PrintInstruction& value ) POSTFIX; \
+		PREFIX void visit_epilog( libcasm_ir::PrintInstruction& value ) POSTFIX; \
+																		\
 		PREFIX void visit_prolog( libcasm_ir::AddInstruction& value ) POSTFIX; \
 		PREFIX void visit_epilog( libcasm_ir::AddInstruction& value ) POSTFIX; \
 																		\
@@ -120,6 +124,9 @@ namespace libcasm_ir
 																		\
 		PREFIX void visit_prolog( libcasm_ir::IntegerConstant& value ) POSTFIX; \
 		PREFIX void visit_epilog( libcasm_ir::IntegerConstant& value ) POSTFIX;	\
+																		\
+		PREFIX void visit_prolog( libcasm_ir::StringConstant& value ) POSTFIX; \
+		PREFIX void visit_epilog( libcasm_ir::StringConstant& value ) POSTFIX;	\
 																		\
 		PREFIX void visit_prolog( libcasm_ir::RulePointerConstant& value ) POSTFIX; \
 		PREFIX void visit_epilog( libcasm_ir::RulePointerConstant& value ) POSTFIX; \

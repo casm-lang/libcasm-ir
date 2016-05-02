@@ -577,7 +577,9 @@ void libcasm_ir::AstToCasmIRPass::visit_print( PrintNode* node, std::vector< T >
 		Value* instr = lookup< Value >( a );
 		ir_print->add( instr );
 	}
-	ir_print->add( StringConstant::create( (const char*)"\n" ) );
+	// INFO: PPA: commented line below, because the 'IR' itself adds this during runtime (interpreter)
+	// and compilation --> this should not be part of the CASM IR!!! 
+	//ir_print->add( StringConstant::create( (const char*)"\n" ) );
 	
 	ir_stmt->add( ir_print );
 }

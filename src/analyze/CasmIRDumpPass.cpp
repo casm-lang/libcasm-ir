@@ -100,6 +100,9 @@ void CasmIRDumpPass::visit_epilog( LookupInstruction& value ) {}
 void CasmIRDumpPass::visit_prolog( UpdateInstruction& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
 void CasmIRDumpPass::visit_epilog( UpdateInstruction& value ) {}
 
+void CasmIRDumpPass::visit_prolog( PrintInstruction& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
+void CasmIRDumpPass::visit_epilog( PrintInstruction& value ) {}
+
 void CasmIRDumpPass::visit_prolog( AddInstruction& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
 void CasmIRDumpPass::visit_epilog( AddInstruction& value ) {}
 
@@ -111,6 +114,9 @@ void CasmIRDumpPass::visit_epilog( AndInstruction& value ) {}
 
 void CasmIRDumpPass::visit_prolog( IntegerConstant& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
 void CasmIRDumpPass::visit_epilog( IntegerConstant& value ) {}
+
+void CasmIRDumpPass::visit_prolog( StringConstant& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
+void CasmIRDumpPass::visit_epilog( StringConstant& value ) {}
 
 void CasmIRDumpPass::visit_prolog( RulePointerConstant& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
 void CasmIRDumpPass::visit_epilog( RulePointerConstant& value ) {}
