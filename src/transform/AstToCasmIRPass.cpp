@@ -1024,14 +1024,16 @@ T libcasm_ir::AstToCasmIRPass::visit_undef_atom( UndefAtom* node )
     
 	switch( node->type_.t )
 	{
-	    case TypeType::BOOLEAN:
-			ir_const = BooleanConstant::create(); break;
-	    case TypeType::INTEGER:
-			ir_const = IntegerConstant::create(); break;
-	    case TypeType::BIT:
-			ir_const = BitConstant::create( node->type_.bitsize ); break;
 	    case TypeType::RULEREF:
 			ir_const = RulePointerConstant::create(); break;
+	    case TypeType::BOOLEAN:
+			ir_const = BooleanConstant::create(); break;
+	    case TypeType::BIT:
+			ir_const = BitConstant::create( node->type_.bitsize ); break;
+	    case TypeType::INTEGER:
+			ir_const = IntegerConstant::create(); break;
+	    case TypeType::STRING:
+			ir_const = StringConstant::create(); break;
 	    default:
 			assert( 0 && "unimplemented undef constant!" );
 	}
