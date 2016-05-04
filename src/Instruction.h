@@ -181,24 +181,6 @@ namespace libcasm_ir
 		static bool classof( Value const* obj );
 	};	
 	
-	class BranchInstruction : public UnaryInstruction // TODO: FIXME: PPA: this instruction should be removed!!!
-	                                                  // TODO: FIXME: PPA: we have a better concept now!!!
-	{
-	private:
-		Value* case_true;
-	    Value* case_false;
-		
-	public :
-	    BranchInstruction( Value* condition, Value* case_true, Value* case_false = 0 );
-		
-		static inline Value::ID classid( void ) { return Value::BRANCH_INSTRUCTION; };
-		static bool classof( Value const* obj );
-
-		Value* getTrue ( void ) const;
-		Value* getFalse( void ) const;
-	};
-
-	
 	
 	class OperatorInstruction : public BinaryInstruction
 	{

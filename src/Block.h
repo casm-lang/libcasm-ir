@@ -34,9 +34,15 @@ namespace libcasm_ir
 	
 	class Block : public Value
 	{
+	private:
+		Value* parent;
+		
 	public:
 		Block( const char* name, Type* type, Value::ID id = Value::BLOCK );
-	    
+
+		void setParent( Value* parent );
+		Value* getParent( void ) const;
+		
 		void dump( void ) const;
 		
 		static inline Value::ID classid( void ) { return Value::BLOCK; };
@@ -48,7 +54,7 @@ namespace libcasm_ir
 	private:
 		const u1 is_parallel;
 		u64 pseudo_state;
-		ExecutionSemanticsBlock* parent;
+		ExecutionSemanticsBlock* scope;
 		std::vector< Block* > blocks;
 		
 	public:
@@ -56,7 +62,7 @@ namespace libcasm_ir
 		( const char* name
 		, Type* type
 		, const u1 is_parallel
-		, ExecutionSemanticsBlock* parent = 0
+		, ExecutionSemanticsBlock* scope = 0
 		, Value::ID id = Value::EXECUTION_SEMANTICS_BLOCK
 		);
 		
@@ -64,9 +70,9 @@ namespace libcasm_ir
 		
 		const u64 getPseudoState( void ) const;
 		
-	    ExecutionSemanticsBlock* getParent( void ) const;
+	    ExecutionSemanticsBlock* getScope( void ) const;
 		
-		void setParent( ExecutionSemanticsBlock* parent_block );
+		void setScope( ExecutionSemanticsBlock* scope_block );
 
 		const std::vector< Block* >& getBlocks( void ) const;
 
@@ -82,7 +88,7 @@ namespace libcasm_ir
 	class ParallelBlock : public ExecutionSemanticsBlock, public libstdhl::Binding< Rule >
 	{
 	public:
-		ParallelBlock( ExecutionSemanticsBlock* parent = 0 );
+		ParallelBlock( ExecutionSemanticsBlock* scope = 0 );
 		
 		void dump( void ) const;
 		
@@ -93,7 +99,7 @@ namespace libcasm_ir
 	class SequentialBlock : public ExecutionSemanticsBlock
 	{
 	public:
-		SequentialBlock( ExecutionSemanticsBlock* parent = 0 );
+		SequentialBlock( ExecutionSemanticsBlock* scope = 0 );
 	    
 		void dump( void ) const;
 		

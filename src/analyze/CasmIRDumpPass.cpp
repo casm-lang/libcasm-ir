@@ -65,8 +65,41 @@ bool CasmIRDumpPass::run( libpass::PassResult& pr )
 	return false;
 }
 
+static const char* indention( Value& value )
+{
+	string ind = "";
+	u8 cnt = 0;
+	Value* p = (&value);
+	while( p != 0 )
+	{
+		if( Value::isa< ExecutionSemanticsBlock >( p ) )
+		{
+			p = (Value*)((ExecutionSemanticsBlock*)p)->getScope();
+		}
+		else if( Value::isa< Instruction >( p ) )
+		{
+			p = (Value*)((Instruction*)p)->getStatement();
+		}
+		else if( Value::isa< Statement >( p ) )
+		{
+			p = (Value*)((Statement*)p)->getScope();
+		}
+		else
+		{
+			break;
+			assert(0);
+		}
+		
+		cnt++;
+		ind+="  ";
+	}
+	
+	return libstdhl::Allocator::string( ind );
+}
 
-#define DUMP_PREFIX  printf( "%-14s: %p, %s, %s ", __FUNCTION__, &value, value.getLabel(), value.getName() )
+
+
+#define DUMP_PREFIX  printf( "%-14s: %p, %s, %s%s ", __FUNCTION__, &value, value.getLabel(), indention( value ), value.getName() )
 #define DUMP_POSTFIX printf( "\n" );
 
 void CasmIRDumpPass::visit_prolog( Specification& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
@@ -90,7 +123,11 @@ void CasmIRDumpPass::visit_epilog( SequentialBlock& value ) {}
 
 void CasmIRDumpPass::visit_prolog( TrivialStatement& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
 void CasmIRDumpPass::visit_epilog( TrivialStatement& value ) {}
-		
+
+void CasmIRDumpPass::visit_prolog( BranchStatement& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
+void CasmIRDumpPass::visit_interlog( BranchStatement& value ) {}
+void CasmIRDumpPass::visit_epilog( BranchStatement& value ) {}
+
 void CasmIRDumpPass::visit_prolog( LocationInstruction& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
 void CasmIRDumpPass::visit_epilog( LocationInstruction& value ) {}
 
@@ -111,6 +148,9 @@ void CasmIRDumpPass::visit_epilog( DivInstruction& value ) {}
 
 void CasmIRDumpPass::visit_prolog( AndInstruction& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
 void CasmIRDumpPass::visit_epilog( AndInstruction& value ) {}
+
+void CasmIRDumpPass::visit_prolog( EquInstruction& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
+void CasmIRDumpPass::visit_epilog( EquInstruction& value ) {}
 
 void CasmIRDumpPass::visit_prolog( IntegerConstant& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
 void CasmIRDumpPass::visit_epilog( IntegerConstant& value ) {}

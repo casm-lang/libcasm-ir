@@ -27,7 +27,7 @@
 #include "CasmIR.h"
 #include "Type.h"
 
-// #include "Instruction.h"
+//#include "Instruction.h"
 // #include "Scope.h"
 // #include "Module.h"
 // #include "Component.h"
@@ -47,15 +47,20 @@ namespace libcasm_ir
 
 	class ParallelBlock;
 	class SequentialBlock;
+	
 	class TrivialStatement;
+	class BranchStatement;
 	
 	class LocationInstruction;
 	class LookupInstruction;
 	class UpdateInstruction;
 	class PrintInstruction;
+
 	class AddInstruction;
 	class DivInstruction;
+	
 	class AndInstruction;
+	class EquInstruction;
 
 	class AgentConstant;
 	class RulePointerConstant;
@@ -101,6 +106,10 @@ namespace libcasm_ir
 		PREFIX void visit_prolog( libcasm_ir::TrivialStatement& value ) POSTFIX; \
 		PREFIX void visit_epilog( libcasm_ir::TrivialStatement& value ) POSTFIX; \
 																		\
+		PREFIX void visit_prolog( libcasm_ir::BranchStatement& value ) POSTFIX; \
+		PREFIX void visit_interlog( libcasm_ir::BranchStatement& value ) POSTFIX; \
+		PREFIX void visit_epilog( libcasm_ir::BranchStatement& value ) POSTFIX; \
+																		\
 		PREFIX void visit_prolog( libcasm_ir::LocationInstruction& value ) POSTFIX; \
 		PREFIX void visit_epilog( libcasm_ir::LocationInstruction& value ) POSTFIX; \
 																		\
@@ -121,6 +130,9 @@ namespace libcasm_ir
 																		\
 		PREFIX void visit_prolog( libcasm_ir::AndInstruction& value ) POSTFIX; \
 		PREFIX void visit_epilog( libcasm_ir::AndInstruction& value ) POSTFIX; \
+																		\
+		PREFIX void visit_prolog( libcasm_ir::EquInstruction& value ) POSTFIX; \
+		PREFIX void visit_epilog( libcasm_ir::EquInstruction& value ) POSTFIX; \
 																		\
 		PREFIX void visit_prolog( libcasm_ir::IntegerConstant& value ) POSTFIX; \
 		PREFIX void visit_epilog( libcasm_ir::IntegerConstant& value ) POSTFIX;	\

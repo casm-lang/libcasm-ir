@@ -678,6 +678,8 @@ void libcasm_ir::AstToCasmIRPass::visit_let( LetNode* node, T var )
 		ast2casmir[ node ] = ir_blk;
 		ir_stmt->addBlock( ir_blk );
 	}
+
+	assert( !" DEPRECATED IMPLEMENTATION, TODO: FIXME: PPA!!! " );
 }
 
 void libcasm_ir::AstToCasmIRPass::visit_let_post( LetNode* node )
@@ -698,6 +700,7 @@ void libcasm_ir::AstToCasmIRPass::visit_pop( PopNode* node )
 	FIXME;
 }
 
+
 void libcasm_ir::AstToCasmIRPass::visit_ifthenelse( IfThenElseNode* node, T cond )
 {
 	VISIT;
@@ -711,28 +714,36 @@ void libcasm_ir::AstToCasmIRPass::visit_ifthenelse( IfThenElseNode* node, T cond
 	BranchStatement* ir_stmt = new BranchStatement( ir_scope );
 	assert( ir_stmt );
 	
+	assert( node->condition_ );
 	Value* ir_cond = lookup< Value >( node->condition_ );
 	assert( ir_cond );
 	assert
-	(  Value::isa< Instruction     >( ir_cond )
-	or Value::isa< BooleanConstant >( ir_cond )
+	( ( Value::isa< Instruction     >( ir_cond ) and ir_cond->getType()->getIDKind() == Type::BOOLEAN )
+	or  Value::isa< BooleanConstant >( ir_cond )
 	);
+
+	ir_stmt->add( ir_cond );
 	
-	Value* ir_case_true = new ParallelBlock( ir_scope );
+	assert( node->then_ );
+    ExecutionSemanticsBlock* ir_case_true = new ParallelBlock( ir_scope );
 	assert( ir_case_true );
 	ast2casmir[ node ]             = ir_case_true;
 	ast2parent[ node->then_ ]      = node;
-	
-	Value* ir_case_false = new ParallelBlock( ir_scope );
-	assert( ir_case_false );
-	ast2casmir[ node->condition_ ] = ir_case_false;
-	ast2parent[ node->else_ ]      = node->condition_;
-	
-	assert( !" DEPRECATED IMPLEMENTATION, PPA FIXME!!! BranchInstr is DEPRECATED!!! " );
-	ir_stmt->add( new BranchInstruction( ir_cond, ir_case_true, ir_case_false ) );
 	ir_stmt->addBlock( ir_case_true  );
-	ir_stmt->addBlock( ir_case_false );
+	
+	if( node->else_ )
+	{
+		assert(0);
+	    // ExecutionSemanticsBlock* ir_case_false = new ParallelBlock( ir_scope );
+		// assert( ir_case_false );
+		// ast2casmir[ node->condition_ ] = ir_case_false;
+		// ast2parent[ node->condition_ ] = node;
+		// ast2parent[ node->else_ ]      = node->condition_;
+		
+		// ir_stmt->addBlock( ir_case_false );
+	}
 }
+
 
 void libcasm_ir::AstToCasmIRPass::visit_case_pre( CaseNode* node, T val )
 {
@@ -753,6 +764,7 @@ void libcasm_ir::AstToCasmIRPass::visit_case_pre( CaseNode* node, T val )
 		ast2parent[ a.second ] = (AstNode*)&a;
 	}
 }
+
 
 void libcasm_ir::AstToCasmIRPass::visit_case( CaseNode* node, T val, const std::vector< T >& case_labels )
 {

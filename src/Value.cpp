@@ -215,25 +215,29 @@ void Value::iterate( Traversal order, Visitor* visitor, std::function< void( Val
 			block->iterate( order, visitor, action );
 		}
 	}
-	else if( Value::isa< TrivialStatement >( this ) )
+	else if( Value::isa< Statement >( this ) )
 	{
-		for( Value* instr : ((TrivialStatement*)this)->getInstructions() )
+		Statement* stmt = (Statement*)this;		
+		assert( stmt->getInstructions().size() > 0 and " a statement must contain at least one instruction " );
+		
+		for( Value* instr : stmt->getInstructions() )
 		{
 			assert( instr );
 			instr->iterate( order, visitor, action );
 		}
+		
+		if( visitor && not Value::isa< TrivialStatement >( this ) )
+		{
+			visitor->dispatch( Visitor::Stage::INTERLOG, this );
+			
+			for( ExecutionSemanticsBlock* sco :stmt->getBlocks() )
+			{
+				assert( sco );
+				sco->iterate( order, visitor, action );
+			}
+		}		
 	}
-	
-	
-	// else if( Value::isa< Scope >( this ) )
-	// {
-	// 	for( Block* block : ((Scope*)this)->getBlocks() )
-	// 	{
-	// 		assert( block );
-	// 		block->iterate( order, visitor, action );
-	// 	}
-	// }
-	
+    
 	if( visitor )
 	{
 		visitor->dispatch( Visitor::Stage::EPILOG, this );

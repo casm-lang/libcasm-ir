@@ -55,7 +55,9 @@ void Visitor::dispatch( Stage stage, Value* value )
 		
 		CASE_VALUE( PARALLEL_BLOCK,       ParallelBlock );
 		CASE_VALUE( SEQUENTIAL_BLOCK,     SequentialBlock );
-	    CASE_VALUE( TRIVIAL_STATEMENT,    TrivialStatement );
+
+		CASE_VALUE( TRIVIAL_STATEMENT,    TrivialStatement );
+		CASE_VALUE_INTER( BRANCH_STATEMENT, BranchStatement );
 		
 		CASE_VALUE( LOCATION_INSTRUCTION, LocationInstruction );
 		CASE_VALUE( LOOKUP_INSTRUCTION,   LookupInstruction );
@@ -67,6 +69,7 @@ void Visitor::dispatch( Stage stage, Value* value )
 		CASE_VALUE( DIV_INSTRUCTION,      DivInstruction );
 		
 		CASE_VALUE( AND_INSTRUCTION,      AndInstruction );
+		CASE_VALUE( EQU_INSTRUCTION,      EquInstruction );
 
 		CASE_VALUE( INTEGER_CONSTANT,     IntegerConstant );
 		CASE_VALUE( STRING_CONSTANT,      StringConstant );

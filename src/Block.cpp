@@ -29,7 +29,19 @@ using namespace libcasm_ir;
 
 Block::Block( const char* name, Type* type, Value::ID id )
 : Value( name, type, id )
+, parent( 0 )
 {
+}
+
+void Block::setParent( Value* parent )
+{
+	assert( parent );
+	this->parent = parent;
+}
+
+Value* Block::getParent( void ) const
+{
+	return parent;
 }
 
 void Block::dump( void ) const
@@ -51,15 +63,15 @@ ExecutionSemanticsBlock::ExecutionSemanticsBlock
 ( const char* name
 , Type* type
 , const u1 is_parallel
-, ExecutionSemanticsBlock* parent
+, ExecutionSemanticsBlock* scope
 , Value::ID id
 )
 : Block( name, type, id )
 , is_parallel( is_parallel )
 , pseudo_state( 0 )
-, parent( parent )
+, scope( scope )
 {
-	setParent( parent );
+	setScope( scope );
 }
 
 const u1 ExecutionSemanticsBlock::isParallel( void ) const
@@ -72,20 +84,20 @@ const u64 ExecutionSemanticsBlock::getPseudoState( void ) const
 	return pseudo_state;
 }
 		
-ExecutionSemanticsBlock* ExecutionSemanticsBlock::getParent( void ) const
+ExecutionSemanticsBlock* ExecutionSemanticsBlock::getScope( void ) const
 {
-	return parent;
+	return scope;
 }
 		
-void ExecutionSemanticsBlock::setParent( ExecutionSemanticsBlock* parent_block )
+void ExecutionSemanticsBlock::setScope( ExecutionSemanticsBlock* scope_block )
 {
-	parent = parent_block;
+	scope = scope_block;
 			
-	if( parent )
+	if( scope )
 	{
-		pseudo_state = parent->getPseudoState();
+		pseudo_state = scope->getPseudoState();
 
-		if( parent->isParallel() != this->isParallel() )
+		if( scope->isParallel() != this->isParallel() )
 		{
 			pseudo_state++;
 		}
@@ -105,7 +117,7 @@ void ExecutionSemanticsBlock::add( Block* block )
 	if( Value::isa< ExecutionSemanticsBlock >( block ) )
 	{
 		ExecutionSemanticsBlock* inner = static_cast< ExecutionSemanticsBlock* >( block );
-		inner->setParent( this );
+		inner->setScope( this );
 	}
 			
 	blocks.push_back( block );
@@ -114,7 +126,7 @@ void ExecutionSemanticsBlock::add( Block* block )
 void ExecutionSemanticsBlock::dump( void ) const
 {
 	printf( "[ESBlk] %p, %p, %u @ %lu\n"
-			, this, parent, isParallel(), getPseudoState() );
+			, this, scope, isParallel(), getPseudoState() );
 			
 	for( Block* block : blocks )
 	{
@@ -128,8 +140,8 @@ void ExecutionSemanticsBlock::dump( void ) const
 
 
 
-ParallelBlock::ParallelBlock( ExecutionSemanticsBlock* parent )
-: ExecutionSemanticsBlock( "par", 0, true, parent, Value::PARALLEL_BLOCK )
+ParallelBlock::ParallelBlock( ExecutionSemanticsBlock* scope )
+: ExecutionSemanticsBlock( "par", 0, true, scope, Value::PARALLEL_BLOCK )
 {
 }
 
@@ -140,8 +152,8 @@ void ParallelBlock::dump( void ) const
 		
 
 
-SequentialBlock::SequentialBlock( ExecutionSemanticsBlock* parent )
-: ExecutionSemanticsBlock( "seq", 0, false, parent, Value::SEQUENTIAL_BLOCK )
+SequentialBlock::SequentialBlock( ExecutionSemanticsBlock* scope )
+: ExecutionSemanticsBlock( "seq", 0, false, scope, Value::SEQUENTIAL_BLOCK )
 {
 }
 		

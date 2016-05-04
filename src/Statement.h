@@ -35,6 +35,7 @@ namespace libcasm_ir
 		
 	private:
 		std::vector< Value* > instructions;
+		std::vector< ExecutionSemanticsBlock* > blocks;
 		
 	public:
 		Statement( const char* name, Type* type, ExecutionSemanticsBlock* scope
@@ -46,6 +47,9 @@ namespace libcasm_ir
 		
 		void add( Value* instruction );
 
+		void addBlock( ExecutionSemanticsBlock* block );
+		const std::vector< ExecutionSemanticsBlock* >& getBlocks( void ) const;
+		
 		void dump( void ) const;
 		
 		static inline Value::ID classid( void ) { return Value::STATEMENT; };
@@ -73,9 +77,8 @@ namespace libcasm_ir
 	public:
 		BranchStatement( ExecutionSemanticsBlock* scope = 0 );
 	    
-		void addBlock( Value* block );
-
-		const std::vector< Block* >& getBlocks( void ) const;
+		// void addBlock( Value* block );
+		// const std::vector< Block* >& getBlocks( void ) const;
 		
 		void dump( void ) const;
 		
