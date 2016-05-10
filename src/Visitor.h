@@ -150,7 +150,7 @@ namespace libcasm_ir
 	};
 }
 
-#define LIB_CASMIR_VISITOR_INTERFACE LIB_CASMIR_VISITOR_INTERFACE_(,)
+#define LIB_CASMIR_VISITOR_INTERFACE LIB_CASMIR_VISITOR_INTERFACE_(, override final )
 
 
 #endif /* _LIB_CASMIR_VISITOR_H_ */
