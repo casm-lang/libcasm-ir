@@ -249,6 +249,11 @@ void Value::iterate( Traversal order, Visitor* visitor, std::function< void( Val
 	}
 }
 
+void Value::iterate
+( Traversal order, std::function< void( Value* ) > action )
+{
+	iterate( order, 0, action );
+}
 
 
 

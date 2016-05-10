@@ -170,6 +170,9 @@ namespace libcasm_ir
 	    virtual void iterate
 		( Traversal order, Visitor* visitor = 0, std::function< void( Value* ) > action  = []( Value* ){ } ) final;
 
+		virtual void iterate
+		( Traversal order, std::function< void( Value* ) > action ) final;
+		
 		virtual u64 getLabelID( void )
 		{
 			static u64 cnt = -1;
