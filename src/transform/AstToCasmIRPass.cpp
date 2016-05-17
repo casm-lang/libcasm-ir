@@ -1172,7 +1172,7 @@ T libcasm_ir::AstToCasmIRPass::visit_builtin_atom( BuiltinAtom* node, T args[], 
 {
 	VISIT;
 
-	printf( "builtin: %s\n", node->to_string().c_str() );
+	printf( "builtin: %s\n", node->to_str().c_str() );
 	
 	Type* ty_ident = getType( node->return_type );
     if( node->arguments )
@@ -1183,7 +1183,7 @@ T libcasm_ir::AstToCasmIRPass::visit_builtin_atom( BuiltinAtom* node, T args[], 
         }
     }
 	
-	Value* ir_ident = new libcasm_ir::Builtin( node->to_string().c_str(), ty_ident );
+	Value* ir_ident = new libcasm_ir::Builtin( node->to_str().c_str(), ty_ident );
     assert( ir_ident );
 	
 	CallInstruction* ir_call = new CallInstruction( ir_ident );
