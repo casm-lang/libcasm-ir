@@ -1099,7 +1099,7 @@ T libcasm_ir::AstToCasmIRPass::visit_bit_atom( IntegerAtom* node )
 	return 0;
 }
 
-T libcasm_ir::AstToCasmIRPass::visit_float_atom( FloatAtom* node )
+T libcasm_ir::AstToCasmIRPass::visit_floating_atom( FloatingAtom* node )
 {
 	VISIT;
 	FIXME;
