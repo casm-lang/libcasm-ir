@@ -98,7 +98,7 @@ namespace libcasm_ir
 		T visit_derived_function_atom( FunctionAtom* node, T expr );
 		T visit_int_atom( IntegerAtom* node );
 		T visit_bit_atom( IntegerAtom* node );
-		T visit_float_atom( FloatAtom* node );
+		T visit_floating_atom( FloatingAtom* node );
 		T visit_rational_atom( RationalAtom* node );
 		T visit_undef_atom( UndefAtom* node );
 		T visit_self_atom( SelfAtom* node );
