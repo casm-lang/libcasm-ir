@@ -102,6 +102,8 @@ static const char* indention( Value& value )
 #define DUMP_PREFIX  printf( "%-14s: %p, %s, %s%s ", __FUNCTION__, &value, value.getLabel(), indention( value ), value.getName() )
 #define DUMP_POSTFIX printf( "\n" );
 
+#define DUMP_INSTR for( auto v : value.getValues() ) { printf( ", %s (%s)", v->getLabel(), v->getType()->getName() ); }
+
 void CasmIRDumpPass::visit_prolog( Specification& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
 void CasmIRDumpPass::visit_epilog( Specification& value ) {}
 
@@ -128,28 +130,28 @@ void CasmIRDumpPass::visit_prolog( BranchStatement& value ) { DUMP_PREFIX; DUMP_
 void CasmIRDumpPass::visit_interlog( BranchStatement& value ) {}
 void CasmIRDumpPass::visit_epilog( BranchStatement& value ) {}
 
-void CasmIRDumpPass::visit_prolog( LocationInstruction& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
+void CasmIRDumpPass::visit_prolog( LocationInstruction& value ) { DUMP_PREFIX; DUMP_INSTR; DUMP_POSTFIX; }
 void CasmIRDumpPass::visit_epilog( LocationInstruction& value ) {}
 
-void CasmIRDumpPass::visit_prolog( LookupInstruction& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
+void CasmIRDumpPass::visit_prolog( LookupInstruction& value ) { DUMP_PREFIX; DUMP_INSTR; DUMP_POSTFIX; }
 void CasmIRDumpPass::visit_epilog( LookupInstruction& value ) {}
 
-void CasmIRDumpPass::visit_prolog( UpdateInstruction& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
+void CasmIRDumpPass::visit_prolog( UpdateInstruction& value ) { DUMP_PREFIX; DUMP_INSTR; DUMP_POSTFIX; }
 void CasmIRDumpPass::visit_epilog( UpdateInstruction& value ) {}
 
-void CasmIRDumpPass::visit_prolog( PrintInstruction& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
+void CasmIRDumpPass::visit_prolog( PrintInstruction& value ) { DUMP_PREFIX; DUMP_INSTR; DUMP_POSTFIX; }
 void CasmIRDumpPass::visit_epilog( PrintInstruction& value ) {}
 
-void CasmIRDumpPass::visit_prolog( AddInstruction& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
+void CasmIRDumpPass::visit_prolog( AddInstruction& value ) { DUMP_PREFIX; DUMP_INSTR; DUMP_POSTFIX; }
 void CasmIRDumpPass::visit_epilog( AddInstruction& value ) {}
 
-void CasmIRDumpPass::visit_prolog( DivInstruction& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
+void CasmIRDumpPass::visit_prolog( DivInstruction& value ) { DUMP_PREFIX; DUMP_INSTR; DUMP_POSTFIX; }
 void CasmIRDumpPass::visit_epilog( DivInstruction& value ) {}
 
-void CasmIRDumpPass::visit_prolog( AndInstruction& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
+void CasmIRDumpPass::visit_prolog( AndInstruction& value ) { DUMP_PREFIX; DUMP_INSTR; DUMP_POSTFIX; }
 void CasmIRDumpPass::visit_epilog( AndInstruction& value ) {}
 
-void CasmIRDumpPass::visit_prolog( EquInstruction& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
+void CasmIRDumpPass::visit_prolog( EquInstruction& value ) { DUMP_PREFIX; DUMP_INSTR; DUMP_POSTFIX; }
 void CasmIRDumpPass::visit_epilog( EquInstruction& value ) {}
 
 void CasmIRDumpPass::visit_prolog( IntegerConstant& value ) { DUMP_PREFIX; DUMP_POSTFIX; }
