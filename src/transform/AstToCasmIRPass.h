@@ -56,8 +56,8 @@ namespace libcasm_ir
 	public:
 		Specification* getSpecification( void ) const;
 		
-		void visit_init( UnaryNode* node );
-		void visit_specification( AstNode* node );	
+		void visit_init( InitNode* node );
+		void visit_specification( SpecificationNode* node );	
 		void visit_body_elements( AstNode* node );
 		void visit_function_def( FunctionDefNode* node, const std::vector<std::pair<T, T>>& inits );
 		void visit_derived_function_atom_pre( FunctionAtom* node, T args[], uint16_t argc );

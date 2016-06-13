@@ -91,7 +91,7 @@ AgentConstant* AgentConstant::create( Type::Agent value )
 	if( result != cache.end() )
 	{
 		assert( result->second );
-		printf( "[Const] found %p\n", result->second );
+		//printf( "[Const] found %p\n", result->second );
 		return result->second;
 	}
 	
@@ -165,7 +165,7 @@ IntegerConstant* IntegerConstant::create( Type::Integer value )
 	if( result != cache.end() )
 	{
 		assert( result->second );
-		printf( "[Const] found %p\n", result->second );
+		//printf( "[Const] found %p\n", result->second );
 		return result->second;
 	}
 	
@@ -208,7 +208,7 @@ BitConstant* BitConstant::create( u64 value, u16 bitsize )
 	if( result != cache[bitsize].end() )
 	{
 		assert( result->second );
-		printf( "[Const] found %p\n", result->second );
+		//printf( "[Const] found %p\n", result->second );
 		return result->second;
 	}
 	
@@ -248,7 +248,7 @@ StringConstant* StringConstant::create( Type::String value )
 	if( result != cache.end() )
 	{
 		assert( result->second );
-		printf( "[Const] found %p\n", result->second );
+		//printf( "[Const] found %p\n", result->second );
 		return result->second;
 	}
 	
@@ -296,7 +296,7 @@ RulePointerConstant* RulePointerConstant::create( Type::RulePointer value )
 	if( result != cache.end() )
 	{
 		assert( result->second );
-		printf( "[Const] found %p\n", result->second );
+		//printf( "[Const] found %p\n", result->second );
 		return result->second;
 	}
 	
@@ -320,7 +320,7 @@ RulePointerConstant* RulePointerConstant::create( const char* name )
 	if( result != cache.end() )
 	{
 		assert( result->second );
-		printf( "[Const] found %p\n", result->second );
+		//printf( "[Const] found %p\n", result->second );
 		return result->second;
 	}
 	
@@ -406,14 +406,14 @@ Identifier* Identifier::create( Type* type, const char* value, Value* scope )
 		Value* x = *result->second.begin();
 		
 		assert( x->getType()->getID() == type->getID() );
-		//if( x->getType()->getID() == type->getID() )
-		//{
-		printf( "[Ident] found '%s' of type %lu @ %p\n", value, type->getID(), x );
+		// //if( x->getType()->getID() == type->getID() )
+		// //{
+		// printf( "[Ident] found '%s' of type %lu @ %p\n", value, type->getID(), x );
 		return (Identifier*)x;
-		//}
+		// //}
 	}
 	
-	printf( "[Ident] creating '%s' of type %lu\n", value, type->getID() );
+	//printf( "[Ident] creating '%s' of type %lu\n", value, type->getID() );
 	return new Identifier( type, value );
 }
 
@@ -439,7 +439,7 @@ Identifier* Identifier::create( Type* type, const char* value, Value* scope )
 
 void Identifier::forgetSymbol( const char* value )
 {
-	printf( "[Ident] forgetting '%s'\n", value );
+	//printf( "[Ident] forgetting '%s'\n", value );
 	getSymbols()->erase( value );
 }
 

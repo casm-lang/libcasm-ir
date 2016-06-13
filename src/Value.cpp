@@ -48,19 +48,20 @@ Value::Value( const char* name, Type* type, Value::ID id )
 {
 	SymbolTable& symbols = *getSymbols();
 	symbols[ name ].insert( this );
-	printf( "[Value] created '%s' @ %p", name, this );
-	if( type )
-	{
-		printf( " of type '%s' (=0x%lx)", type->getName(), type->getID() );
-	}
-	printf( "\n" );
+	
+	// printf( "[Value] created '%s' @ %p", name, this );
+	// if( type )
+	// {
+	// 	printf( " of type '%s' (=0x%lx)", type->getName(), type->getID() );
+	// }
+	// printf( "\n" );
 }
 
 Value::~Value()
 {
 	SymbolTable& symbols = *getSymbols();
 	symbols[ name ].erase( this );
-	printf( "[Value] deleted '%s' @ %p of type %p\n", name, this, type );
+	// printf( "[Value] deleted '%s' @ %p of type %p\n", name, this, type );
 }
 
 const char* Value::getName( void ) const

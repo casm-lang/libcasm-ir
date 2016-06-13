@@ -74,13 +74,13 @@ bool libcasm_ir::AstToCasmIRPass::run( libpass::PassResult& pr )
 {
 	specification = 0;
     
-	AstNode* node = (AstNode*)pr.getResult< libcasm_fe::AstDumpPass >();
+	Ast* root = (Ast*)pr.getResult< libcasm_fe::TypeCheckPass >();
 	
 	AstWalker< AstToCasmIRPass, bool > walker( *this );
 	
 	walker.suppress_calls = true;
-	walker.walk_specification( node );
-
+	walker.walk_specification( root );
+	
 	// PPA: this could be extracted to a 'update and check consistency' Value function?
     Value::SymbolTable& symbols = *Value::getSymbols();
 	for( auto value : symbols[".rulepointer"] )
@@ -131,8 +131,8 @@ libcasm_ir::Specification* libcasm_ir::AstToCasmIRPass::getSpecification( void )
 }
 
 
-#define VISIT printf( "===--- %s:%i: %s: %p: %s\n", \
-__FILE__, __LINE__, __FUNCTION__, node, node->to_str().c_str() )
+#define VISIT
+//printf( "===--- %s:%i: %s: %p: %s\n", __FILE__, __LINE__, __FUNCTION__, node, node->to_str().c_str() )
 
 #define FIXME											  \
 	printf( "+++ FIXME +++: '%s:%i' in '%s'\n",			  \
@@ -142,17 +142,17 @@ __FILE__, __LINE__, __FUNCTION__, node, node->to_str().c_str() )
 
 
 
-void libcasm_ir::AstToCasmIRPass::visit_specification( AstNode* node )
+void libcasm_ir::AstToCasmIRPass::visit_specification( SpecificationNode* node )
 {
 	// VISIT;
 	assert( !specification );
-    specification = new libcasm_ir::Specification( libstdhl::Allocator::string( global_driver->spec_name ) );
+    specification = new libcasm_ir::Specification( libstdhl::Allocator::string( node->identifier ) );
 }
 
-void libcasm_ir::AstToCasmIRPass::visit_init( UnaryNode* node )
+void libcasm_ir::AstToCasmIRPass::visit_init( InitNode* node )
 {
 	// VISIT;
-	RulePointerConstant* ir_init = RulePointerConstant::create( global_driver->init_name.c_str() );
+	RulePointerConstant* ir_init = RulePointerConstant::create( node->identifier.c_str() );
 	
 	// single execution agent!
 	Agent* ir_agent = new Agent();
@@ -189,12 +189,12 @@ void libcasm_ir::AstToCasmIRPass::visit_function_def
 		x.append( a->to_str() );
 	}
 	
-	printf( "%s, %lu: %s -> %s, \n"
-			, node->sym->name.c_str()
-			, node->sym->id
-			, x.c_str()
-			, node->sym->return_type_->to_str().c_str()
-		);
+	// printf( "%s, %lu: %s -> %s, \n"
+	// 		, node->sym->name.c_str()
+	// 		, node->sym->id
+	// 		, x.c_str()
+	// 		, node->sym->return_type_->to_str().c_str()
+	// 	);
 
 	
 	Type* ftype = getType( node->sym->return_type_ );
@@ -231,7 +231,7 @@ void libcasm_ir::AstToCasmIRPass::visit_derived_def_pre( FunctionDefNode* node )
 	for( i32 i = 0; i < node->sym->arguments_.size(); i++ )
 	{
 		const char* param_ident = node->sym->parameter[i];
-		printf( "param %s\n", param_ident );
+		// printf( "param %s\n", param_ident );
 		
 		ir_derived->addParameter
 		( Identifier::create
@@ -253,7 +253,7 @@ void libcasm_ir::AstToCasmIRPass::visit_derived_def( FunctionDefNode* node, T ex
 	{
 		x.append( a->to_str() );
 	}
-	printf( "%s, %lu: %s -> %s, \n", node->sym->name.c_str(), node->sym->id, x.c_str(), node->sym->return_type_->to_str().c_str() );
+	// printf( "%s, %lu: %s -> %s, \n", node->sym->name.c_str(), node->sym->id, x.c_str(), node->sym->return_type_->to_str().c_str() );
 	
 	assert( node->sym->type == Symbol::SymbolType::DERIVED );
 	
@@ -299,14 +299,14 @@ void libcasm_ir::AstToCasmIRPass::visit_skip( AstNode* node )
 
 void libcasm_ir::AstToCasmIRPass::visit_rule( RuleNode* node )
 {
-	printf( "\n\n" );
+//	printf( "\n\n" );
 	VISIT;
 	string x;
 	for( auto& a : node->arguments )
 	{
 		x.append( a->to_str() );
 	}
-	printf( "%p -> %p\n", node, node->child_ );
+//	printf( "%p -> %p\n", node, node->child_ );
     assert( node );
 	
 	Rule* ir_rule = new Rule( node->name.c_str() );
@@ -361,8 +361,8 @@ void libcasm_ir::AstToCasmIRPass::visit_rule_post( RuleNode* node )
 void libcasm_ir::AstToCasmIRPass::visit_parblock( UnaryNode* node )
 {
 	VISIT;
-	printf( "{ }\n" );
-	printf( "%p -> %p\n", node, node->child_ );
+	// printf( "{ }\n" );
+	// printf( "%p -> %p\n", node, node->child_ );
 	
 	assert( node );
 	
@@ -397,8 +397,8 @@ void libcasm_ir::AstToCasmIRPass::visit_parblock( UnaryNode* node )
 void libcasm_ir::AstToCasmIRPass::visit_seqblock( UnaryNode* node )
 {	
 	VISIT;
-	printf( "{| |}\n" );
-	printf( "%p -> %p\n", node, node->child_ );
+	// printf( "{| |}\n" );
+	// printf( "%p -> %p\n", node, node->child_ );
 	
 	assert( node );
 	
@@ -434,11 +434,11 @@ void libcasm_ir::AstToCasmIRPass::visit_seqblock( UnaryNode* node )
 void libcasm_ir::AstToCasmIRPass::visit_statements( AstListNode* node )
 {
     VISIT;
-    printf( "...\n" );
-	for( AstNode *s : node->nodes )
-	{
-		printf( "%p -> %p\n", node, s );
-	}
+    // printf( "...\n" );
+	// for( AstNode *s : node->nodes )
+	// {
+	// 	printf( "%p -> %p\n", node, s );
+	// }
 	
 	assert( node );
 	
@@ -472,8 +472,8 @@ void libcasm_ir::AstToCasmIRPass::visit_iterate( AstNode* node )
 void libcasm_ir::AstToCasmIRPass::visit_update( UpdateNode* node, T func, T expr )
 {
 	VISIT;
-    printf( "%p -> %p\n", node, node->func );
-	printf( "%p -> %p\n", node, node->expr_ );
+    // printf( "%p -> %p\n", node, node->func );
+	// printf( "%p -> %p\n", node, node->expr_ );
 	
 	ExecutionSemanticsBlock* ir_scope =
 		lookupParent< ExecutionSemanticsBlock >( node );
@@ -658,7 +658,7 @@ void libcasm_ir::AstToCasmIRPass::visit_let( LetNode* node, T var )
 	else if( Value::isa< Statement >( parent ) )
 	{
 		ir_scope = ((Statement*)parent)->getScope();
-		printf( "up for %p\n", parent );
+		//printf( "up for %p\n", parent );
 	}
 	else
 	{
@@ -704,8 +704,8 @@ void libcasm_ir::AstToCasmIRPass::visit_pop( PopNode* node )
 void libcasm_ir::AstToCasmIRPass::visit_ifthenelse( IfThenElseNode* node, T cond )
 {
 	VISIT;
-	printf( "%p -> %p\n",      node, node->condition_ );
-	printf( "%p -> %p | %p\n", node, node->then_, node->else_ );
+	// printf( "%p -> %p\n",      node, node->condition_ );
+	// printf( "%p -> %p | %p\n", node, node->then_, node->else_ );
 
 	ExecutionSemanticsBlock* ir_scope =
 		lookupParent< ExecutionSemanticsBlock >( node );
@@ -748,7 +748,7 @@ void libcasm_ir::AstToCasmIRPass::visit_ifthenelse( IfThenElseNode* node, T cond
 void libcasm_ir::AstToCasmIRPass::visit_case_pre( CaseNode* node, T val )
 {
 	VISIT;
-	printf( "%p -> %p\n",      node, node->expr );
+	// printf( "%p -> %p\n",      node, node->expr );
 
 	ExecutionSemanticsBlock* ir_scope =
 		lookupParent< ExecutionSemanticsBlock >( node );
@@ -756,7 +756,7 @@ void libcasm_ir::AstToCasmIRPass::visit_case_pre( CaseNode* node, T val )
 	
     for( auto& a : node->case_list )
     {
-		printf( "%p: %p -> %p\n", &node->case_list, a.first, a.second );
+		// printf( "%p: %p -> %p\n", &node->case_list, a.first, a.second );
 		
 		Value* ir_case = new ParallelBlock( ir_scope );
 		assert( ir_case );
@@ -794,7 +794,7 @@ void libcasm_ir::AstToCasmIRPass::visit_case( CaseNode* node, T val, const std::
 	
 	for( auto& a : node->case_list )
     {
-		printf( "case: %p: %p -> %p\n", &node->case_list, a.first, a.second );
+		// printf( "case: %p: %p -> %p\n", &node->case_list, a.first, a.second );
 		
 		ExecutionSemanticsBlock* ir_case =
 			lookupParent< ExecutionSemanticsBlock >( a.second );
@@ -822,7 +822,7 @@ void libcasm_ir::AstToCasmIRPass::visit_case( CaseNode* node, T val, const std::
 T libcasm_ir::AstToCasmIRPass::visit_expression( Expression* node, T lhs, T rhs )
 {
 	VISIT;
-	printf( "%s, %p, %p\n", operator_to_str( node->op ).c_str(), node->left_, node->right_ );
+	// printf( "%s, %p, %p\n", operator_to_str( node->op ).c_str(), node->left_, node->right_ );
 	
 	Value* ir_lhs = lookup< Value >( node->left_  );
 	Value* ir_rhs = lookup< Value >( node->right_ );
@@ -890,7 +890,7 @@ T libcasm_ir::AstToCasmIRPass::visit_expression( Expression* node, T lhs, T rhs 
 T libcasm_ir::AstToCasmIRPass::visit_expression_single( Expression* node, T val )
 {
 	VISIT;
-	printf( "%s, %p\n", operator_to_str( node->op ).c_str(), node->left_ );
+	// printf( "%s, %p\n", operator_to_str( node->op ).c_str(), node->left_ );
 	
 	Value* ir_lhs = lookup< Value >( node->left_  );
 	assert( ir_lhs );
@@ -914,15 +914,15 @@ T libcasm_ir::AstToCasmIRPass::visit_expression_single( Expression* node, T val 
 T libcasm_ir::AstToCasmIRPass::visit_function_atom( FunctionAtom* node, T args[], uint16_t argc )
 {
 	VISIT;
-	printf( "%s, %p", node->name.c_str(), node );
-	if( node->arguments )
-	{
-		for( auto a : *(node->arguments) )
-		{
-			printf( ", %p", a );
-		}
-	}
-	printf( "\n" );
+	// printf( "%s, %p", node->name.c_str(), node );
+	// if( node->arguments )
+	// {
+	// 	for( auto a : *(node->arguments) )
+	// 	{
+	// 		printf( ", %p", a );
+	// 	}
+	// }
+	// printf( "\n" );
 	
 	if( node->symbol_type == FunctionAtom::SymbolType::PARAMETER )
 	{
@@ -993,10 +993,10 @@ T libcasm_ir::AstToCasmIRPass::visit_derived_function_atom( FunctionAtom* node, 
 {
 	VISIT;
 	string x;
-	printf( "derived: %s, %s\n"
-			, node->name.c_str()
-		    , x.c_str()
-	    );
+	// printf( "derived: %s, %s\n"
+	// 		, node->name.c_str()
+	// 	    , x.c_str()
+	//     );
 
 	assert( node->symbol );
 	assert( node->symbol_type == FunctionAtom::SymbolType::DERIVED );
@@ -1030,7 +1030,7 @@ T libcasm_ir::AstToCasmIRPass::visit_derived_function_atom( FunctionAtom* node, 
 T libcasm_ir::AstToCasmIRPass::visit_undef_atom( UndefAtom* node )
 {
 	VISIT;
-	printf( "undef\n" );
+	// printf( "undef\n" );
 	
 	Value* ir_const = 0;
     
@@ -1060,7 +1060,7 @@ T libcasm_ir::AstToCasmIRPass::visit_undef_atom( UndefAtom* node )
 T libcasm_ir::AstToCasmIRPass::visit_boolean_atom( BooleanAtom* node )
 {
 	VISIT;
-	printf( "%u\n", node->value );
+	// printf( "%u\n", node->value );
 	
 	BooleanConstant* ir_const
 		= BooleanConstant::create( (Type::Boolean)node->value );
@@ -1075,7 +1075,7 @@ T libcasm_ir::AstToCasmIRPass::visit_boolean_atom( BooleanAtom* node )
 T libcasm_ir::AstToCasmIRPass::visit_int_atom( IntegerAtom* node )
 {
 	VISIT;
-	printf( "%lu\n", node->val_	);
+	// printf( "%lu\n", node->val_	);
 	
 	IntegerConstant* ir_const
 		= IntegerConstant::create( (Type::Integer)node->val_ );	
@@ -1089,7 +1089,7 @@ T libcasm_ir::AstToCasmIRPass::visit_int_atom( IntegerAtom* node )
 T libcasm_ir::AstToCasmIRPass::visit_bit_atom( IntegerAtom* node )
 {
 	VISIT;
-	printf( "%lu (0x%lx)\n", node->val_, node->val_	);
+	// printf( "%lu (0x%lx)\n", node->val_, node->val_	);
 	
 	BitConstant* ir_const = BitConstant::create( (u64)node->val_, node->type_.bitsize );	
 	assert( ir_const );
@@ -1121,7 +1121,7 @@ T libcasm_ir::AstToCasmIRPass::visit_string_atom( StringAtom* node )
 	assert( ir_const );
     ast2casmir[ node ] = ir_const;
 	
-	printf( "%s\n", node->string.c_str() );
+	// printf( "%s\n", node->string.c_str() );
 
 	getSpecification()->add( ir_const );
 	return 0;
@@ -1148,7 +1148,7 @@ T libcasm_ir::AstToCasmIRPass::visit_rule_atom( RuleAtom* node )
     assert( ir_const );
     ast2casmir[ node ] = ir_const;
 	
-	printf( "rule: @%s\n", node->name.c_str() );
+	// printf( "rule: @%s\n", node->name.c_str() );
 	
 	getSpecification()->add( ir_const );
 	return 0;
@@ -1172,7 +1172,7 @@ T libcasm_ir::AstToCasmIRPass::visit_builtin_atom( BuiltinAtom* node, T args[], 
 {
 	VISIT;
 
-	printf( "builtin: %s\n", node->to_str().c_str() );
+	// printf( "builtin: %s\n", node->to_str().c_str() );
 	
 	Type* ty_ident = getType( node->return_type );
     if( node->arguments )
