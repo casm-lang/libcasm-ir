@@ -90,7 +90,7 @@ bool libcasm_ir::AstToCasmIRPass::run( libpass::PassResult& pr )
 	}
 	
 	
-	casm_frontend_destroy();
+	//casm_frontend_destroy();
 	
 	
 	pr.setResult< AstToCasmIRPass >( specification );
