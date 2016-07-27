@@ -90,3 +90,8 @@ clean:
 	@rm -rf obj
 	@echo "RM  " $(TARGET)
 	@rm -f $(TARGET)
+
+
+
+ci:
+	fly -t ci sp -p libcasm-ir -c .ci/pipeline.yml -l ~/.ci.yml

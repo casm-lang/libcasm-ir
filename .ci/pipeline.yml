@@ -1,0 +1,132 @@
+#   
+#   Copyright (c) 2014-2016 CASM Organization
+#   All rights reserved.
+#   
+#   Developed by: Florian Hahn
+#                 Philipp Paulweber
+#                 Emmanuel Pescosta
+#                 https://github.com/ppaulweber/libcasm-ir
+#   
+#   This file is part of libcasm-ir.
+#   
+#   libcasm-ir is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#   
+#   libcasm-ir is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+#   GNU General Public License for more details.
+#   
+#   You should have received a copy of the GNU General Public License
+#   along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
+#   
+
+resource_types:
+- name: matrix-notification-resource
+  type: docker-image
+  source:
+    repository: freelock/matrix-notification-resource
+
+- name: rsync-resource
+  type: docker-image
+  source:
+    repository: mrsixw/concourse-rsync-resource
+    tag: latest
+
+groups: []
+#groups:
+#- name: master
+#  jobs:
+#    - build@master
+#    - test@master
+#- name: ppaulweber/ast
+#  jobs:
+#    - build@ppaulweber-ast
+
+
+resources:
+- name: notify
+  type: matrix-notification-resource
+  source:
+    matrix_server_url: {{matrix-addr}}
+    token: {{matrix-auth}}
+    room_id: {{matrix-room}}
+
+- name: libcasm-ir
+  type: rsync-resource
+  source:
+    base_dir:    /opt/sync/libcasm-ir
+    server:      {{sync-addr}}
+    port:        {{sync-port}}
+    user:        {{sync-user}}
+    private_key: {{sync-auth}}
+    
+- name: gtest@master
+  type: git
+  source:
+    branch: master
+    disable_ci_skip: true
+    private_key: {{github-auth}}
+    uri: git@github.com:google/googletest
+- name: libstdhl@master
+  type: git
+  source:
+    branch: master
+    disable_ci_skip: true
+    private_key: {{github-auth}}
+    uri: git@github.com:ppaulweber/libstdhl
+- name: libpass@master
+  type: git
+  source:
+    branch: master
+    disable_ci_skip: true
+    private_key: {{github-auth}}
+    uri: git@github.com:ppaulweber/libpass
+
+- name: libcasm-fe@master
+  type: git
+  source:
+    branch: master
+    disable_ci_skip: true
+    private_key: {{github-auth}}
+    uri: git@github.com:ppaulweber/libcasm-fe
+
+- name: libcasm-ir@master
+  type: git
+  source:
+    branch: master
+    disable_ci_skip: true
+    private_key: {{github-auth}}
+    uri: git@github.com:ppaulweber/libcasm-ir
+
+    
+jobs:
+- name: build@master
+  plan:
+  - get: gtest@master
+  - get: libstdhl@master
+  - get: libpass@master
+  - get: libcasm-ir@master
+    trigger: true
+  - task: build
+    file: libcasm-ir@master/.ci/task/build.yml
+    input_mapping:
+      gtest    : gtest@master
+      libstdhl : libstdhl@master
+      libpass  : libpass@master
+      libcasm-fe: libcasm-fe@master
+      libcasm-ir: libcasm-ir@master
+  - put: libcasm-ir
+    params:
+      "sync_dir" : "out"
+- name: test@master
+  plan:
+  - get: libcasm-ir
+    passed: [build@master]
+    trigger: true
+  - task: test
+    file: libcasm-ir/casm-ir/.ci/task/test.yml
+    input_mapping:
+      in: libcasm-ir
