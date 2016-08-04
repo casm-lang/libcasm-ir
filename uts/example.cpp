@@ -25,6 +25,6 @@
 
 #include "gtest/gtest.h"
 
-TEST( libcasm_fe, example )
+TEST( libcasm_ir, example )
 {    
 }
