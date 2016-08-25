@@ -96,6 +96,7 @@ namespace libcasm_ir
 		T visit_function_atom( FunctionAtom* node, T args[], uint16_t argc );
 		T visit_function_atom_subrange( FunctionAtom* node, T args[], uint16_t argc	);
 		T visit_derived_function_atom( FunctionAtom* node, T expr );
+		T visit_zero_atom( ZeroAtom* node ) { assert( !"internal error!" ); };
 		T visit_int_atom( IntegerAtom* node );
 		T visit_bit_atom( IntegerAtom* node );
 		T visit_floating_atom( FloatingAtom* node );
