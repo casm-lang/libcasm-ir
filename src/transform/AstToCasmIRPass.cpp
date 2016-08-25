@@ -558,7 +558,7 @@ void libcasm_ir::AstToCasmIRPass::visit_call_post( CallNode* node )
 	//VISIT;
 }
 
-void libcasm_ir::AstToCasmIRPass::visit_print( PrintNode* node, std::vector< T >& args )
+void libcasm_ir::AstToCasmIRPass::visit_print( PrintNode* node, T expr )
 {
 	VISIT;
 	
@@ -572,11 +572,14 @@ void libcasm_ir::AstToCasmIRPass::visit_print( PrintNode* node, std::vector< T >
 	
 	PrintInstruction* ir_print = new PrintInstruction();
     assert( ir_print );
-	for( auto a : node->atoms )
-	{
-		Value* instr = lookup< Value >( a );
-		ir_print->add( instr );
-	}
+	
+	// for( auto a : node->atoms )
+	// {
+	// 	Value* instr = lookup< Value >( a );
+	// 	ir_print->add( instr );
+	// }
+	ir_print->add( lookup< Value >( node->getAtom() ) );
+	
 	// INFO: PPA: commented line below, because the 'IR' itself adds this during runtime (interpreter)
 	// and compilation --> this should not be part of the CASM IR!!! 
 	//ir_print->add( StringConstant::create( (const char*)"\n" ) );

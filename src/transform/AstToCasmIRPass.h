@@ -79,7 +79,7 @@ namespace libcasm_ir
 		void visit_call_pre( CallNode* node, T expr );
 		void visit_call( CallNode* node, std::vector< T >& args );
 		void visit_call_post( CallNode* node );
-		void visit_print( PrintNode* node, std::vector< T >& args );
+		void visit_print( PrintNode* node, T expr );
 		void visit_diedie( DiedieNode* node, T msg );
 		void visit_impossible( AstNode* node );
 		void visit_assert( UnaryNode* node, T expr );
