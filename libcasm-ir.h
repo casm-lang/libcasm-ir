@@ -41,9 +41,9 @@
 
 namespace libcasm_ir
 {
-	// class CasmIR // TODO: FIXME: PPA: this should be the right class not src/CasmIR.h !!!
-	// {
-	// };
+    // class CasmIR // TODO: FIXME: PPA: this should be the right class not src/CasmIR.h !!!
+    // {
+    // };
 }
 
 #endif /* _LIB_CASMIR_H_ */

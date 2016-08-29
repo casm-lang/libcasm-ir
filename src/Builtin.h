@@ -31,19 +31,19 @@
 namespace libcasm_ir
 {
     class Identifier;
-	
+    
     class Builtin : public User
     {
-		//private:
+        //private:
         
     public:
         Builtin( const char* name, Type* result );
-		
+        
         ~Builtin( void );
-		
+        
         void dump( void ) const;
-		
-		static inline Value::ID classid( void ) { return Value::BUILTIN; };
+        
+        static inline Value::ID classid( void ) { return Value::BUILTIN; };
         static bool classof( Value const* obj );
     };
 }

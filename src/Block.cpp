@@ -35,26 +35,26 @@ Block::Block( const char* name, Type* type, Value::ID id )
 
 void Block::setParent( Value* parent )
 {
-	assert( parent );
-	this->parent = parent;
+    assert( parent );
+    this->parent = parent;
 }
 
 Value* Block::getParent( void ) const
 {
-	return parent;
+    return parent;
 }
 
 void Block::dump( void ) const
 {
-	// printf( "[Block] %p\n", this );
-	((Value*)this)->dump();
+    // printf( "[Block] %p\n", this );
+    ((Value*)this)->dump();
 }
 
 bool Block::classof( Value const* obj )
 {
-	return obj->getValueID() == classid()
-		or ExecutionSemanticsBlock::classof( obj )
-		or Statement::classof( obj );
+    return obj->getValueID() == classid()
+        or ExecutionSemanticsBlock::classof( obj )
+        or Statement::classof( obj );
 }
 
 
@@ -71,71 +71,71 @@ ExecutionSemanticsBlock::ExecutionSemanticsBlock
 , pseudo_state( 0 )
 , scope( scope )
 {
-	setScope( scope );
+    setScope( scope );
 }
 
 const u1 ExecutionSemanticsBlock::isParallel( void ) const
 {
-	return is_parallel;
+    return is_parallel;
 }
-		
+        
 const u64 ExecutionSemanticsBlock::getPseudoState( void ) const
 {
-	return pseudo_state;
+    return pseudo_state;
 }
-		
+        
 ExecutionSemanticsBlock* ExecutionSemanticsBlock::getScope( void ) const
 {
-	return scope;
+    return scope;
 }
-		
+        
 void ExecutionSemanticsBlock::setScope( ExecutionSemanticsBlock* scope_block )
 {
-	scope = scope_block;
-			
-	if( scope )
-	{
-		pseudo_state = scope->getPseudoState();
+    scope = scope_block;
+            
+    if( scope )
+    {
+        pseudo_state = scope->getPseudoState();
 
-		if( scope->isParallel() != this->isParallel() )
-		{
-			pseudo_state++;
-		}
-	}
+        if( scope->isParallel() != this->isParallel() )
+        {
+            pseudo_state++;
+        }
+    }
 }
 
 const std::vector< Block* >& ExecutionSemanticsBlock::getBlocks( void ) const
 {
-	return blocks;
+    return blocks;
 }
-		
+        
 void ExecutionSemanticsBlock::add( Block* block )
 {
-	assert( block );
-			
-			
-	if( Value::isa< ExecutionSemanticsBlock >( block ) )
-	{
-		ExecutionSemanticsBlock* inner = static_cast< ExecutionSemanticsBlock* >( block );
-		inner->setScope( this );
-	}
-			
-	blocks.push_back( block );
+    assert( block );
+            
+            
+    if( Value::isa< ExecutionSemanticsBlock >( block ) )
+    {
+        ExecutionSemanticsBlock* inner = static_cast< ExecutionSemanticsBlock* >( block );
+        inner->setScope( this );
+    }
+            
+    blocks.push_back( block );
 }
-		
+        
 void ExecutionSemanticsBlock::dump( void ) const
 {
-	printf( "[ESBlk] %p, %p, %u @ %lu\n"
-			, this, scope, isParallel(), getPseudoState() );
-			
-	for( Block* block : blocks )
-	{
-		assert( block );
+    printf( "[ESBlk] %p, %p, %u @ %lu\n"
+            , this, scope, isParallel(), getPseudoState() );
+            
+    for( Block* block : blocks )
+    {
+        assert( block );
 
-		block->dump();
-	}
+        block->dump();
+    }
 }
-		
+        
 
 
 
@@ -147,19 +147,19 @@ ParallelBlock::ParallelBlock( ExecutionSemanticsBlock* scope )
 
 void ParallelBlock::dump( void ) const
 {
-	((ExecutionSemanticsBlock*)this)->dump();
+    ((ExecutionSemanticsBlock*)this)->dump();
 }
-		
+        
 
 
 SequentialBlock::SequentialBlock( ExecutionSemanticsBlock* scope )
 : ExecutionSemanticsBlock( "seq", 0, false, scope, Value::SEQUENTIAL_BLOCK )
 {
 }
-		
+        
 void SequentialBlock::dump( void ) const
 {
-	((ExecutionSemanticsBlock*)this)->dump();
+    ((ExecutionSemanticsBlock*)this)->dump();
 }
 
 
@@ -168,19 +168,19 @@ void SequentialBlock::dump( void ) const
 
 bool ExecutionSemanticsBlock::classof( Value const* obj )
 {
-	return obj->getValueID() == classid()
-		or ParallelBlock::classof( obj )
-		or SequentialBlock::classof( obj );
+    return obj->getValueID() == classid()
+        or ParallelBlock::classof( obj )
+        or SequentialBlock::classof( obj );
 }
 
 bool ParallelBlock::classof( Value const* obj )
 {
-	return obj->getValueID() == classid();
+    return obj->getValueID() == classid();
 }
 
 bool SequentialBlock::classof( Value const* obj )
 {
-	return obj->getValueID() == classid();
+    return obj->getValueID() == classid();
 }
 
 

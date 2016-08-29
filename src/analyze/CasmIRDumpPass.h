@@ -35,17 +35,17 @@
 
 namespace libcasm_ir
 {
-	class CasmIRDumpPass : public libpass::Pass, Visitor
-	{
-	public:
-		static char id;
-		
-		bool run( libpass::PassResult& pr ) override;
+    class CasmIRDumpPass : public libpass::Pass, Visitor
+    {
+    public:
+        static char id;
+        
+        bool run( libpass::PassResult& pr ) override;
 
-		LIB_CASMIR_VISITOR_INTERFACE;
-	};
+        LIB_CASMIR_VISITOR_INTERFACE;
+    };
 }
-	
+    
 #endif /* _LIB_CASMIR_CASM_IR_DUMP_PASS_H_ */
 
 

@@ -30,25 +30,25 @@
 
 namespace libcasm_ir
 {
-	class RulePointerConstant;
-	
+    class RulePointerConstant;
+    
     class Agent : public User
     {
     private:
         RulePointerConstant* rule_ptr_init;
-		
+        
     public:
         Agent( void );
 
         // ~Agent( void );
-	
+    
         RulePointerConstant* getInitRulePointer( void ) const;
-	
+    
         void setInitRulePointer( RulePointerConstant* init );
         
         void dump( void ) const;
-		
-		static inline Value::ID classid( void ) { return Value::AGENT; };
+        
+        static inline Value::ID classid( void ) { return Value::AGENT; };
         static bool classof( Value const* obj );
     };
 }

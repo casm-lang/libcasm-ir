@@ -38,85 +38,85 @@
 
 namespace libcasm_ir
 {
-	class AstToCasmIRPass : public libpass::Pass, libcasm_fe::AstInterface< bool >
-	{
-	public:
-		static char id;
+    class AstToCasmIRPass : public libpass::Pass, libcasm_fe::AstInterface< bool >
+    {
+    public:
+        static char id;
 
-		virtual bool run( libpass::PassResult& pr );
-	
-	private:
-		std::unordered_map< AstNode*, Value* >   ast2casmir;
-		std::unordered_map< AstNode*, AstNode* > ast2parent;
+        virtual bool run( libpass::PassResult& pr );
+    
+    private:
+        std::unordered_map< AstNode*, Value* >   ast2casmir;
+        std::unordered_map< AstNode*, AstNode* > ast2parent;
 
-		std::vector< Value* > current_scope;
+        std::vector< Value* > current_scope;
 
-		Specification* specification;
-		
-	public:
-		Specification* getSpecification( void ) const;
-		
-		void visit_init( InitNode* node );
-		void visit_specification( SpecificationNode* node );	
-		void visit_body_elements( AstNode* node );
-		void visit_function_def( FunctionDefNode* node, const std::vector<std::pair<T, T>>& inits );
-		void visit_derived_function_atom_pre( FunctionAtom* node, T args[], uint16_t argc );
-		void visit_derived_def_pre( FunctionDefNode* node );
-		void visit_derived_def( FunctionDefNode* node, T expr );
-		void visit_rule( RuleNode* node );
-		void visit_rule_post( RuleNode* node );
-		void visit_skip(AstNode* node);
-		void visit_statements( AstListNode* node );
-		void visit_parblock( UnaryNode* node );
-		void visit_seqblock( UnaryNode* node );
-		void visit_forall_pre( AstNode* node );
-		void visit_forall_post( AstNode* node );
-		void visit_iterate( AstNode* node );
-		void visit_update( UpdateNode* node, T func, T expr );
-		void visit_update_dumps( UpdateNode* node, T func, T expr );
-		void visit_update_subrange( UpdateNode* node, T func, T expr);
-		void visit_call_pre( CallNode* node );
-		void visit_call_pre( CallNode* node, T expr );
-		void visit_call( CallNode* node, std::vector< T >& args );
-		void visit_call_post( CallNode* node );
-		void visit_print( PrintNode* node, T expr );
-		void visit_diedie( DiedieNode* node, T msg );
-		void visit_impossible( AstNode* node );
-		void visit_assert( UnaryNode* node, T expr );
-		void visit_assure( UnaryNode* node, T expr );
-		void visit_let( LetNode* node, T var );
-		void visit_let_post( LetNode* node );
-		void visit_push( PushNode* node, T expr, T atom );
-		void visit_pop( PopNode* node );
-		void visit_ifthenelse( IfThenElseNode* node, T cond );
-		void visit_case_pre( CaseNode* node, T val );
-		void visit_case( CaseNode* node, T val, const std::vector< T >& case_labels );
-		T visit_expression( Expression* node, T lhs, T rhs );
-		T visit_expression_single( Expression* node, T val );
-		T visit_function_atom( FunctionAtom* node, T args[], uint16_t argc );
-		T visit_function_atom_subrange( FunctionAtom* node, T args[], uint16_t argc	);
-		T visit_derived_function_atom( FunctionAtom* node, T expr );
-		T visit_zero_atom( ZeroAtom* node ) { assert( !"internal error!" ); };
-		T visit_int_atom( IntegerAtom* node );
-		T visit_bit_atom( IntegerAtom* node );
-		T visit_floating_atom( FloatingAtom* node );
-		T visit_rational_atom( RationalAtom* node );
-		T visit_undef_atom( UndefAtom* node );
-		T visit_self_atom( SelfAtom* node );
-		T visit_rule_atom( RuleAtom* node );
-		T visit_boolean_atom( BooleanAtom* node );
-		T visit_string_atom( StringAtom* node );
-		T visit_list_atom( ListAtom* node, std::vector< T >& args );
-		T visit_number_range_atom( NumberRangeAtom* node );
-		T visit_builtin_atom( BuiltinAtom* node, T args[], uint16_t argc );
+        Specification* specification;
+        
+    public:
+        Specification* getSpecification( void ) const;
+        
+        void visit_init( InitNode* node );
+        void visit_specification( SpecificationNode* node );    
+        void visit_body_elements( AstNode* node );
+        void visit_function_def( FunctionDefNode* node, const std::vector<std::pair<T, T>>& inits );
+        void visit_derived_function_atom_pre( FunctionAtom* node, T args[], uint16_t argc );
+        void visit_derived_def_pre( FunctionDefNode* node );
+        void visit_derived_def( FunctionDefNode* node, T expr );
+        void visit_rule( RuleNode* node );
+        void visit_rule_post( RuleNode* node );
+        void visit_skip(AstNode* node);
+        void visit_statements( AstListNode* node );
+        void visit_parblock( UnaryNode* node );
+        void visit_seqblock( UnaryNode* node );
+        void visit_forall_pre( AstNode* node );
+        void visit_forall_post( AstNode* node );
+        void visit_iterate( AstNode* node );
+        void visit_update( UpdateNode* node, T func, T expr );
+        void visit_update_dumps( UpdateNode* node, T func, T expr );
+        void visit_update_subrange( UpdateNode* node, T func, T expr);
+        void visit_call_pre( CallNode* node );
+        void visit_call_pre( CallNode* node, T expr );
+        void visit_call( CallNode* node, std::vector< T >& args );
+        void visit_call_post( CallNode* node );
+        void visit_print( PrintNode* node, T expr );
+        void visit_diedie( DiedieNode* node, T msg );
+        void visit_impossible( AstNode* node );
+        void visit_assert( UnaryNode* node, T expr );
+        void visit_assure( UnaryNode* node, T expr );
+        void visit_let( LetNode* node, T var );
+        void visit_let_post( LetNode* node );
+        void visit_push( PushNode* node, T expr, T atom );
+        void visit_pop( PopNode* node );
+        void visit_ifthenelse( IfThenElseNode* node, T cond );
+        void visit_case_pre( CaseNode* node, T val );
+        void visit_case( CaseNode* node, T val, const std::vector< T >& case_labels );
+        T visit_expression( Expression* node, T lhs, T rhs );
+        T visit_expression_single( Expression* node, T val );
+        T visit_function_atom( FunctionAtom* node, T args[], uint16_t argc );
+        T visit_function_atom_subrange( FunctionAtom* node, T args[], uint16_t argc    );
+        T visit_derived_function_atom( FunctionAtom* node, T expr );
+        T visit_zero_atom( ZeroAtom* node ) { assert( !"internal error!" ); };
+        T visit_int_atom( IntegerAtom* node );
+        T visit_bit_atom( IntegerAtom* node );
+        T visit_floating_atom( FloatingAtom* node );
+        T visit_rational_atom( RationalAtom* node );
+        T visit_undef_atom( UndefAtom* node );
+        T visit_self_atom( SelfAtom* node );
+        T visit_rule_atom( RuleAtom* node );
+        T visit_boolean_atom( BooleanAtom* node );
+        T visit_string_atom( StringAtom* node );
+        T visit_list_atom( ListAtom* node, std::vector< T >& args );
+        T visit_number_range_atom( NumberRangeAtom* node );
+        T visit_builtin_atom( BuiltinAtom* node, T args[], uint16_t argc );
 
-	private:
-		template< class C >
-		C* lookupParent( AstNode* node );
-	
-		template< class C >
-		C* lookup( AstNode* node );
-	};
+    private:
+        template< class C >
+        C* lookupParent( AstNode* node );
+    
+        template< class C >
+        C* lookup( AstNode* node );
+    };
 }
 
 #endif /* _LIB_CASMIR_PASSASTTOCASMIR_H_ */

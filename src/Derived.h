@@ -30,33 +30,33 @@
 
 namespace libcasm_ir
 {
-	class Identifier;
-	
-	class Derived : public User
-	{
-	private:
-		Identifier* ident;
-	    TrivialStatement* context;
-		std::vector< Value* > parameter;
-		
-	public:
-		Derived( const char* name, Type* result );
-		
-		~Derived( void );
-		
-	    TrivialStatement* getContext( void ) const;
-		
-		void setContext( TrivialStatement* scope );
+    class Identifier;
+    
+    class Derived : public User
+    {
+    private:
+        Identifier* ident;
+        TrivialStatement* context;
+        std::vector< Value* > parameter;
+        
+    public:
+        Derived( const char* name, Type* result );
+        
+        ~Derived( void );
+        
+        TrivialStatement* getContext( void ) const;
+        
+        void setContext( TrivialStatement* scope );
 
-		void addParameter( Value* value );
+        void addParameter( Value* value );
 
-		const std::vector< Value* >& getParameters( void ) const;
-		
-		void dump( void ) const;
-		
-		static inline Value::ID classid( void ) { return Value::DERIVED; };
-		static bool classof( Value const* obj );
-	};
+        const std::vector< Value* >& getParameters( void ) const;
+        
+        void dump( void ) const;
+        
+        static inline Value::ID classid( void ) { return Value::DERIVED; };
+        static bool classof( Value const* obj );
+    };
 }
 
 

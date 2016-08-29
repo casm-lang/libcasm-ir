@@ -28,18 +28,18 @@
 
 namespace libcasm_ir
 {
-	class User : public Value
-	{
-	public:
-		User( const char* name, Type* type /*opt use and num*/, Value::ID id = Value::USER )
-			: Value( name, type, id )
-		{
-			
-		}
-		
-		static inline Value::ID classid( void ) { return Value::USER; };
-		static bool classof( Value const* obj );
-	};
+    class User : public Value
+    {
+    public:
+        User( const char* name, Type* type /*opt use and num*/, Value::ID id = Value::USER )
+            : Value( name, type, id )
+        {
+            
+        }
+        
+        static inline Value::ID classid( void ) { return Value::USER; };
+        static bool classof( Value const* obj );
+    };
 }
 
 

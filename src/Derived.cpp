@@ -28,60 +28,60 @@ using namespace libcasm_ir;
 
 Derived::Derived( const char* name, Type* result )
 : User( name, result, Value::DERIVED )
-{			
+{            
     ident = Identifier::create( result, name );
-	
-	(*Value::getSymbols())[ ".derived" ].insert( this );
-	(*Value::getSymbols())[ ".identifier" ].insert( this );
+    
+    (*Value::getSymbols())[ ".derived" ].insert( this );
+    (*Value::getSymbols())[ ".identifier" ].insert( this );
 }
 
 Derived::~Derived( void )
 {
-	(*Value::getSymbols())[ ".derived" ].erase( this );
-	(*Value::getSymbols())[ ".identifier" ].erase( ident );
+    (*Value::getSymbols())[ ".derived" ].erase( this );
+    (*Value::getSymbols())[ ".identifier" ].erase( ident );
 }
 
 TrivialStatement* Derived::getContext( void ) const
 {
-	return context;
+    return context;
 }
 
 void Derived::setContext( TrivialStatement* scope )
 {
-	assert( scope );
-	context = scope;
+    assert( scope );
+    context = scope;
 }
 
 void Derived::addParameter( Value* value )
 {
-	assert( Value::isa< Identifier >( value ) and "parameter must be an identifier" );
+    assert( Value::isa< Identifier >( value ) and "parameter must be an identifier" );
     
-	parameter.push_back( value );
+    parameter.push_back( value );
 }
 
 const std::vector< Value* >& Derived::getParameters( void ) const
 {
-	return parameter;
+    return parameter;
 }
 
 void Derived::dump( void ) const
 {
-	printf( "[Derived] " );
+    printf( "[Derived] " );
     debug();
-	
-	if( context )
-	{
-		context->dump();
-	}
-	else
-	{
-		printf( "('context' not set)\n" );
-	}
+    
+    if( context )
+    {
+        context->dump();
+    }
+    else
+    {
+        printf( "('context' not set)\n" );
+    }
 }
 
 bool Derived::classof( Value const* obj )
 {
-	return obj->getValueID() == classid();
+    return obj->getValueID() == classid();
 }
 
 

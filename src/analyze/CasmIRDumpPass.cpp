@@ -40,61 +40,61 @@ static libpass::PassRegistration< CasmIRDumpPass > PASS
 
 bool CasmIRDumpPass::run( libpass::PassResult& pr )
 {
-	// CasmIRNode* node = (CasmIRNode*)pr.getResult< TypeCheckPass >();
-	
-	// CasmIRWalker< CasmIRDumpVisitor, bool > dump_walker( *this );
-	
-	// dump_walker.suppress_calls = true;
-	// dump_walker.walk_specification( node );
-	
-	// // std::cout << this->get_dump() << std::endl;
-	
-	// std::ofstream dotfile( "./obj/out.dot" );
-	// dotfile << this->get_dump() << "\n";
-	// dotfile.close();
-	
-	
-	Specification* value = (Specification*)pr.getResult< CasmIRDumpPass >();
-	assert( value );
-	
-	value->iterate
-	( Traversal::PREORDER
-	, this
-	);
-	
-	return false;
+    // CasmIRNode* node = (CasmIRNode*)pr.getResult< TypeCheckPass >();
+    
+    // CasmIRWalker< CasmIRDumpVisitor, bool > dump_walker( *this );
+    
+    // dump_walker.suppress_calls = true;
+    // dump_walker.walk_specification( node );
+    
+    // // std::cout << this->get_dump() << std::endl;
+    
+    // std::ofstream dotfile( "./obj/out.dot" );
+    // dotfile << this->get_dump() << "\n";
+    // dotfile.close();
+    
+    
+    Specification* value = (Specification*)pr.getResult< CasmIRDumpPass >();
+    assert( value );
+    
+    value->iterate
+    ( Traversal::PREORDER
+    , this
+    );
+    
+    return false;
 }
 
 static const char* indention( Value& value )
 {
-	string ind = "";
-	u8 cnt = 0;
-	Value* p = (&value);
-	while( p != 0 )
-	{
-		if( Value::isa< ExecutionSemanticsBlock >( p ) )
-		{
-			p = (Value*)((ExecutionSemanticsBlock*)p)->getScope();
-		}
-		else if( Value::isa< Instruction >( p ) )
-		{
-			p = (Value*)((Instruction*)p)->getStatement();
-		}
-		else if( Value::isa< Statement >( p ) )
-		{
-			p = (Value*)((Statement*)p)->getScope();
-		}
-		else
-		{
-			break;
-			assert(0);
-		}
-		
-		cnt++;
-		ind+="  ";
-	}
-	
-	return libstdhl::Allocator::string( ind );
+    string ind = "";
+    u8 cnt = 0;
+    Value* p = (&value);
+    while( p != 0 )
+    {
+        if( Value::isa< ExecutionSemanticsBlock >( p ) )
+        {
+            p = (Value*)((ExecutionSemanticsBlock*)p)->getScope();
+        }
+        else if( Value::isa< Instruction >( p ) )
+        {
+            p = (Value*)((Instruction*)p)->getStatement();
+        }
+        else if( Value::isa< Statement >( p ) )
+        {
+            p = (Value*)((Statement*)p)->getScope();
+        }
+        else
+        {
+            break;
+            assert(0);
+        }
+        
+        cnt++;
+        ind+="  ";
+    }
+    
+    return libstdhl::Allocator::string( ind );
 }
 
 

@@ -30,27 +30,27 @@
 
 namespace libcasm_ir
 {
-	class ParallelBlock;
-	
-	class Rule : public User
-	{
-	private:
-		ParallelBlock* context;
-		
-	public:
-		Rule( const char* name );
+    class ParallelBlock;
+    
+    class Rule : public User
+    {
+    private:
+        ParallelBlock* context;
+        
+    public:
+        Rule( const char* name );
 
-		~Rule( void );
-		
-		ParallelBlock* getContext( void ) const;
-		
-		void setContext( ParallelBlock* scope );
-		
-		void dump( void ) const;
-		
-		static inline Value::ID classid( void ) { return Value::RULE; };
-		static bool classof( Value const* obj );
-	};
+        ~Rule( void );
+        
+        ParallelBlock* getContext( void ) const;
+        
+        void setContext( ParallelBlock* scope );
+        
+        void dump( void ) const;
+        
+        static inline Value::ID classid( void ) { return Value::RULE; };
+        static bool classof( Value const* obj );
+    };
 }
 
 

@@ -32,55 +32,55 @@ using namespace libcasm_ir;
 
 Specification::Specification( const char* name )
 : User( name, 0, Value::SPECIFICATION )
-{			
-	(*Value::getSymbols())[ ".specification" ].insert( this );
+{            
+    (*Value::getSymbols())[ ".specification" ].insert( this );
 }
 
 Specification::~Specification( void )
-{			
-	(*Value::getSymbols())[ ".specification" ].erase( this );
+{            
+    (*Value::getSymbols())[ ".specification" ].erase( this );
 }
-		
+        
 void Specification::add( Value* value )
 {
-	assert( value );
+    assert( value );
     
-	if( Value::isa< Rule >( value ) )
-	{
-		content[ Rule::classid() ].push_back( value );
-	}
-	else if( Value::isa< Derived >( value ) )
-	{
-		content[ Derived::classid() ].push_back( value );
-	}
-	else if( Value::isa< Function >( value ) )
-	{
-		content[ Function::classid() ].push_back( value );
-	}
-	else if( Value::isa< Agent >( value ) )
-	{
-		content[ Agent::classid() ].push_back( value );
-	}
-	else if( Value::isa< ConstantValue >( value ) )
-	{
-		content[ ConstantValue::classid() ].push_back( value );
-	}
-	else
-	{
-		assert( !"unsupported Specification content Value found!" );
-	}
+    if( Value::isa< Rule >( value ) )
+    {
+        content[ Rule::classid() ].push_back( value );
+    }
+    else if( Value::isa< Derived >( value ) )
+    {
+        content[ Derived::classid() ].push_back( value );
+    }
+    else if( Value::isa< Function >( value ) )
+    {
+        content[ Function::classid() ].push_back( value );
+    }
+    else if( Value::isa< Agent >( value ) )
+    {
+        content[ Agent::classid() ].push_back( value );
+    }
+    else if( Value::isa< ConstantValue >( value ) )
+    {
+        content[ ConstantValue::classid() ].push_back( value );
+    }
+    else
+    {
+        assert( !"unsupported Specification content Value found!" );
+    }
 }
 
 void Specification::dump( void ) const
 {
-	printf( "[Specification ] " );
-	debug();
-	printf( "<<not implemented due to new dump pass>>\n" );
+    printf( "[Specification ] " );
+    debug();
+    printf( "<<not implemented due to new dump pass>>\n" );
 }
 
 bool Specification::classof( Value const* obj )
 {
-	return obj->getValueID() == classid();
+    return obj->getValueID() == classid();
 }
 
 

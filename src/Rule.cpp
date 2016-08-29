@@ -28,44 +28,44 @@ using namespace libcasm_ir;
 
 Rule::Rule( const char* name )
 : User( name, 0, Value::RULE )
-{			
-	(*Value::getSymbols())[ ".rule" ].insert( this );
+{            
+    (*Value::getSymbols())[ ".rule" ].insert( this );
 }
 
 Rule::~Rule( void )
-{			
-	(*Value::getSymbols())[ ".rule" ].erase( this );
+{            
+    (*Value::getSymbols())[ ".rule" ].erase( this );
 }
 
 ParallelBlock* Rule::getContext( void ) const
 {
-	return context;
+    return context;
 }
 
 void Rule::setContext( ParallelBlock* scope )
 {
-	assert( scope );	
-	context = scope;
+    assert( scope );    
+    context = scope;
 }
 
 void Rule::dump( void ) const
 {
-	printf( "[Rule ] " );
-	debug();
-	
-	if( context )
-	{
-		context->dump();
-	}
-	else
-	{
-		printf( "('context' not set)\n" );
-	}
+    printf( "[Rule ] " );
+    debug();
+    
+    if( context )
+    {
+        context->dump();
+    }
+    else
+    {
+        printf( "('context' not set)\n" );
+    }
 }
 
 bool Rule::classof( Value const* obj )
 {
-	return obj->getValueID() == classid();
+    return obj->getValueID() == classid();
 }
 
 

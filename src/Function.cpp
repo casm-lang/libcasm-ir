@@ -30,26 +30,26 @@ Function::Function( const char* name, Type* result )
 : User( name, result, Value::FUNCTION )
 , ident( 0 )
 {
-	ident = Identifier::create( result, name );
-	(*Value::getSymbols())[ ".function" ].insert( this );
-	(*Value::getSymbols())[ ".identifier" ].insert( ident );
+    ident = Identifier::create( result, name );
+    (*Value::getSymbols())[ ".function" ].insert( this );
+    (*Value::getSymbols())[ ".identifier" ].insert( ident );
 }
 
 Function::~Function( void )
 {
-	(*Value::getSymbols())[ ".function" ].erase( this );
-	(*Value::getSymbols())[ ".identifier" ].erase( ident );
+    (*Value::getSymbols())[ ".function" ].erase( this );
+    (*Value::getSymbols())[ ".identifier" ].erase( ident );
 }
 
 void Function::dump( void ) const
 {
-	printf( "[Function] " );
-	debug();
+    printf( "[Function] " );
+    debug();
 }
 
 bool Function::classof( Value const* obj )
 {
-	return obj->getValueID() == classid();
+    return obj->getValueID() == classid();
 }
 
 

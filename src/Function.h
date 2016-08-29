@@ -30,23 +30,23 @@
 
 namespace libcasm_ir
 {
-	class Identifier;
-	
-	class Function : public User
-	{
-	private:
-		Identifier* ident;
-		
-	public:
-		Function( const char* name, Type* result );
-		
-		~Function( void );
-		
-		void dump( void ) const;
-		
-		static inline Value::ID classid( void ) { return Value::FUNCTION; };
-		static bool classof( Value const* obj );
-	};
+    class Identifier;
+    
+    class Function : public User
+    {
+    private:
+        Identifier* ident;
+        
+    public:
+        Function( const char* name, Type* result );
+        
+        ~Function( void );
+        
+        void dump( void ) const;
+        
+        static inline Value::ID classid( void ) { return Value::FUNCTION; };
+        static bool classof( Value const* obj );
+    };
 }
 
 
