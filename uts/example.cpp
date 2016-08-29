@@ -1,11 +1,9 @@
 //  
-//  Copyright (c) 2014-2016 CASM Organization
+//  Copyright (c) 2015-2016 CASM Organization
 //  All rights reserved.
 //  
-//  Developed by: Florian Hahn
-//                Philipp Paulweber
-//                Emmanuel Pescosta
-//                https://github.com/ppaulweber/libcasm-ir
+//  Developed by: Philipp Paulweber
+//                https://github.com/casm-lang/libcasm-ir
 //  
 //  This file is part of libcasm-ir.
 //  

@@ -3,7 +3,7 @@
 #   All rights reserved.
 #   
 #   Developed by: Philipp Paulweber
-#                 https://github.com/ppaulweber/libcasm-ir
+#                 https://github.com/casm-lang/libcasm-ir
 #   
 #   This file is part of libcasm-ir.
 #   
