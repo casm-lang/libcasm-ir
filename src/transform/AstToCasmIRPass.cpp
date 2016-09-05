@@ -1164,7 +1164,7 @@ T libcasm_ir::AstToCasmIRPass::visit_list_atom( ListAtom* node, std::vector< T >
     return 0;
 }
     
-T libcasm_ir::AstToCasmIRPass::visit_number_range_atom( NumberRangeAtom* node )
+T libcasm_ir::AstToCasmIRPass::visit_number_range_atom( NumberRangeAtom* node , T start, T end )
 {
     VISIT; 
     FIXME;

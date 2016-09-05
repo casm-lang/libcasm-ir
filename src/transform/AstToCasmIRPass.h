@@ -107,7 +107,7 @@ namespace libcasm_ir
         T visit_boolean_atom( BooleanAtom* node );
         T visit_string_atom( StringAtom* node );
         T visit_list_atom( ListAtom* node, std::vector< T >& args );
-        T visit_number_range_atom( NumberRangeAtom* node );
+        T visit_number_range_atom( NumberRangeAtom* node, T start, T end );
         T visit_builtin_atom( BuiltinAtom* node, T args[], uint16_t argc );
 
     private:
