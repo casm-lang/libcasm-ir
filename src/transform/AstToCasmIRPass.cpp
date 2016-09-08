@@ -914,7 +914,7 @@ T libcasm_ir::AstToCasmIRPass::visit_expression_single( Expression* node, T val 
     return 0;
 }
     
-T libcasm_ir::AstToCasmIRPass::visit_function_atom( FunctionAtom* node, T args[], uint16_t argc )
+T libcasm_ir::AstToCasmIRPass::visit_function_atom( FunctionAtom* node, std::vector< T >& args )
 {
     VISIT;
     // printf( "%s, %p", node->name.c_str(), node );
@@ -987,7 +987,7 @@ T libcasm_ir::AstToCasmIRPass::visit_function_atom_subrange( FunctionAtom* node,
     return 0;
 }
 
-void libcasm_ir::AstToCasmIRPass::visit_derived_function_atom_pre( FunctionAtom* node, T args[], uint16_t argc )
+void libcasm_ir::AstToCasmIRPass::visit_derived_function_atom_pre( FunctionAtom* node, std::vector< T >& args )
 {
     VISIT;
 }
@@ -1171,7 +1171,7 @@ T libcasm_ir::AstToCasmIRPass::visit_number_range_atom( NumberRangeAtom* node , 
     return 0; 
 }
     
-T libcasm_ir::AstToCasmIRPass::visit_builtin_atom( BuiltinAtom* node, T args[], uint16_t argc ) 
+T libcasm_ir::AstToCasmIRPass::visit_builtin_atom( BuiltinAtom* node, std::vector< T >& args )
 {
     VISIT;
 
