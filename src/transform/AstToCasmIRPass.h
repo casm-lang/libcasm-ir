@@ -60,7 +60,7 @@ namespace libcasm_ir
         void visit_specification( SpecificationNode* node );    
         void visit_body_elements( AstNode* node );
         void visit_function_def( FunctionDefNode* node, const std::vector<std::pair<T, T>>& inits );
-        void visit_derived_function_atom_pre( FunctionAtom* node, T args[], uint16_t argc );
+        void visit_derived_function_atom_pre( FunctionAtom* node, std::vector< T >& args );
         void visit_derived_def_pre( FunctionDefNode* node );
         void visit_derived_def( FunctionDefNode* node, T expr );
         void visit_rule( RuleNode* node );
@@ -93,7 +93,7 @@ namespace libcasm_ir
         void visit_case( CaseNode* node, T val, const std::vector< T >& case_labels );
         T visit_expression( Expression* node, T lhs, T rhs );
         T visit_expression_single( Expression* node, T val );
-        T visit_function_atom( FunctionAtom* node, T args[], uint16_t argc );
+        T visit_function_atom( FunctionAtom* node, std::vector< T >& args );
         T visit_function_atom_subrange( FunctionAtom* node, T args[], uint16_t argc    );
         T visit_derived_function_atom( FunctionAtom* node, T expr );
         T visit_zero_atom( ZeroAtom* node ) { assert( !"internal error!" ); };
@@ -108,7 +108,7 @@ namespace libcasm_ir
         T visit_string_atom( StringAtom* node );
         T visit_list_atom( ListAtom* node, std::vector< T >& args );
         T visit_number_range_atom( NumberRangeAtom* node, T start, T end );
-        T visit_builtin_atom( BuiltinAtom* node, T args[], uint16_t argc );
+        T visit_builtin_atom( BuiltinAtom* node, std::vector< T >& args );
 
     private:
         template< class C >
