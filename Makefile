@@ -117,35 +117,6 @@ obj/%.o: %.c
 	@echo "C   " $<
 	@$(CC) $(CF) $(CI) -c $< -o $@
 
-
-src/various/Grammar.org: src/GrammarParser.yy
-	@echo "GEN " $@
-	@grep -e "^[:|] [alpha]*" $< -B 2 -A 1 |\
-		sed "/^  {/d" |\
-		sed "/^  }/d" |\
-		sed "/^--/d"  |\
-		sed "/^\t/d"  > $@
-
-src/various/GrammarParser.cpp: src/GrammarParser.yy src/GrammarToken.h
-	@echo "YAC " $<
-	@mkdir -p `dirname obj/$<`
-	@head -n +`grep -n "{{grammartoken}}" $< | grep -o "[0-9]*"` $< | cat  > obj/$<
-	@cat $(filter %.h,$^) | sed "/^\/\/ /d" | sed "s/{ /\/\/ {/g"         >> obj/$< 
-	@tail -n +`grep -n "{{grammartoken}}" $< | grep -o "[0-9]*"` $< | cat >> obj/$<
-	@sed -i "/^{{grammartoken}}/d" obj/$<
-	@cd src/various && $(YC) $(YF) -b src/various/ --output GrammarParser.cpp --defines=GrammarParser.tab.h ../../obj/$<
-
-
-src/various/GrammarLexer.cpp: src/GrammarLexer.l src/GrammarToken.h
-	@echo "LEX " $<
-	@mkdir -p `dirname obj/$<`
-	@head -n +`grep -n "{{grammartoken}}" $< | grep -o "[0-9]*"` $< | cat  > obj/$<
-	@cat $(filter %.h,$^) | sed "/^\/\/ /d" | sed "s/[A-Za-z_]*[ ]* \"/\"/g"  >> obj/$< 
-	@tail -n +`grep -n "{{grammartoken}}" $< | grep -o "[0-9]*"` $< | cat >> obj/$<
-	@sed -i "/^{{grammartoken}}/d" obj/$<
-	@$(LX) $(LFLAGS) -o $@ obj/$<
-
-
 $(TARGET): $(CO) $(CL)
 	@echo "AR  " $@
 	@$(AR) rsc $@ $(filter %.o,$^)
