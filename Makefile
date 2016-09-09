@@ -127,7 +127,7 @@ clean:
 	@rm -rf obj
 	@echo "RM  " $(TARGET)
 	@rm -f $(TARGET)
-	@rm -f test
+	@echo "RM  " $(TEST_TARGET)
 	@rm -f $(TEST_TARGET)
 
 
