@@ -91,8 +91,8 @@ namespace libcasm_ir
         void visit_ifthenelse( IfThenElseNode* node, T cond );
         void visit_case_pre( CaseNode* node, T val );
         void visit_case( CaseNode* node, T val, const std::vector< T >& case_labels );
-        T visit_expression( Expression* node, T lhs, T rhs );
-        T visit_expression_single( Expression* node, T val );
+        T visit_expression( BinaryExpression* node, T lhs, T rhs );
+        T visit_expression_single( UnaryExpression* node, T val );
         T visit_function_atom( FunctionAtom* node, std::vector< T >& args );
         T visit_function_atom_subrange( FunctionAtom* node, T args[], uint16_t argc    );
         T visit_derived_function_atom( FunctionAtom* node, T expr );

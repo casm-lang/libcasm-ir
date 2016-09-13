@@ -822,7 +822,7 @@ void libcasm_ir::AstToCasmIRPass::visit_case( CaseNode* node, T val, const std::
     }
 }
 
-T libcasm_ir::AstToCasmIRPass::visit_expression( Expression* node, T lhs, T rhs )
+T libcasm_ir::AstToCasmIRPass::visit_expression( BinaryExpression* node, T lhs, T rhs )
 {
     VISIT;
     // printf( "%s, %p, %p\n", operator_to_str( node->op ).c_str(), node->left_, node->right_ );
@@ -890,12 +890,12 @@ T libcasm_ir::AstToCasmIRPass::visit_expression( Expression* node, T lhs, T rhs 
     return 0;
 }
 
-T libcasm_ir::AstToCasmIRPass::visit_expression_single( Expression* node, T val )
+T libcasm_ir::AstToCasmIRPass::visit_expression_single( UnaryExpression* node, T val )
 {
     VISIT;
     // printf( "%s, %p\n", operator_to_str( node->op ).c_str(), node->left_ );
     
-    Value* ir_lhs = lookup< Value >( node->left_  );
+    Value* ir_lhs = lookup< Value >( node->expr_  );
     assert( ir_lhs );
     
     Value* ir_expr = 0;
