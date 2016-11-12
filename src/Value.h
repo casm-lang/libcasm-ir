@@ -34,7 +34,7 @@
 #include "Type.h"
 #include "Visitor.h"
 
-#include "stdhl/cpp/Labeling.h"
+#include "cpp/Labeling.h"
 
 namespace libcasm_ir
 {
