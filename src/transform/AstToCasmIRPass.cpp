@@ -1248,7 +1248,7 @@ C* libcasm_ir::AstToCasmIRPass::lookup( AstNode* node )
 //  
 //  Local variables:
 //  mode: c++
-//  indent-tabs-mode: t
+//  indent-tabs-mode: nil
 //  c-basic-offset: 4
 //  tab-width: 4
 //  End:
