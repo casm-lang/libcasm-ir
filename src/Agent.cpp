@@ -25,15 +25,14 @@
 
 using namespace libcasm_ir;
 
-
 Agent::Agent()
 : User( ".agent", 0, Value::AGENT )
-{            
+{
     // (*Value::getSymbols())[ ".agent" ].insert( this );
 }
 
 // Agent::~Agent( void )
-// {            
+// {
 //     // (*Value::getSymbols())[ ".agent" ].erase( this );
 // }
 
@@ -44,7 +43,7 @@ RulePointerConstant* Agent::getInitRulePointer( void ) const
 
 void Agent::setInitRulePointer( RulePointerConstant* init )
 {
-    assert( init );    
+    assert( init );
     rule_ptr_init = init;
 }
 
@@ -52,7 +51,7 @@ void Agent::dump( void ) const
 {
     printf( "[Agent] " );
     debug();
-    
+
     if( rule_ptr_init )
     {
         printf( "@%p\n", rule_ptr_init );
@@ -68,9 +67,7 @@ bool Agent::classof( Value const* obj )
     return obj->getValueID() == classid();
 }
 
-
-
-//  
+//
 //  Local variables:
 //  mode: c++
 //  indent-tabs-mode: nil
@@ -78,4 +75,4 @@ bool Agent::classof( Value const* obj )
 //  tab-width: 4
 //  End:
 //  vim:noexpandtab:sw=4:ts=4:
-//  
+//

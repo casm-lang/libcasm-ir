@@ -24,52 +24,54 @@
 #ifndef _LIB_CASMIR_SPECIFICATION_H_
 #define _LIB_CASMIR_SPECIFICATION_H_
 
-#include "Value.h"
-#include "User.h"
 #include "Block.h"
+#include "User.h"
+#include "Value.h"
 
 namespace libcasm_ir
 {
     class ParallelBlock;
-    
+
     class Specification : public User
     {
-    private:
+      private:
         std::unordered_map< u32, std::vector< Value* > > content;
         std::vector< Value* > content_list;
-        
-    public:
+
+      public:
         Specification( const char* name );
-        
+
         ~Specification( void );
-        
+
         void add( Value* value );
 
-        template< class C >
+        template < class C >
         bool has( void ) const
         {
             return content.count( C::classid() ) > 0;
         }
-        
-        template< class C >
+
+        template < class C >
         const std::vector< Value* >& get( void ) const
         {
             auto result = content.find( C::classid() );
             assert( result != content.end() );
             return result->second;
         }
-        
+
         void dump( void ) const;
-        
-        static inline Value::ID classid( void ) { return Value::SPECIFICATION; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::SPECIFICATION;
+        };
         static bool classof( Value const* obj );
     };
 }
 
-
 #endif /* _LIB_CASMIR_SPECIFICATION_H_ */
 
-//  
+//
 //  Local variables:
 //  mode: c++
 //  indent-tabs-mode: nil
@@ -77,4 +79,4 @@ namespace libcasm_ir
 //  tab-width: 4
 //  End:
 //  vim:noexpandtab:sw=4:ts=4:
-//  
+//

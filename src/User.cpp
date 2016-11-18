@@ -22,31 +22,25 @@
 //
 
 #include "User.h"
-#include "Rule.h"
 #include "Agent.h"
-#include "Derived.h"
-#include "Function.h"
 #include "Builtin.h"
 #include "Constant.h"
+#include "Derived.h"
+#include "Function.h"
 #include "Instruction.h"
+#include "Rule.h"
 
 using namespace libcasm_ir;
 
-
 bool User::classof( Value const* obj )
 {
-    return obj->getValueID() == classid()
-        or Agent::classof( obj )
-        or Rule::classof( obj )
-        or Derived::classof( obj )
-        or Function::classof( obj )
-        or Builtin::classof( obj )
-        or ConstantValue::classof( obj )
-        or Instruction::classof( obj );
+    return obj->getValueID() == classid() or Agent::classof( obj )
+           or Rule::classof( obj ) or Derived::classof( obj )
+           or Function::classof( obj ) or Builtin::classof( obj )
+           or ConstantValue::classof( obj ) or Instruction::classof( obj );
 }
 
-
-//  
+//
 //  Local variables:
 //  mode: c++
 //  indent-tabs-mode: nil
@@ -54,4 +48,4 @@ bool User::classof( Value const* obj )
 //  tab-width: 4
 //  End:
 //  vim:noexpandtab:sw=4:ts=4:
-//  
+//

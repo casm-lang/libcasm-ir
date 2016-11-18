@@ -24,13 +24,13 @@
 #ifndef _LIB_CASMIR_ASTTOCASMIRPASS_H_
 #define _LIB_CASMIR_ASTTOCASMIRPASS_H_
 
-#include "libpass.h"
-#include "libcasm-ir.all.h"
 #include "libcasm-fe.all.h"
+#include "libcasm-ir.all.h"
+#include "libpass.h"
 
 /**
    @brief    TODO
-   
+
    TODO
 */
 
@@ -40,32 +40,34 @@ namespace libcasm_ir
 {
     class AstToCasmIRPass : public libpass::Pass, public BaseVisitor< bool >
     {
-    public:
+      public:
         static char id;
 
         virtual bool run( libpass::PassResult& pr );
-    
-    private:
-        std::unordered_map< AstNode*, Value* >   ast2casmir;
+
+      private:
+        std::unordered_map< AstNode*, Value* > ast2casmir;
         std::unordered_map< AstNode*, AstNode* > ast2parent;
 
         std::vector< Value* > current_scope;
 
         Specification* specification;
-        
-    public:
+
+      public:
         Specification* getSpecification( void ) const;
-        
+
         void visit_init( InitNode* node );
-        void visit_specification( SpecificationNode* node );    
+        void visit_specification( SpecificationNode* node );
         void visit_body_elements( AstNode* node );
-        void visit_function_def( FunctionDefNode* node, const std::vector<std::pair<T, T>>& inits );
-        void visit_derived_function_atom_pre( FunctionAtom* node, std::vector< T >& args );
+        void visit_function_def( FunctionDefNode* node,
+            const std::vector< std::pair< T, T > >& inits );
+        void visit_derived_function_atom_pre(
+            FunctionAtom* node, std::vector< T >& args );
         void visit_derived_def_pre( FunctionDefNode* node );
         void visit_derived_def( FunctionDefNode* node, T expr );
         void visit_rule( RuleNode* node );
         void visit_rule_post( RuleNode* node );
-        void visit_skip(AstNode* node);
+        void visit_skip( AstNode* node );
         void visit_statements( AstListNode* node );
         void visit_parblock( UnaryNode* node );
         void visit_seqblock( UnaryNode* node );
@@ -74,7 +76,7 @@ namespace libcasm_ir
         void visit_iterate( AstNode* node );
         void visit_update( UpdateNode* node, T func, T expr );
         void visit_update_dumps( UpdateNode* node, T func, T expr );
-        void visit_update_subrange( UpdateNode* node, T func, T expr);
+        void visit_update_subrange( UpdateNode* node, T func, T expr );
         void visit_call_pre( CallNode* node );
         void visit_call_pre( CallNode* node, T expr );
         void visit_call( CallNode* node, std::vector< T >& args );
@@ -90,13 +92,18 @@ namespace libcasm_ir
         void visit_pop( PopNode* node );
         void visit_ifthenelse( IfThenElseNode* node, T cond );
         void visit_case_pre( CaseNode* node, T val );
-        void visit_case( CaseNode* node, T val, const std::vector< T >& case_labels );
+        void visit_case(
+            CaseNode* node, T val, const std::vector< T >& case_labels );
         T visit_expression( BinaryExpression* node, T lhs, T rhs );
         T visit_expression_single( UnaryExpression* node, T val );
         T visit_function_atom( FunctionAtom* node, std::vector< T >& args );
-        T visit_function_atom_subrange( FunctionAtom* node, T args[], uint16_t argc    );
+        T visit_function_atom_subrange(
+            FunctionAtom* node, T args[], uint16_t argc );
         T visit_derived_function_atom( FunctionAtom* node, T expr );
-        T visit_zero_atom( ZeroAtom* node ) { assert( !"internal error!" ); };
+        T visit_zero_atom( ZeroAtom* node )
+        {
+            assert( !"internal error!" );
+        };
         T visit_int_atom( IntegerAtom* node );
         T visit_bit_atom( IntegerAtom* node );
         T visit_floating_atom( FloatingAtom* node );
@@ -110,19 +117,18 @@ namespace libcasm_ir
         T visit_number_range_atom( NumberRangeAtom* node, T start, T end );
         T visit_builtin_atom( BuiltinAtom* node, std::vector< T >& args );
 
-    private:
-        template< class C >
+      private:
+        template < class C >
         C* lookupParent( AstNode* node );
-    
-        template< class C >
+
+        template < class C >
         C* lookup( AstNode* node );
     };
 }
 
 #endif /* _LIB_CASMIR_PASSASTTOCASMIR_H_ */
 
-
-//  
+//
 //  Local variables:
 //  mode: c++
 //  indent-tabs-mode: nil
@@ -130,4 +136,4 @@ namespace libcasm_ir
 //  tab-width: 4
 //  End:
 //  vim:noexpandtab:sw=4:ts=4:
-//  
+//

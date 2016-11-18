@@ -24,39 +24,41 @@
 #ifndef _LIB_CASMIR_AGENT_H_
 #define _LIB_CASMIR_AGENT_H_
 
-#include "Value.h"
-#include "User.h"
 #include "Constant.h"
+#include "User.h"
+#include "Value.h"
 
 namespace libcasm_ir
 {
     class RulePointerConstant;
-    
+
     class Agent : public User
     {
-    private:
+      private:
         RulePointerConstant* rule_ptr_init;
-        
-    public:
+
+      public:
         Agent( void );
 
         // ~Agent( void );
-    
+
         RulePointerConstant* getInitRulePointer( void ) const;
-    
+
         void setInitRulePointer( RulePointerConstant* init );
-        
+
         void dump( void ) const;
-        
-        static inline Value::ID classid( void ) { return Value::AGENT; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::AGENT;
+        };
         static bool classof( Value const* obj );
     };
 }
 
-
 #endif /* _LIB_CASMIR_AGENT_H_ */
 
-//  
+//
 //  Local variables:
 //  mode: c++
 //  indent-tabs-mode: nil
@@ -64,4 +66,4 @@ namespace libcasm_ir
 //  tab-width: 4
 //  End:
 //  vim:noexpandtab:sw=4:ts=4:
-//  
+//

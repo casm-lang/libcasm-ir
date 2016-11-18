@@ -23,7 +23,7 @@
 
 /**
    @brief    TODO
-   
+
    TODO
 */
 
@@ -41,8 +41,7 @@ namespace libcasm_ir
 
 #endif /* _LIB_CASMIR_CASMIR_H_ */
 
-
-//  
+//
 //  Local variables:
 //  mode: c++
 //  indent-tabs-mode: nil
@@ -50,4 +49,4 @@ namespace libcasm_ir
 //  tab-width: 4
 //  End:
 //  vim:noexpandtab:sw=4:ts=4:
-//  
+//

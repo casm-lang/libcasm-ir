@@ -30,69 +30,75 @@ namespace libcasm_ir
 {
     class Statement : public Block
     {
-    protected:
+      protected:
         ExecutionSemanticsBlock* scope;
-        
-    private:
+
+      private:
         std::vector< Value* > instructions;
         std::vector< ExecutionSemanticsBlock* > blocks;
-        
-    public:
-        Statement( const char* name, Type* type, ExecutionSemanticsBlock* scope
-                 , Value::ID id = Value::STATEMENT );
-        
+
+      public:
+        Statement( const char* name, Type* type, ExecutionSemanticsBlock* scope,
+            Value::ID id = Value::STATEMENT );
+
         ExecutionSemanticsBlock* getScope( void ) const;
 
         const std::vector< Value* >& getInstructions( void ) const;
-        
+
         void add( Value* instruction );
 
         void addBlock( ExecutionSemanticsBlock* block );
         const std::vector< ExecutionSemanticsBlock* >& getBlocks( void ) const;
-        
+
         void dump( void ) const;
-        
-        static inline Value::ID classid( void ) { return Value::STATEMENT; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::STATEMENT;
+        };
         static bool classof( Value const* obj );
     };
-    
+
     class TrivialStatement : public Statement
     {
-    public:
+      public:
         TrivialStatement( ExecutionSemanticsBlock* scope = 0 );
 
         void dump( void ) const;
-        
-        static inline Value::ID classid( void ) { return Value::TRIVIAL_STATEMENT; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::TRIVIAL_STATEMENT;
+        };
         static bool classof( Value const* obj );
     };
 
-
-    
     class BranchStatement : public Statement
     {
-    private:
+      private:
         std::vector< Block* > blocks;
-        
-    public:
+
+      public:
         BranchStatement( ExecutionSemanticsBlock* scope = 0 );
-        
+
         // void addBlock( Value* block );
         // const std::vector< Block* >& getBlocks( void ) const;
-        
+
         void dump( void ) const;
-        
-        static inline Value::ID classid( void ) { return Value::BRANCH_STATEMENT; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::BRANCH_STATEMENT;
+        };
         static bool classof( Value const* obj );
     };
-    
+
     // TODO: FIXME: PPA: add ForallStatement and IterateStatement etc.
 }
 
-
 #endif /* _LIB_CASMIR_STATEMENT_H_ */
 
-//  
+//
 //  Local variables:
 //  mode: c++
 //  indent-tabs-mode: nil
@@ -100,4 +106,4 @@ namespace libcasm_ir
 //  tab-width: 4
 //  End:
 //  vim:noexpandtab:sw=4:ts=4:
-//  
+//

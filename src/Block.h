@@ -31,87 +31,94 @@
 namespace libcasm_ir
 {
     class Statement;
-    
+
     class Block : public Value
     {
-    private:
+      private:
         Value* parent;
-        
-    public:
+
+      public:
         Block( const char* name, Type* type, Value::ID id = Value::BLOCK );
 
         void setParent( Value* parent );
         Value* getParent( void ) const;
-        
+
         void dump( void ) const;
-        
-        static inline Value::ID classid( void ) { return Value::BLOCK; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::BLOCK;
+        };
         static bool classof( Value const* obj );
     };
-    
+
     class ExecutionSemanticsBlock : public Block
     {
-    private:
+      private:
         const u1 is_parallel;
         u64 pseudo_state;
         ExecutionSemanticsBlock* scope;
         std::vector< Block* > blocks;
-        
-    public:
-        ExecutionSemanticsBlock
-        ( const char* name
-        , Type* type
-        , const u1 is_parallel
-        , ExecutionSemanticsBlock* scope = 0
-        , Value::ID id = Value::EXECUTION_SEMANTICS_BLOCK
-        );
-        
+
+      public:
+        ExecutionSemanticsBlock( const char* name, Type* type,
+            const u1 is_parallel, ExecutionSemanticsBlock* scope = 0,
+            Value::ID id = Value::EXECUTION_SEMANTICS_BLOCK );
+
         const u1 isParallel( void ) const;
-        
+
         const u64 getPseudoState( void ) const;
-        
+
         ExecutionSemanticsBlock* getScope( void ) const;
-        
+
         void setScope( ExecutionSemanticsBlock* scope_block );
 
         const std::vector< Block* >& getBlocks( void ) const;
 
         void add( Block* block );
-        
+
         void dump( void ) const;
-        
-        static inline Value::ID classid( void ) { return Value::EXECUTION_SEMANTICS_BLOCK; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::EXECUTION_SEMANTICS_BLOCK;
+        };
         static bool classof( Value const* obj );
     };
 
-    
-    class ParallelBlock : public ExecutionSemanticsBlock, public libstdhl::Binding< Rule >
+    class ParallelBlock : public ExecutionSemanticsBlock,
+                          public libstdhl::Binding< Rule >
     {
-    public:
+      public:
         ParallelBlock( ExecutionSemanticsBlock* scope = 0 );
-        
+
         void dump( void ) const;
-        
-        static inline Value::ID classid( void ) { return Value::PARALLEL_BLOCK; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::PARALLEL_BLOCK;
+        };
         static bool classof( Value const* obj );
     };
-    
+
     class SequentialBlock : public ExecutionSemanticsBlock
     {
-    public:
+      public:
         SequentialBlock( ExecutionSemanticsBlock* scope = 0 );
-        
+
         void dump( void ) const;
-        
-        static inline Value::ID classid( void ) { return Value::SEQUENTIAL_BLOCK; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::SEQUENTIAL_BLOCK;
+        };
         static bool classof( Value const* obj );
     };
 }
 
-
 #endif /* _LIB_CASMIR_BASICBLOCK_H_ */
 
-//  
+//
 //  Local variables:
 //  mode: c++
 //  indent-tabs-mode: nil
@@ -119,4 +126,4 @@ namespace libcasm_ir
 //  tab-width: 4
 //  End:
 //  vim:noexpandtab:sw=4:ts=4:
-//  
+//

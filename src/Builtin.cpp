@@ -25,16 +25,15 @@
 
 using namespace libcasm_ir;
 
-
 Builtin::Builtin( const char* name, Type* result )
-    : User( name, result, Value::BUILTIN )
+: User( name, result, Value::BUILTIN )
 {
-    (*Value::getSymbols())[ ".builtin" ].insert( this );
+    ( *Value::getSymbols() )[ ".builtin" ].insert( this );
 }
 
 Builtin::~Builtin( void )
 {
-    (*Value::getSymbols())[ ".builtin" ].erase( this );
+    ( *Value::getSymbols() )[ ".builtin" ].erase( this );
 }
 
 void Builtin::dump( void ) const
@@ -48,9 +47,7 @@ bool Builtin::classof( Value const* obj )
     return obj->getValueID() == classid();
 }
 
-
-
-//  
+//
 //  Local variables:
 //  mode: c++
 //  indent-tabs-mode: nil
@@ -58,4 +55,4 @@ bool Builtin::classof( Value const* obj )
 //  tab-width: 4
 //  End:
 //  vim:noexpandtab:sw=4:ts=4:
-//  
+//

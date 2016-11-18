@@ -24,12 +24,12 @@
 #ifndef _LIB_CASMIR_CASM_IR_DUMP_PASS_H_
 #define _LIB_CASMIR_CASM_IR_DUMP_PASS_H_
 
-#include "libpass.h"
 #include "libcasm-ir.all.h"
+#include "libpass.h"
 
 /**
    @brief    TODO
-   
+
    TODO
 */
 
@@ -37,19 +37,18 @@ namespace libcasm_ir
 {
     class CasmIRDumpPass : public libpass::Pass, Visitor
     {
-    public:
+      public:
         static char id;
-        
+
         bool run( libpass::PassResult& pr ) override;
 
         LIB_CASMIR_VISITOR_INTERFACE;
     };
 }
-    
+
 #endif /* _LIB_CASMIR_CASM_IR_DUMP_PASS_H_ */
 
-
-//  
+//
 //  Local variables:
 //  mode: c++
 //  indent-tabs-mode: nil
@@ -57,4 +56,4 @@ namespace libcasm_ir
 //  tab-width: 4
 //  End:
 //  vim:noexpandtab:sw=4:ts=4:
-//  
+//

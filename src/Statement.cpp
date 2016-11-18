@@ -28,17 +28,18 @@
 
 using namespace libcasm_ir;
 
-
-Statement::Statement( const char* name, Type* type, ExecutionSemanticsBlock* scope, Value::ID id )
+Statement::Statement(
+    const char* name, Type* type, ExecutionSemanticsBlock* scope, Value::ID id )
 : Block( name, type, id )
 , scope( scope )
 {
-    //assert( scope );
-    if( !scope ) return;
-    
+    // assert( scope );
+    if( !scope )
+        return;
+
     scope->add( this );
-    
-    //printf( "[Statement] '%s' at %lu\n", name, scope->getPseudoState() );
+
+    // printf( "[Statement] '%s' at %lu\n", name, scope->getPseudoState() );
 }
 
 ExecutionSemanticsBlock* Statement::getScope( void ) const
@@ -53,33 +54,34 @@ const std::vector< Value* >& Statement::getInstructions( void ) const
 
 void Statement::add( Value* instruction )
 {
-    //printf( "%s: %p\n", __FUNCTION__, instruction );
+    // printf( "%s: %p\n", __FUNCTION__, instruction );
     assert( instruction );
 
     if( Value::isa< ConstantValue >( instruction ) )
     {
-        //printf( "%s: %p --> Constant, omitted\n", __FUNCTION__, instruction );
+        // printf( "%s: %p --> Constant, omitted\n", __FUNCTION__, instruction
+        // );
         return;
     }
-    
+
     if( Value::isa< Instruction >( instruction ) )
     {
-        //printf( "%s: %p --> Instruction\n", __FUNCTION__, instruction );
+        // printf( "%s: %p --> Instruction\n", __FUNCTION__, instruction );
         static_cast< Instruction* >( instruction )->setStatement( this );
     }
-    
-    instructions.push_back( instruction );
-    //printf( "[Stmt] add: %p\n", instruction );    
-}
 
+    instructions.push_back( instruction );
+    // printf( "[Stmt] add: %p\n", instruction );
+}
 
 void Statement::addBlock( ExecutionSemanticsBlock* block )
 {
     assert( block );
-    
+
     if( Value::isa< TrivialStatement >( this ) )
     {
-        assert( !" trivial statements are not allowed to have inside blocks! " );        
+        assert(
+            !" trivial statements are not allowed to have inside blocks! " );
     }
     // else if( Value::isa< ForallStatement >( this ) )
     // {
@@ -89,28 +91,27 @@ void Statement::addBlock( ExecutionSemanticsBlock* block )
     {
         assert( blocks.size() < 2 );
     }
-    
+
     blocks.push_back( block );
-    
+
     if( block->getParent() == 0 )
     {
         block->setParent( this );
     }
-    
+
     assert( block->getParent() == this && " inconsistent block nesting! " );
 }
 
-const std::vector< ExecutionSemanticsBlock* >& Statement::getBlocks( void ) const
+const std::vector< ExecutionSemanticsBlock* >& Statement::getBlocks(
+    void ) const
 {
     if( Value::isa< TrivialStatement >( this ) )
     {
-        assert( !" trivial statements do not contain inside blocks! " );        
+        assert( !" trivial statements do not contain inside blocks! " );
     }
 
     return blocks;
 }
-
-
 
 void Statement::dump( void ) const
 {
@@ -122,14 +123,9 @@ void Statement::dump( void ) const
 
 bool Statement::classof( Value const* obj )
 {
-    return obj->getValueID() == classid()
-        or TrivialStatement::classof( obj )
-        or BranchStatement::classof( obj );
+    return obj->getValueID() == classid() or TrivialStatement::classof( obj )
+           or BranchStatement::classof( obj );
 }
-
-
-
-
 
 TrivialStatement::TrivialStatement( ExecutionSemanticsBlock* scope )
 : Statement( ".statement", 0, scope, Value::TRIVIAL_STATEMENT )
@@ -144,18 +140,14 @@ void TrivialStatement::dump( void ) const
         printf( " @ %lu (%p)", scope->getPseudoState(), scope );
     }
     printf( "\n" );
-    
-    ((Statement*)this)->dump();    
+
+    ( (Statement*)this )->dump();
 }
 
 bool TrivialStatement::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
-
-
-
-
 
 BranchStatement::BranchStatement( ExecutionSemanticsBlock* scope )
 : Statement( ".branch", 0, scope, Value::BRANCH_STATEMENT )
@@ -165,7 +157,7 @@ BranchStatement::BranchStatement( ExecutionSemanticsBlock* scope )
 // void BranchStatement::addBlock( Value* block )
 // {
 //     assert( Value::isa< Block >( block ) );
-    
+
 //     blocks.push_back( (Block*)block );
 // }
 
@@ -177,9 +169,9 @@ BranchStatement::BranchStatement( ExecutionSemanticsBlock* scope )
 void BranchStatement::dump( void ) const
 {
     printf( "[BranchStatement] %p\n", this );
-    
-    ((Statement*)this)->dump();
-    
+
+    ( (Statement*)this )->dump();
+
     // TODO: here the branches etc.
 }
 
@@ -188,11 +180,7 @@ bool BranchStatement::classof( Value const* obj )
     return obj->getValueID() == classid();
 }
 
-
-
-
-
-//  
+//
 //  Local variables:
 //  mode: c++
 //  indent-tabs-mode: nil
@@ -200,4 +188,4 @@ bool BranchStatement::classof( Value const* obj )
 //  tab-width: 4
 //  End:
 //  vim:noexpandtab:sw=4:ts=4:
-//  
+//

@@ -24,39 +24,41 @@
 #ifndef _LIB_CASMIR_RULE_H_
 #define _LIB_CASMIR_RULE_H_
 
-#include "Value.h"
-#include "User.h"
 #include "Block.h"
+#include "User.h"
+#include "Value.h"
 
 namespace libcasm_ir
 {
     class ParallelBlock;
-    
+
     class Rule : public User
     {
-    private:
+      private:
         ParallelBlock* context;
-        
-    public:
+
+      public:
         Rule( const char* name );
 
         ~Rule( void );
-        
+
         ParallelBlock* getContext( void ) const;
-        
+
         void setContext( ParallelBlock* scope );
-        
+
         void dump( void ) const;
-        
-        static inline Value::ID classid( void ) { return Value::RULE; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::RULE;
+        };
         static bool classof( Value const* obj );
     };
 }
 
-
 #endif /* _LIB_CASMIR_RULE_H_ */
 
-//  
+//
 //  Local variables:
 //  mode: c++
 //  indent-tabs-mode: nil
@@ -64,4 +66,4 @@ namespace libcasm_ir
 //  tab-width: 4
 //  End:
 //  vim:noexpandtab:sw=4:ts=4:
-//  
+//

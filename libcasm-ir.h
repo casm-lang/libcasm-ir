@@ -24,31 +24,32 @@
 #ifndef _LIB_CASMIR_H_
 #define _LIB_CASMIR_H_
 
-#include "src/Value.h"
-#include "src/User.h"
 #include "src/Agent.h"
-#include "src/Rule.h"
 #include "src/Block.h"
+#include "src/Constant.h"
 #include "src/Derived.h"
 #include "src/Function.h"
-#include "src/Constant.h"
-#include "src/Statement.h"
 #include "src/Instruction.h"
+#include "src/Rule.h"
 #include "src/Specification.h"
+#include "src/Statement.h"
+#include "src/User.h"
+#include "src/Value.h"
 
-#include "src/Visitor.h"
 #include "src/Type.h"
+#include "src/Visitor.h"
 
 namespace libcasm_ir
 {
-    // class CasmIR // TODO: FIXME: PPA: this should be the right class not src/CasmIR.h !!!
+    // class CasmIR // TODO: FIXME: PPA: this should be the right class not
+    // src/CasmIR.h !!!
     // {
     // };
 }
 
 #endif /* _LIB_CASMIR_H_ */
 
-//  
+//
 //  Local variables:
 //  mode: c++
 //  indent-tabs-mode: nil
@@ -56,4 +57,4 @@ namespace libcasm_ir
 //  tab-width: 4
 //  End:
 //  vim:noexpandtab:sw=4:ts=4:
-//  
+//

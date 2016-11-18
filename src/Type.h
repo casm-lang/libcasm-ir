@@ -23,7 +23,7 @@
 
 /**
    @brief    TODO
-   
+
    TODO
 */
 
@@ -37,36 +37,38 @@
 namespace libcasm_ir
 {
     class Rule;
-    
+
     class Type : public CasmIR
     {
-    public:        
-        typedef u1     Undef; // PPA: this is obsolete ??? FIXME: TODO:
-        typedef void*  Agent;
-        typedef Rule*  RulePointer;
-        typedef u1     Boolean;
-        typedef i64    Integer;
-        typedef u64*   Bit;
-        typedef char*  String;
-        
+      public:
+        typedef u1 Undef; // PPA: this is obsolete ??? FIXME: TODO:
+        typedef void* Agent;
+        typedef Rule* RulePointer;
+        typedef u1 Boolean;
+        typedef i64 Integer;
+        typedef u64* Bit;
+        typedef char* String;
+
         enum ID
-        { UNDEF = 0
-        , AGENT
-        , RULE_POINTER
-        , BOOLEAN
-        , INTEGER
-        , BIT
-        , STRING
-        , _TOP_
+        {
+            UNDEF = 0,
+            AGENT,
+            RULE_POINTER,
+            BOOLEAN,
+            INTEGER,
+            BIT,
+            STRING,
+            _TOP_
         };
-        
+
         enum STATE
-        { UNCHANGED
-        , CHANGED
-        , LOCKED
+        {
+            UNCHANGED,
+            CHANGED,
+            LOCKED
         };
-        
-    private:        
+
+      private:
         ID type_id;
         u64 type_uid_hash;
         STATE type_state;
@@ -74,10 +76,10 @@ namespace libcasm_ir
         std::string description;
         std::vector< Type* > parameters;
         std::vector< Type* > subtypes;
-        
+
         static const char* ID2str[ ID::_TOP_ ];
-        
-    public:
+
+      public:
         Type( ID id, i16 bitsize = -1, STATE state = STATE::UNCHANGED );
         const ID getIDKind( void ) const;
         const u64 getID( void ) const;
@@ -86,29 +88,28 @@ namespace libcasm_ir
 
         const std::vector< Type* >& getParameters( void ) const;
         const std::vector< Type* >& getSubTypes( void ) const;
-        
+
         void addParameter( Type* parameter );
         void addSubType( Type* subtype );
-        
+
         Type* getResultType( void );
-        
-    private:
-        void setID( ID id );    
+
+      private:
+        void setID( ID id );
     };
-    
-    static Type UndefType       = Type( Type::UNDEF,        Type::STATE::LOCKED );
-    static Type AgentType       = Type( Type::AGENT,        Type::STATE::LOCKED );
-    static Type RulePointerType = Type( Type::RULE_POINTER, Type::STATE::LOCKED );
-    static Type BooleanType     = Type( Type::BOOLEAN,      Type::STATE::LOCKED );
-    static Type IntegerType     = Type( Type::INTEGER,      Type::STATE::LOCKED );
-    static Type StringType      = Type( Type::STRING,       Type::STATE::LOCKED );    
-    
+
+    static Type UndefType = Type( Type::UNDEF, Type::STATE::LOCKED );
+    static Type AgentType = Type( Type::AGENT, Type::STATE::LOCKED );
+    static Type RulePointerType
+        = Type( Type::RULE_POINTER, Type::STATE::LOCKED );
+    static Type BooleanType = Type( Type::BOOLEAN, Type::STATE::LOCKED );
+    static Type IntegerType = Type( Type::INTEGER, Type::STATE::LOCKED );
+    static Type StringType = Type( Type::STRING, Type::STATE::LOCKED );
 }
 
 #endif /* _LIB_CASMIR_TYPE_H_ */
 
-
-//  
+//
 //  Local variables:
 //  mode: c++
 //  indent-tabs-mode: nil
@@ -116,4 +117,4 @@ namespace libcasm_ir
 //  tab-width: 4
 //  End:
 //  vim:noexpandtab:sw=4:ts=4:
-//  
+//

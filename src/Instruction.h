@@ -24,334 +24,415 @@
 #ifndef _LIB_CASMIR_INSTRUCTION_H_
 #define _LIB_CASMIR_INSTRUCTION_H_
 
-#include "User.h"
 #include "Builtin.h"
 #include "Constant.h"
 #include "Statement.h"
+#include "User.h"
 
 namespace libcasm_ir
 {
     class Statement;
-    
+
     class Instruction : public User
     {
-    private:
+      private:
         Statement* statement;
         std::vector< Value* > values;
-        
-    public:
-        Instruction( const char* name, Type* type, Value::ID id = Value::INSTRUCTION );
+
+      public:
+        Instruction(
+            const char* name, Type* type, Value::ID id = Value::INSTRUCTION );
         void setStatement( Statement* stmt );
         const Statement* getStatement( void ) const;
-        
+
         void add( Value* value );
         Value* getValue( u8 index ) const;
         const std::vector< Value* >& getValues( void ) const;
-        
+
         void dump( void ) const;
-        
-        static inline Value::ID classid( void ) { return Value::INSTRUCTION; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::INSTRUCTION;
+        };
         static bool classof( Value const* obj );
     };
-    
+
     class UnaryInstruction : public Instruction
     {
-    public:
-        UnaryInstruction( const char* name, Type* type, Value* value
-                        , Value::ID id = Value::UNARY_INSTRUCTION );
+      public:
+        UnaryInstruction( const char* name, Type* type, Value* value,
+            Value::ID id = Value::UNARY_INSTRUCTION );
         Value* get( void ) const;
 
-        static inline Value::ID classid( void ) { return Value::UNARY_INSTRUCTION; };
+        static inline Value::ID classid( void )
+        {
+            return Value::UNARY_INSTRUCTION;
+        };
         static bool classof( Value const* obj );
     };
-    
+
     class BinaryInstruction : public Instruction
     {
-    public:
-        BinaryInstruction( const char* name, Type* type, Value* lhs, Value* rhs
-                         , Value::ID id = Value::BINARY_INSTRUCTION );
-        
+      public:
+        BinaryInstruction( const char* name, Type* type, Value* lhs, Value* rhs,
+            Value::ID id = Value::BINARY_INSTRUCTION );
+
         Value* getLHS( void ) const;
         Value* getRHS( void ) const;
-                
-        static inline Value::ID classid( void ) { return Value::BINARY_INSTRUCTION; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::BINARY_INSTRUCTION;
+        };
         static bool classof( Value const* obj );
     };
-    
-    
-    
+
     class SkipInstruction : public Instruction
     {
-    public:
+      public:
         SkipInstruction( void );
-        
-        //void dump( void ) const;
-        
-        static inline Value::ID classid( void ) { return Value::SKIP_INSTRUCTION; };
+
+        // void dump( void ) const;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::SKIP_INSTRUCTION;
+        };
         static bool classof( Value const* obj );
     };
 
-    
-    
     class LookupInstruction : public UnaryInstruction
     {
-    public :
+      public:
         LookupInstruction( Value* location );
 
-        //void dump( void ) const;
-        
-        static inline Value::ID classid( void ) { return Value::LOOKUP_INSTRUCTION; };
+        // void dump( void ) const;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::LOOKUP_INSTRUCTION;
+        };
         static bool classof( Value const* obj );
     };
-    
-    
+
     class UpdateInstruction : public BinaryInstruction
     {
-    public:
+      public:
         UpdateInstruction( Value* location, Value* expr );
 
-        //void dump( void ) const;
-        
-        static inline Value::ID classid( void ) { return Value::UPDATE_INSTRUCTION; };
+        // void dump( void ) const;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::UPDATE_INSTRUCTION;
+        };
         static bool classof( Value const* obj );
     };
-    
-    
+
     class LetInstruction : public BinaryInstruction
     {
-    public:
+      public:
         LetInstruction( Value* ident, Value* expr );
-        
-        static inline Value::ID classid( void ) { return Value::LET_INSTRUCTION; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::LET_INSTRUCTION;
+        };
         static bool classof( Value const* obj );
     };
-    
+
     class LocationInstruction : public Instruction
     {
-    public:
+      public:
         LocationInstruction( Value* function );
 
-        //void dump( void ) const;
-        
-        static inline Value::ID classid( void ) { return Value::LOCATION_INSTRUCTION; };
+        // void dump( void ) const;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::LOCATION_INSTRUCTION;
+        };
         static bool classof( Value const* obj );
     };
-    
+
     class CallInstruction : public Instruction
     {
-    public:
+      public:
         CallInstruction( Value* symbol );
-        
-        //void dump( void ) const;
-        
-        static inline Value::ID classid( void ) { return Value::CALL_INSTRUCTION; };
+
+        // void dump( void ) const;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::CALL_INSTRUCTION;
+        };
         static bool classof( Value const* obj );
     };
 
     class PrintInstruction : public Instruction
     {
-    public:
+      public:
         PrintInstruction( Value* channel = 0 );
-        
-        static inline Value::ID classid( void ) { return Value::PRINT_INSTRUCTION; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::PRINT_INSTRUCTION;
+        };
         static bool classof( Value const* obj );
     };
-
 
     class AssertInstruction : public UnaryInstruction
     {
-    public :
+      public:
         AssertInstruction( Value* condition );
 
-        //void dump( void ) const;
-        
-        static inline Value::ID classid( void ) { return Value::ASSERT_INSTRUCTION; };
+        // void dump( void ) const;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::ASSERT_INSTRUCTION;
+        };
         static bool classof( Value const* obj );
     };
-    
-    
+
     class SwitchInstruction : public Instruction
     {
-    public:
+      public:
         SwitchInstruction( Value* expression );
-        
-        //void dump( void ) const;
-        
-        static inline Value::ID classid( void ) { return Value::SWITCH_INSTRUCTION; };
+
+        // void dump( void ) const;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::SWITCH_INSTRUCTION;
+        };
         static bool classof( Value const* obj );
-    };    
-    
-    
+    };
+
     class OperatorInstruction : public BinaryInstruction
     {
-    public:
-        OperatorInstruction( const char* name, Type* type, Value* lhs, Value* rhs
-                           , Value::ID id = Value::OPERATOR_INSTRUCTION );
-        
-        //void dump( void ) const;
-        
-        static inline Value::ID classid( void ) { return Value::OPERATOR_INSTRUCTION; };
+      public:
+        OperatorInstruction( const char* name, Type* type, Value* lhs,
+            Value* rhs, Value::ID id = Value::OPERATOR_INSTRUCTION );
+
+        // void dump( void ) const;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::OPERATOR_INSTRUCTION;
+        };
         static bool classof( Value const* obj );
     };
 
     class AddInstruction : public OperatorInstruction
     {
-    public:
+      public:
         AddInstruction( Value* lhs, Value* rhs );
 
-        static inline Value::ID classid( void ) { return Value::ADD_INSTRUCTION; };
+        static inline Value::ID classid( void )
+        {
+            return Value::ADD_INSTRUCTION;
+        };
         static bool classof( Value const* obj );
     };
 
     class SubInstruction : public OperatorInstruction
     {
-    public:
+      public:
         SubInstruction( Value* lhs, Value* rhs );
-        
-        static inline Value::ID classid( void ) { return Value::SUB_INSTRUCTION; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::SUB_INSTRUCTION;
+        };
         static bool classof( Value const* obj );
     };
 
     class MulInstruction : public OperatorInstruction
     {
-    public:
+      public:
         MulInstruction( Value* lhs, Value* rhs );
-        
-        static inline Value::ID classid( void ) { return Value::MUL_INSTRUCTION; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::MUL_INSTRUCTION;
+        };
         static bool classof( Value const* obj );
     };
 
     class DivInstruction : public OperatorInstruction
     {
-    public:
+      public:
         DivInstruction( Value* lhs, Value* rhs );
-        
-        static inline Value::ID classid( void ) { return Value::DIV_INSTRUCTION; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::DIV_INSTRUCTION;
+        };
         static bool classof( Value const* obj );
     };
 
     class RivInstruction : public OperatorInstruction
     {
-    public:
+      public:
         RivInstruction( Value* lhs, Value* rhs );
-        
-        static inline Value::ID classid( void ) { return Value::RIV_INSTRUCTION; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::RIV_INSTRUCTION;
+        };
         static bool classof( Value const* obj );
     };
 
     class ModInstruction : public OperatorInstruction
     {
-    public:
+      public:
         ModInstruction( Value* lhs, Value* rhs );
-        
-        static inline Value::ID classid( void ) { return Value::MOD_INSTRUCTION; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::MOD_INSTRUCTION;
+        };
         static bool classof( Value const* obj );
     };
 
     class EquInstruction : public OperatorInstruction
     {
-    public:
+      public:
         EquInstruction( Value* lhs, Value* rhs );
-        
-        static inline Value::ID classid( void ) { return Value::EQU_INSTRUCTION; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::EQU_INSTRUCTION;
+        };
         static bool classof( Value const* obj );
     };
 
     class NeqInstruction : public OperatorInstruction
     {
-    public:
+      public:
         NeqInstruction( Value* lhs, Value* rhs );
-        
-        static inline Value::ID classid( void ) { return Value::NEQ_INSTRUCTION; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::NEQ_INSTRUCTION;
+        };
         static bool classof( Value const* obj );
     };
 
     class LthInstruction : public OperatorInstruction
     {
-    public:
+      public:
         LthInstruction( Value* lhs, Value* rhs );
-        
-        static inline Value::ID classid( void ) { return Value::LTH_INSTRUCTION; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::LTH_INSTRUCTION;
+        };
         static bool classof( Value const* obj );
     };
 
     class LeqInstruction : public OperatorInstruction
     {
-    public:
+      public:
         LeqInstruction( Value* lhs, Value* rhs );
 
-        static inline Value::ID classid( void ) { return Value::LEQ_INSTRUCTION; };
+        static inline Value::ID classid( void )
+        {
+            return Value::LEQ_INSTRUCTION;
+        };
         static bool classof( Value const* obj );
     };
 
     class GthInstruction : public OperatorInstruction
     {
-    public:
+      public:
         GthInstruction( Value* lhs, Value* rhs );
 
-        static inline Value::ID classid( void ) { return Value::GTH_INSTRUCTION; };
+        static inline Value::ID classid( void )
+        {
+            return Value::GTH_INSTRUCTION;
+        };
         static bool classof( Value const* obj );
     };
 
     class GeqInstruction : public OperatorInstruction
     {
-    public:
+      public:
         GeqInstruction( Value* lhs, Value* rhs );
-        
-        static inline Value::ID classid( void ) { return Value::GEQ_INSTRUCTION; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::GEQ_INSTRUCTION;
+        };
         static bool classof( Value const* obj );
     };
 
     class OrInstruction : public OperatorInstruction
     {
-    public:
+      public:
         OrInstruction( Value* lhs, Value* rhs );
-        
-        static inline Value::ID classid( void ) { return Value::OR_INSTRUCTION; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::OR_INSTRUCTION;
+        };
         static bool classof( Value const* obj );
     };
 
     class XorInstruction : public OperatorInstruction
     {
-    public:
+      public:
         XorInstruction( Value* lhs, Value* rhs );
-        
-        static inline Value::ID classid( void ) { return Value::XOR_INSTRUCTION; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::XOR_INSTRUCTION;
+        };
         static bool classof( Value const* obj );
     };
 
     class AndInstruction : public OperatorInstruction
     {
-    public:
+      public:
         AndInstruction( Value* lhs, Value* rhs );
-        
-        static inline Value::ID classid( void ) { return Value::AND_INSTRUCTION; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::AND_INSTRUCTION;
+        };
         static bool classof( Value const* obj );
     };
-    
+
     class NotInstruction : public UnaryInstruction
     {
-    public:
+      public:
         NotInstruction( Value* lhs );
-        
-        static inline Value::ID classid( void ) { return Value::NOT_INSTRUCTION; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::NOT_INSTRUCTION;
+        };
         static bool classof( Value const* obj );
     };
-    
+
     class MovInstruction : public UnaryInstruction
     {
-    public:
+      public:
         MovInstruction( Value* lhs );
-        
-        static inline Value::ID classid( void ) { return Value::MOV_INSTRUCTION; };
-        static bool classof( Value const* obj );
-    };    
-}
 
+        static inline Value::ID classid( void )
+        {
+            return Value::MOV_INSTRUCTION;
+        };
+        static bool classof( Value const* obj );
+    };
+}
 
 #endif /* _LIB_CASMIR_INSTRUCTION_H_ */
 
-//  
+//
 //  Local variables:
 //  mode: c++
 //  indent-tabs-mode: nil
@@ -359,4 +440,4 @@ namespace libcasm_ir
 //  tab-width: 4
 //  End:
 //  vim:noexpandtab:sw=4:ts=4:
-//  
+//

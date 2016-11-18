@@ -25,20 +25,19 @@
 
 using namespace libcasm_ir;
 
-
 Function::Function( const char* name, Type* result )
 : User( name, result, Value::FUNCTION )
 , ident( 0 )
 {
     ident = Identifier::create( result, name );
-    (*Value::getSymbols())[ ".function" ].insert( this );
-    (*Value::getSymbols())[ ".identifier" ].insert( ident );
+    ( *Value::getSymbols() )[ ".function" ].insert( this );
+    ( *Value::getSymbols() )[ ".identifier" ].insert( ident );
 }
 
 Function::~Function( void )
 {
-    (*Value::getSymbols())[ ".function" ].erase( this );
-    (*Value::getSymbols())[ ".identifier" ].erase( ident );
+    ( *Value::getSymbols() )[ ".function" ].erase( this );
+    ( *Value::getSymbols() )[ ".identifier" ].erase( ident );
 }
 
 void Function::dump( void ) const
@@ -52,9 +51,7 @@ bool Function::classof( Value const* obj )
     return obj->getValueID() == classid();
 }
 
-
-
-//  
+//
 //  Local variables:
 //  mode: c++
 //  indent-tabs-mode: nil
@@ -62,4 +59,4 @@ bool Function::classof( Value const* obj )
 //  tab-width: 4
 //  End:
 //  vim:noexpandtab:sw=4:ts=4:
-//  
+//

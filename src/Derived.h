@@ -24,45 +24,47 @@
 #ifndef _LIB_CASMIR_DERIVED_H_
 #define _LIB_CASMIR_DERIVED_H_
 
-#include "User.h"
 #include "Constant.h"
 #include "Statement.h"
+#include "User.h"
 
 namespace libcasm_ir
 {
     class Identifier;
-    
+
     class Derived : public User
     {
-    private:
+      private:
         Identifier* ident;
         TrivialStatement* context;
         std::vector< Value* > parameter;
-        
-    public:
+
+      public:
         Derived( const char* name, Type* result );
-        
+
         ~Derived( void );
-        
+
         TrivialStatement* getContext( void ) const;
-        
+
         void setContext( TrivialStatement* scope );
 
         void addParameter( Value* value );
 
         const std::vector< Value* >& getParameters( void ) const;
-        
+
         void dump( void ) const;
-        
-        static inline Value::ID classid( void ) { return Value::DERIVED; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::DERIVED;
+        };
         static bool classof( Value const* obj );
     };
 }
 
-
 #endif /* _LIB_CASMIR_DERIVED_H_ */
 
-//  
+//
 //  Local variables:
 //  mode: c++
 //  indent-tabs-mode: nil
@@ -70,4 +72,4 @@ namespace libcasm_ir
 //  tab-width: 4
 //  End:
 //  vim:noexpandtab:sw=4:ts=4:
-//  
+//

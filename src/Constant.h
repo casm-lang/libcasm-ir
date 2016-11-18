@@ -30,169 +30,194 @@ namespace libcasm_ir
 {
     class Statement;
 
-    template< typename V >
+    template < typename V >
     class Constant : public User
     {
-    private:
+      private:
         V value;
         u1 defined;
-        
-    protected:
-        Constant( const char* name, Type* type, V value, u1 defined, Value::ID id = Value::CONSTANT );
 
-    public:
+      protected:
+        Constant( const char* name, Type* type, V value, u1 defined,
+            Value::ID id = Value::CONSTANT );
+
+      public:
         ~Constant( void );
-        
+
         const V getValue( void ) const;
-        
+
         const u1 isDefined( void ) const
         {
             return defined;
         }
-        
+
         const u1 isUndef( void ) const
         {
             return not defined;
         }
-        
-        static inline Value::ID classid( void ) { return Value::CONSTANT; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::CONSTANT;
+        };
         static bool classof( Value const* obj );
 
-    protected:
+      protected:
         void setValue( V val );
     };
-    
+
     class ConstantValue : public Constant< Type::Undef >
     {
-    public:
-        static inline Value::ID classid( void ) { return Value::CONSTANT; };
+      public:
+        static inline Value::ID classid( void )
+        {
+            return Value::CONSTANT;
+        };
         static bool classof( Value const* obj );
     };
-    
-    
+
     class AgentConstant : public Constant< Type::Agent >
     {
-    private:
+      private:
         AgentConstant( Type::Agent value, u1 defined );
 
-    public:
+      public:
         static AgentConstant* create( Type::Agent value );
         static AgentConstant* create( void );
-        
+
         void dump( void ) const;
-        
-        static inline Value::ID classid( void ) { return Value::AGENT_CONSTANT; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::AGENT_CONSTANT;
+        };
         static bool classof( Value const* obj );
     };
-    
-    
+
     class RulePointerConstant : public Constant< Type::RulePointer >
     {
-    private:
+      private:
         const char* resolve_identifier;
-        
+
         RulePointerConstant( Type::RulePointer value, u1 defined );
-        
-    public:
+
+      public:
         static RulePointerConstant* create( Type::RulePointer value );
         static RulePointerConstant* create( const char* name );
         static RulePointerConstant* create( void );
 
         void setResolveIdentifier( const char* name );
         void resolve( void );
-        
+
         void dump( void ) const;
-        
-        static inline Value::ID classid( void ) { return Value::RULE_POINTER_CONSTANT; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::RULE_POINTER_CONSTANT;
+        };
         static bool classof( Value const* obj );
     };
-    
-    
+
     class BooleanConstant : public Constant< Type::Boolean >
     {
-    private:
+      private:
         BooleanConstant( Type::Boolean value, u1 defined );
-        
-    public:
+
+      public:
         static BooleanConstant* create( Type::Boolean value );
         static BooleanConstant* create( void );
-        
+
         void dump( void ) const;
-        
-        static inline Value::ID classid( void ) { return Value::BOOLEAN_CONSTANT; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::BOOLEAN_CONSTANT;
+        };
         static bool classof( Value const* obj );
     };
 
     class IntegerConstant : public Constant< Type::Integer >
     {
-    private:
+      private:
         IntegerConstant( Type::Integer value, u1 defined );
 
-    public:
+      public:
         static IntegerConstant* create( Type::Integer value );
         static IntegerConstant* create( void );
-        
+
         void dump( void ) const;
-        
-        static inline Value::ID classid( void ) { return Value::INTEGER_CONSTANT; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::INTEGER_CONSTANT;
+        };
         static bool classof( Value const* obj );
     };
-    
+
     class BitConstant : public Constant< Type::Bit >
     {
-    private:
-        u64 value[1];
+      private:
+        u64 value[ 1 ];
         BitConstant( Type* type, u64 value, u1 defined );
 
-    public:
+      public:
         static BitConstant* create( u64 value, u16 bitsize );
         static BitConstant* create( u16 bitsize );
-        
+
         void dump( void ) const;
-        
-        static inline Value::ID classid( void ) { return Value::BIT_CONSTANT; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::BIT_CONSTANT;
+        };
         static bool classof( Value const* obj );
     };
-    
+
     class StringConstant : public Constant< Type::String >
     {
-    private:
+      private:
         StringConstant( Type::String value, u1 defined );
 
-    public:
+      public:
         static StringConstant* create( Type::String value );
         static StringConstant* create( const char* value );
         static StringConstant* create( void );
-        
+
         void dump( void ) const;
-        
-        static inline Value::ID classid( void ) { return Value::STRING_CONSTANT; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::STRING_CONSTANT;
+        };
         static bool classof( Value const* obj );
     };
-    
+
     class Identifier : public Constant< const char* >
     {
-    private:
+      private:
         Identifier( Type* type, const char* value );
 
-    public:
+      public:
         ~Identifier( void );
 
-        static Identifier* create( Type* type, const char* value, Value* scope = 0 );
-        
+        static Identifier* create(
+            Type* type, const char* value, Value* scope = 0 );
+
         static void forgetSymbol( const char* value );
-        
+
         void dump( void ) const;
 
-        static inline Value::ID classid( void ) { return Value::IDENTIFIER; };
+        static inline Value::ID classid( void )
+        {
+            return Value::IDENTIFIER;
+        };
         static bool classof( Value const* obj );
     };
 }
 
-
 #endif /* _LIB_CASMIR_CONSTANT_H_ */
 
-//  
+//
 //  Local variables:
 //  mode: c++
 //  indent-tabs-mode: nil
@@ -200,4 +225,4 @@ namespace libcasm_ir
 //  tab-width: 4
 //  End:
 //  vim:noexpandtab:sw=4:ts=4:
-//  
+//

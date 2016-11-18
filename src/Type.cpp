@@ -25,23 +25,28 @@
 
 using namespace libcasm_ir;
 
-const char* Type::ID2str[ Type::ID::_TOP_ ] =
-{ "Undef"    // UNDEF = 0
-, "Agent"    // AGENT
-, "Rule*"    // RULEPOINTER
-, "Boolean"  // BOOLEAN
-, "Integer"  // INTEGER
-, "Bit"      // BIT
-, "String"   // STRING
+const char* Type::ID2str[ Type::ID::_TOP_ ] = {
+    "Undef" // UNDEF = 0
+    ,
+    "Agent" // AGENT
+    ,
+    "Rule*" // RULEPOINTER
+    ,
+    "Boolean" // BOOLEAN
+    ,
+    "Integer" // INTEGER
+    ,
+    "Bit" // BIT
+    ,
+    "String" // STRING
 };
 
-
 Type::Type( Type::ID id, i16 bitsize, Type::STATE state )
-//: Value( ".type", self, Value::TYPE );
-: type_id( id )
-, type_uid_hash( 0 )
-, type_state( Type::STATE::CHANGED )
-, bitsize( bitsize )
+    //: Value( ".type", self, Value::TYPE );
+    : type_id( id ),
+      type_uid_hash( 0 ),
+      type_state( Type::STATE::CHANGED ),
+      bitsize( bitsize )
 {
     getName();
     type_state = state;
@@ -63,7 +68,7 @@ const char* Type::getName( void )
     {
         return description.c_str();
     }
-    
+
     description.clear();
     if( parameters.size() > 0 )
     {
@@ -82,7 +87,7 @@ const char* Type::getName( void )
         }
         description.append( " -> " );
     }
-    
+
     description.append( ID2str[ type_id ] );
     if( type_id == Type::BIT )
     {
@@ -90,7 +95,7 @@ const char* Type::getName( void )
         description.append( std::to_string( bitsize ) );
         description.append( ")" );
     }
-    
+
     if( subtypes.size() > 0 )
     {
         u1 flag = 0;
@@ -109,9 +114,9 @@ const char* Type::getName( void )
         }
         description.append( " )" );
     }
-    
+
     type_uid_hash = std::hash< std::string >()( description );
-    
+
     return description.c_str();
 }
 
@@ -135,7 +140,7 @@ void Type::addParameter( Type* parameter )
     assert( parameter );
     assert( type_state != Type::STATE::LOCKED );
     parameters.push_back( parameter );
-    
+
     type_state = Type::STATE::CHANGED;
     getName();
     type_state = Type::STATE::UNCHANGED;
@@ -197,8 +202,7 @@ Type* Type::getResultType( void )
     }
 }
 
-
-//  
+//
 //  Local variables:
 //  mode: c++
 //  indent-tabs-mode: nil
@@ -206,4 +210,4 @@ Type* Type::getResultType( void )
 //  tab-width: 4
 //  End:
 //  vim:noexpandtab:sw=4:ts=4:
-//  
+//

@@ -24,34 +24,36 @@
 #ifndef _LIB_CASMIR_BUILTIN_H_
 #define _LIB_CASMIR_BUILTIN_H_
 
-#include "User.h"
 #include "Constant.h"
 #include "Type.h"
+#include "User.h"
 
 namespace libcasm_ir
 {
     class Identifier;
-    
+
     class Builtin : public User
     {
-        //private:
-        
-    public:
+        // private:
+
+      public:
         Builtin( const char* name, Type* result );
-        
+
         ~Builtin( void );
-        
+
         void dump( void ) const;
-        
-        static inline Value::ID classid( void ) { return Value::BUILTIN; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::BUILTIN;
+        };
         static bool classof( Value const* obj );
     };
 }
 
-
 #endif /* _LIB_CASMIR_BUILTIN_H_ */
 
-//  
+//
 //  Local variables:
 //  mode: c++
 //  indent-tabs-mode: nil
@@ -59,4 +61,4 @@ namespace libcasm_ir
 //  tab-width: 4
 //  End:
 //  vim:noexpandtab:sw=4:ts=4:
-//  
+//

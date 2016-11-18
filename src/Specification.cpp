@@ -22,29 +22,28 @@
 //
 
 #include "Specification.h"
-#include "Rule.h"
+#include "Agent.h"
 #include "Derived.h"
 #include "Function.h"
-#include "Agent.h"
+#include "Rule.h"
 
 using namespace libcasm_ir;
 
-
 Specification::Specification( const char* name )
 : User( name, 0, Value::SPECIFICATION )
-{            
-    (*Value::getSymbols())[ ".specification" ].insert( this );
+{
+    ( *Value::getSymbols() )[ ".specification" ].insert( this );
 }
 
 Specification::~Specification( void )
-{            
-    (*Value::getSymbols())[ ".specification" ].erase( this );
+{
+    ( *Value::getSymbols() )[ ".specification" ].erase( this );
 }
-        
+
 void Specification::add( Value* value )
 {
     assert( value );
-    
+
     if( Value::isa< Rule >( value ) )
     {
         content[ Rule::classid() ].push_back( value );
@@ -83,9 +82,7 @@ bool Specification::classof( Value const* obj )
     return obj->getValueID() == classid();
 }
 
-
-
-//  
+//
 //  Local variables:
 //  mode: c++
 //  indent-tabs-mode: nil
@@ -93,4 +90,4 @@ bool Specification::classof( Value const* obj )
 //  tab-width: 4
 //  End:
 //  vim:noexpandtab:sw=4:ts=4:
-//  
+//

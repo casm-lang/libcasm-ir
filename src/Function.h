@@ -24,35 +24,37 @@
 #ifndef _LIB_CASMIR_FUNCTION_H_
 #define _LIB_CASMIR_FUNCTION_H_
 
-#include "User.h"
 #include "Constant.h"
 #include "Type.h"
+#include "User.h"
 
 namespace libcasm_ir
 {
     class Identifier;
-    
+
     class Function : public User
     {
-    private:
+      private:
         Identifier* ident;
-        
-    public:
+
+      public:
         Function( const char* name, Type* result );
-        
+
         ~Function( void );
-        
+
         void dump( void ) const;
-        
-        static inline Value::ID classid( void ) { return Value::FUNCTION; };
+
+        static inline Value::ID classid( void )
+        {
+            return Value::FUNCTION;
+        };
         static bool classof( Value const* obj );
     };
 }
 
-
 #endif /* _LIB_CASMIR_FUNCTION_H_ */
 
-//  
+//
 //  Local variables:
 //  mode: c++
 //  indent-tabs-mode: nil
@@ -60,4 +62,4 @@ namespace libcasm_ir
 //  tab-width: 4
 //  End:
 //  vim:noexpandtab:sw=4:ts=4:
-//  
+//

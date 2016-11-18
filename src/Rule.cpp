@@ -25,16 +25,15 @@
 
 using namespace libcasm_ir;
 
-
 Rule::Rule( const char* name )
 : User( name, 0, Value::RULE )
-{            
-    (*Value::getSymbols())[ ".rule" ].insert( this );
+{
+    ( *Value::getSymbols() )[ ".rule" ].insert( this );
 }
 
 Rule::~Rule( void )
-{            
-    (*Value::getSymbols())[ ".rule" ].erase( this );
+{
+    ( *Value::getSymbols() )[ ".rule" ].erase( this );
 }
 
 ParallelBlock* Rule::getContext( void ) const
@@ -44,7 +43,7 @@ ParallelBlock* Rule::getContext( void ) const
 
 void Rule::setContext( ParallelBlock* scope )
 {
-    assert( scope );    
+    assert( scope );
     context = scope;
 }
 
@@ -52,7 +51,7 @@ void Rule::dump( void ) const
 {
     printf( "[Rule ] " );
     debug();
-    
+
     if( context )
     {
         context->dump();
@@ -68,9 +67,7 @@ bool Rule::classof( Value const* obj )
     return obj->getValueID() == classid();
 }
 
-
-
-//  
+//
 //  Local variables:
 //  mode: c++
 //  indent-tabs-mode: nil
@@ -78,4 +75,4 @@ bool Rule::classof( Value const* obj )
 //  tab-width: 4
 //  End:
 //  vim:noexpandtab:sw=4:ts=4:
-//  
+//

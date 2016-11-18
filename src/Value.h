@@ -23,7 +23,7 @@
 
 /**
    @brief    TODO
-   
+
    TODO
 */
 
@@ -40,139 +40,149 @@ namespace libcasm_ir
 {
     class Value : public CasmIR, public libstdhl::Labeling
     {
-    public:
+      public:
         enum ID
-        { VALUE
-        , USER
-          
-        , SPECIFICATION
-        , AGENT
-        , RULE
-        , DERIVED
-        , FUNCTION
-        , BUILTIN
-        
-        , BLOCK
-        , EXECUTION_SEMANTICS_BLOCK
-        , PARALLEL_BLOCK
-        , SEQUENTIAL_BLOCK
-        
-        , STATEMENT
-        , TRIVIAL_STATEMENT
-        , BRANCH_STATEMENT
-        
-        , CONSTANT
-        // , UNDEF_CONSTANT
-        // , SELF_CONSTANT
-        , AGENT_CONSTANT
-        , RULE_POINTER_CONSTANT
-        , BOOLEAN_CONSTANT
-        , INTEGER_CONSTANT
-        , BIT_CONSTANT
-        , STRING_CONSTANT
-        , IDENTIFIER
-        
-        , INSTRUCTION
-        , UNARY_INSTRUCTION
-        , BINARY_INSTRUCTION
-        
-        , ASSERT_INSTRUCTION
-        , SWITCH_INSTRUCTION
-        
-        , SKIP_INSTRUCTION
-        , LOOKUP_INSTRUCTION
-        , UPDATE_INSTRUCTION
-        , LOCATION_INSTRUCTION
-        , CALL_INSTRUCTION
-        , PRINT_INSTRUCTION
-        , LET_INSTRUCTION
-        
-        , OPERATOR_INSTRUCTION
-        , ADD_INSTRUCTION
-        , SUB_INSTRUCTION
-        , MUL_INSTRUCTION
-        , DIV_INSTRUCTION
-        , RIV_INSTRUCTION
-        , MOD_INSTRUCTION
-        , EQU_INSTRUCTION
-        , NEQ_INSTRUCTION
-        , LTH_INSTRUCTION
-        , LEQ_INSTRUCTION
-        , GTH_INSTRUCTION
-        , GEQ_INSTRUCTION
-        ,  OR_INSTRUCTION
-        , XOR_INSTRUCTION
-        , AND_INSTRUCTION
-        , NOT_INSTRUCTION
-        , MOV_INSTRUCTION
+        {
+            VALUE,
+            USER
+
+            ,
+            SPECIFICATION,
+            AGENT,
+            RULE,
+            DERIVED,
+            FUNCTION,
+            BUILTIN
+
+            ,
+            BLOCK,
+            EXECUTION_SEMANTICS_BLOCK,
+            PARALLEL_BLOCK,
+            SEQUENTIAL_BLOCK
+
+            ,
+            STATEMENT,
+            TRIVIAL_STATEMENT,
+            BRANCH_STATEMENT
+
+            ,
+            CONSTANT
+            // , UNDEF_CONSTANT
+            // , SELF_CONSTANT
+            ,
+            AGENT_CONSTANT,
+            RULE_POINTER_CONSTANT,
+            BOOLEAN_CONSTANT,
+            INTEGER_CONSTANT,
+            BIT_CONSTANT,
+            STRING_CONSTANT,
+            IDENTIFIER
+
+            ,
+            INSTRUCTION,
+            UNARY_INSTRUCTION,
+            BINARY_INSTRUCTION
+
+            ,
+            ASSERT_INSTRUCTION,
+            SWITCH_INSTRUCTION
+
+            ,
+            SKIP_INSTRUCTION,
+            LOOKUP_INSTRUCTION,
+            UPDATE_INSTRUCTION,
+            LOCATION_INSTRUCTION,
+            CALL_INSTRUCTION,
+            PRINT_INSTRUCTION,
+            LET_INSTRUCTION
+
+            ,
+            OPERATOR_INSTRUCTION,
+            ADD_INSTRUCTION,
+            SUB_INSTRUCTION,
+            MUL_INSTRUCTION,
+            DIV_INSTRUCTION,
+            RIV_INSTRUCTION,
+            MOD_INSTRUCTION,
+            EQU_INSTRUCTION,
+            NEQ_INSTRUCTION,
+            LTH_INSTRUCTION,
+            LEQ_INSTRUCTION,
+            GTH_INSTRUCTION,
+            GEQ_INSTRUCTION,
+            OR_INSTRUCTION,
+            XOR_INSTRUCTION,
+            AND_INSTRUCTION,
+            NOT_INSTRUCTION,
+            MOV_INSTRUCTION
         };
-        
-        typedef std::unordered_map
-        < const char*
-        , std::unordered_set< Value* >
-        , libstdhl::Hash
-        , libstdhl::Equal
-        > SymbolTable;
-        
+
+        typedef std::unordered_map< const char*, std::unordered_set< Value* >,
+            libstdhl::Hash, libstdhl::Equal >
+            SymbolTable;
+
         static SymbolTable* getSymbols( void )
         {
             static SymbolTable symbols;
             return &symbols;
         }
-        
-    private:
+
+      private:
         const char* name;
-        Type* type;        
+        Type* type;
         ID id;
         u1 type_lock;
-        
+
         std::vector< Type* > parameters;
-        
-    public:
+
+      public:
         Value( const char* name, Type* type, ID id );
 
         ~Value();
 
         const char* getName( void ) const;
-        
+
         Type* getType( void ) const;
-    protected:
+
+      protected:
         void setType( Type* type );
-        
-    public:
+
+      public:
         ID getValueID() const;
-        
+
         void debug( void ) const;
         void dump( void ) const;
-        
-        
+
         // TODO: FIXME: PPA: setRef/getRef interface will be added soon!
-        
-        static inline ID classid( void ) { return Value::VALUE; };
-        
+
+        static inline ID classid( void )
+        {
+            return Value::VALUE;
+        };
+
         static inline bool classof( Value const* )
         {
             return true;
         }
-        
-        template< class TO >
+
+        template < class TO >
         static inline bool isa( Value* value )
         {
             return TO::classof( value );
         }
-        
-        template< class TO >
+
+        template < class TO >
         static inline bool isa( const Value* value )
         {
             return isa< TO >( (Value*)value );
         }
 
-        virtual void iterate
-        ( Traversal order, Visitor* visitor = 0, std::function< void( Value* ) > action  = []( Value* ){ } ) final;
+        virtual void iterate( Traversal order, Visitor* visitor = 0,
+            std::function< void( Value* ) > action = []( Value* ) {} ) final;
 
-        virtual void iterate
-        ( Traversal order, std::function< void( Value* ) > action ) final;
-        
+        virtual void iterate(
+            Traversal order, std::function< void( Value* ) > action ) final;
+
         virtual u64 getLabelID( void )
         {
             static u64 cnt = -1;
@@ -184,7 +194,7 @@ namespace libcasm_ir
 
 #endif /* _LIB_CASMIR_VALUE_H_ */
 
-//  
+//
 //  Local variables:
 //  mode: c++
 //  indent-tabs-mode: nil
@@ -192,4 +202,4 @@ namespace libcasm_ir
 //  tab-width: 4
 //  End:
 //  vim:noexpandtab:sw=4:ts=4:
-//  
+//
