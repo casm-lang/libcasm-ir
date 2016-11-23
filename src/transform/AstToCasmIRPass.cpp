@@ -27,7 +27,8 @@ char libcasm_ir::AstToCasmIRPass::id = 0;
 
 static libpass::PassRegistration< libcasm_ir::AstToCasmIRPass > PASS(
     "AST to CASM IR",
-    "internal: translates the AST to the CASM intermeditate representation", 0,
+    "translates the AST to the CASM intermeditate representation",
+    "ast2ir",
     0 );
 
 extern Driver* global_driver;
