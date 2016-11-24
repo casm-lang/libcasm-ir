@@ -347,7 +347,7 @@ void libcasm_ir::AstToCasmIRPass::visit_rule_post( RuleNode* node )
     current_scope.pop_back();
 }
 
-void libcasm_ir::AstToCasmIRPass::visit_parblock( UnaryNode* node )
+void libcasm_ir::AstToCasmIRPass::visit_parblock_pre( UnaryNode* node )
 {
     VISIT;
     // printf( "{ }\n" );
@@ -383,7 +383,7 @@ void libcasm_ir::AstToCasmIRPass::visit_parblock( UnaryNode* node )
     }
 }
 
-void libcasm_ir::AstToCasmIRPass::visit_seqblock( UnaryNode* node )
+void libcasm_ir::AstToCasmIRPass::visit_seqblock_pre( UnaryNode* node )
 {
     VISIT;
     // printf( "{| |}\n" );

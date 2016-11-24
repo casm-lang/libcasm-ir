@@ -69,8 +69,8 @@ namespace libcasm_ir
         void visit_rule_post( RuleNode* node );
         void visit_skip( AstNode* node );
         void visit_statements( AstListNode* node );
-        void visit_parblock( UnaryNode* node );
-        void visit_seqblock( UnaryNode* node );
+        void visit_parblock_pre( UnaryNode* node );
+        void visit_seqblock_pre( UnaryNode* node );
         void visit_forall_pre( AstNode* node );
         void visit_forall_post( AstNode* node );
         void visit_iterate( AstNode* node );
