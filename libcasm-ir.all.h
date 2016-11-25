@@ -27,7 +27,6 @@
 #include "libcasm-ir.h"
 
 #include "src/analyze/CasmIRDumpPass.h"
-#include "src/transform/AstToCasmIRPass.h"
 
 #endif /* _LIB_CASMIR_PASS_H_ */
 

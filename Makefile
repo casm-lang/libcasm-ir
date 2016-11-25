@@ -45,7 +45,6 @@ CI += -I ./src/transform
 
 CI += -I ../stdhl
 CI += -I ../pass
-CI += -I ../casm-fe
 
 CL  =
 
