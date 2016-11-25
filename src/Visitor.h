@@ -49,6 +49,8 @@ namespace libcasm_ir
     class TrivialStatement;
     class BranchStatement;
 
+    class LocalInstruction;
+    
     class LocationInstruction;
     class LookupInstruction;
     class UpdateInstruction;
@@ -110,6 +112,9 @@ namespace libcasm_ir
     PREFIX void visit_interlog( libcasm_ir::BranchStatement& value ) POSTFIX;  \
     PREFIX void visit_epilog( libcasm_ir::BranchStatement& value ) POSTFIX;    \
                                                                                \
+    PREFIX void visit_prolog( libcasm_ir::LocalInstruction& value ) POSTFIX;  \
+    PREFIX void visit_epilog( libcasm_ir::LocalInstruction& value ) POSTFIX;  \
+                                                                               \
     PREFIX void visit_prolog( libcasm_ir::LocationInstruction& value )         \
         POSTFIX;                                                               \
     PREFIX void visit_epilog( libcasm_ir::LocationInstruction& value )         \
@@ -150,12 +155,15 @@ namespace libcasm_ir
     PREFIX void visit_prolog( libcasm_ir::AgentConstant& value ) POSTFIX;      \
     PREFIX void visit_epilog( libcasm_ir::AgentConstant& value ) POSTFIX
 
-        LIB_CASMIR_VISITOR_INTERFACE_( virtual, = 0 );
+            
+#define LIB_CASMIR_VISITOR_INTERFACE                            \
+            LIB_CASMIR_VISITOR_INTERFACE_(, override final )
+            
+            
+            LIB_CASMIR_VISITOR_INTERFACE_( virtual, = 0 );
     };
 }
 
-#define LIB_CASMIR_VISITOR_INTERFACE                                           \
-    LIB_CASMIR_VISITOR_INTERFACE_(, override final )
 
 #endif /* _LIB_CASMIR_VISITOR_H_ */
 

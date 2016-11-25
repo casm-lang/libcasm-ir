@@ -130,14 +130,14 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class LetInstruction : public BinaryInstruction
+    class LocalInstruction : public BinaryInstruction
     {
       public:
-        LetInstruction( Value* ident, Value* expr );
+        LocalInstruction( Value* ident, Value* expr );
 
         static inline Value::ID classid( void )
         {
-            return Value::LET_INSTRUCTION;
+            return Value::LOCAL_INSTRUCTION;
         };
         static bool classof( Value const* obj );
     };

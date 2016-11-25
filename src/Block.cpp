@@ -104,14 +104,15 @@ const std::vector< Block* >& ExecutionSemanticsBlock::getBlocks( void ) const
 void ExecutionSemanticsBlock::add( Block* block )
 {
     assert( block );
-
+    
     if( Value::isa< ExecutionSemanticsBlock >( block ) )
     {
         ExecutionSemanticsBlock* inner
             = static_cast< ExecutionSemanticsBlock* >( block );
         inner->setScope( this );
+        inner->setParent( this );
     }
-
+    
     blocks.push_back( block );
 }
 

@@ -626,57 +626,69 @@ void libcasm_ir::AstToCasmIRPass::visit_let( LetNode* node, T var )
 
     ast2parent[ node->expr ] = node;
     ast2parent[ node->stmt ] = node;
-
+    
     Value* ir_expr = lookup< Value >( node->expr );
     assert( ir_expr );
 
     Value* ir_ident = Identifier::create(
         getType( &node->type_ ), node->identifier.c_str() );
     assert( ir_ident );
-
-    Value* ir_let = new LetInstruction( ir_ident, ir_expr );
-    assert( ir_let );
-
+    
+    Value* ir_local = new LocalInstruction( ir_ident, ir_expr );
+    assert( ir_local );
+    
     ExecutionSemanticsBlock* ir_scope = 0;
     Value* parent = lookupParent< Value >( node );
     assert( parent );
+    
     if( Value::isa< ExecutionSemanticsBlock >( parent ) )
     {
         ir_scope = (ExecutionSemanticsBlock*)parent;
-        // if( ir_scope->isParallel() )
-        // {
-        //     ExecutionSemanticsBlock* ir_scope_top = ir_scope;
-        //     ir_scope = new SequentialBlock();
-        //     assert( ir_scope );
-        //     ir_scope->setParent( ir_scope_top );
-        //     ir_scope_top->add( ir_scope );
-        // }
     }
     else if( Value::isa< Statement >( parent ) )
     {
         ir_scope = ( (Statement*)parent )->getScope();
-        // printf( "up for %p\n", parent );
     }
     else
     {
         assert( 0 );
     }
 
-    BranchStatement* ir_stmt = new BranchStatement( ir_scope );
+    SequentialBlock* ir_block = new SequentialBlock();
+    assert( ir_block );
+    ir_scope->add( ir_block );
+    ir_block->setParent( ir_scope );
+
+    printf( ">>>>>>>>>>>>> %p\n", ir_block );
+    
+    TrivialStatement* ir_stmt = new TrivialStatement( ir_block );
     assert( ir_stmt );
-    ast2casmir[ node ] = ir_stmt;
+    ir_stmt->add( ir_local );
+    ir_stmt->setParent( ir_block );
+    
+    ast2casmir[ node ] = ir_block;
+    
+    
+    // SequentialBlock* ir_block = new SequentialBlock( ir_scope );
+    // assert( ir_block );
+    // TrivialStatement* ir_stmt = new TrivialStatement( ir_block );
+    // assert( ir_stmt );
+    
+    // ir_stmt->add( ir_local );
 
-    ir_stmt->add( ir_let );
+    // ast2casmir[ node ] = ir_stmt;
+    
+    // ir_block->add( ir_ );
+    
+    // if( node->stmt->node_type_ != NodeType::PARBLOCK )
+    // {
+    //     ParallelBlock* ir_blk = new ParallelBlock();
+    //     assert( ir_blk );
+    //     ast2casmir[ node ] = ir_blk;
+    //     ir_stmt->addBlock( ir_blk );
+    // }
 
-    if( node->stmt->node_type_ != NodeType::PARBLOCK )
-    {
-        ParallelBlock* ir_blk = new ParallelBlock();
-        assert( ir_blk );
-        ast2casmir[ node ] = ir_blk;
-        ir_stmt->addBlock( ir_blk );
-    }
-
-    assert( !" DEPRECATED IMPLEMENTATION, TODO: FIXME: PPA!!! " );
+    //assert( !" DEPRECATED IMPLEMENTATION, TODO: FIXME: PPA!!! " );
 }
 
 void libcasm_ir::AstToCasmIRPass::visit_let_post( LetNode* node )

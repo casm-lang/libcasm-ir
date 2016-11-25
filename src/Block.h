@@ -52,7 +52,8 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class ExecutionSemanticsBlock : public Block
+    class ExecutionSemanticsBlock : public Block,
+                                    public libstdhl::Binding< Rule >
     {
       private:
         const u1 is_parallel;
@@ -86,8 +87,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class ParallelBlock : public ExecutionSemanticsBlock,
-                          public libstdhl::Binding< Rule >
+    class ParallelBlock : public ExecutionSemanticsBlock
     {
       public:
         ParallelBlock( ExecutionSemanticsBlock* scope = 0 );

@@ -43,7 +43,7 @@ namespace libcasm_ir
       public:
         static char id;
 
-        virtual bool run( libpass::PassResult& pr );
+        bool run( libpass::PassResult& pr ) override final;
 
       private:
         std::unordered_map< AstNode*, Value* > ast2casmir;

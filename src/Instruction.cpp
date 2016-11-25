@@ -159,7 +159,7 @@ Value* BinaryInstruction::getRHS( void ) const
 bool BinaryInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid() or UpdateInstruction::classof( obj )
-           or LetInstruction::classof( obj )
+           or LocalInstruction::classof( obj )
            or OperatorInstruction::classof( obj );
 }
 
@@ -186,14 +186,14 @@ bool UpdateInstruction::classof( Value const* obj )
     return obj->getValueID() == classid();
 }
 
-LetInstruction::LetInstruction( Value* ident, Value* expr )
-: BinaryInstruction( ".let", 0, ident, expr, Value::LET_INSTRUCTION )
+LocalInstruction::LocalInstruction( Value* ident, Value* expr )
+: BinaryInstruction( ".local", 0, ident, expr, Value::LOCAL_INSTRUCTION )
 {
     assert( expr->getType() );
     setType( expr->getType() );
 }
 
-bool LetInstruction::classof( Value const* obj )
+bool LocalInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }

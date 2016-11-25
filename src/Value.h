@@ -86,7 +86,7 @@ namespace libcasm_ir
             ,
             ASSERT_INSTRUCTION,
             SWITCH_INSTRUCTION
-
+            
             ,
             SKIP_INSTRUCTION,
             LOOKUP_INSTRUCTION,
@@ -94,8 +94,8 @@ namespace libcasm_ir
             LOCATION_INSTRUCTION,
             CALL_INSTRUCTION,
             PRINT_INSTRUCTION,
-            LET_INSTRUCTION
-
+            LOCAL_INSTRUCTION
+            
             ,
             OPERATOR_INSTRUCTION,
             ADD_INSTRUCTION,
