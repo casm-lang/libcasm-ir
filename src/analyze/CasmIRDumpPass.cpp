@@ -33,8 +33,6 @@ static libpass::PassRegistration< CasmIRDumpPass > PASS( "CASM IR Dumping Pass",
 
 bool CasmIRDumpPass::run( libpass::PassResult& pr )
 {
-    printf("CASM IR Dump Pass\n");
-    
     // CasmIRNode* node = (CasmIRNode*)pr.getResult< TypeCheckPass >();
 
     // CasmIRWalker< CasmIRDumpVisitor, bool > dump_walker( *this );
