@@ -135,7 +135,9 @@ Value* UnaryInstruction::get( void ) const
 bool UnaryInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid() or AssertInstruction::classof( obj )
-           or LookupInstruction::classof( obj );
+           or LookupInstruction::classof( obj )
+           or NotInstruction::classof(
+                  obj ); // PPA: INFO: this is a special case!
 }
 
 BinaryInstruction::BinaryInstruction(

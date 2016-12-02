@@ -41,9 +41,9 @@ namespace libcasm_ir
     class Value : public CasmIR, public libstdhl::Labeling
     {
       public:
-        enum ID
+        enum ID : u8
         {
-            VALUE,
+            VALUE = 0,
             USER
 
             ,
@@ -86,7 +86,7 @@ namespace libcasm_ir
             ,
             ASSERT_INSTRUCTION,
             SWITCH_INSTRUCTION
-            
+
             ,
             SKIP_INSTRUCTION,
             LOOKUP_INSTRUCTION,
@@ -95,7 +95,7 @@ namespace libcasm_ir
             CALL_INSTRUCTION,
             PRINT_INSTRUCTION,
             LOCAL_INSTRUCTION
-            
+
             ,
             OPERATOR_INSTRUCTION,
             ADD_INSTRUCTION,
