@@ -46,7 +46,8 @@ CI += -I ./src/transform
 CI += -I ../stdhl
 CI += -I ../pass
 
-CL  =
+CL += ../stdhl/libstdhlcpp.a
+CL += ../pass/libpass.a
 
 CC  =
 CF  =
@@ -106,6 +107,13 @@ config:
 	@echo "CFG  $(CFG)"
 
 
+../stdhl/libstdhlcpp.a: ../stdhl
+	@cd $<; $(MAKE) $(MFLAGS) build CC="$(CC)" CF="$(CF)"
+
+../pass/libpass.a: ../pass
+	@cd $<; $(MAKE) $(MFLAGS) build CC="$(CC)" CF="$(CF)"
+
+
 obj/%.o: %.cpp
 	@mkdir -p `dirname $@`
 	@echo "C++ " $<
@@ -147,7 +155,7 @@ obj/uts/%.o: uts/%.cpp
 	@echo "C++ " $<
 	@$(CC) $(CF) $(TI) $(CI) -c $< -o $@
 
-$(TEST_TARGET): $(TO) $(CO) $(TARGET)
+$(TEST_TARGET): $(TO) $(CO) $(CL) $(TARGET)
 	@echo "LD " $@
 	@$(CC) \
 	  $(CF) \
@@ -156,7 +164,7 @@ $(TEST_TARGET): $(TO) $(CO) $(TARGET)
 	  $(TL) \
 	  -o $@ \
 	  $(TO) \
-	  $(TARGET) \
+	  -Wl,--whole-archive $(CL) $(TARGET) -Wl,--no-whole-archive \
 	  ../gtest/googletest/src/gtest-all.cc \
 	  ../gtest/googletest/src/gtest_main.cc 
 	@echo "RUN " $@
