@@ -46,7 +46,9 @@ $(OBJ):
 	@mkdir -p $(OBJ)/uts
 
 clean:
+ifneq ("$(wildcard $(OBJ)/CMakeBuild_$(TYPE))","")
 	@$(MAKE) $(MFLAGS) --no-print-directory -C $(OBJ) clean
+endif
 
 clean-all:
 	@echo "-- Removing build directory" $(OBJ)
@@ -60,7 +62,8 @@ BENCH = $(TYPES:%=%-benchmark)
 ALL   = $(TYPES:%=%-all)
 
 
-$(OBJ)/Makefile: $(OBJ) 
+$(OBJ)/Makefile: $(OBJ)
+	@rm -f $(OBJ)/CMakeCache.txt
 	@(\
 	cd $(OBJ); \
 	cmake \
