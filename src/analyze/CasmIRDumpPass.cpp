@@ -29,7 +29,7 @@ using namespace libcasm_ir;
 char CasmIRDumpPass::id = 0;
 
 static libpass::PassRegistration< CasmIRDumpPass > PASS( "CASM IR Dumping Pass",
-                                                         "generates a ASCII representation of the CASM IR", "ir-dump", 0 );
+    "generates a ASCII representation of the CASM IR", "ir-dump", 0 );
 
 bool CasmIRDumpPass::run( libpass::PassResult& pr )
 {

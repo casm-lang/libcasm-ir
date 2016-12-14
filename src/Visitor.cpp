@@ -67,7 +67,7 @@ void Visitor::dispatch( Stage stage, Value* value )
         CASE_VALUE_INTER( BRANCH_STATEMENT, BranchStatement );
 
         CASE_VALUE( LOCAL_INSTRUCTION, LocalInstruction );
-        
+
         CASE_VALUE( LOCATION_INSTRUCTION, LocationInstruction );
         CASE_VALUE( LOOKUP_INSTRUCTION, LookupInstruction );
         CASE_VALUE( UPDATE_INSTRUCTION, UpdateInstruction );

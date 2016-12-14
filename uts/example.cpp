@@ -25,5 +25,4 @@
 
 TEST( libcasm_ir, example )
 {
-    
 }

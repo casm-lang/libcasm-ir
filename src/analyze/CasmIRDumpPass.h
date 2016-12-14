@@ -41,7 +41,7 @@ namespace libcasm_ir
         static char id;
 
         bool run( libpass::PassResult& pr ) override final;
-        
+
         LIB_CASMIR_VISITOR_INTERFACE;
     };
 }
