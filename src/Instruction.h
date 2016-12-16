@@ -93,8 +93,6 @@ namespace libcasm_ir
       public:
         SkipInstruction( void );
 
-        // void dump( void ) const;
-
         static inline Value::ID classid( void )
         {
             return Value::SKIP_INSTRUCTION;
@@ -107,8 +105,6 @@ namespace libcasm_ir
       public:
         LookupInstruction( Value* location );
 
-        // void dump( void ) const;
-
         static inline Value::ID classid( void )
         {
             return Value::LOOKUP_INSTRUCTION;
@@ -120,8 +116,6 @@ namespace libcasm_ir
     {
       public:
         UpdateInstruction( Value* location, Value* expr );
-
-        // void dump( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -147,8 +141,6 @@ namespace libcasm_ir
       public:
         LocationInstruction( Value* function );
 
-        // void dump( void ) const;
-
         static inline Value::ID classid( void )
         {
             return Value::LOCATION_INSTRUCTION;
@@ -160,8 +152,6 @@ namespace libcasm_ir
     {
       public:
         CallInstruction( Value* symbol );
-
-        // void dump( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -187,8 +177,6 @@ namespace libcasm_ir
       public:
         AssertInstruction( Value* condition );
 
-        // void dump( void ) const;
-
         static inline Value::ID classid( void )
         {
             return Value::ASSERT_INSTRUCTION;
@@ -200,8 +188,6 @@ namespace libcasm_ir
     {
       public:
         SwitchInstruction( Value* expression );
-
-        // void dump( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -215,8 +201,6 @@ namespace libcasm_ir
       public:
         OperatorInstruction( const char* name, Type* type, Value* lhs,
             Value* rhs, Value::ID id = Value::OPERATOR_INSTRUCTION );
-
-        // void dump( void ) const;
 
         static inline Value::ID classid( void )
         {

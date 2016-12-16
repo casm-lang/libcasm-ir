@@ -41,7 +41,6 @@ namespace libcasm_ir
     class Type : public CasmIR
     {
       public:
-        typedef u1 Undef; // PPA: this is obsolete ??? FIXME: TODO:
         typedef void* Agent;
         typedef Rule* RulePointer;
         typedef u1 Boolean;
@@ -49,19 +48,19 @@ namespace libcasm_ir
         typedef u64* Bit;
         typedef char* String;
 
-        enum ID
+        enum ID : u8
         {
-            UNDEF = 0,
-            AGENT,
+            AGENT = 0,
             RULE_POINTER,
             BOOLEAN,
             INTEGER,
             BIT,
             STRING,
+            FLOATING,
             _TOP_
         };
 
-        enum STATE
+        enum STATE : u8
         {
             UNCHANGED,
             CHANGED,
@@ -98,13 +97,13 @@ namespace libcasm_ir
         void setID( ID id );
     };
 
-    static Type UndefType = Type( Type::UNDEF, Type::STATE::LOCKED );
     static Type AgentType = Type( Type::AGENT, Type::STATE::LOCKED );
     static Type RulePointerType
         = Type( Type::RULE_POINTER, Type::STATE::LOCKED );
     static Type BooleanType = Type( Type::BOOLEAN, Type::STATE::LOCKED );
     static Type IntegerType = Type( Type::INTEGER, Type::STATE::LOCKED );
     static Type StringType = Type( Type::STRING, Type::STATE::LOCKED );
+    static Type FloatingType = Type( Type::FLOATING, Type::STATE::LOCKED );
 }
 
 #endif /* _LIB_CASMIR_TYPE_H_ */

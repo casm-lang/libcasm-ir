@@ -23,6 +23,7 @@
 
 #include "Specification.h"
 #include "Agent.h"
+#include "Builtin.h"
 #include "Derived.h"
 #include "Function.h"
 #include "Rule.h"
@@ -61,6 +62,10 @@ void Specification::add( Value* value )
         content[ Agent::classid() ].push_back( value );
     }
     else if( Value::isa< ConstantValue >( value ) )
+    {
+        content[ ConstantValue::classid() ].push_back( value );
+    }
+    else if( Value::isa< Builtin >( value ) )
     {
         content[ ConstantValue::classid() ].push_back( value );
     }

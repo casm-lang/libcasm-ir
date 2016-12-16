@@ -31,10 +31,9 @@
 #define _LIB_CASMIR_VALUE_H_
 
 #include "CasmIR.h"
+
 #include "Type.h"
 #include "Visitor.h"
-
-#include "cpp/Labeling.h"
 
 namespace libcasm_ir
 {
@@ -52,9 +51,56 @@ namespace libcasm_ir
             RULE,
             DERIVED,
             FUNCTION,
-            BUILTIN
 
-            ,
+            BUILTIN,
+            IS_SYMBOLIC_BUILTIN,
+
+            /*
+                        LIST_BUILTIN
+                        NTH_BUILTIN,
+                        CONS_BUILTIN,
+                        APP_BUILTIN,
+                        LEN_BUILTIN,
+                        TAIL_BUILTIN,
+                        PEEK_BUILTIN,
+            */
+            CASTING_BUILTIN,
+            AS_INTEGER_BUILTIN,
+            AS_BOOLEAN_BUILTIN,
+            AS_FLOATING_BUILTIN,
+            AS_BIT_BUILTIN,
+            AS_ENUM_BUILTIN,
+            AS_STRING_BUILTIN,
+            AS_RATIONAL_BUILTIN,
+
+            STRINGIFY_BUILTIN,
+            DEC_BUILTIN,
+            HEX_BUILTIN,
+            BIN_BUILTIN,
+
+            MATH_BUILTIN,
+            POW_BUILTIN,
+            RAND_BUILTIN,
+
+            BIT_OPERATION_BUILTIN,
+            ZEXT_BUILTIN,
+            SEXT_BUILTIN,
+            TRUNC_BUILTIN,
+            SHL_BUILTIN,
+            SHR_BUILTIN,
+            ASHR_BUILTIN,
+            CLZ_BUILTIN,
+            CLO_BUILTIN,
+            CLS_BUILTIN,
+            LESU_BUILTIN,
+            LESS_BUILTIN,
+            LEQU_BUILTIN,
+            LEQS_BUILTIN,
+            GREU_BUILTIN,
+            GRES_BUILTIN,
+            GEQU_BUILTIN,
+            GEQS_BUILTIN,
+
             BLOCK,
             EXECUTION_SEMANTICS_BLOCK,
             PARALLEL_BLOCK,

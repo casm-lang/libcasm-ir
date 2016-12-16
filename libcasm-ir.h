@@ -26,6 +26,7 @@
 
 #include "src/Agent.h"
 #include "src/Block.h"
+#include "src/CasmIR.h"
 #include "src/Constant.h"
 #include "src/Derived.h"
 #include "src/Function.h"
@@ -33,10 +34,9 @@
 #include "src/Rule.h"
 #include "src/Specification.h"
 #include "src/Statement.h"
+#include "src/Type.h"
 #include "src/User.h"
 #include "src/Value.h"
-
-#include "src/Type.h"
 #include "src/Visitor.h"
 
 namespace libcasm_ir

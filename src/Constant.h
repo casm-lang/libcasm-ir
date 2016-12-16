@@ -66,7 +66,7 @@ namespace libcasm_ir
         void setValue( V val );
     };
 
-    class ConstantValue : public Constant< Type::Undef >
+    class ConstantValue : public Constant< void* >
     {
       public:
         static inline Value::ID classid( void )

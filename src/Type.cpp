@@ -26,11 +26,9 @@
 using namespace libcasm_ir;
 
 const char* Type::ID2str[ Type::ID::_TOP_ ] = {
-    "Undef" // UNDEF = 0
+    "Agent" // AGENT = 0
     ,
-    "Agent" // AGENT
-    ,
-    "Rule*" // RULEPOINTER
+    "RuleRef" // RULEPOINTER
     ,
     "Boolean" // BOOLEAN
     ,
@@ -39,6 +37,8 @@ const char* Type::ID2str[ Type::ID::_TOP_ ] = {
     "Bit" // BIT
     ,
     "String" // STRING
+    ,
+    "Floating" // FLOATING
 };
 
 Type::Type( Type::ID id, i16 bitsize, Type::STATE state )

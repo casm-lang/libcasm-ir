@@ -30,7 +30,7 @@
 #ifndef _LIB_CASMIR_CASMIR_H_
 #define _LIB_CASMIR_CASMIR_H_
 
-#include "CasmIR.h"
+#include "libstdhlcpp.h"
 
 namespace libcasm_ir
 {

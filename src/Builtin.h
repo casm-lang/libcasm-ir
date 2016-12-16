@@ -34,12 +34,32 @@ namespace libcasm_ir
 
     class Builtin : public User
     {
-        // private:
+      private:
+        const Type::ID ret_type;
+        const std::vector< std::vector< Type::ID > >& arg_type;
+
+        static std::unordered_map< Value::ID, Builtin* >& id2obj( void )
+        {
+            static std::unordered_map< Value::ID, Builtin* > cache;
+            return cache;
+        };
+
+        static std::unordered_map< std::string, Builtin* >& str2obj( void )
+        {
+            static std::unordered_map< std::string, Builtin* > cache;
+            return cache;
+        };
 
       public:
-        Builtin( const char* name, Type* result );
+        Builtin( const char* name, Type* result, Type::ID ret_type,
+            std::vector< std::vector< Type::ID > > arg_type,
+            Value::ID id = Value::BUILTIN );
 
         ~Builtin( void );
+
+        const Type::ID getTypeIDsOfResult( void ) const;
+        const std::vector< std::vector< Type::ID > >& getTypeIDsOfArguments(
+            void ) const;
 
         void dump( void ) const;
 
@@ -49,6 +69,98 @@ namespace libcasm_ir
         };
         static bool classof( Value const* obj );
     };
+
+    class CastingBuiltin : public Builtin
+    {
+      public:
+        CastingBuiltin( const char* name, Type* result, Type::ID ret_type,
+            std::vector< std::vector< Type::ID > > arg_typ,
+            Value::ID id = Value::CASTING_BUILTIN );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::CASTING_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+    };
+
+    class AsBooleanBuiltin : public CastingBuiltin
+    {
+      public:
+        AsBooleanBuiltin( void );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::AS_BOOLEAN_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+    };
+    static Builtin asBooleanBuiltin = AsBooleanBuiltin();
+
+    class AsIntegerBuiltin : public CastingBuiltin
+    {
+      public:
+        AsIntegerBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::AS_INTEGER_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+    };
+    static Builtin asIntegerBuiltin = AsIntegerBuiltin( 0 );
+
+    class AsBitBuiltin : public CastingBuiltin
+    {
+      public:
+        AsBitBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::AS_BIT_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+    };
+    static Builtin asBitBuiltin = AsBitBuiltin( 0 );
+
+    // class AsEnumBuiltin : public CastingBuiltin
+    // {
+    //   public:
+    //     AsEnumBuiltin( Type* result );
+
+    //     static inline Value::ID classid( void )
+    //     {
+    //         return Value::AS_ENUM_BUILTIN;
+    //     };
+    //     static bool classof( Value const* obj );
+    // };
+    // static Builtin asEnumBuiltin = AsEnumBuiltin();
+
+    class AsStringBuiltin : public CastingBuiltin
+    {
+      public:
+        AsStringBuiltin( void );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::AS_STRING_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+    };
+    static Builtin asStringBuiltin = AsStringBuiltin();
+
+    class AsFloatingBuiltin : public CastingBuiltin
+    {
+      public:
+        AsFloatingBuiltin( void );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::AS_FLOATING_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+    };
+    static Builtin asFloatingBuiltin = AsFloatingBuiltin();
 }
 
 #endif /* _LIB_CASMIR_BUILTIN_H_ */
