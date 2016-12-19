@@ -40,8 +40,9 @@ namespace libcasm_ir
         std::vector< Value* > values;
 
       public:
-        Instruction(
-            const char* name, Type* type, Value::ID id = Value::INSTRUCTION );
+        Instruction( const char* name, Type* type,
+            const std::vector< Value* >& values,
+            Value::ID id = Value::INSTRUCTION );
         void setStatement( Statement* stmt );
         const Statement* getStatement( void ) const;
 
@@ -58,11 +59,14 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class UnaryInstruction : public Instruction
+    class UnaryInstruction : public CasmIR
     {
+      private:
+        Instruction& self;
+
       public:
-        UnaryInstruction( const char* name, Type* type, Value* value,
-            Value::ID id = Value::UNARY_INSTRUCTION );
+        UnaryInstruction( Instruction* self );
+
         Value* get( void ) const;
 
         static inline Value::ID classid( void )
@@ -72,11 +76,13 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class BinaryInstruction : public Instruction
+    class BinaryInstruction : public CasmIR
     {
+      private:
+        Instruction& self;
+
       public:
-        BinaryInstruction( const char* name, Type* type, Value* lhs, Value* rhs,
-            Value::ID id = Value::BINARY_INSTRUCTION );
+        BinaryInstruction( Instruction* self );
 
         Value* getLHS( void ) const;
         Value* getRHS( void ) const;
@@ -100,7 +106,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class LookupInstruction : public UnaryInstruction
+    class LookupInstruction : public Instruction, public UnaryInstruction
     {
       public:
         LookupInstruction( Value* location );
@@ -112,7 +118,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class UpdateInstruction : public BinaryInstruction
+    class UpdateInstruction : public Instruction, public BinaryInstruction
     {
       public:
         UpdateInstruction( Value* location, Value* expr );
@@ -124,7 +130,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class LocalInstruction : public BinaryInstruction
+    class LocalInstruction : public Instruction, public BinaryInstruction
     {
       public:
         LocalInstruction( Value* ident, Value* expr );
@@ -172,7 +178,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class AssertInstruction : public UnaryInstruction
+    class AssertInstruction : public Instruction, public UnaryInstruction
     {
       public:
         AssertInstruction( Value* condition );
@@ -196,11 +202,12 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class OperatorInstruction : public BinaryInstruction
+    class OperatorInstruction : public Instruction, public TypeAnnotation
     {
       public:
-        OperatorInstruction( const char* name, Type* type, Value* lhs,
-            Value* rhs, Value::ID id = Value::OPERATOR_INSTRUCTION );
+        OperatorInstruction( const char* name, Type* type,
+            std::vector< Value* > values, const TypeAnnotation::Data info,
+            Value::ID id = Value::OPERATOR_INSTRUCTION );
 
         static inline Value::ID classid( void )
         {
@@ -209,7 +216,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class AddInstruction : public OperatorInstruction
+    class AddInstruction : public OperatorInstruction, public BinaryInstruction
     {
       public:
         AddInstruction( Value* lhs, Value* rhs );
@@ -221,7 +228,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class SubInstruction : public OperatorInstruction
+    class SubInstruction : public OperatorInstruction, public BinaryInstruction
     {
       public:
         SubInstruction( Value* lhs, Value* rhs );
@@ -233,7 +240,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class MulInstruction : public OperatorInstruction
+    class MulInstruction : public OperatorInstruction, public BinaryInstruction
     {
       public:
         MulInstruction( Value* lhs, Value* rhs );
@@ -245,7 +252,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class DivInstruction : public OperatorInstruction
+    class DivInstruction : public OperatorInstruction, public BinaryInstruction
     {
       public:
         DivInstruction( Value* lhs, Value* rhs );
@@ -257,7 +264,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class RivInstruction : public OperatorInstruction
+    class RivInstruction : public OperatorInstruction, public BinaryInstruction
     {
       public:
         RivInstruction( Value* lhs, Value* rhs );
@@ -269,7 +276,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class ModInstruction : public OperatorInstruction
+    class ModInstruction : public OperatorInstruction, public BinaryInstruction
     {
       public:
         ModInstruction( Value* lhs, Value* rhs );
@@ -281,7 +288,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class EquInstruction : public OperatorInstruction
+    class EquInstruction : public OperatorInstruction, public BinaryInstruction
     {
       public:
         EquInstruction( Value* lhs, Value* rhs );
@@ -293,7 +300,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class NeqInstruction : public OperatorInstruction
+    class NeqInstruction : public OperatorInstruction, public BinaryInstruction
     {
       public:
         NeqInstruction( Value* lhs, Value* rhs );
@@ -305,7 +312,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class LthInstruction : public OperatorInstruction
+    class LthInstruction : public OperatorInstruction, public BinaryInstruction
     {
       public:
         LthInstruction( Value* lhs, Value* rhs );
@@ -317,7 +324,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class LeqInstruction : public OperatorInstruction
+    class LeqInstruction : public OperatorInstruction, public BinaryInstruction
     {
       public:
         LeqInstruction( Value* lhs, Value* rhs );
@@ -329,7 +336,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class GthInstruction : public OperatorInstruction
+    class GthInstruction : public OperatorInstruction, public BinaryInstruction
     {
       public:
         GthInstruction( Value* lhs, Value* rhs );
@@ -341,7 +348,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class GeqInstruction : public OperatorInstruction
+    class GeqInstruction : public OperatorInstruction, public BinaryInstruction
     {
       public:
         GeqInstruction( Value* lhs, Value* rhs );
@@ -353,7 +360,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class OrInstruction : public OperatorInstruction
+    class OrInstruction : public OperatorInstruction, public BinaryInstruction
     {
       public:
         OrInstruction( Value* lhs, Value* rhs );
@@ -365,7 +372,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class XorInstruction : public OperatorInstruction
+    class XorInstruction : public OperatorInstruction, public BinaryInstruction
     {
       public:
         XorInstruction( Value* lhs, Value* rhs );
@@ -377,7 +384,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class AndInstruction : public OperatorInstruction
+    class AndInstruction : public OperatorInstruction, public BinaryInstruction
     {
       public:
         AndInstruction( Value* lhs, Value* rhs );
@@ -389,7 +396,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class NotInstruction : public UnaryInstruction
+    class NotInstruction : public OperatorInstruction, public UnaryInstruction
     {
       public:
         NotInstruction( Value* lhs );

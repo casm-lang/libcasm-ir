@@ -21,8 +21,19 @@
 //  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //
 
+#include "libcasm-ir.h"
 #include "gtest/gtest.h"
 
 TEST( libcasm_ir, example )
 {
+    EXPECT_EXIT( libcasm_ir::AddInstruction i( 0, 0 ),
+        ::testing::KilledBySignal( SIGABRT ), "" );
+}
+
+TEST( libcasm_ir, example2 )
+{
+    libcasm_ir::IntegerConstant* a = libcasm_ir::IntegerConstant::create( 5 );
+    libcasm_ir::AddInstruction i( a, a );
+
+    // printf( "--> %s\n", i.getType() );
 }
