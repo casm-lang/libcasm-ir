@@ -74,7 +74,7 @@ bool Builtin::classof( Value const* obj )
 // Casting built-ins:
 
 CastingBuiltin::CastingBuiltin(
-const char* name, Type* result, TypeAnnotation::Data info, Value::ID id )
+    const char* name, Type* result, TypeAnnotation::Data info, Value::ID id )
 : Builtin( name, result, info, id )
 {
 }

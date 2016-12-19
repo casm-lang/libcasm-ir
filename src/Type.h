@@ -30,7 +30,6 @@
 #ifndef _LIB_CASMIR_TYPE_H_
 #define _LIB_CASMIR_TYPE_H_
 
-
 #include "CasmIR.h"
 
 namespace libcasm_ir
@@ -59,7 +58,7 @@ namespace libcasm_ir
             ENUMERATION,
             _TOP_
         };
-        
+
         enum STATE : u8
         {
             UNCHANGED,

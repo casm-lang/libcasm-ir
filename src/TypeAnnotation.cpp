@@ -25,12 +25,10 @@
 
 using namespace libcasm_ir;
 
-
 TypeAnnotation::TypeAnnotation( const Data& info )
 : info( info )
 {
 }
-
 
 //
 //  Local variables:

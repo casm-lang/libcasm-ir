@@ -33,7 +33,6 @@
 #include "CasmIR.h"
 #include "Type.h"
 
-
 namespace libcasm_ir
 {
     class TypeAnnotation : public CasmIR
@@ -41,11 +40,12 @@ namespace libcasm_ir
       public:
         // stores a list of type relations for possible type unification etc.
         // format is: < result type <-- < arg1_type, arg2_type, ... > >
-        typedef std::vector< std::tuple< Type::ID, std::vector< Type::ID > > > Data;
-        
+        typedef std::vector< std::tuple< Type::ID, std::vector< Type::ID > > >
+            Data;
+
       private:
         const Data info;
-        
+
       public:
         TypeAnnotation( const Data& info );
     };
