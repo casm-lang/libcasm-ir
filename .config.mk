@@ -46,8 +46,8 @@ $(OBJ):
 	@mkdir -p $(OBJ)/uts
 
 clean:
-ifneq ("$(wildcard $(OBJ)/CMakeBuild_$(TYPE))","")
-	@$(MAKE) $(MFLAGS) --no-print-directory -C $(OBJ) clean
+ifneq ("$(wildcard $(OBJ)/CMakeCache.txt)","")
+	@$(MAKE) $(MFLAGS) --no-print-directory -C $(OBJ) $@
 endif
 
 clean-all:
