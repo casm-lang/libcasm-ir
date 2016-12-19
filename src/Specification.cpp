@@ -33,12 +33,12 @@ using namespace libcasm_ir;
 Specification::Specification( const char* name )
 : User( name, 0, Value::SPECIFICATION )
 {
-    ( *Value::getSymbols() )[ ".specification" ].insert( this );
+    getSymbols()[ ".specification" ].insert( this );
 }
 
 Specification::~Specification( void )
 {
-    ( *Value::getSymbols() )[ ".specification" ].erase( this );
+    getSymbols()[ ".specification" ].erase( this );
 }
 
 void Specification::add( Value* value )

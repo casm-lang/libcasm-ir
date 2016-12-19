@@ -28,12 +28,12 @@ using namespace libcasm_ir;
 Agent::Agent()
 : User( ".agent", 0, Value::AGENT )
 {
-    // (*Value::getSymbols())[ ".agent" ].insert( this );
+    // getSymbols()[ ".agent" ].insert( this );
 }
 
 // Agent::~Agent( void )
 // {
-//     // (*Value::getSymbols())[ ".agent" ].erase( this );
+//     // getSymbols()[ ".agent" ].erase( this );
 // }
 
 RulePointerConstant* Agent::getInitRulePointer( void ) const

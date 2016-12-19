@@ -28,12 +28,12 @@ using namespace libcasm_ir;
 Rule::Rule( const char* name )
 : User( name, 0, Value::RULE )
 {
-    ( *Value::getSymbols() )[ ".rule" ].insert( this );
+    getSymbols()[ ".rule" ].insert( this );
 }
 
 Rule::~Rule( void )
 {
-    ( *Value::getSymbols() )[ ".rule" ].erase( this );
+    getSymbols()[ ".rule" ].erase( this );
 }
 
 ParallelBlock* Rule::getContext( void ) const

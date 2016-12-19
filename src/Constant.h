@@ -109,6 +109,8 @@ namespace libcasm_ir
         void setResolveIdentifier( const char* name );
         void resolve( void );
 
+        static void checking( void );
+
         void dump( void ) const;
 
         static inline Value::ID classid( void )

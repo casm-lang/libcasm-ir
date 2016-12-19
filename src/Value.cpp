@@ -45,8 +45,7 @@ Value::Value( const char* name, Type* type, Value::ID id )
 , id( id )
 , type_lock( false )
 {
-    SymbolTable& symbols = *getSymbols();
-    symbols[ name ].insert( this );
+    getSymbols()[ name ].insert( this );
 
     // printf( "[Value] created '%s' @ %p", name, this );
     // if( type )
@@ -58,8 +57,7 @@ Value::Value( const char* name, Type* type, Value::ID id )
 
 Value::~Value()
 {
-    SymbolTable& symbols = *getSymbols();
-    symbols[ name ].erase( this );
+    getSymbols()[ name ].erase( this );
     // printf( "[Value] deleted '%s' @ %p of type %p\n", name, this, type );
 }
 

@@ -33,13 +33,13 @@ Constant< V >::Constant(
 , value( value )
 , defined( defined )
 {
-    ( *Value::getSymbols() )[ ".constant" ].insert( this );
+    getSymbols()[ ".constant" ].insert( this );
 }
 
 template < typename V >
 Constant< V >::~Constant( void )
 {
-    ( *Value::getSymbols() )[ ".constant" ].erase( this );
+    getSymbols()[ ".constant" ].erase( this );
 }
 
 template < typename T >
@@ -297,8 +297,8 @@ RulePointerConstant* RulePointerConstant::create( const char* name )
 {
     static std::unordered_map< const char*, RulePointerConstant* > cache;
 
-    auto rsym = ( *Value::getSymbols() ).find( name );
-    if( rsym != ( *Value::getSymbols() ).end() )
+    auto rsym = getSymbols().find( name );
+    if( rsym != getSymbols().end() )
     {
         return create( ( (Rule*)( *rsym->second.begin() ) ) );
     }
@@ -336,13 +336,22 @@ void RulePointerConstant::resolve( void )
         return;
     }
 
-    auto result = ( *Value::getSymbols() ).find( resolve_identifier );
-    if( result != ( *Value::getSymbols() ).end() )
+    auto result = getSymbols().find( resolve_identifier );
+    if( result != getSymbols().end() )
     {
         assert( result->second.size() == 1 );
         Value* val = *( result->second.begin() );
         assert( Value::isa< Rule >( val ) );
         setValue( (Rule*)val );
+    }
+}
+
+void RulePointerConstant::checking( void )
+{
+    for( auto value : getSymbols()[ ".rulepointer" ] )
+    {
+        assert( Value::isa< RulePointerConstant >( value ) );
+        ( (libcasm_ir::RulePointerConstant*)value )->resolve();
     }
 }
 
@@ -359,18 +368,16 @@ bool RulePointerConstant::classof( Value const* obj )
 Identifier::Identifier( Type* type, const char* value )
 : Constant< const char* >( value, type, value, true, Value::IDENTIFIER )
 {
-    ( *Value::getSymbols() )[ ".identifier" ].insert( this );
+    getSymbols()[ ".identifier" ].insert( this );
 }
 
 Identifier::~Identifier( void )
 {
-    ( *Value::getSymbols() )[ ".identifier" ].erase( this );
+    getSymbols()[ ".identifier" ].erase( this );
 }
 
 Identifier* Identifier::create( Type* type, const char* value, Value* scope )
 {
-    SymbolTable& symbols = *getSymbols();
-
     const char* tmp = value;
 
     // if( scope )
@@ -384,8 +391,8 @@ Identifier* Identifier::create( Type* type, const char* value, Value* scope )
     //     // tmp_scope = tmp.c_str();
     // }
 
-    auto result = symbols.find( tmp );
-    if( result != symbols.end() )
+    auto result = getSymbols().find( tmp );
+    if( result != getSymbols().end() )
     {
         assert( result->second.size() == 1 );
         Value* x = *result->second.begin();
@@ -427,7 +434,7 @@ Identifier* Identifier::create( Type* type, const char* value, Value* scope )
 void Identifier::forgetSymbol( const char* value )
 {
     // printf( "[Ident] forgetting '%s'\n", value );
-    getSymbols()->erase( value );
+    getSymbols().erase( value );
 }
 
 void Identifier::dump( void ) const

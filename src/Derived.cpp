@@ -30,14 +30,14 @@ Derived::Derived( const char* name, Type* result )
 {
     ident = Identifier::create( result, name );
 
-    ( *Value::getSymbols() )[ ".derived" ].insert( this );
-    ( *Value::getSymbols() )[ ".identifier" ].insert( this );
+    getSymbols()[ ".derived" ].insert( this );
+    getSymbols()[ ".identifier" ].insert( this );
 }
 
 Derived::~Derived( void )
 {
-    ( *Value::getSymbols() )[ ".derived" ].erase( this );
-    ( *Value::getSymbols() )[ ".identifier" ].erase( ident );
+    getSymbols()[ ".derived" ].erase( this );
+    getSymbols()[ ".identifier" ].erase( ident );
 }
 
 TrivialStatement* Derived::getContext( void ) const

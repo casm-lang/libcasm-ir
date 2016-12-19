@@ -95,7 +95,6 @@ namespace libcasm_ir
         };
         static bool classof( Value const* obj );
     };
-    static Builtin asBooleanBuiltin = AsBooleanBuiltin();
 
     class AsIntegerBuiltin : public CastingBuiltin
     {
@@ -108,7 +107,6 @@ namespace libcasm_ir
         };
         static bool classof( Value const* obj );
     };
-    static Builtin asIntegerBuiltin = AsIntegerBuiltin( 0 );
 
     class AsBitBuiltin : public CastingBuiltin
     {
@@ -121,20 +119,18 @@ namespace libcasm_ir
         };
         static bool classof( Value const* obj );
     };
-    static Builtin asBitBuiltin = AsBitBuiltin( 0 );
 
-    // class AsEnumBuiltin : public CastingBuiltin
-    // {
-    //   public:
-    //     AsEnumBuiltin( Type* result );
+    class AsEnumerationBuiltin : public CastingBuiltin
+    {
+      public:
+        AsEnumerationBuiltin( Type* result, const char* token );
 
-    //     static inline Value::ID classid( void )
-    //     {
-    //         return Value::AS_ENUM_BUILTIN;
-    //     };
-    //     static bool classof( Value const* obj );
-    // };
-    // static Builtin asEnumBuiltin = AsEnumBuiltin();
+        static inline Value::ID classid( void )
+        {
+            return Value::AS_ENUM_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+    };
 
     class AsStringBuiltin : public CastingBuiltin
     {
@@ -147,7 +143,6 @@ namespace libcasm_ir
         };
         static bool classof( Value const* obj );
     };
-    static Builtin asStringBuiltin = AsStringBuiltin();
 
     class AsFloatingBuiltin : public CastingBuiltin
     {
@@ -160,7 +155,6 @@ namespace libcasm_ir
         };
         static bool classof( Value const* obj );
     };
-    static Builtin asFloatingBuiltin = AsFloatingBuiltin();
 }
 
 #endif /* _LIB_CASMIR_BUILTIN_H_ */

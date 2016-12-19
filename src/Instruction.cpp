@@ -512,16 +512,16 @@ bool NotInstruction::classof( Value const* obj )
     return obj->getValueID() == classid();
 }
 
-MovInstruction::MovInstruction( Value* lhs )
-: UnaryInstruction( ".mov", 0, lhs, Value::MOV_INSTRUCTION )
-{
-    assert( get()->getType() );
-    setType( get()->getType() );
-}
-bool MovInstruction::classof( Value const* obj )
-{
-    return obj->getValueID() == classid();
-}
+// MovInstruction::MovInstruction( Value* lhs )
+// : UnaryInstruction( ".mov", 0, lhs, Value::MOV_INSTRUCTION )
+// {
+//     assert( get()->getType() );
+//     setType( get()->getType() );
+// }
+// bool MovInstruction::classof( Value const* obj )
+// {
+//     return obj->getValueID() == classid();
+// }
 
 //
 //  Local variables:

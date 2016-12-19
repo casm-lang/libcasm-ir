@@ -25,6 +25,13 @@
 
 using namespace libcasm_ir;
 
+static Builtin pre_defined[]
+    = { AsBooleanBuiltin(), AsIntegerBuiltin( &IntegerType )
+        //, AsIntegerBuiltin( ... ) // ranged Integer is dynamically created!
+        //, AsBitBuiltin() // is dynamically created!
+        //, AsEnumerationBuiltin() // is dynamically created!
+        ,
+        AsStringBuiltin(), AsFloatingBuiltin() };
 
 Builtin::Builtin( const char* name, Type* result, Type::ID ret_type,
     std::vector< std::vector< Type::ID > > arg_type, Value::ID id )
@@ -32,7 +39,7 @@ Builtin::Builtin( const char* name, Type* result, Type::ID ret_type,
 , ret_type( ret_type )
 , arg_type( arg_type )
 {
-    ( *Value::getSymbols() )[ ".builtin" ].insert( this );
+    getSymbols()[ ".builtin" ].insert( this );
 
     id2obj()[ id ] = this;
     str2obj()[ std::string( name ) ] = this;
@@ -40,7 +47,7 @@ Builtin::Builtin( const char* name, Type* result, Type::ID ret_type,
 
 Builtin::~Builtin( void )
 {
-    ( *Value::getSymbols() )[ ".builtin" ].erase( this );
+    getSymbols()[ ".builtin" ].erase( this );
 }
 
 const Type::ID Builtin::getTypeIDsOfResult( void ) const
@@ -78,18 +85,10 @@ bool CastingBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid() or AsBooleanBuiltin::classof( obj )
            or AsIntegerBuiltin::classof( obj ) or AsBitBuiltin::classof( obj )
-           // TODO: PPA: or AsEnumerationBuiltin::classof( obj )
+           or AsEnumerationBuiltin::classof( obj )
            or AsStringBuiltin::classof( obj )
-        // TODO: PPA: or AsFloating::classof( obj )
-        ;
+           or AsFloatingBuiltin::classof( obj );
 }
-
-// asBoolean : Integer  -> Boolean, 0 -> false, other -> true
-// asBoolean : Floating -> Boolean, SHALL NOT BE POSSIBLE !!! ERROR
-// asBoolean : Bit( n ) -> Boolean, SHALL NOT BE POSSIBLE where n != 1 !!! ERROR
-// asBoolean : Bit( 1 ) -> Boolean, 0b0 -> false, 0b1 -> true
-// asBoolean : e        -> Boolean, SHALL NOT BE POSSIBLE !!! ERROR
-//                                , 'e' is a enumeration value of type 'e'
 
 AsBooleanBuiltin::AsBooleanBuiltin( void )
 : CastingBuiltin( "asBoolean", &BooleanType, Type::BOOLEAN,
@@ -101,15 +100,6 @@ bool AsBooleanBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
-
-// asInteger : Boolean  -> Integer, false -> 0, true -> 1, undef -> undef
-// asInteger : Floating -> Integer, cut of comma value to integer, undef ->
-// undef
-// asInteger : Bit( n ) -> Integer, n is a integer constant, always use unsigned
-// semantics
-// asInteger : e        -> Integer, e -> index(e), e !in index(e) -> undef,
-// undef -> undef
-//                                 'e' is a enumeration value of type 'e'
 
 AsIntegerBuiltin::AsIntegerBuiltin( Type* result )
 : CastingBuiltin( "asInteger", result, Type::INTEGER,
@@ -128,19 +118,6 @@ bool AsIntegerBuiltin::classof( Value const* obj )
     return obj->getValueID() == classid();
 }
 
-// asBit : Integer  * Integer (const, n) -> Bit( n ), only possible if integer
-// fits into bit-width,
-//                                                  , unsigned semantic only
-//                                                  which means e.g.:
-//                                                  , -1 is a 64-bit integer
-//                                                  value and has to fit in at
-//                                                  least Bit( 64 )
-// asBit : Boolean  * Integer (const, n) -> Bit( n ), false -> 0b0, true -> 0b1
-// asBit : Floating * Integer (const, n) -> Bit( n ), SHALL NOT BE POSSIBLE
-// (YET! maybe later!)
-// asBit : e        * Integer (const, n) -> Bit( n ), only possible if enum
-// value 'e' fits into bit-width!
-
 AsBitBuiltin::AsBitBuiltin( Type* result )
 : CastingBuiltin( "asBit", result, Type::BIT,
       { {
@@ -157,31 +134,21 @@ bool AsBitBuiltin::classof( Value const* obj )
     return obj->getValueID() == classid();
 }
 
-// // asEnum : Integer  -> e, iff Integer value is in { indexes of e }
-// // asEnum : Boolean  -> e, SHALL NOT BE POSSIBLE
-// // asEnum : Floating -> e, SHALL NOT BE POSSIBLE
-// // asEnum : Bit( n ) -> e, iff Bit(n) value is in { indexes of e }
-// // // 'e' is a enumeration value of type 'e'
+AsEnumerationBuiltin::AsEnumerationBuiltin( Type* result, const char* token )
+: CastingBuiltin( token, result, Type::ENUM,
+      { {
+            Type::INTEGER, Type::BOOLEAN, Type::FLOATING,
+            // TODO: PPA: Type::ENUMERATION
+        },
+          { Type::INTEGER } },
+      Value::AS_ENUM_BUILTIN )
+{
+}
 
-// AsEnumBuiltin::AsEnumBuiltin( Type* result, Value* value )
-//     : CastingBuiltin( "asEnum", &EnumType, Type::ENUM,
-//       { {
-//           Type::INTEGER, Type::BIT
-//       } },
-//       Value::AS_ENUM_BUILTIN )
-// {
-// }
-
-// bool AsEnumBuiltin::classof( Value const* obj )
-// {
-//     return obj->getValueID() == classid();
-// }
-
-// asString : Integer  -> String, SHALL NOT BE POSSIBLE !!! ERROR  --> use 'dec'
-// asString : Boolean  -> String, false -> "false", true -> "true"
-// asString : Floating -> String, SHALL NOT BE POSSIBLE !!! ERROR  --> use 'dec'
-// asString : Bit( n ) -> String, SHALL NOT BE POSSIBLE !!! ERROR  --> use 'dec'
-// asString : e        -> String, string represenation of enum value 'e'
+bool AsEnumerationBuiltin::classof( Value const* obj )
+{
+    return obj->getValueID() == classid();
+}
 
 AsStringBuiltin::AsStringBuiltin( void )
 : CastingBuiltin( "asString", &StringType, Type::STRING,

@@ -55,15 +55,6 @@ namespace libcasm_ir
             BUILTIN,
             IS_SYMBOLIC_BUILTIN,
 
-            /*
-                        LIST_BUILTIN
-                        NTH_BUILTIN,
-                        CONS_BUILTIN,
-                        APP_BUILTIN,
-                        LEN_BUILTIN,
-                        TAIL_BUILTIN,
-                        PEEK_BUILTIN,
-            */
             CASTING_BUILTIN,
             AS_INTEGER_BUILTIN,
             AS_BOOLEAN_BUILTIN,
@@ -100,6 +91,14 @@ namespace libcasm_ir
             GRES_BUILTIN,
             GEQU_BUILTIN,
             GEQS_BUILTIN,
+
+            // LIST_BUILTIN, // TODO: PPA: when List (type)domain is ready
+            // NTH_BUILTIN,
+            // CONS_BUILTIN,
+            // APP_BUILTIN,
+            // LEN_BUILTIN,
+            // TAIL_BUILTIN,
+            // PEEK_BUILTIN,
 
             BLOCK,
             EXECUTION_SEMANTICS_BLOCK,
@@ -159,19 +158,14 @@ namespace libcasm_ir
             OR_INSTRUCTION,
             XOR_INSTRUCTION,
             AND_INSTRUCTION,
-            NOT_INSTRUCTION,
-            MOV_INSTRUCTION
+            NOT_INSTRUCTION
+
+            // MOV_INSTRUCTION
         };
 
         typedef std::unordered_map< const char*, std::unordered_set< Value* >,
             libstdhl::Hash, libstdhl::Equal >
             SymbolTable;
-
-        static SymbolTable* getSymbols( void )
-        {
-            static SymbolTable symbols;
-            return &symbols;
-        }
 
       private:
         const char* name;
@@ -180,6 +174,13 @@ namespace libcasm_ir
         u1 type_lock;
 
         std::vector< Type* > parameters;
+
+      protected:
+        static SymbolTable& getSymbols( void )
+        {
+            static SymbolTable symbols;
+            return symbols;
+        }
 
       public:
         Value( const char* name, Type* type, ID id );

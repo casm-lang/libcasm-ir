@@ -30,14 +30,14 @@ Function::Function( const char* name, Type* result )
 , ident( 0 )
 {
     ident = Identifier::create( result, name );
-    ( *Value::getSymbols() )[ ".function" ].insert( this );
-    ( *Value::getSymbols() )[ ".identifier" ].insert( ident );
+    getSymbols()[ ".function" ].insert( this );
+    getSymbols()[ ".identifier" ].insert( ident );
 }
 
 Function::~Function( void )
 {
-    ( *Value::getSymbols() )[ ".function" ].erase( this );
-    ( *Value::getSymbols() )[ ".identifier" ].erase( ident );
+    getSymbols()[ ".function" ].erase( this );
+    getSymbols()[ ".identifier" ].erase( ident );
 }
 
 void Function::dump( void ) const

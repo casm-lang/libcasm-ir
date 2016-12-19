@@ -401,17 +401,17 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class MovInstruction : public UnaryInstruction
-    {
-      public:
-        MovInstruction( Value* lhs );
+    // class MovInstruction : public UnaryInstruction
+    // {
+    //   public:
+    //     MovInstruction( Value* lhs );
 
-        static inline Value::ID classid( void )
-        {
-            return Value::MOV_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
-    };
+    //     static inline Value::ID classid( void )
+    //     {
+    //         return Value::MOV_INSTRUCTION;
+    //     };
+    //     static bool classof( Value const* obj );
+    // };
 }
 
 #endif /* _LIB_CASMIR_INSTRUCTION_H_ */
