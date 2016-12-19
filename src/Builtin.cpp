@@ -33,11 +33,10 @@ static Builtin pre_defined[]
         ,
         AsStringBuiltin(), AsFloatingBuiltin() };
 
-Builtin::Builtin( const char* name, Type* result, Type::ID ret_type,
-    std::vector< std::vector< Type::ID > > arg_type, Value::ID id )
+Builtin::Builtin(
+    const char* name, Type* result, TypeAnnotation::Data info, Value::ID id )
 : User( name, result, id )
-, ret_type( ret_type )
-, arg_type( arg_type )
+, TypeAnnotation( info )
 {
     getSymbols()[ ".builtin" ].insert( this );
 
@@ -50,16 +49,16 @@ Builtin::~Builtin( void )
     getSymbols()[ ".builtin" ].erase( this );
 }
 
-const Type::ID Builtin::getTypeIDsOfResult( void ) const
-{
-    return ret_type;
-}
+// const Type::ID Builtin::getTypeIDsOfResult( void ) const
+// {
+//     return ret_type;
+// }
 
-const std::vector< std::vector< Type::ID > >& Builtin::getTypeIDsOfArguments(
-    void ) const
-{
-    return arg_type;
-}
+// const std::vector< std::vector< Type::ID > >& Builtin::getTypeIDsOfArguments(
+//     void ) const
+// {
+//     return arg_type;
+// }
 
 void Builtin::dump( void ) const
 {
@@ -74,10 +73,9 @@ bool Builtin::classof( Value const* obj )
 
 // Casting built-ins:
 
-CastingBuiltin::CastingBuiltin( const char* name, Type* result,
-    Type::ID ret_type, std::vector< std::vector< Type::ID > > arg_type,
-    Value::ID id )
-: Builtin( name, result, ret_type, arg_type, id )
+CastingBuiltin::CastingBuiltin(
+const char* name, Type* result, TypeAnnotation::Data info, Value::ID id )
+: Builtin( name, result, info, id )
 {
 }
 
@@ -91,8 +89,13 @@ bool CastingBuiltin::classof( Value const* obj )
 }
 
 AsBooleanBuiltin::AsBooleanBuiltin( void )
-: CastingBuiltin( "asBoolean", &BooleanType, Type::BOOLEAN,
-      { { Type::INTEGER, Type::BIT } }, Value::AS_INTEGER_BUILTIN )
+: CastingBuiltin( "asBoolean", &BooleanType,
+      { { Type::BOOLEAN, { Type::BOOLEAN } },
+          { Type::BOOLEAN, { Type::INTEGER } },
+          { Type::BOOLEAN, { Type::FLOATING } },
+          { Type::BOOLEAN, { Type::BIT } },
+          { Type::BOOLEAN, { Type::ENUMERATION } } },
+      Value::AS_BOOLEAN_BUILTIN )
 {
 }
 
@@ -102,13 +105,12 @@ bool AsBooleanBuiltin::classof( Value const* obj )
 }
 
 AsIntegerBuiltin::AsIntegerBuiltin( Type* result )
-: CastingBuiltin( "asInteger", result, Type::INTEGER,
-      { {
-          Type::BOOLEAN,
-          // TODO: PPA: Type::FLOATING,
-          Type::BIT,
-          // TODO: PPA: Type::ENUMERATION,
-      } },
+: CastingBuiltin( "asInteger", result,
+      { { Type::INTEGER, { Type::INTEGER } },
+          { Type::INTEGER, { Type::BOOLEAN } },
+          { Type::INTEGER, { Type::FLOATING } },
+          { Type::INTEGER, { Type::BIT } },
+          { Type::INTEGER, { Type::ENUMERATION } } },
       Value::AS_INTEGER_BUILTIN )
 {
 }
@@ -119,12 +121,12 @@ bool AsIntegerBuiltin::classof( Value const* obj )
 }
 
 AsBitBuiltin::AsBitBuiltin( Type* result )
-: CastingBuiltin( "asBit", result, Type::BIT,
-      { {
-            Type::INTEGER, Type::BOOLEAN, Type::FLOATING,
-            // TODO: PPA: Type::ENUMERATION
-        },
-          { Type::INTEGER } },
+: CastingBuiltin( "asBit", result,
+      { { Type::BIT, { Type::BIT, Type::INTEGER } },
+          { Type::BIT, { Type::INTEGER, Type::INTEGER } },
+          { Type::BIT, { Type::BOOLEAN, Type::INTEGER } },
+          { Type::BIT, { Type::FLOATING, Type::INTEGER } },
+          { Type::BIT, { Type::ENUMERATION, Type::INTEGER } } },
       Value::AS_BIT_BUILTIN )
 {
 }
@@ -135,13 +137,9 @@ bool AsBitBuiltin::classof( Value const* obj )
 }
 
 AsEnumerationBuiltin::AsEnumerationBuiltin( Type* result, const char* token )
-: CastingBuiltin( token, result, Type::ENUM,
-      { {
-            Type::INTEGER, Type::BOOLEAN, Type::FLOATING,
-            // TODO: PPA: Type::ENUMERATION
-        },
-          { Type::INTEGER } },
-      Value::AS_ENUM_BUILTIN )
+: CastingBuiltin( token, result, { { Type::ENUMERATION, { Type::INTEGER } },
+                                     { Type::ENUMERATION, { Type::BIT } } },
+      Value::AS_ENUMERATION_BUILTIN )
 {
 }
 
@@ -151,11 +149,11 @@ bool AsEnumerationBuiltin::classof( Value const* obj )
 }
 
 AsStringBuiltin::AsStringBuiltin( void )
-: CastingBuiltin( "asString", &StringType, Type::STRING,
-      { {
-          Type::BOOLEAN
-          // TODO: PPA: Type::ENUMERATION
-      } },
+: CastingBuiltin( "asString", &StringType,
+      { { Type::STRING, { Type::STRING } }, { Type::STRING, { Type::INTEGER } },
+          { Type::STRING, { Type::BOOLEAN } },
+          { Type::STRING, { Type::FLOATING } }, { Type::STRING, { Type::BIT } },
+          { Type::STRING, { Type::ENUMERATION } } },
       Value::AS_STRING_BUILTIN )
 {
 }
@@ -165,19 +163,13 @@ bool AsStringBuiltin::classof( Value const* obj )
     return obj->getValueID() == classid();
 }
 
-// asFloating : Integer  -> Floating, int to float converstion!
-// asFloating : Boolean  -> Floating, false -> 0.0, true -> 1.0
-// asFloating : Bit( n ) -> Floating, SHALL NOT BE POSSIBLE
-// asFloating : e        -> Floating, e -> index(e).0, e !in index(e) -> undef,
-// undef -> undef
-//                                  , 'e' is a enumeration value of type 'e'
-
 AsFloatingBuiltin::AsFloatingBuiltin( void )
-: CastingBuiltin( "asFloating", &FloatingType, Type::FLOATING,
-      { {
-          Type::INTEGER, Type::BOOLEAN
-          // TODO: PPA: Type::ENUMERATION
-      } },
+: CastingBuiltin( "asFloating", &FloatingType,
+      { { Type::FLOATING, { Type::FLOATING } },
+          { Type::FLOATING, { Type::INTEGER } },
+          { Type::FLOATING, { Type::BOOLEAN } },
+          { Type::FLOATING, { Type::BIT } },
+          { Type::FLOATING, { Type::ENUMERATION } } },
       Value::AS_FLOATING_BUILTIN )
 {
 }
@@ -193,9 +185,11 @@ bool AsFloatingBuiltin::classof( Value const* obj )
 
 // dec  : Integer  -> String , decimal representation of integer
 // dec  : Boolean  -> String , decimal representation of boolean
-// dec  : Floating -> String , decimal representation of floating point value
+// dec  : Floating -> String , decimal representation of floating point
+// value
 // dec  : Bit( n ) -> String , decimal representation of bit-vector
-// dec  : e        -> String , decimal representation of enumeration value of
+// dec  : e        -> String , decimal representation of enumeration value
+// of
 // type 'e'
 
 // hex  : Integer  -> String , hexadecimal representation of integer WITHOUT
@@ -204,14 +198,18 @@ bool AsFloatingBuiltin::classof( Value const* obj )
 // prefix '0x'
 // hex  : Floating -> String , hexadecimal representation of floating point
 // value WITHOUT prefix '0x'
-// hex  : Bit( n ) -> String , hexadecimal representation of bit-vector WITHOUT
+// hex  : Bit( n ) -> String , hexadecimal representation of bit-vector
+// WITHOUT
 // prefix '0x'
-// hex  : e        -> String , hexadecimal representation of enumeration value
+// hex  : e        -> String , hexadecimal representation of enumeration
+// value
 // of type 'e' WITHOUT prefix '0x'
 
-// bin  : Integer  -> String , binary representation of integer WITHOUT prefix
+// bin  : Integer  -> String , binary representation of integer WITHOUT
+// prefix
 // '0b'
-// bin  : Boolean  -> String , binary representation of boolean WITHOUT prefix
+// bin  : Boolean  -> String , binary representation of boolean WITHOUT
+// prefix
 // '0b'
 // bin  : Floating -> String , binary representation of floating point value
 // WITHOUT prefix '0b'
@@ -229,24 +227,32 @@ bool AsFloatingBuiltin::classof( Value const* obj )
 
 // Bit Operation built-ins:
 
-// zext  : Bit( n ) * Integer (const, m) -> Bit( m ), zero extend to new size,
+// zext  : Bit( n ) * Integer (const, m) -> Bit( m ), zero extend to new
+// size,
 // if m < n then error!
-// sext  : Bit( n ) * Integer (const, m) -> Bit( m ), sign extend to new size,
+// sext  : Bit( n ) * Integer (const, m) -> Bit( m ), sign extend to new
+// size,
 // if m < n then error!
-// trunc : Bit( n ) * Integer (const, m) -> Bit( m ), truncate to new size, if m
+// trunc : Bit( n ) * Integer (const, m) -> Bit( m ), truncate to new size,
+// if
+// m
 // > n then error!
 
-// shl   : Bit( n ) * Integer  -> Bit( n ), logic shift left of Integer value
+// shl   : Bit( n ) * Integer  -> Bit( n ), logic shift left of Integer
+// value
 // positions
 // shl   : Bit( n ) * Bit( n ) -> Bit( n ), logic shift left of Bit(n) value
 // positions
 
-// shr   : Bit( n ) * Integer  -> Bit( n ), logic shift right of Integer value
+// shr   : Bit( n ) * Integer  -> Bit( n ), logic shift right of Integer
+// value
 // positions
-// shr   : Bit( n ) * Bit( n ) -> Bit( n ), logic shift right of Bit(n) value
+// shr   : Bit( n ) * Bit( n ) -> Bit( n ), logic shift right of Bit(n)
+// value
 // positions
 
-// ashr  : Bit( n ) * Integer  -> Bit( n ), arithmetic shift right of Integer
+// ashr  : Bit( n ) * Integer  -> Bit( n ), arithmetic shift right of
+// Integer
 // value positions
 // ashr  : Bit( n ) * Bit( n ) -> Bit( n ), arithmetic shift right of Bit(n)
 // value positions

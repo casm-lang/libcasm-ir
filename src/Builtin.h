@@ -24,20 +24,17 @@
 #ifndef _LIB_CASMIR_BUILTIN_H_
 #define _LIB_CASMIR_BUILTIN_H_
 
-#include "Constant.h"
 #include "Type.h"
+#include "TypeAnnotation.h"
 #include "User.h"
 
 namespace libcasm_ir
 {
     class Identifier;
 
-    class Builtin : public User
+    class Builtin : public User, public TypeAnnotation
     {
       private:
-        const Type::ID ret_type;
-        const std::vector< std::vector< Type::ID > >& arg_type;
-
         static std::unordered_map< Value::ID, Builtin* >& id2obj( void )
         {
             static std::unordered_map< Value::ID, Builtin* > cache;
@@ -51,15 +48,14 @@ namespace libcasm_ir
         };
 
       public:
-        Builtin( const char* name, Type* result, Type::ID ret_type,
-            std::vector< std::vector< Type::ID > > arg_type,
+        Builtin( const char* name, Type* result, TypeAnnotation::Data info,
             Value::ID id = Value::BUILTIN );
 
         ~Builtin( void );
 
-        const Type::ID getTypeIDsOfResult( void ) const;
-        const std::vector< std::vector< Type::ID > >& getTypeIDsOfArguments(
-            void ) const;
+        // const Type::ID getTypeIDsOfResult( void ) const;
+        // const std::vector< std::vector< Type::ID > >& getTypeIDsOfArguments(
+        //     void ) const;
 
         void dump( void ) const;
 
@@ -73,9 +69,8 @@ namespace libcasm_ir
     class CastingBuiltin : public Builtin
     {
       public:
-        CastingBuiltin( const char* name, Type* result, Type::ID ret_type,
-            std::vector< std::vector< Type::ID > > arg_typ,
-            Value::ID id = Value::CASTING_BUILTIN );
+        CastingBuiltin( const char* name, Type* result,
+            TypeAnnotation::Data info, Value::ID id = Value::CASTING_BUILTIN );
 
         static inline Value::ID classid( void )
         {
@@ -127,7 +122,7 @@ namespace libcasm_ir
 
         static inline Value::ID classid( void )
         {
-            return Value::AS_ENUM_BUILTIN;
+            return Value::AS_ENUMERATION_BUILTIN;
         };
         static bool classof( Value const* obj );
     };

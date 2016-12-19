@@ -40,7 +40,7 @@ const char* Type::ID2str[ Type::ID::_TOP_ ] = {
     ,
     "Floating" // FLOATING
     ,
-    "<Enum>" // ENUM // TODO: PPA: fix this to support all variations of types!
+    "<Enumeration>" // ENUMERATION // TODO: PPA: fix this to support all variations of types!
 };
 
 Type::Type( Type::ID id, i16 bitsize, Type::STATE state )

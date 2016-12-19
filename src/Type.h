@@ -30,7 +30,6 @@
 #ifndef _LIB_CASMIR_TYPE_H_
 #define _LIB_CASMIR_TYPE_H_
 
-#include "cpp/Type.h"
 
 #include "CasmIR.h"
 
@@ -57,10 +56,10 @@ namespace libcasm_ir
             BIT,
             STRING,
             FLOATING,
-            ENUM,
+            ENUMERATION,
             _TOP_
         };
-
+        
         enum STATE : u8
         {
             UNCHANGED,
