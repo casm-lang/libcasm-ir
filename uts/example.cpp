@@ -37,3 +37,10 @@ TEST( libcasm_ir, example2 )
 
     ASSERT_EQ( i.getType()->getID(), a->getType()->getID() );
 }
+
+TEST( libcasm_ir, example3 )
+{
+    libcasm_ir::TypeAnnotation::getResultTypes< libcasm_ir::AddInstruction >();
+    libcasm_ir::TypeAnnotation::getResultTypes< libcasm_ir::SubInstruction >();
+    libcasm_ir::TypeAnnotation::getResultTypes< libcasm_ir::DivInstruction >();
+}

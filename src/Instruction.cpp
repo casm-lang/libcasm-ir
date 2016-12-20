@@ -164,12 +164,12 @@ bool BinaryInstruction::classof( Value const* obj )
     return obj->getValueID() == classid() or UpdateInstruction::classof( obj )
            or LocalInstruction::classof( obj ) or AddInstruction::classof( obj )
            or SubInstruction::classof( obj ) or MulInstruction::classof( obj )
-           or DivInstruction::classof( obj ) or RivInstruction::classof( obj )
-           or ModInstruction::classof( obj ) or EquInstruction::classof( obj )
-           or NeqInstruction::classof( obj ) or LthInstruction::classof( obj )
-           or LeqInstruction::classof( obj ) or GthInstruction::classof( obj )
-           or GeqInstruction::classof( obj ) or OrInstruction::classof( obj )
-           or XorInstruction::classof( obj ) or AndInstruction::classof( obj );
+           or DivInstruction::classof( obj ) or ModInstruction::classof( obj )
+           or EquInstruction::classof( obj ) or NeqInstruction::classof( obj )
+           or LthInstruction::classof( obj ) or LeqInstruction::classof( obj )
+           or GthInstruction::classof( obj ) or GeqInstruction::classof( obj )
+           or OrInstruction::classof( obj ) or XorInstruction::classof( obj )
+           or AndInstruction::classof( obj );
 }
 
 SkipInstruction::SkipInstruction( void )
@@ -290,8 +290,7 @@ bool SwitchInstruction::classof( Value const* obj )
 }
 
 OperatorInstruction::OperatorInstruction( const char* name, Type* type,
-    std::vector< Value* > values, const TypeAnnotation::Data info,
-    Value::ID id )
+    std::vector< Value* > values, const TypeAnnotation& info, Value::ID id )
 : Instruction( name, type, values, id )
 , TypeAnnotation( info )
 {
@@ -303,7 +302,7 @@ OperatorInstruction::OperatorInstruction( const char* name, Type* type,
         arguments.push_back( v->getType() );
     }
 
-    resolved = getTypeForRelation( arguments );
+    resolved = getResultTypeForRelation( arguments );
 }
 
 const Type::ID OperatorInstruction::getResolved( void ) const
@@ -320,8 +319,7 @@ bool OperatorInstruction::classof( Value const* obj )
 }
 
 ArithmeticInstruction::ArithmeticInstruction( const char* name, Type* type,
-    std::vector< Value* > values, const TypeAnnotation::Data info,
-    Value::ID id )
+    std::vector< Value* > values, const TypeAnnotation& info, Value::ID id )
 : OperatorInstruction( name, type, values, info, id )
 {
     assert( getValues().size() == 2 );
@@ -339,13 +337,11 @@ bool ArithmeticInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid() or AddInstruction::classof( obj )
            or SubInstruction::classof( obj ) or MulInstruction::classof( obj )
-           or DivInstruction::classof( obj ) or RivInstruction::classof( obj )
-           or ModInstruction::classof( obj );
+           or DivInstruction::classof( obj ) or ModInstruction::classof( obj );
 }
 
 CompareInstruction::CompareInstruction( const char* name,
-    std::vector< Value* > values, const TypeAnnotation::Data info,
-    Value::ID id )
+    std::vector< Value* > values, const TypeAnnotation& info, Value::ID id )
 : OperatorInstruction( name, &BooleanType, values, info, id )
 {
 }
@@ -359,8 +355,7 @@ bool CompareInstruction::classof( Value const* obj )
 }
 
 LogicalInstruction::LogicalInstruction( const char* name, Type* type,
-    std::vector< Value* > values, const TypeAnnotation::Data info,
-    Value::ID id )
+    std::vector< Value* > values, const TypeAnnotation& info, Value::ID id )
 : OperatorInstruction( name, type, values, info, id )
 {
     assert( getValues().size() <= 2 );
@@ -386,188 +381,176 @@ bool LogicalInstruction::classof( Value const* obj )
 }
 
 AddInstruction::AddInstruction( Value* lhs, Value* rhs )
-: ArithmeticInstruction( ".add", 0, { lhs, rhs },
-      { { Type::INTEGER, { Type::INTEGER, Type::INTEGER } } },
-      Value::ADD_INSTRUCTION )
+: ArithmeticInstruction( ".add", 0, { lhs, rhs }, info, Value::ADD_INSTRUCTION )
 , BinaryInstruction( this )
 {
 }
+const TypeAnnotation AddInstruction::info(
+    { { Type::INTEGER, { Type::INTEGER, Type::INTEGER } } } );
 bool AddInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
 
 SubInstruction::SubInstruction( Value* lhs, Value* rhs )
-: ArithmeticInstruction( ".sub", 0, { lhs, rhs },
-      { { Type::INTEGER, { Type::INTEGER, Type::INTEGER } } },
-      Value::SUB_INSTRUCTION )
+: ArithmeticInstruction( ".sub", 0, { lhs, rhs }, info, Value::SUB_INSTRUCTION )
 , BinaryInstruction( this )
 {
 }
+const TypeAnnotation SubInstruction::info(
+    { { Type::INTEGER, { Type::INTEGER, Type::INTEGER } } } );
 bool SubInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
 
 MulInstruction::MulInstruction( Value* lhs, Value* rhs )
-: ArithmeticInstruction( ".mul", 0, { lhs, rhs },
-      { { Type::INTEGER, { Type::INTEGER, Type::INTEGER } } },
-      Value::MUL_INSTRUCTION )
+: ArithmeticInstruction( ".mul", 0, { lhs, rhs }, info, Value::MUL_INSTRUCTION )
 , BinaryInstruction( this )
 {
 }
+const TypeAnnotation MulInstruction::info(
+    { { Type::INTEGER, { Type::INTEGER, Type::INTEGER } } } );
 bool MulInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
 
 DivInstruction::DivInstruction( Value* lhs, Value* rhs )
-: ArithmeticInstruction( ".div", 0, { lhs, rhs },
-      { { Type::INTEGER, { Type::INTEGER, Type::INTEGER } } },
-      Value::DIV_INSTRUCTION )
+: ArithmeticInstruction( ".div", 0, { lhs, rhs }, info, Value::DIV_INSTRUCTION )
 , BinaryInstruction( this )
 {
 }
+const TypeAnnotation DivInstruction::info(
+    { { Type::INTEGER, { Type::INTEGER, Type::INTEGER } },
+        { Type::RATIONAL, { Type::RATIONAL, Type::RATIONAL } } } );
 bool DivInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
 
-RivInstruction::RivInstruction( Value* lhs, Value* rhs )
-: ArithmeticInstruction( ".riv", 0, { lhs, rhs },
-      { { Type::INTEGER, { Type::INTEGER, Type::INTEGER } } },
-      Value::RIV_INSTRUCTION )
-, BinaryInstruction( this )
-{
-}
-bool RivInstruction::classof( Value const* obj )
-{
-    return obj->getValueID() == classid();
-}
-
 ModInstruction::ModInstruction( Value* lhs, Value* rhs )
-: ArithmeticInstruction( ".mod", 0, { lhs, rhs },
-      { { Type::INTEGER, { Type::INTEGER, Type::INTEGER } } },
-      Value::MOD_INSTRUCTION )
+: ArithmeticInstruction( ".mod", 0, { lhs, rhs }, info, Value::MOD_INSTRUCTION )
 , BinaryInstruction( this )
 {
 }
+const TypeAnnotation ModInstruction::info(
+    { { Type::INTEGER, { Type::INTEGER, Type::INTEGER } } } );
 bool ModInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
 
 EquInstruction::EquInstruction( Value* lhs, Value* rhs )
-: CompareInstruction( ".equ", { lhs, rhs },
-      { { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } } },
-      Value::EQU_INSTRUCTION )
+: CompareInstruction( ".equ", { lhs, rhs }, info, Value::EQU_INSTRUCTION )
 , BinaryInstruction( this )
 {
 }
+const TypeAnnotation EquInstruction::info(
+    { { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } } } );
 bool EquInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
 
 NeqInstruction::NeqInstruction( Value* lhs, Value* rhs )
-: CompareInstruction( ".neq", { lhs, rhs },
-      { { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } } },
-      Value::NEQ_INSTRUCTION )
+: CompareInstruction( ".neq", { lhs, rhs }, info, Value::NEQ_INSTRUCTION )
 , BinaryInstruction( this )
 {
 }
+const TypeAnnotation NeqInstruction::info(
+    { { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } } } );
 bool NeqInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
 
 LthInstruction::LthInstruction( Value* lhs, Value* rhs )
-: CompareInstruction( ".lth", { lhs, rhs },
-      { { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } } },
-      Value::LTH_INSTRUCTION )
+: CompareInstruction( ".lth", { lhs, rhs }, info, Value::LTH_INSTRUCTION )
 , BinaryInstruction( this )
 {
 }
+const TypeAnnotation LthInstruction::info(
+    { { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } } } );
 bool LthInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
 
 LeqInstruction::LeqInstruction( Value* lhs, Value* rhs )
-: CompareInstruction( ".leq", { lhs, rhs },
-      { { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } } },
-      Value::LEQ_INSTRUCTION )
+: CompareInstruction( ".leq", { lhs, rhs }, info, Value::LEQ_INSTRUCTION )
 , BinaryInstruction( this )
 {
 }
+const TypeAnnotation LeqInstruction::info(
+    { { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } } } );
 bool LeqInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
 
 GthInstruction::GthInstruction( Value* lhs, Value* rhs )
-: CompareInstruction( ".gth", { lhs, rhs },
-      { { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } } },
-      Value::GTH_INSTRUCTION )
+: CompareInstruction( ".gth", { lhs, rhs }, info, Value::GTH_INSTRUCTION )
 , BinaryInstruction( this )
 {
 }
+const TypeAnnotation GthInstruction::info(
+    { { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } } } );
 bool GthInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
 
 GeqInstruction::GeqInstruction( Value* lhs, Value* rhs )
-: CompareInstruction( ".geq", { lhs, rhs },
-      { { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } } },
-      Value::GEQ_INSTRUCTION )
+: CompareInstruction( ".geq", { lhs, rhs }, info, Value::GEQ_INSTRUCTION )
 , BinaryInstruction( this )
 {
 }
+const TypeAnnotation GeqInstruction::info(
+    { { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } } } );
 bool GeqInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
 
 OrInstruction::OrInstruction( Value* lhs, Value* rhs )
-: LogicalInstruction( ".or", 0, { lhs, rhs },
-      { { Type::BOOLEAN, { Type::BOOLEAN, Type::BOOLEAN } } },
-      Value::OR_INSTRUCTION )
+: LogicalInstruction( ".or", 0, { lhs, rhs }, info, Value::OR_INSTRUCTION )
 , BinaryInstruction( this )
 {
 }
+const TypeAnnotation OrInstruction::info(
+    { { Type::BOOLEAN, { Type::BOOLEAN, Type::BOOLEAN } } } );
 bool OrInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
 
 XorInstruction::XorInstruction( Value* lhs, Value* rhs )
-: LogicalInstruction( ".xor", 0, { lhs, rhs },
-      { { Type::BOOLEAN, { Type::BOOLEAN, Type::BOOLEAN } } },
-      Value::XOR_INSTRUCTION )
+: LogicalInstruction( ".xor", 0, { lhs, rhs }, info, Value::XOR_INSTRUCTION )
 , BinaryInstruction( this )
 {
 }
+const TypeAnnotation XorInstruction::info(
+    { { Type::BOOLEAN, { Type::BOOLEAN, Type::BOOLEAN } } } );
 bool XorInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
 
 AndInstruction::AndInstruction( Value* lhs, Value* rhs )
-: LogicalInstruction( ".and", 0, { lhs, rhs },
-      { { Type::BOOLEAN, { Type::BOOLEAN, Type::BOOLEAN } } },
-      Value::AND_INSTRUCTION )
+: LogicalInstruction( ".and", 0, { lhs, rhs }, info, Value::AND_INSTRUCTION )
 , BinaryInstruction( this )
 {
 }
+const TypeAnnotation AndInstruction::info(
+    { { Type::BOOLEAN, { Type::BOOLEAN, Type::BOOLEAN } } } );
 bool AndInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
 
 NotInstruction::NotInstruction( Value* lhs )
-: LogicalInstruction( ".not", 0, { lhs },
-      { { Type::BOOLEAN, { Type::BOOLEAN } } }, Value::NOT_INSTRUCTION )
+: LogicalInstruction( ".not", 0, { lhs }, info, Value::NOT_INSTRUCTION )
 , UnaryInstruction( this )
 {
     Type* ty = get()->getType();
@@ -585,6 +568,8 @@ NotInstruction::NotInstruction( Value* lhs )
         assert( !" invalid type case for NOT instruction " );
     }
 }
+const TypeAnnotation NotInstruction::info(
+    { { Type::BOOLEAN, { Type::BOOLEAN } } } );
 bool NotInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();

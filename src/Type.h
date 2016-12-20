@@ -55,6 +55,7 @@ namespace libcasm_ir
             BIT,
             STRING,
             FLOATING,
+            RATIONAL,
             ENUMERATION,
             _TOP_
         };

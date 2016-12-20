@@ -58,20 +58,19 @@ TypeAnnotation::TypeAnnotation( const Data& info )
     }
 }
 
-const TypeAnnotation::Set& TypeAnnotation::getAnnotatedResultTypes( void ) const
+const TypeAnnotation::Set& TypeAnnotation::getResultTypes( void ) const
 {
     return type_set[ 0 ];
 }
 
-const TypeAnnotation::Set& TypeAnnotation::getAnnotatedArgumentTypes(
-    u8 pos ) const
+const TypeAnnotation::Set& TypeAnnotation::getArgumentTypes( u8 pos ) const
 {
     assert( pos < ( type_set.size() - 1 ) );
 
     return type_set[ pos + 1 ];
 }
 
-Type::ID TypeAnnotation::getTypeForRelation(
+Type::ID TypeAnnotation::getResultTypeForRelation(
     const std::vector< Type* > arguments ) const
 {
     std::string key;

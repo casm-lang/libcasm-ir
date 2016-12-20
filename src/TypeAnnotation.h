@@ -52,16 +52,27 @@ namespace libcasm_ir
         std::vector< Set > type_set;
 
         std::unordered_map< std::string, Type::ID > relation_to_type;
-
+        
       public:
         TypeAnnotation( const Data& info );
 
-        const Set& getAnnotatedResultTypes( void ) const;
-
-        const Set& getAnnotatedArgumentTypes( u8 pos ) const;
-
-        Type::ID getTypeForRelation(
+        Type::ID getResultTypeForRelation(
             const std::vector< Type* > arguments ) const;
+        
+        const Set& getResultTypes( void ) const;
+        const Set& getArgumentTypes( u8 pos ) const;
+
+        template < class T >
+        static const Set& getResultTypes( void )
+        {
+            return T::info.getResultTypes();
+        }
+        
+        template < class T >
+        static const Set& getArgumentTypes( u8 pos )
+        {
+            return T::info.getArgumentTypes( pos );
+        }
     };
 }
 

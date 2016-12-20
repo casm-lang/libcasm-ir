@@ -209,7 +209,7 @@ namespace libcasm_ir
 
       public:
         OperatorInstruction( const char* name, Type* type,
-            std::vector< Value* > values, const TypeAnnotation::Data info,
+            std::vector< Value* > values, const TypeAnnotation& info,
             Value::ID id = Value::OPERATOR_INSTRUCTION );
 
         const Type::ID getResolved( void ) const;
@@ -225,7 +225,7 @@ namespace libcasm_ir
     {
       public:
         ArithmeticInstruction( const char* name, Type* type,
-            std::vector< Value* > values, const TypeAnnotation::Data info,
+            std::vector< Value* > values, const TypeAnnotation& info,
             Value::ID id = Value::ARITHMETIC_INSTRUCTION );
 
         static inline Value::ID classid( void )
@@ -239,7 +239,7 @@ namespace libcasm_ir
     {
       public:
         CompareInstruction( const char* name, std::vector< Value* > values,
-            const TypeAnnotation::Data info,
+            const TypeAnnotation& info,
             Value::ID id = Value::COMPARE_INSTRUCTION );
 
         static inline Value::ID classid( void )
@@ -253,7 +253,7 @@ namespace libcasm_ir
     {
       public:
         LogicalInstruction( const char* name, Type* type,
-            std::vector< Value* > values, const TypeAnnotation::Data info,
+            std::vector< Value* > values, const TypeAnnotation& info,
             Value::ID id = Value::LOGICAL_INSTRUCTION );
 
         static inline Value::ID classid( void )
@@ -274,6 +274,8 @@ namespace libcasm_ir
             return Value::ADD_INSTRUCTION;
         };
         static bool classof( Value const* obj );
+        
+        static const TypeAnnotation info;
     };
 
     class SubInstruction : public ArithmeticInstruction,
@@ -287,6 +289,8 @@ namespace libcasm_ir
             return Value::SUB_INSTRUCTION;
         };
         static bool classof( Value const* obj );
+        
+        static const TypeAnnotation info;
     };
 
     class MulInstruction : public ArithmeticInstruction,
@@ -300,6 +304,8 @@ namespace libcasm_ir
             return Value::MUL_INSTRUCTION;
         };
         static bool classof( Value const* obj );
+        
+        static const TypeAnnotation info;
     };
 
     class DivInstruction : public ArithmeticInstruction,
@@ -313,21 +319,10 @@ namespace libcasm_ir
             return Value::DIV_INSTRUCTION;
         };
         static bool classof( Value const* obj );
+        
+        static const TypeAnnotation info;
     };
-
-    class RivInstruction : public ArithmeticInstruction,
-                           public BinaryInstruction
-    {
-      public:
-        RivInstruction( Value* lhs, Value* rhs );
-
-        static inline Value::ID classid( void )
-        {
-            return Value::RIV_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
-    };
-
+    
     class ModInstruction : public ArithmeticInstruction,
                            public BinaryInstruction
     {
@@ -339,6 +334,8 @@ namespace libcasm_ir
             return Value::MOD_INSTRUCTION;
         };
         static bool classof( Value const* obj );
+        
+        static const TypeAnnotation info;
     };
 
     class EquInstruction : public CompareInstruction, public BinaryInstruction
@@ -351,6 +348,8 @@ namespace libcasm_ir
             return Value::EQU_INSTRUCTION;
         };
         static bool classof( Value const* obj );
+        
+        static const TypeAnnotation info;
     };
 
     class NeqInstruction : public CompareInstruction, public BinaryInstruction
@@ -363,6 +362,8 @@ namespace libcasm_ir
             return Value::NEQ_INSTRUCTION;
         };
         static bool classof( Value const* obj );
+        
+        static const TypeAnnotation info;
     };
 
     class LthInstruction : public CompareInstruction, public BinaryInstruction
@@ -375,6 +376,8 @@ namespace libcasm_ir
             return Value::LTH_INSTRUCTION;
         };
         static bool classof( Value const* obj );
+        
+        static const TypeAnnotation info;
     };
 
     class LeqInstruction : public CompareInstruction, public BinaryInstruction
@@ -387,6 +390,8 @@ namespace libcasm_ir
             return Value::LEQ_INSTRUCTION;
         };
         static bool classof( Value const* obj );
+        
+        static const TypeAnnotation info;
     };
 
     class GthInstruction : public CompareInstruction, public BinaryInstruction
@@ -399,6 +404,8 @@ namespace libcasm_ir
             return Value::GTH_INSTRUCTION;
         };
         static bool classof( Value const* obj );
+        
+        static const TypeAnnotation info;
     };
 
     class GeqInstruction : public CompareInstruction, public BinaryInstruction
@@ -411,6 +418,8 @@ namespace libcasm_ir
             return Value::GEQ_INSTRUCTION;
         };
         static bool classof( Value const* obj );
+        
+        static const TypeAnnotation info;
     };
 
     class OrInstruction : public LogicalInstruction, public BinaryInstruction
@@ -423,6 +432,8 @@ namespace libcasm_ir
             return Value::OR_INSTRUCTION;
         };
         static bool classof( Value const* obj );
+        
+        static const TypeAnnotation info;
     };
 
     class XorInstruction : public LogicalInstruction, public BinaryInstruction
@@ -435,6 +446,8 @@ namespace libcasm_ir
             return Value::XOR_INSTRUCTION;
         };
         static bool classof( Value const* obj );
+        
+        static const TypeAnnotation info;
     };
 
     class AndInstruction : public LogicalInstruction, public BinaryInstruction
@@ -447,6 +460,8 @@ namespace libcasm_ir
             return Value::AND_INSTRUCTION;
         };
         static bool classof( Value const* obj );
+        
+        static const TypeAnnotation info;
     };
 
     class NotInstruction : public LogicalInstruction, public UnaryInstruction
@@ -459,6 +474,8 @@ namespace libcasm_ir
             return Value::NOT_INSTRUCTION;
         };
         static bool classof( Value const* obj );
+        
+        static const TypeAnnotation info;        
     };
 
     // class MovInstruction : public UnaryInstruction
