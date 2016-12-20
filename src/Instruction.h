@@ -274,7 +274,7 @@ namespace libcasm_ir
             return Value::ADD_INSTRUCTION;
         };
         static bool classof( Value const* obj );
-        
+
         static const TypeAnnotation info;
     };
 
@@ -289,7 +289,7 @@ namespace libcasm_ir
             return Value::SUB_INSTRUCTION;
         };
         static bool classof( Value const* obj );
-        
+
         static const TypeAnnotation info;
     };
 
@@ -304,7 +304,7 @@ namespace libcasm_ir
             return Value::MUL_INSTRUCTION;
         };
         static bool classof( Value const* obj );
-        
+
         static const TypeAnnotation info;
     };
 
@@ -319,10 +319,10 @@ namespace libcasm_ir
             return Value::DIV_INSTRUCTION;
         };
         static bool classof( Value const* obj );
-        
+
         static const TypeAnnotation info;
     };
-    
+
     class ModInstruction : public ArithmeticInstruction,
                            public BinaryInstruction
     {
@@ -334,7 +334,7 @@ namespace libcasm_ir
             return Value::MOD_INSTRUCTION;
         };
         static bool classof( Value const* obj );
-        
+
         static const TypeAnnotation info;
     };
 
@@ -348,7 +348,7 @@ namespace libcasm_ir
             return Value::EQU_INSTRUCTION;
         };
         static bool classof( Value const* obj );
-        
+
         static const TypeAnnotation info;
     };
 
@@ -362,7 +362,7 @@ namespace libcasm_ir
             return Value::NEQ_INSTRUCTION;
         };
         static bool classof( Value const* obj );
-        
+
         static const TypeAnnotation info;
     };
 
@@ -376,7 +376,7 @@ namespace libcasm_ir
             return Value::LTH_INSTRUCTION;
         };
         static bool classof( Value const* obj );
-        
+
         static const TypeAnnotation info;
     };
 
@@ -390,7 +390,7 @@ namespace libcasm_ir
             return Value::LEQ_INSTRUCTION;
         };
         static bool classof( Value const* obj );
-        
+
         static const TypeAnnotation info;
     };
 
@@ -404,7 +404,7 @@ namespace libcasm_ir
             return Value::GTH_INSTRUCTION;
         };
         static bool classof( Value const* obj );
-        
+
         static const TypeAnnotation info;
     };
 
@@ -418,7 +418,7 @@ namespace libcasm_ir
             return Value::GEQ_INSTRUCTION;
         };
         static bool classof( Value const* obj );
-        
+
         static const TypeAnnotation info;
     };
 
@@ -432,7 +432,7 @@ namespace libcasm_ir
             return Value::OR_INSTRUCTION;
         };
         static bool classof( Value const* obj );
-        
+
         static const TypeAnnotation info;
     };
 
@@ -446,7 +446,7 @@ namespace libcasm_ir
             return Value::XOR_INSTRUCTION;
         };
         static bool classof( Value const* obj );
-        
+
         static const TypeAnnotation info;
     };
 
@@ -460,7 +460,7 @@ namespace libcasm_ir
             return Value::AND_INSTRUCTION;
         };
         static bool classof( Value const* obj );
-        
+
         static const TypeAnnotation info;
     };
 
@@ -474,8 +474,8 @@ namespace libcasm_ir
             return Value::NOT_INSTRUCTION;
         };
         static bool classof( Value const* obj );
-        
-        static const TypeAnnotation info;        
+
+        static const TypeAnnotation info;
     };
 
     // class MovInstruction : public UnaryInstruction

@@ -47,6 +47,8 @@ TEST( libcasm_ir, example3 )
 
 TEST( libcasm_ir, example4 )
 {
-    libcasm_ir::TypeAnnotation::getResultTypes< libcasm_ir::AsIntegerBuiltin >();
-    libcasm_ir::TypeAnnotation::getResultTypes< libcasm_ir::AsEnumerationBuiltin >();
+    libcasm_ir::TypeAnnotation::
+        getResultTypes< libcasm_ir::AsIntegerBuiltin >();
+    libcasm_ir::TypeAnnotation::
+        getResultTypes< libcasm_ir::AsEnumerationBuiltin >();
 }
