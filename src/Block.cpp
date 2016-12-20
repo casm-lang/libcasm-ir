@@ -130,7 +130,7 @@ void ExecutionSemanticsBlock::dump( void ) const
 }
 
 ParallelBlock::ParallelBlock( ExecutionSemanticsBlock* scope )
-: ExecutionSemanticsBlock( "par", 0, true, scope, Value::PARALLEL_BLOCK )
+: ExecutionSemanticsBlock( ".par", 0, true, scope, Value::PARALLEL_BLOCK )
 {
 }
 
@@ -140,7 +140,7 @@ void ParallelBlock::dump( void ) const
 }
 
 SequentialBlock::SequentialBlock( ExecutionSemanticsBlock* scope )
-: ExecutionSemanticsBlock( "seq", 0, false, scope, Value::SEQUENTIAL_BLOCK )
+: ExecutionSemanticsBlock( ".seq", 0, false, scope, Value::SEQUENTIAL_BLOCK )
 {
 }
 
