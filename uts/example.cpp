@@ -44,3 +44,9 @@ TEST( libcasm_ir, example3 )
     libcasm_ir::TypeAnnotation::getResultTypes< libcasm_ir::SubInstruction >();
     libcasm_ir::TypeAnnotation::getResultTypes< libcasm_ir::DivInstruction >();
 }
+
+TEST( libcasm_ir, example4 )
+{
+    libcasm_ir::TypeAnnotation::getResultTypes< libcasm_ir::AsIntegerBuiltin >();
+    libcasm_ir::TypeAnnotation::getResultTypes< libcasm_ir::AsEnumerationBuiltin >();
+}
