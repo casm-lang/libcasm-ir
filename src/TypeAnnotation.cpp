@@ -28,6 +28,65 @@ using namespace libcasm_ir;
 TypeAnnotation::TypeAnnotation( const Data& info )
 : info( info )
 {
+    assert( info.size() > 0 );
+
+    type_set.push_back( Set() );
+
+    for( u32 i = 0; i < std::get< 1 >( info[ 0 ] ).size(); i++ )
+    {
+        type_set.push_back( Set() );
+    }
+
+    for( auto relation : info )
+    {
+        Type::ID rt = std::get< 0 >( relation );
+
+        type_set[ 0 ].insert( rt );
+
+        std::string key;
+
+        for( u32 i = 0; i < std::get< 1 >( relation ).size(); i++ )
+        {
+            type_set[ ( i + 1 ) ].insert( std::get< 1 >( relation )[ i ] );
+
+            key += std::to_string( std::get< 1 >( relation )[ i ] ) + ";";
+        }
+
+        result_set[ key ] = rt;
+    }
+}
+
+const TypeAnnotation::Set& TypeAnnotation::getAnnotatedResultTypes( void ) const
+{
+    return type_set[ 0 ];
+}
+
+const TypeAnnotation::Set& TypeAnnotation::getAnnotatedArgumentTypes(
+    u8 pos ) const
+{
+    assert( pos < ( type_set.size() - 1 ) );
+
+    return type_set[ pos + 1 ];
+}
+
+Type::ID TypeAnnotation::getTypeForRelation(
+    const std::vector< Type* > arguments ) const
+{
+    std::string key;
+
+    for( auto arg : arguments )
+    {
+        key += std::to_string( arg->getIDKind() ) + ";";
+    }
+
+    auto result = result_set.find( key );
+    if( result != result_set.end() )
+    {
+        return result->second;
+    }
+
+    assert( !" no result type found for requested relation! " );
+    return Type::_TOP_;
 }
 
 //

@@ -40,14 +40,28 @@ namespace libcasm_ir
       public:
         // stores a list of type relations for possible type unification etc.
         // format is: < result type <-- < arg1_type, arg2_type, ... > >
-        typedef std::vector< std::tuple< Type::ID, std::vector< Type::ID > > >
-            Data;
+        typedef std::tuple< Type::ID, std::vector< Type::ID > > Relation;
+
+        typedef std::vector< Relation > Data;
+
+        typedef std::set< Type::ID > Set;
 
       private:
         const Data info;
 
+        std::vector< Set > type_set;
+
+        std::unordered_map< std::string, Type::ID > result_set;
+
       public:
         TypeAnnotation( const Data& info );
+
+        const Set& getAnnotatedResultTypes( void ) const;
+
+        const Set& getAnnotatedArgumentTypes( u8 pos ) const;
+
+        Type::ID getTypeForRelation(
+            const std::vector< Type* > arguments ) const;
     };
 }
 

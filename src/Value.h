@@ -143,18 +143,23 @@ namespace libcasm_ir
 
             ,
             OPERATOR_INSTRUCTION,
+            ARITHMETIC_INSTRUCTION,
             ADD_INSTRUCTION,
             SUB_INSTRUCTION,
             MUL_INSTRUCTION,
             DIV_INSTRUCTION,
             RIV_INSTRUCTION,
             MOD_INSTRUCTION,
+
+            COMPARE_INSTRUCTION,
             EQU_INSTRUCTION,
             NEQ_INSTRUCTION,
             LTH_INSTRUCTION,
             LEQ_INSTRUCTION,
             GTH_INSTRUCTION,
             GEQ_INSTRUCTION,
+
+            LOGICAL_INSTRUCTION,
             OR_INSTRUCTION,
             XOR_INSTRUCTION,
             AND_INSTRUCTION,

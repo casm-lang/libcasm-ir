@@ -204,10 +204,15 @@ namespace libcasm_ir
 
     class OperatorInstruction : public Instruction, public TypeAnnotation
     {
+      private:
+        Type::ID resolved;
+
       public:
         OperatorInstruction( const char* name, Type* type,
             std::vector< Value* > values, const TypeAnnotation::Data info,
             Value::ID id = Value::OPERATOR_INSTRUCTION );
+
+        const Type::ID getResolved( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -216,7 +221,50 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class AddInstruction : public OperatorInstruction, public BinaryInstruction
+    class ArithmeticInstruction : public OperatorInstruction
+    {
+      public:
+        ArithmeticInstruction( const char* name, Type* type,
+            std::vector< Value* > values, const TypeAnnotation::Data info,
+            Value::ID id = Value::ARITHMETIC_INSTRUCTION );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::ARITHMETIC_INSTRUCTION;
+        };
+        static bool classof( Value const* obj );
+    };
+
+    class CompareInstruction : public OperatorInstruction
+    {
+      public:
+        CompareInstruction( const char* name, std::vector< Value* > values,
+            const TypeAnnotation::Data info,
+            Value::ID id = Value::COMPARE_INSTRUCTION );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::COMPARE_INSTRUCTION;
+        };
+        static bool classof( Value const* obj );
+    };
+
+    class LogicalInstruction : public OperatorInstruction
+    {
+      public:
+        LogicalInstruction( const char* name, Type* type,
+            std::vector< Value* > values, const TypeAnnotation::Data info,
+            Value::ID id = Value::LOGICAL_INSTRUCTION );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::LOGICAL_INSTRUCTION;
+        };
+        static bool classof( Value const* obj );
+    };
+
+    class AddInstruction : public ArithmeticInstruction,
+                           public BinaryInstruction
     {
       public:
         AddInstruction( Value* lhs, Value* rhs );
@@ -228,7 +276,8 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class SubInstruction : public OperatorInstruction, public BinaryInstruction
+    class SubInstruction : public ArithmeticInstruction,
+                           public BinaryInstruction
     {
       public:
         SubInstruction( Value* lhs, Value* rhs );
@@ -240,7 +289,8 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class MulInstruction : public OperatorInstruction, public BinaryInstruction
+    class MulInstruction : public ArithmeticInstruction,
+                           public BinaryInstruction
     {
       public:
         MulInstruction( Value* lhs, Value* rhs );
@@ -252,7 +302,8 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class DivInstruction : public OperatorInstruction, public BinaryInstruction
+    class DivInstruction : public ArithmeticInstruction,
+                           public BinaryInstruction
     {
       public:
         DivInstruction( Value* lhs, Value* rhs );
@@ -264,7 +315,8 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class RivInstruction : public OperatorInstruction, public BinaryInstruction
+    class RivInstruction : public ArithmeticInstruction,
+                           public BinaryInstruction
     {
       public:
         RivInstruction( Value* lhs, Value* rhs );
@@ -276,7 +328,8 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class ModInstruction : public OperatorInstruction, public BinaryInstruction
+    class ModInstruction : public ArithmeticInstruction,
+                           public BinaryInstruction
     {
       public:
         ModInstruction( Value* lhs, Value* rhs );
@@ -288,7 +341,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class EquInstruction : public OperatorInstruction, public BinaryInstruction
+    class EquInstruction : public CompareInstruction, public BinaryInstruction
     {
       public:
         EquInstruction( Value* lhs, Value* rhs );
@@ -300,7 +353,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class NeqInstruction : public OperatorInstruction, public BinaryInstruction
+    class NeqInstruction : public CompareInstruction, public BinaryInstruction
     {
       public:
         NeqInstruction( Value* lhs, Value* rhs );
@@ -312,7 +365,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class LthInstruction : public OperatorInstruction, public BinaryInstruction
+    class LthInstruction : public CompareInstruction, public BinaryInstruction
     {
       public:
         LthInstruction( Value* lhs, Value* rhs );
@@ -324,7 +377,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class LeqInstruction : public OperatorInstruction, public BinaryInstruction
+    class LeqInstruction : public CompareInstruction, public BinaryInstruction
     {
       public:
         LeqInstruction( Value* lhs, Value* rhs );
@@ -336,7 +389,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class GthInstruction : public OperatorInstruction, public BinaryInstruction
+    class GthInstruction : public CompareInstruction, public BinaryInstruction
     {
       public:
         GthInstruction( Value* lhs, Value* rhs );
@@ -348,7 +401,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class GeqInstruction : public OperatorInstruction, public BinaryInstruction
+    class GeqInstruction : public CompareInstruction, public BinaryInstruction
     {
       public:
         GeqInstruction( Value* lhs, Value* rhs );
@@ -360,7 +413,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class OrInstruction : public OperatorInstruction, public BinaryInstruction
+    class OrInstruction : public LogicalInstruction, public BinaryInstruction
     {
       public:
         OrInstruction( Value* lhs, Value* rhs );
@@ -372,7 +425,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class XorInstruction : public OperatorInstruction, public BinaryInstruction
+    class XorInstruction : public LogicalInstruction, public BinaryInstruction
     {
       public:
         XorInstruction( Value* lhs, Value* rhs );
@@ -384,7 +437,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class AndInstruction : public OperatorInstruction, public BinaryInstruction
+    class AndInstruction : public LogicalInstruction, public BinaryInstruction
     {
       public:
         AndInstruction( Value* lhs, Value* rhs );
@@ -396,7 +449,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class NotInstruction : public OperatorInstruction, public UnaryInstruction
+    class NotInstruction : public LogicalInstruction, public UnaryInstruction
     {
       public:
         NotInstruction( Value* lhs );
