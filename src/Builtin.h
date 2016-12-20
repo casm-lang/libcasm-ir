@@ -48,14 +48,10 @@ namespace libcasm_ir
         };
 
       public:
-        Builtin( const char* name, Type* result, TypeAnnotation::Data info,
+        Builtin( const char* name, Type* result, const TypeAnnotation& info,
             Value::ID id = Value::BUILTIN );
 
         ~Builtin( void );
-
-        // const Type::ID getTypeIDsOfResult( void ) const;
-        // const std::vector< std::vector< Type::ID > >& getTypeIDsOfArguments(
-        //     void ) const;
 
         void dump( void ) const;
 
@@ -70,7 +66,7 @@ namespace libcasm_ir
     {
       public:
         CastingBuiltin( const char* name, Type* result,
-            TypeAnnotation::Data info, Value::ID id = Value::CASTING_BUILTIN );
+            const TypeAnnotation& info, Value::ID id = Value::CASTING_BUILTIN );
 
         static inline Value::ID classid( void )
         {
@@ -89,6 +85,8 @@ namespace libcasm_ir
             return Value::AS_BOOLEAN_BUILTIN;
         };
         static bool classof( Value const* obj );
+
+        static const TypeAnnotation info;
     };
 
     class AsIntegerBuiltin : public CastingBuiltin
@@ -101,6 +99,8 @@ namespace libcasm_ir
             return Value::AS_INTEGER_BUILTIN;
         };
         static bool classof( Value const* obj );
+
+        static const TypeAnnotation info;
     };
 
     class AsBitBuiltin : public CastingBuiltin
@@ -113,6 +113,8 @@ namespace libcasm_ir
             return Value::AS_BIT_BUILTIN;
         };
         static bool classof( Value const* obj );
+
+        static const TypeAnnotation info;
     };
 
     class AsEnumerationBuiltin : public CastingBuiltin
@@ -125,6 +127,8 @@ namespace libcasm_ir
             return Value::AS_ENUMERATION_BUILTIN;
         };
         static bool classof( Value const* obj );
+
+        static const TypeAnnotation info;
     };
 
     class AsStringBuiltin : public CastingBuiltin
@@ -137,6 +141,8 @@ namespace libcasm_ir
             return Value::AS_STRING_BUILTIN;
         };
         static bool classof( Value const* obj );
+
+        static const TypeAnnotation info;
     };
 
     class AsFloatingBuiltin : public CastingBuiltin
@@ -149,6 +155,8 @@ namespace libcasm_ir
             return Value::AS_FLOATING_BUILTIN;
         };
         static bool classof( Value const* obj );
+
+        static const TypeAnnotation info;
     };
 }
 

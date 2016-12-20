@@ -34,7 +34,7 @@ static Builtin pre_defined[]
         AsStringBuiltin(), AsFloatingBuiltin() };
 
 Builtin::Builtin(
-    const char* name, Type* result, TypeAnnotation::Data info, Value::ID id )
+    const char* name, Type* result, const TypeAnnotation& info, Value::ID id )
 : User( name, result, id )
 , TypeAnnotation( info )
 {
@@ -49,17 +49,6 @@ Builtin::~Builtin( void )
     getSymbols()[ ".builtin" ].erase( this );
 }
 
-// const Type::ID Builtin::getTypeIDsOfResult( void ) const
-// {
-//     return ret_type;
-// }
-
-// const std::vector< std::vector< Type::ID > >& Builtin::getTypeIDsOfArguments(
-//     void ) const
-// {
-//     return arg_type;
-// }
-
 void Builtin::dump( void ) const
 {
     printf( "[Builtin] " );
@@ -71,10 +60,12 @@ bool Builtin::classof( Value const* obj )
     return obj->getValueID() == classid() or CastingBuiltin::classof( obj );
 }
 
-// Casting built-ins:
+//
+// CastingBuiltin
+//
 
 CastingBuiltin::CastingBuiltin(
-    const char* name, Type* result, TypeAnnotation::Data info, Value::ID id )
+    const char* name, Type* result, const TypeAnnotation& info, Value::ID id )
 : Builtin( name, result, info, id )
 {
 }
@@ -88,92 +79,109 @@ bool CastingBuiltin::classof( Value const* obj )
            or AsFloatingBuiltin::classof( obj );
 }
 
+//
+// AsBooleanBuiltin
+//
+
 AsBooleanBuiltin::AsBooleanBuiltin( void )
-: CastingBuiltin( "asBoolean", &BooleanType,
-      { { Type::BOOLEAN, { Type::BOOLEAN } },
-          { Type::BOOLEAN, { Type::INTEGER } },
-          { Type::BOOLEAN, { Type::FLOATING } },
-          { Type::BOOLEAN, { Type::BIT } },
-          { Type::BOOLEAN, { Type::ENUMERATION } } },
-      Value::AS_BOOLEAN_BUILTIN )
+: CastingBuiltin( "asBoolean", &BooleanType, info, Value::AS_BOOLEAN_BUILTIN )
 {
 }
-
+const TypeAnnotation AsBooleanBuiltin::info(
+    { { Type::BOOLEAN, { Type::BOOLEAN } },
+        { Type::BOOLEAN, { Type::INTEGER } },
+        { Type::BOOLEAN, { Type::FLOATING } }, { Type::BOOLEAN, { Type::BIT } },
+        { Type::BOOLEAN, { Type::ENUMERATION } } } );
 bool AsBooleanBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
 
+//
+// AsIntegerBuiltin
+//
+
 AsIntegerBuiltin::AsIntegerBuiltin( Type* result )
-: CastingBuiltin( "asInteger", result,
-      { { Type::INTEGER, { Type::INTEGER } },
-          { Type::INTEGER, { Type::BOOLEAN } },
-          { Type::INTEGER, { Type::FLOATING } },
-          { Type::INTEGER, { Type::BIT } },
-          { Type::INTEGER, { Type::ENUMERATION } } },
-      Value::AS_INTEGER_BUILTIN )
+: CastingBuiltin( "asInteger", result, info, Value::AS_INTEGER_BUILTIN )
 {
 }
-
+const TypeAnnotation AsIntegerBuiltin::info(
+    { { Type::INTEGER, { Type::INTEGER } },
+        { Type::INTEGER, { Type::BOOLEAN } },
+        { Type::INTEGER, { Type::FLOATING } }, { Type::INTEGER, { Type::BIT } },
+        { Type::INTEGER, { Type::ENUMERATION } } } );
 bool AsIntegerBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
 
+//
+// AsBitBuiltin
+//
+
 AsBitBuiltin::AsBitBuiltin( Type* result )
-: CastingBuiltin( "asBit", result,
-      { { Type::BIT, { Type::BIT, Type::INTEGER } },
-          { Type::BIT, { Type::INTEGER, Type::INTEGER } },
-          { Type::BIT, { Type::BOOLEAN, Type::INTEGER } },
-          { Type::BIT, { Type::FLOATING, Type::INTEGER } },
-          { Type::BIT, { Type::ENUMERATION, Type::INTEGER } } },
-      Value::AS_BIT_BUILTIN )
+: CastingBuiltin( "asBit", result, info, Value::AS_BIT_BUILTIN )
 {
 }
-
+const TypeAnnotation AsBitBuiltin::info(
+    { { Type::BIT, { Type::BIT, Type::INTEGER } },
+        { Type::BIT, { Type::INTEGER, Type::INTEGER } },
+        { Type::BIT, { Type::BOOLEAN, Type::INTEGER } },
+        { Type::BIT, { Type::FLOATING, Type::INTEGER } },
+        { Type::BIT, { Type::ENUMERATION, Type::INTEGER } } } );
 bool AsBitBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
 
+//
+// AsEnumerationBuiltin
+//
+
 AsEnumerationBuiltin::AsEnumerationBuiltin( Type* result, const char* token )
-: CastingBuiltin( token, result, { { Type::ENUMERATION, { Type::INTEGER } },
-                                     { Type::ENUMERATION, { Type::BIT } } },
-      Value::AS_ENUMERATION_BUILTIN )
+: CastingBuiltin( token, result, info, Value::AS_ENUMERATION_BUILTIN )
 {
 }
-
+const TypeAnnotation AsEnumerationBuiltin::info(
+    { { Type::ENUMERATION, { Type::INTEGER } },
+        { Type::ENUMERATION, { Type::BIT } } } );
 bool AsEnumerationBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
 
+//
+// AsStringBuiltin
+//
+
 AsStringBuiltin::AsStringBuiltin( void )
-: CastingBuiltin( "asString", &StringType,
-      { { Type::STRING, { Type::STRING } }, { Type::STRING, { Type::INTEGER } },
-          { Type::STRING, { Type::BOOLEAN } },
-          { Type::STRING, { Type::FLOATING } }, { Type::STRING, { Type::BIT } },
-          { Type::STRING, { Type::ENUMERATION } } },
-      Value::AS_STRING_BUILTIN )
+: CastingBuiltin( "asString", &StringType, info, Value::AS_STRING_BUILTIN )
 {
 }
-
+const TypeAnnotation AsStringBuiltin::info(
+    { { Type::STRING, { Type::STRING } }, { Type::STRING, { Type::INTEGER } },
+        { Type::STRING, { Type::BOOLEAN } },
+        { Type::STRING, { Type::FLOATING } }, { Type::STRING, { Type::BIT } },
+        { Type::STRING, { Type::ENUMERATION } } } );
 bool AsStringBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
 
+//
+// AsFloatingBuiltin
+//
+
 AsFloatingBuiltin::AsFloatingBuiltin( void )
-: CastingBuiltin( "asFloating", &FloatingType,
-      { { Type::FLOATING, { Type::FLOATING } },
-          { Type::FLOATING, { Type::INTEGER } },
-          { Type::FLOATING, { Type::BOOLEAN } },
-          { Type::FLOATING, { Type::BIT } },
-          { Type::FLOATING, { Type::ENUMERATION } } },
-      Value::AS_FLOATING_BUILTIN )
+: CastingBuiltin(
+      "asFloating", &FloatingType, info, Value::AS_FLOATING_BUILTIN )
 {
 }
-
+const TypeAnnotation AsFloatingBuiltin::info( { { Type::FLOATING,
+                                                    { Type::FLOATING } },
+    { Type::FLOATING, { Type::INTEGER } },
+    { Type::FLOATING, { Type::BOOLEAN } }, { Type::FLOATING, { Type::BIT } },
+    { Type::FLOATING, { Type::ENUMERATION } } } );
 bool AsFloatingBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
