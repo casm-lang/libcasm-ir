@@ -51,7 +51,7 @@ namespace libcasm_ir
 
         std::vector< Set > type_set;
 
-        std::unordered_map< std::string, Type::ID > result_set;
+        std::unordered_map< std::string, Type::ID > relation_to_type;
 
       public:
         TypeAnnotation( const Data& info );

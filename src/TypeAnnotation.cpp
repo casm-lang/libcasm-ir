@@ -52,7 +52,9 @@ TypeAnnotation::TypeAnnotation( const Data& info )
             key += std::to_string( std::get< 1 >( relation )[ i ] ) + ";";
         }
 
-        result_set[ key ] = rt;
+        assert( relation_to_type.find( key ) == relation_to_type.end()
+                and " result type of relation already exists!" );
+        relation_to_type[ key ] = rt;
     }
 }
 
@@ -79,8 +81,8 @@ Type::ID TypeAnnotation::getTypeForRelation(
         key += std::to_string( arg->getIDKind() ) + ";";
     }
 
-    auto result = result_set.find( key );
-    if( result != result_set.end() )
+    auto result = relation_to_type.find( key );
+    if( result != relation_to_type.end() )
     {
         return result->second;
     }
