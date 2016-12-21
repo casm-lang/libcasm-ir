@@ -40,7 +40,7 @@ Builtin::Builtin(
 {
     getSymbols()[ ".builtin" ].insert( this );
 
-    id2obj()[ id ] = this;
+    id2obj()[ (u8)id ] = this;
     str2obj()[ std::string( name ) ] = this;
 }
 

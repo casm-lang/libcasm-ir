@@ -24,15 +24,13 @@
 #ifndef _LIB_CASMIR_SPECIFICATION_H_
 #define _LIB_CASMIR_SPECIFICATION_H_
 
-#include "Block.h"
-#include "User.h"
 #include "Value.h"
 
 namespace libcasm_ir
 {
     class ParallelBlock;
 
-    class Specification : public User
+    class Specification : public Value
     {
       private:
         std::unordered_map< u32, std::vector< Value* > > content;

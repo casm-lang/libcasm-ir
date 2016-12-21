@@ -31,7 +31,7 @@
 using namespace libcasm_ir;
 
 Specification::Specification( const char* name )
-: User( name, 0, Value::SPECIFICATION )
+: Value( name, 0, Value::SPECIFICATION )
 {
     getSymbols()[ ".specification" ].insert( this );
 }

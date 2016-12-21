@@ -35,9 +35,9 @@ namespace libcasm_ir
     class Builtin : public User, public TypeAnnotation
     {
       private:
-        static std::unordered_map< Value::ID, Builtin* >& id2obj( void )
+        static std::unordered_map< u8, Builtin* >& id2obj( void )
         {
-            static std::unordered_map< Value::ID, Builtin* > cache;
+            static std::unordered_map< u8, Builtin* > cache;
             return cache;
         };
 
