@@ -40,7 +40,11 @@ namespace libcasm_ir
       public:
         // stores a list of type relations for possible type unification etc.
         // format is: < result type <-- < arg1_type, arg2_type, ... > >
-        typedef std::tuple< Type::ID, std::vector< Type::ID > > Relation;
+        struct Relation
+        {
+            Type::ID result;
+            std::vector< Type::ID > argument;
+        };
 
         typedef std::vector< Relation > Data;
 

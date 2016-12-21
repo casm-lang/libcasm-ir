@@ -87,11 +87,10 @@ AsBooleanBuiltin::AsBooleanBuiltin( void )
 : CastingBuiltin( "asBoolean", &BooleanType, info, Value::AS_BOOLEAN_BUILTIN )
 {
 }
-const TypeAnnotation AsBooleanBuiltin::info(
-    { { Type::BOOLEAN, { Type::BOOLEAN } },
-        { Type::BOOLEAN, { Type::INTEGER } },
-        { Type::BOOLEAN, { Type::FLOATING } }, { Type::BOOLEAN, { Type::BIT } },
-        { Type::BOOLEAN, { Type::ENUMERATION } } } );
+const TypeAnnotation AsBooleanBuiltin::info( TypeAnnotation::Data{
+    { Type::BOOLEAN, { Type::BOOLEAN } }, { Type::BOOLEAN, { Type::INTEGER } },
+    { Type::BOOLEAN, { Type::FLOATING } }, { Type::BOOLEAN, { Type::BIT } },
+    { Type::BOOLEAN, { Type::ENUMERATION } } } );
 bool AsBooleanBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
@@ -105,11 +104,10 @@ AsIntegerBuiltin::AsIntegerBuiltin( Type* result )
 : CastingBuiltin( "asInteger", result, info, Value::AS_INTEGER_BUILTIN )
 {
 }
-const TypeAnnotation AsIntegerBuiltin::info(
-    { { Type::INTEGER, { Type::INTEGER } },
-        { Type::INTEGER, { Type::BOOLEAN } },
-        { Type::INTEGER, { Type::FLOATING } }, { Type::INTEGER, { Type::BIT } },
-        { Type::INTEGER, { Type::ENUMERATION } } } );
+const TypeAnnotation AsIntegerBuiltin::info( TypeAnnotation::Data{
+    { Type::INTEGER, { Type::INTEGER } }, { Type::INTEGER, { Type::BOOLEAN } },
+    { Type::INTEGER, { Type::FLOATING } }, { Type::INTEGER, { Type::BIT } },
+    { Type::INTEGER, { Type::ENUMERATION } } } );
 bool AsIntegerBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
@@ -124,7 +122,7 @@ AsBitBuiltin::AsBitBuiltin( Type* result )
 {
 }
 const TypeAnnotation AsBitBuiltin::info(
-    { { Type::BIT, { Type::BIT, Type::INTEGER } },
+    TypeAnnotation::Data{ { Type::BIT, { Type::BIT, Type::INTEGER } },
         { Type::BIT, { Type::INTEGER, Type::INTEGER } },
         { Type::BIT, { Type::BOOLEAN, Type::INTEGER } },
         { Type::BIT, { Type::FLOATING, Type::INTEGER } },
@@ -143,7 +141,7 @@ AsEnumerationBuiltin::AsEnumerationBuiltin( Type* result, const char* token )
 {
 }
 const TypeAnnotation AsEnumerationBuiltin::info(
-    { { Type::ENUMERATION, { Type::INTEGER } },
+    TypeAnnotation::Data{ { Type::ENUMERATION, { Type::INTEGER } },
         { Type::ENUMERATION, { Type::BIT } } } );
 bool AsEnumerationBuiltin::classof( Value const* obj )
 {
@@ -158,11 +156,11 @@ AsStringBuiltin::AsStringBuiltin( void )
 : CastingBuiltin( "asString", &StringType, info, Value::AS_STRING_BUILTIN )
 {
 }
-const TypeAnnotation AsStringBuiltin::info(
-    { { Type::STRING, { Type::STRING } }, { Type::STRING, { Type::INTEGER } },
-        { Type::STRING, { Type::BOOLEAN } },
-        { Type::STRING, { Type::FLOATING } }, { Type::STRING, { Type::BIT } },
-        { Type::STRING, { Type::ENUMERATION } } } );
+const TypeAnnotation AsStringBuiltin::info( TypeAnnotation::Data{
+    { Type::STRING, { Type::STRING } }, { Type::STRING, { Type::INTEGER } },
+    { Type::STRING, { Type::BOOLEAN } }, { Type::STRING, { Type::FLOATING } },
+    { Type::STRING, { Type::BIT } },
+    { Type::STRING, { Type::ENUMERATION } } } );
 bool AsStringBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
@@ -177,8 +175,8 @@ AsFloatingBuiltin::AsFloatingBuiltin( void )
       "asFloating", &FloatingType, info, Value::AS_FLOATING_BUILTIN )
 {
 }
-const TypeAnnotation AsFloatingBuiltin::info( { { Type::FLOATING,
-                                                    { Type::FLOATING } },
+const TypeAnnotation AsFloatingBuiltin::info( TypeAnnotation::Data{
+    { Type::FLOATING, { Type::FLOATING } },
     { Type::FLOATING, { Type::INTEGER } },
     { Type::FLOATING, { Type::BOOLEAN } }, { Type::FLOATING, { Type::BIT } },
     { Type::FLOATING, { Type::ENUMERATION } } } );

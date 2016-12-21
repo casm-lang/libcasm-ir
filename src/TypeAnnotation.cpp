@@ -32,24 +32,25 @@ TypeAnnotation::TypeAnnotation( const Data& info )
 
     type_set.push_back( Set() );
 
-    for( u32 i = 0; i < std::get< 1 >( info[ 0 ] ).size(); i++ )
+    for( u32 i = 0; i < info[ 0 ].argument.size(); i++ )
     {
         type_set.push_back( Set() );
     }
 
     for( auto relation : info )
     {
-        Type::ID rt = std::get< 0 >( relation );
+        Type::ID rt = relation.result;
 
         type_set[ 0 ].insert( rt );
 
         std::string key;
 
-        for( u32 i = 0; i < std::get< 1 >( relation ).size(); i++ )
+        for( u32 i = 0; i < relation.argument.size(); i++ )
         {
-            type_set[ ( i + 1 ) ].insert( std::get< 1 >( relation )[ i ] );
+            Type::ID at = relation.argument[ i ];
 
-            key += std::to_string( std::get< 1 >( relation )[ i ] ) + ";";
+            type_set[ ( i + 1 ) ].insert( at );
+            key += std::to_string( at ) + ";";
         }
 
         assert( relation_to_type.find( key ) == relation_to_type.end()

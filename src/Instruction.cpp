@@ -385,8 +385,8 @@ AddInstruction::AddInstruction( Value* lhs, Value* rhs )
 , BinaryInstruction( this )
 {
 }
-const TypeAnnotation AddInstruction::info(
-    { { Type::INTEGER, { Type::INTEGER, Type::INTEGER } } } );
+const TypeAnnotation AddInstruction::info( TypeAnnotation::Data{
+    { Type::INTEGER, { Type::INTEGER, Type::INTEGER } } } );
 bool AddInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
@@ -397,8 +397,8 @@ SubInstruction::SubInstruction( Value* lhs, Value* rhs )
 , BinaryInstruction( this )
 {
 }
-const TypeAnnotation SubInstruction::info(
-    { { Type::INTEGER, { Type::INTEGER, Type::INTEGER } } } );
+const TypeAnnotation SubInstruction::info( TypeAnnotation::Data{
+    { Type::INTEGER, { Type::INTEGER, Type::INTEGER } } } );
 bool SubInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
@@ -409,8 +409,8 @@ MulInstruction::MulInstruction( Value* lhs, Value* rhs )
 , BinaryInstruction( this )
 {
 }
-const TypeAnnotation MulInstruction::info(
-    { { Type::INTEGER, { Type::INTEGER, Type::INTEGER } } } );
+const TypeAnnotation MulInstruction::info( TypeAnnotation::Data{
+    { Type::INTEGER, { Type::INTEGER, Type::INTEGER } } } );
 bool MulInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
@@ -422,7 +422,7 @@ DivInstruction::DivInstruction( Value* lhs, Value* rhs )
 {
 }
 const TypeAnnotation DivInstruction::info(
-    { { Type::INTEGER, { Type::INTEGER, Type::INTEGER } },
+    TypeAnnotation::Data{ { Type::INTEGER, { Type::INTEGER, Type::INTEGER } },
         { Type::RATIONAL, { Type::RATIONAL, Type::RATIONAL } } } );
 bool DivInstruction::classof( Value const* obj )
 {
@@ -434,8 +434,8 @@ ModInstruction::ModInstruction( Value* lhs, Value* rhs )
 , BinaryInstruction( this )
 {
 }
-const TypeAnnotation ModInstruction::info(
-    { { Type::INTEGER, { Type::INTEGER, Type::INTEGER } } } );
+const TypeAnnotation ModInstruction::info( TypeAnnotation::Data{
+    { Type::INTEGER, { Type::INTEGER, Type::INTEGER } } } );
 bool ModInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
@@ -446,8 +446,8 @@ EquInstruction::EquInstruction( Value* lhs, Value* rhs )
 , BinaryInstruction( this )
 {
 }
-const TypeAnnotation EquInstruction::info(
-    { { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } } } );
+const TypeAnnotation EquInstruction::info( TypeAnnotation::Data{
+    { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } } } );
 bool EquInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
@@ -458,8 +458,8 @@ NeqInstruction::NeqInstruction( Value* lhs, Value* rhs )
 , BinaryInstruction( this )
 {
 }
-const TypeAnnotation NeqInstruction::info(
-    { { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } } } );
+const TypeAnnotation NeqInstruction::info( TypeAnnotation::Data{
+    { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } } } );
 bool NeqInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
@@ -470,8 +470,8 @@ LthInstruction::LthInstruction( Value* lhs, Value* rhs )
 , BinaryInstruction( this )
 {
 }
-const TypeAnnotation LthInstruction::info(
-    { { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } } } );
+const TypeAnnotation LthInstruction::info( TypeAnnotation::Data{
+    { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } } } );
 bool LthInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
@@ -482,8 +482,8 @@ LeqInstruction::LeqInstruction( Value* lhs, Value* rhs )
 , BinaryInstruction( this )
 {
 }
-const TypeAnnotation LeqInstruction::info(
-    { { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } } } );
+const TypeAnnotation LeqInstruction::info( TypeAnnotation::Data{
+    { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } } } );
 bool LeqInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
@@ -494,8 +494,8 @@ GthInstruction::GthInstruction( Value* lhs, Value* rhs )
 , BinaryInstruction( this )
 {
 }
-const TypeAnnotation GthInstruction::info(
-    { { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } } } );
+const TypeAnnotation GthInstruction::info( TypeAnnotation::Data{
+    { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } } } );
 bool GthInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
@@ -506,8 +506,8 @@ GeqInstruction::GeqInstruction( Value* lhs, Value* rhs )
 , BinaryInstruction( this )
 {
 }
-const TypeAnnotation GeqInstruction::info(
-    { { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } } } );
+const TypeAnnotation GeqInstruction::info( TypeAnnotation::Data{
+    { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } } } );
 bool GeqInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
@@ -518,8 +518,8 @@ OrInstruction::OrInstruction( Value* lhs, Value* rhs )
 , BinaryInstruction( this )
 {
 }
-const TypeAnnotation OrInstruction::info(
-    { { Type::BOOLEAN, { Type::BOOLEAN, Type::BOOLEAN } } } );
+const TypeAnnotation OrInstruction::info( TypeAnnotation::Data{
+    { Type::BOOLEAN, { Type::BOOLEAN, Type::BOOLEAN } } } );
 bool OrInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
@@ -530,8 +530,8 @@ XorInstruction::XorInstruction( Value* lhs, Value* rhs )
 , BinaryInstruction( this )
 {
 }
-const TypeAnnotation XorInstruction::info(
-    { { Type::BOOLEAN, { Type::BOOLEAN, Type::BOOLEAN } } } );
+const TypeAnnotation XorInstruction::info( TypeAnnotation::Data{
+    { Type::BOOLEAN, { Type::BOOLEAN, Type::BOOLEAN } } } );
 bool XorInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
@@ -542,8 +542,8 @@ AndInstruction::AndInstruction( Value* lhs, Value* rhs )
 , BinaryInstruction( this )
 {
 }
-const TypeAnnotation AndInstruction::info(
-    { { Type::BOOLEAN, { Type::BOOLEAN, Type::BOOLEAN } } } );
+const TypeAnnotation AndInstruction::info( TypeAnnotation::Data{
+    { Type::BOOLEAN, { Type::BOOLEAN, Type::BOOLEAN } } } );
 bool AndInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
@@ -569,7 +569,9 @@ NotInstruction::NotInstruction( Value* lhs )
     }
 }
 const TypeAnnotation NotInstruction::info(
-    { { Type::BOOLEAN, { Type::BOOLEAN } } } );
+    TypeAnnotation::Data{ { Type::BOOLEAN, {
+                                               Type::BOOLEAN,
+                                           } } } );
 bool NotInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
