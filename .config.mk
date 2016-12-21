@@ -35,6 +35,15 @@ ifdef CLANG
   CXX=clang++
 endif
 
+ifdef ENV_CC
+  CC=$(ENV_CC)
+endif
+
+ifdef ENV_CXX
+  CXX=$(ENV_CXX)
+endif
+
+
 default: debug
 
 help:
