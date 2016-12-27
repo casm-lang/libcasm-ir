@@ -65,7 +65,7 @@ void Constant< V >::setValue( V val )
 bool ConstantValue::classof( Value const* obj )
 {
     return obj->getValueID() == classid() or AgentConstant::classof( obj )
-           or RulePointerConstant::classof( obj )
+           or RuleReferenceConstant::classof( obj )
            or BooleanConstant::classof( obj ) or IntegerConstant::classof( obj )
            or BitConstant::classof( obj ) or StringConstant::classof( obj )
            or Identifier::classof( obj );
@@ -73,7 +73,7 @@ bool ConstantValue::classof( Value const* obj )
 
 AgentConstant::AgentConstant( Type::Agent value, u1 defined )
 : Constant< Type::Agent >(
-      ".agent", &AgentType, value, defined, Value::AGENT_CONSTANT )
+      ".agent", Type::getAgent(), value, defined, Value::AGENT_CONSTANT )
 {
 }
 
@@ -112,7 +112,7 @@ bool AgentConstant::classof( Value const* obj )
 
 BooleanConstant::BooleanConstant( Type::Boolean value, u1 defined )
 : Constant< Type::Boolean >(
-      ".boolean", &BooleanType, value, defined, Value::BOOLEAN_CONSTANT )
+      ".boolean", Type::getBoolean(), value, defined, Value::BOOLEAN_CONSTANT )
 {
 }
 
@@ -142,7 +142,7 @@ bool BooleanConstant::classof( Value const* obj )
 
 IntegerConstant::IntegerConstant( Type::Integer value, u1 defined )
 : Constant< Type::Integer >(
-      ".integer", &IntegerType, value, defined, Value::INTEGER_CONSTANT )
+      ".integer", Type::getInteger(), value, defined, Value::INTEGER_CONSTANT )
 {
 }
 
@@ -201,8 +201,7 @@ BitConstant* BitConstant::create( u64 value, u16 bitsize )
         return result->second;
     }
 
-    BitConstant* obj
-        = new BitConstant( new Type( Type::ID::BIT, bitsize ), value, true );
+    BitConstant* obj = new BitConstant( Type::getBit( bitsize ), value, true );
     cache[ bitsize ][ value ] = obj;
     return obj;
 }
@@ -210,7 +209,7 @@ BitConstant* BitConstant::create( u64 value, u16 bitsize )
 BitConstant* BitConstant::create( u16 bitsize )
 {
     static BitConstant* cache
-        = new BitConstant( new Type( Type::ID::BIT, bitsize ), 0, false );
+        = new BitConstant( Type::getBit( bitsize ), 0, false );
     return cache;
 }
 
@@ -226,7 +225,7 @@ bool BitConstant::classof( Value const* obj )
 
 StringConstant::StringConstant( Type::String value, u1 defined )
 : Constant< Type::String >(
-      ".string", &StringType, value, defined, Value::STRING_CONSTANT )
+      ".string", Type::getString(), value, defined, Value::STRING_CONSTANT )
 {
 }
 
@@ -268,16 +267,19 @@ bool StringConstant::classof( Value const* obj )
     return obj->getValueID() == classid();
 }
 
-RulePointerConstant::RulePointerConstant( Type::RulePointer value, u1 defined )
-: Constant< Type::RulePointer >( ".rulepointer", &RulePointerType, value,
-      defined, Value::RULE_POINTER_CONSTANT )
+RuleReferenceConstant::RuleReferenceConstant(
+    Type::RuleReference value, u1 defined )
+: Constant< Type::RuleReference >( ".rulereference", Type::getRuleReference(),
+      value, defined, Value::RULE_REFERENCE_CONSTANT )
 , resolve_identifier( 0 )
 {
 }
 
-RulePointerConstant* RulePointerConstant::create( Type::RulePointer value )
+RuleReferenceConstant* RuleReferenceConstant::create(
+    Type::RuleReference value )
 {
-    static std::unordered_map< Type::RulePointer, RulePointerConstant* > cache;
+    static std::unordered_map< Type::RuleReference, RuleReferenceConstant* >
+        cache;
 
     auto result = cache.find( value );
     if( result != cache.end() )
@@ -287,15 +289,15 @@ RulePointerConstant* RulePointerConstant::create( Type::RulePointer value )
         return result->second;
     }
 
-    RulePointerConstant* obj = new RulePointerConstant( value, true );
+    RuleReferenceConstant* obj = new RuleReferenceConstant( value, true );
     cache[ value ] = obj;
     return obj;
 }
 
 // use this ruleconstpointer for not finished resolved rule*'s
-RulePointerConstant* RulePointerConstant::create( const char* name )
+RuleReferenceConstant* RuleReferenceConstant::create( const char* name )
 {
-    static std::unordered_map< const char*, RulePointerConstant* > cache;
+    static std::unordered_map< const char*, RuleReferenceConstant* > cache;
 
     auto rsym = getSymbols().find( name );
     if( rsym != getSymbols().end() )
@@ -311,25 +313,25 @@ RulePointerConstant* RulePointerConstant::create( const char* name )
         return result->second;
     }
 
-    RulePointerConstant* obj = new RulePointerConstant( 0, true );
+    RuleReferenceConstant* obj = new RuleReferenceConstant( 0, true );
     assert( obj );
     obj->setResolveIdentifier( name );
     cache[ name ] = obj;
     return obj;
 }
 
-RulePointerConstant* RulePointerConstant::create( void )
+RuleReferenceConstant* RuleReferenceConstant::create( void )
 {
-    static RulePointerConstant* cache = new RulePointerConstant( 0, false );
+    static RuleReferenceConstant* cache = new RuleReferenceConstant( 0, false );
     return cache;
 }
 
-void RulePointerConstant::setResolveIdentifier( const char* name )
+void RuleReferenceConstant::setResolveIdentifier( const char* name )
 {
     resolve_identifier = name;
 }
 
-void RulePointerConstant::resolve( void )
+void RuleReferenceConstant::resolve( void )
 {
     if( !resolve_identifier )
     {
@@ -346,21 +348,21 @@ void RulePointerConstant::resolve( void )
     }
 }
 
-void RulePointerConstant::checking( void )
+void RuleReferenceConstant::checking( void )
 {
     for( auto value : getSymbols()[ ".rulepointer" ] )
     {
-        assert( Value::isa< RulePointerConstant >( value ) );
-        ( (libcasm_ir::RulePointerConstant*)value )->resolve();
+        assert( Value::isa< RuleReferenceConstant >( value ) );
+        ( (libcasm_ir::RuleReferenceConstant*)value )->resolve();
     }
 }
 
-void RulePointerConstant::dump( void ) const
+void RuleReferenceConstant::dump( void ) const
 {
     printf( "[Const] %p = rule %p\n", this, getValue() );
 }
 
-bool RulePointerConstant::classof( Value const* obj )
+bool RuleReferenceConstant::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }

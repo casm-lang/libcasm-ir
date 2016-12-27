@@ -63,7 +63,7 @@ namespace libcasm_ir
     class EquInstruction;
 
     class AgentConstant;
-    class RulePointerConstant;
+    class RuleReferenceConstant;
     class IntegerConstant;
     class StringConstant;
 
@@ -147,9 +147,9 @@ namespace libcasm_ir
     PREFIX void visit_prolog( libcasm_ir::StringConstant& value ) POSTFIX;     \
     PREFIX void visit_epilog( libcasm_ir::StringConstant& value ) POSTFIX;     \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::RulePointerConstant& value )         \
+    PREFIX void visit_prolog( libcasm_ir::RuleReferenceConstant& value )         \
         POSTFIX;                                                               \
-    PREFIX void visit_epilog( libcasm_ir::RulePointerConstant& value )         \
+    PREFIX void visit_epilog( libcasm_ir::RuleReferenceConstant& value )         \
         POSTFIX;                                                               \
                                                                                \
     PREFIX void visit_prolog( libcasm_ir::AgentConstant& value ) POSTFIX;      \

@@ -94,17 +94,17 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class RulePointerConstant : public Constant< Type::RulePointer >
+    class RuleReferenceConstant : public Constant< Type::RuleReference >
     {
       private:
         const char* resolve_identifier;
 
-        RulePointerConstant( Type::RulePointer value, u1 defined );
+        RuleReferenceConstant( Type::RuleReference value, u1 defined );
 
       public:
-        static RulePointerConstant* create( Type::RulePointer value );
-        static RulePointerConstant* create( const char* name );
-        static RulePointerConstant* create( void );
+        static RuleReferenceConstant* create( Type::RuleReference value );
+        static RuleReferenceConstant* create( const char* name );
+        static RuleReferenceConstant* create( void );
 
         void setResolveIdentifier( const char* name );
         void resolve( void );
@@ -115,7 +115,7 @@ namespace libcasm_ir
 
         static inline Value::ID classid( void )
         {
-            return Value::RULE_POINTER_CONSTANT;
+            return Value::RULE_REFERENCE_CONSTANT;
         };
         static bool classof( Value const* obj );
     };

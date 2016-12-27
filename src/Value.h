@@ -116,7 +116,7 @@ namespace libcasm_ir
             // , SELF_CONSTANT
             ,
             AGENT_CONSTANT,
-            RULE_POINTER_CONSTANT,
+            RULE_REFERENCE_CONSTANT,
             BOOLEAN_CONSTANT,
             INTEGER_CONSTANT,
             BIT_CONSTANT,

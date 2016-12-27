@@ -30,21 +30,21 @@
 
 namespace libcasm_ir
 {
-    class RulePointerConstant;
+    class RuleReferenceConstant;
 
     class Agent : public User
     {
       private:
-        RulePointerConstant* rule_ptr_init;
+        RuleReferenceConstant* rule_ptr_init;
 
       public:
         Agent( void );
 
         // ~Agent( void );
 
-        RulePointerConstant* getInitRulePointer( void ) const;
+        RuleReferenceConstant* getInitRuleReference( void ) const;
 
-        void setInitRulePointer( RulePointerConstant* init );
+        void setInitRuleReference( RuleReferenceConstant* init );
 
         void dump( void ) const;
 

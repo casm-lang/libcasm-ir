@@ -36,12 +36,12 @@ Agent::Agent()
 //     // getSymbols()[ ".agent" ].erase( this );
 // }
 
-RulePointerConstant* Agent::getInitRulePointer( void ) const
+RuleReferenceConstant* Agent::getInitRuleReference( void ) const
 {
     return rule_ptr_init;
 }
 
-void Agent::setInitRulePointer( RulePointerConstant* init )
+void Agent::setInitRuleReference( RuleReferenceConstant* init )
 {
     assert( init );
     rule_ptr_init = init;

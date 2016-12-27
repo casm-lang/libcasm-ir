@@ -186,9 +186,8 @@ LookupInstruction::LookupInstruction( Value* location )
 : Instruction( ".lookup", 0, { location }, Value::LOOKUP_INSTRUCTION )
 , UnaryInstruction( this )
 {
-
     assert( location->getType() );
-    setType( location->getType()->getResultType() );
+    setType( location->getType()->getResult() );
 }
 
 bool LookupInstruction::classof( Value const* obj )
@@ -241,7 +240,7 @@ CallInstruction::CallInstruction( Value* symbol )
     if( Value::isa< Builtin >( symbol ) or Value::isa< Derived >( symbol ) )
     {
         assert( symbol->getType() );
-        setType( symbol->getType()->getResultType() );
+        setType( symbol->getType()->getResult() );
     }
 }
 
@@ -251,7 +250,7 @@ bool CallInstruction::classof( Value const* obj )
 }
 
 PrintInstruction::PrintInstruction( Value* channel )
-: Instruction( ".print", &StringType, {}, Value::PRINT_INSTRUCTION )
+: Instruction( ".print", Type::getString(), {}, Value::PRINT_INSTRUCTION )
 {
     if( channel )
     {
@@ -269,7 +268,7 @@ AssertInstruction::AssertInstruction( Value* condition )
 , UnaryInstruction( this )
 {
     assert( condition->getType() );
-    setType( condition->getType()->getResultType() );
+    setType( condition->getType()->getResult() );
 }
 
 bool AssertInstruction::classof( Value const* obj )
@@ -281,7 +280,7 @@ SwitchInstruction::SwitchInstruction( Value* expression )
 : Instruction( ".switch", 0, { expression }, Value::SWITCH_INSTRUCTION )
 {
     assert( expression->getType() );
-    setType( expression->getType()->getResultType() );
+    setType( expression->getType()->getResult() );
 }
 
 bool SwitchInstruction::classof( Value const* obj )
@@ -324,11 +323,11 @@ ArithmeticInstruction::ArithmeticInstruction( const char* name, Type* type,
 {
     assert( getValues().size() == 2 );
 
-    Type* lhs_ty = getValue( 0 )->getType()->getResultType();
-    Type* rhs_ty = getValue( 1 )->getType()->getResultType();
+    Type* lhs_ty = getValue( 0 )->getType();
+    Type* rhs_ty = getValue( 1 )->getType();
 
     assert( lhs_ty->getID() == rhs_ty->getID()
-            and lhs_ty->getIDKind() == getResolved() );
+            and lhs_ty->getID() == getResolved() );
 
     setType( lhs_ty );
 }
@@ -342,7 +341,7 @@ bool ArithmeticInstruction::classof( Value const* obj )
 
 CompareInstruction::CompareInstruction( const char* name,
     std::vector< Value* > values, const TypeAnnotation& info, Value::ID id )
-: OperatorInstruction( name, &BooleanType, values, info, id )
+    : OperatorInstruction( name, Type::getBoolean(), values, info, id )
 {
 }
 
@@ -360,16 +359,16 @@ LogicalInstruction::LogicalInstruction( const char* name, Type* type,
 {
     assert( getValues().size() <= 2 );
 
-    Type* lhs_ty = getValue( 0 )->getType()->getResultType();
+    Type* lhs_ty = getValue( 0 )->getType();
 
     if( getValues().size() > 1 )
     {
-        Type* rhs_ty = getValue( 1 )->getType()->getResultType();
+        Type* rhs_ty = getValue( 1 )->getType();
 
         assert( lhs_ty->getID() == rhs_ty->getID() );
     }
 
-    assert( lhs_ty->getIDKind() == getResolved() );
+    assert( lhs_ty->getID() == getResolved() );
     setType( lhs_ty );
 }
 
@@ -555,11 +554,9 @@ NotInstruction::NotInstruction( Value* lhs )
 {
     Type* ty = get()->getType();
     assert( get()->getType() );
-
-    ty = ty->getResultType();
-
-    if( ty->getIDKind() == Type::ID::BOOLEAN
-        or ty->getIDKind() == Type::ID::BIT )
+    
+    if( ty->getID() == Type::ID::BOOLEAN
+        or ty->getID() == Type::ID::BIT )
     {
         setType( ty );
     }

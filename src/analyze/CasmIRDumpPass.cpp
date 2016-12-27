@@ -283,12 +283,12 @@ void CasmIRDumpPass::visit_epilog( StringConstant& value )
 {
 }
 
-void CasmIRDumpPass::visit_prolog( RulePointerConstant& value )
+void CasmIRDumpPass::visit_prolog( RuleReferenceConstant& value )
 {
     DUMP_PREFIX;
     DUMP_POSTFIX;
 }
-void CasmIRDumpPass::visit_epilog( RulePointerConstant& value )
+void CasmIRDumpPass::visit_epilog( RuleReferenceConstant& value )
 {
 }
 

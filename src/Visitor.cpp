@@ -82,7 +82,7 @@ void Visitor::dispatch( Stage stage, Value* value )
 
         CASE_VALUE( INTEGER_CONSTANT, IntegerConstant );
         CASE_VALUE( STRING_CONSTANT, StringConstant );
-        CASE_VALUE( RULE_POINTER_CONSTANT, RulePointerConstant );
+        CASE_VALUE( RULE_REFERENCE_CONSTANT, RuleReferenceConstant );
         CASE_VALUE( AGENT_CONSTANT, AgentConstant );
 
         default:
