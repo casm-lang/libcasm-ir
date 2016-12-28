@@ -341,7 +341,7 @@ bool ArithmeticInstruction::classof( Value const* obj )
 
 CompareInstruction::CompareInstruction( const char* name,
     std::vector< Value* > values, const TypeAnnotation& info, Value::ID id )
-    : OperatorInstruction( name, Type::getBoolean(), values, info, id )
+: OperatorInstruction( name, Type::getBoolean(), values, info, id )
 {
 }
 
@@ -554,9 +554,8 @@ NotInstruction::NotInstruction( Value* lhs )
 {
     Type* ty = get()->getType();
     assert( get()->getType() );
-    
-    if( ty->getID() == Type::ID::BOOLEAN
-        or ty->getID() == Type::ID::BIT )
+
+    if( ty->getID() == Type::ID::BOOLEAN or ty->getID() == Type::ID::BIT )
     {
         setType( ty );
     }

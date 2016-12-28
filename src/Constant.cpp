@@ -302,7 +302,17 @@ RuleReferenceConstant* RuleReferenceConstant::create( const char* name )
     auto rsym = getSymbols().find( name );
     if( rsym != getSymbols().end() )
     {
-        return create( ( (Rule*)( *rsym->second.begin() ) ) );
+        Rule* rv = 0;
+        for( auto r : rsym->second )
+        {
+            assert( not rv );
+            if( Value::isa< Rule >( r ) )
+            {
+                rv = static_cast< Rule* >( rv );
+            }
+        }
+
+        return create( rv );
     }
 
     auto result = cache.find( name );

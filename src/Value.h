@@ -191,7 +191,7 @@ namespace libcasm_ir
         Value( const char* name, Type* type, ID id );
 
         virtual ~Value();
-        
+
         const char* getName( void ) const;
 
         Type* getType( void ) const;

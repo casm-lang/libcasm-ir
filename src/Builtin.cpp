@@ -26,7 +26,7 @@
 using namespace libcasm_ir;
 
 static Builtin pre_defined[]
-= { AsBooleanBuiltin(), AsIntegerBuiltin( Type::getInteger() )
+    = { AsBooleanBuiltin(), AsIntegerBuiltin( Type::getInteger() )
         //, AsIntegerBuiltin( ... ) // ranged Integer is dynamically created!
         //, AsBitBuiltin() // is dynamically created!
         //, AsEnumerationBuiltin() // is dynamically created!
@@ -84,7 +84,8 @@ bool CastingBuiltin::classof( Value const* obj )
 //
 
 AsBooleanBuiltin::AsBooleanBuiltin( void )
-    : CastingBuiltin( "asBoolean", Type::getBoolean(), info, Value::AS_BOOLEAN_BUILTIN )
+: CastingBuiltin(
+      "asBoolean", Type::getBoolean(), info, Value::AS_BOOLEAN_BUILTIN )
 {
 }
 const TypeAnnotation AsBooleanBuiltin::info( TypeAnnotation::Data{
@@ -153,7 +154,8 @@ bool AsEnumerationBuiltin::classof( Value const* obj )
 //
 
 AsStringBuiltin::AsStringBuiltin( void )
-    : CastingBuiltin( "asString", Type::getString(), info, Value::AS_STRING_BUILTIN )
+: CastingBuiltin(
+      "asString", Type::getString(), info, Value::AS_STRING_BUILTIN )
 {
 }
 const TypeAnnotation AsStringBuiltin::info( TypeAnnotation::Data{
@@ -172,7 +174,7 @@ bool AsStringBuiltin::classof( Value const* obj )
 
 AsFloatingBuiltin::AsFloatingBuiltin( void )
 : CastingBuiltin(
-    "asFloating", Type::getFloating(), info, Value::AS_FLOATING_BUILTIN )
+      "asFloating", Type::getFloating(), info, Value::AS_FLOATING_BUILTIN )
 {
 }
 const TypeAnnotation AsFloatingBuiltin::info( TypeAnnotation::Data{

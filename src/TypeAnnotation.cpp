@@ -49,7 +49,7 @@ TypeAnnotation::TypeAnnotation( const Data& info )
         {
             Type::ID at = relation.argument[ i ];
             assert( at != libcasm_ir::Type::RELATION );
-            
+
             type_set[ ( i + 1 ) ].insert( at );
             key += std::to_string( at ) + ";";
         }
@@ -81,10 +81,10 @@ Type::ID TypeAnnotation::getResultTypeForRelation(
     {
         libcasm_ir::Type::ID at = arg->getResult()->getID();
         assert( at != libcasm_ir::Type::RELATION );
-        
+
         key += std::to_string( at ) + ";";
     }
-    
+
     auto result = relation_to_type.find( key );
     if( result != relation_to_type.end() )
     {

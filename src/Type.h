@@ -90,21 +90,11 @@ namespace libcasm_ir
 
       public:
         Type( const char* name, ID id );
-        //, i16 bitsize = -1, STATE state = STATE::UNCHANGED );
         ~Type() = default;
 
-        // const ID getIDKind( void ) const;
         const ID getID( void ) const;
 
         virtual const char* getName( void ) = 0;
-
-        // const i16 getBitsize( void );
-
-        // const std::vector< Type* >& getParameters( void ) const;
-        // const std::vector< Type* >& getSubTypes( void ) const;
-
-        // void addParameter( Type* parameter );
-        // void addSubType( Type* subtype );
 
         Type* getResult( void ) const;
 
@@ -125,14 +115,6 @@ namespace libcasm_ir
       private:
         void setID( ID id );
     };
-
-    // static Type AgentType = Type( Type::AGENT, Type::STATE::LOCKED );
-    // static Type RuleReferenceType
-    //     = Type( Type::RULE_POINTER, Type::STATE::LOCKED );
-    // static Type BooleanType = Type( Type::BOOLEAN, Type::STATE::LOCKED );
-    // static Type IntegerType = Type( Type::INTEGER, Type::STATE::LOCKED );
-    // static Type StringType = Type( Type::STRING, Type::STATE::LOCKED );
-    // static Type FloatingType = Type( Type::FLOATING, Type::STATE::LOCKED );
 
     class PrimitiveType : public Type
     {

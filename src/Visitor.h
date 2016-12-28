@@ -147,9 +147,9 @@ namespace libcasm_ir
     PREFIX void visit_prolog( libcasm_ir::StringConstant& value ) POSTFIX;     \
     PREFIX void visit_epilog( libcasm_ir::StringConstant& value ) POSTFIX;     \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::RuleReferenceConstant& value )         \
+    PREFIX void visit_prolog( libcasm_ir::RuleReferenceConstant& value )       \
         POSTFIX;                                                               \
-    PREFIX void visit_epilog( libcasm_ir::RuleReferenceConstant& value )         \
+    PREFIX void visit_epilog( libcasm_ir::RuleReferenceConstant& value )       \
         POSTFIX;                                                               \
                                                                                \
     PREFIX void visit_prolog( libcasm_ir::AgentConstant& value ) POSTFIX;      \
