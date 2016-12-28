@@ -137,7 +137,7 @@ namespace libcasm_ir
     class PrimitiveType : public Type
     {
       public:
-        PrimitiveType( const char* name, ID id );
+        PrimitiveType( const char* name, Type::ID id );
 
         const char* getName( void ) override final;
     };

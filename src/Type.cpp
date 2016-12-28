@@ -303,7 +303,7 @@ Type* Type::getEnumeration( const char* name )
 Type* Type::getRelation( Type* result, std::vector< Type* > arguments )
 {
     RelationType tmp( result, arguments );
-
+    
     auto cache = id2str().find( tmp.getName() );
     if( cache != id2str().end() )
     {
@@ -315,7 +315,7 @@ Type* Type::getRelation( Type* result, std::vector< Type* > arguments )
     return ptr;
 }
 
-PrimitiveType::PrimitiveType( const char* name, ID id )
+PrimitiveType::PrimitiveType( const char* name, Type::ID id )
 : Type( name, id )
 {
 }
@@ -326,22 +326,22 @@ const char* PrimitiveType::getName( void )
 }
 
 AgentType::AgentType()
-: PrimitiveType( "Agent", AGENT )
+    : PrimitiveType( "Agent", Type::AGENT )
 {
 }
 
 RuleReferenceType::RuleReferenceType()
-: PrimitiveType( "RuleRef", RULE_REFERENCE )
+    : PrimitiveType( "RuleRef", Type::RULE_REFERENCE )
 {
 }
 
 BooleanType::BooleanType()
-: PrimitiveType( "Boolean", BOOLEAN )
+    : PrimitiveType( "Boolean", Type::BOOLEAN )
 {
 }
 
 IntegerType::IntegerType()
-: PrimitiveType( "Integer", INTEGER )
+    : PrimitiveType( "Integer", Type::INTEGER )
 
 {
 }
@@ -354,27 +354,27 @@ BitType::BitType( u8 size )
 }
 
 StringType::StringType()
-: PrimitiveType( "String", STRING )
+    : PrimitiveType( "String", Type::STRING )
 {
 }
 
 FloatingType::FloatingType()
-: PrimitiveType( "Floating", FLOATING )
+    : PrimitiveType( "Floating", Type::FLOATING )
 {
 }
 
 RationalType::RationalType()
-: PrimitiveType( "Rational", RATIONAL )
+    : PrimitiveType( "Rational", Type::RATIONAL )
 {
 }
 
 EnumerationType::EnumerationType( const char* name )
-: PrimitiveType( name, ENUMERATION )
+    : PrimitiveType( name, Type::ENUMERATION )
 {
 }
 
 RelationType::RelationType( Type* result, std::vector< Type* > arguments )
-: Type( " -> ", RELATION )
+    : Type( 0, Type::RELATION )
 , result( result )
 , arguments( arguments )
 {
@@ -383,8 +383,7 @@ RelationType::RelationType( Type* result, std::vector< Type* > arguments )
 
 const char* RelationType::getName( void )
 {
-    static const char* cache = 0;
-    if( not cache )
+    if( not name )
     {
         u1 first = true;
         std::string tmp;
@@ -398,13 +397,13 @@ const char* RelationType::getName( void )
             first = true;
         }
 
-        tmp += name;
+        tmp += " -> ";
         tmp += result->getName();
 
-        cache = libstdhl::Allocator::string( tmp );
+        name = libstdhl::Allocator::string( tmp );
     }
 
-    return cache;
+    return name;
 }
 
 const Type* RelationType::getResult( void ) const
