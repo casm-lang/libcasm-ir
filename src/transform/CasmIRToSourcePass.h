@@ -21,47 +21,30 @@
 //  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef _LIB_CASMIR_RULE_H_
-#define _LIB_CASMIR_RULE_H_
+#ifndef _LIB_CASMIR_CASM_IR_TO_SOURCE_PASS_H_
+#define _LIB_CASMIR_CASM_IR_TO_SOURCE_PASS_H_
 
-#include "User.h"
+#include "libcasm-ir.all.h"
+#include "libpass.h"
+
+/**
+   @brief    TODO
+
+   TODO
+*/
 
 namespace libcasm_ir
 {
-    class Identifier;
-    class ParallelBlock;
-
-    class Rule : public User
+    class CasmIRToSourcePass : public libpass::Pass
     {
-      private:
-        Identifier* ident;
-        ParallelBlock* context;
-        std::vector< Value* > parameter;
-
       public:
-        Rule( const char* name, Type* result );
+        static char id;
 
-        ~Rule( void );
-
-        ParallelBlock* getContext( void ) const;
-
-        void setContext( ParallelBlock* scope );
-
-        void addParameter( Value* value );
-
-        const std::vector< Value* >& getParameters( void ) const;
-
-        void dump( void ) const;
-
-        static inline Value::ID classid( void )
-        {
-            return Value::RULE;
-        };
-        static bool classof( Value const* obj );
+        bool run( libpass::PassResult& pr ) override final;
     };
 }
 
-#endif /* _LIB_CASMIR_RULE_H_ */
+#endif /* _LIB_CASMIR_CASM_IR_TO_SOURCE_PASS_H_ */
 
 //
 //  Local variables:

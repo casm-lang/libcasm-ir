@@ -233,10 +233,26 @@ void Value::iterate(
     }
     else if( Value::isa< ExecutionSemanticsBlock >( this ) )
     {
-        for( Value* block : ( (ExecutionSemanticsBlock*)this )->getBlocks() )
+        ExecutionSemanticsBlock* val
+            = static_cast< ExecutionSemanticsBlock* >( this );
+
+        Block* entry = val->getEntryBlock();
+        Block* exit = val->getExitBlock();
+
+        if( entry )
+        {
+            entry->iterate( order, visitor, action );
+        }
+
+        for( Value* block : val->getBlocks() )
         {
             assert( block );
             block->iterate( order, visitor, action );
+        }
+
+        if( exit )
+        {
+            exit->iterate( order, visitor, action );
         }
     }
     else if( Value::isa< Statement >( this ) )

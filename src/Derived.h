@@ -24,13 +24,12 @@
 #ifndef _LIB_CASMIR_DERIVED_H_
 #define _LIB_CASMIR_DERIVED_H_
 
-#include "Constant.h"
-#include "Statement.h"
 #include "User.h"
 
 namespace libcasm_ir
 {
     class Identifier;
+    class TrivialStatement;
 
     class Derived : public User
     {

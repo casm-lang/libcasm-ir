@@ -33,13 +33,6 @@ Statement::Statement(
 : Block( name, type, id )
 , scope( scope )
 {
-    // assert( scope );
-    if( !scope )
-        return;
-
-    scope->add( this );
-
-    // printf( "[Statement] '%s' at %lu\n", name, scope->getPseudoState() );
 }
 
 ExecutionSemanticsBlock* Statement::getScope( void ) const
@@ -55,16 +48,17 @@ const std::vector< Value* >& Statement::getInstructions( void ) const
 void Statement::add( Value* instruction )
 {
     // printf( "%s: %p\n", __FUNCTION__, instruction );
-    assert( instruction );
+    assert( instruction and Value::isa< Instruction >( instruction ) );
 
-    if( Value::isa< ConstantValue >( instruction ) )
-    {
-        // printf( "%s: %p --> Constant, omitted\n", __FUNCTION__, instruction
-        // );
-        return;
-    }
+    // if( Value::isa< ConstantValue >( instruction ) )
+    // {
+    //     // printf( "%s: %p --> Constant, omitted\n", __FUNCTION__,
+    //     instruction
+    //     // );
+    //     return;
+    // }
 
-    if( Value::isa< Instruction >( instruction ) )
+    // if( Value::isa< Instruction >( instruction ) )
     {
         // printf( "%s: %p --> Instruction\n", __FUNCTION__, instruction );
         static_cast< Instruction* >( instruction )->setStatement( this );

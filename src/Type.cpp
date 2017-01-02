@@ -25,8 +25,9 @@
 
 using namespace libcasm_ir;
 
-Type::Type( const char* name, Type::ID id )
+Type::Type( const char* name, const char* description, Type::ID id )
 : name( name )
+, description( description )
 , id( id )
 {
 }
@@ -124,8 +125,9 @@ Type* Type::getRelation( Type* result, std::vector< Type* > arguments )
     return ptr;
 }
 
-PrimitiveType::PrimitiveType( const char* name, Type::ID id )
-: Type( name, id )
+PrimitiveType::PrimitiveType(
+    const char* name, const char* description, Type::ID id )
+: Type( name, description, id )
 {
 }
 
@@ -134,57 +136,62 @@ const char* PrimitiveType::getName( void )
     return name;
 }
 
+const char* PrimitiveType::getDescription( void )
+{
+    return description;
+}
+
 AgentType::AgentType()
-: PrimitiveType( "Agent", Type::AGENT )
+: PrimitiveType( "a", "Agent", Type::AGENT )
 {
 }
 
 RuleReferenceType::RuleReferenceType()
-: PrimitiveType( "RuleRef", Type::RULE_REFERENCE )
+: PrimitiveType( "r", "RuleRef", Type::RULE_REFERENCE )
 {
 }
 
 BooleanType::BooleanType()
-: PrimitiveType( "Boolean", Type::BOOLEAN )
+: PrimitiveType( "b", "Boolean", Type::BOOLEAN )
 {
 }
 
 IntegerType::IntegerType()
-: PrimitiveType( "Integer", Type::INTEGER )
+: PrimitiveType( "i", "Integer", Type::INTEGER )
 
 {
 }
 
 BitType::BitType( u8 size )
-: PrimitiveType(
+: PrimitiveType( libstdhl::Allocator::string( "u" + std::to_string( size ) ),
       libstdhl::Allocator::string( "Bit(" + std::to_string( size ) + ")" ),
-      BIT )
+      Type::BIT )
 , size( size )
 {
 }
 
 StringType::StringType()
-: PrimitiveType( "String", Type::STRING )
+: PrimitiveType( "s", "String", Type::STRING )
 {
 }
 
 FloatingType::FloatingType()
-: PrimitiveType( "Floating", Type::FLOATING )
+: PrimitiveType( "f", "Floating", Type::FLOATING )
 {
 }
 
 RationalType::RationalType()
-: PrimitiveType( "Rational", Type::RATIONAL )
+: PrimitiveType( "q", "Rational", Type::RATIONAL )
 {
 }
 
 EnumerationType::EnumerationType( const char* name )
-: PrimitiveType( name, Type::ENUMERATION )
+: PrimitiveType( name, name, Type::ENUMERATION )
 {
 }
 
 RelationType::RelationType( Type* result, std::vector< Type* > arguments )
-: Type( 0, Type::RELATION )
+: Type( 0, 0, Type::RELATION )
 , result( result )
 , arguments( arguments )
 {
@@ -196,12 +203,12 @@ const char* RelationType::getName( void )
     if( not name )
     {
         u1 first = true;
-        std::string tmp;
+        std::string tmp = "(";
         for( auto argument : arguments )
         {
             if( not first )
             {
-                tmp += " x ";
+                tmp += ", ";
             }
             tmp += argument->getName();
             first = true;
@@ -209,11 +216,38 @@ const char* RelationType::getName( void )
 
         tmp += " -> ";
         tmp += result->getName();
+        tmp += ")";
 
         name = libstdhl::Allocator::string( tmp );
     }
 
     return name;
+}
+
+const char* RelationType::getDescription( void )
+{
+    if( not description )
+    {
+        u1 first = true;
+        std::string tmp = "(";
+        for( auto argument : arguments )
+        {
+            if( not first )
+            {
+                tmp += " x ";
+            }
+            tmp += argument->getDescription();
+            first = true;
+        }
+
+        tmp += " -> ";
+        tmp += result->getDescription();
+        tmp += ")";
+
+        description = libstdhl::Allocator::string( tmp );
+    }
+
+    return description;
 }
 
 const Type* RelationType::getResult( void ) const

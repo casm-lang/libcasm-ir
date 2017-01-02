@@ -22,6 +22,7 @@
 //
 
 #include "Block.h"
+#include "Instruction.h"
 #include "Statement.h"
 
 using namespace libcasm_ir;
@@ -62,8 +63,34 @@ ExecutionSemanticsBlock::ExecutionSemanticsBlock( const char* name, Type* type,
 , is_parallel( is_parallel )
 , pseudo_state( 0 )
 , scope( scope )
+, entry( 0 )
+, exit( 0 )
 {
     setScope( scope );
+
+    TrivialStatement* tmp = new TrivialStatement( this );
+    tmp->add( new ForkInstruction() );
+    entry = tmp;
+
+    tmp = new TrivialStatement( this );
+    tmp->add( new MergeInstruction() );
+    exit = tmp;
+}
+
+ExecutionSemanticsBlock::~ExecutionSemanticsBlock( void )
+{
+    delete entry;
+    delete exit;
+}
+
+Block* ExecutionSemanticsBlock::getEntryBlock( void ) const
+{
+    return entry;
+}
+
+Block* ExecutionSemanticsBlock::getExitBlock( void ) const
+{
+    return exit;
 }
 
 const u1 ExecutionSemanticsBlock::isParallel( void ) const

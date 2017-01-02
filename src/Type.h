@@ -70,6 +70,7 @@ namespace libcasm_ir
 
       protected:
         const char* name;
+        const char* description;
 
       private:
         ID id;
@@ -89,12 +90,13 @@ namespace libcasm_ir
         }
 
       public:
-        Type( const char* name, ID id );
+        Type( const char* name, const char* description, ID id );
         ~Type() = default;
 
         const ID getID( void ) const;
 
         virtual const char* getName( void ) = 0;
+        virtual const char* getDescription( void ) = 0;
 
         Type* getResult( void ) const;
 
@@ -119,9 +121,10 @@ namespace libcasm_ir
     class PrimitiveType : public Type
     {
       public:
-        PrimitiveType( const char* name, Type::ID id );
+        PrimitiveType( const char* name, const char* description, Type::ID id );
 
         const char* getName( void ) override final;
+        const char* getDescription( void ) override final;
     };
 
     class AgentType : public PrimitiveType
@@ -193,6 +196,8 @@ namespace libcasm_ir
         RelationType( Type* result, std::vector< Type* > arguments );
 
         const char* getName( void ) override final;
+        const char* getDescription( void ) override final;
+
         const Type* getResult( void ) const;
         const std::vector< Type* >& getArguments( void ) const;
     };

@@ -23,17 +23,24 @@
 
 #include "Rule.h"
 
+#include "Block.h"
+#include "Constant.h"
+
 using namespace libcasm_ir;
 
-Rule::Rule( const char* name )
-: User( name, 0, Value::RULE )
+Rule::Rule( const char* name, Type* result )
+: User( name, result, Value::RULE )
 {
+    ident = Identifier::create( result, name );
+
     getSymbols()[ ".rule" ].insert( this );
+    getSymbols()[ ".identifier" ].insert( this );
 }
 
 Rule::~Rule( void )
 {
     getSymbols()[ ".rule" ].erase( this );
+    getSymbols()[ ".identifier" ].insert( this );
 }
 
 ParallelBlock* Rule::getContext( void ) const
@@ -45,6 +52,19 @@ void Rule::setContext( ParallelBlock* scope )
 {
     assert( scope );
     context = scope;
+}
+
+void Rule::addParameter( Value* value )
+{
+    assert( Value::isa< Identifier >( value )
+            and "parameter must be an identifier" );
+
+    parameter.push_back( value );
+}
+
+const std::vector< Value* >& Rule::getParameters( void ) const
+{
+    return parameter;
 }
 
 void Rule::dump( void ) const

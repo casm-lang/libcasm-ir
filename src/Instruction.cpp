@@ -116,6 +116,8 @@ void Instruction::dump( void ) const
 bool Instruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid() or SkipInstruction::classof( obj )
+           or ForkInstruction::classof( obj )
+           or MergeInstruction::classof( obj )
            or LookupInstruction::classof( obj )
            or UpdateInstruction::classof( obj )
            or LocalInstruction::classof( obj )
@@ -139,7 +141,9 @@ Value* UnaryInstruction::get( void ) const
 
 bool UnaryInstruction::classof( Value const* obj )
 {
-    return obj->getValueID() == classid() or LookupInstruction::classof( obj )
+    return obj->getValueID() == classid() or ForkInstruction::classof( obj )
+           or MergeInstruction::classof( obj )
+           or LookupInstruction::classof( obj )
            or AssertInstruction::classof( obj )
            or NotInstruction::classof( obj );
 }
@@ -178,6 +182,26 @@ SkipInstruction::SkipInstruction( void )
 }
 
 bool SkipInstruction::classof( Value const* obj )
+{
+    return obj->getValueID() == classid();
+}
+
+ForkInstruction::ForkInstruction( void )
+: Instruction( ".fork", 0, {}, Value::FORK_INSTRUCTION )
+{
+}
+
+bool ForkInstruction::classof( Value const* obj )
+{
+    return obj->getValueID() == classid();
+}
+
+MergeInstruction::MergeInstruction( void )
+: Instruction( ".merge", 0, {}, Value::MERGE_INSTRUCTION )
+{
+}
+
+bool MergeInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }

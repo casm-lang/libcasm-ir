@@ -26,7 +26,7 @@
 using namespace libcasm_ir;
 
 Agent::Agent()
-: User( ".agent", 0, Value::AGENT )
+: User( ".agent", Type::getAgent(), Value::AGENT )
 {
     // getSymbols()[ ".agent" ].insert( this );
 }

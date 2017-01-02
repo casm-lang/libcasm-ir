@@ -27,14 +27,6 @@
 #include "CasmIR.h"
 #include "Type.h"
 
-//#include "Instruction.h"
-// #include "Scope.h"
-// #include "Module.h"
-// #include "Component.h"
-// #include "Function.h"
-// #include "Reference.h"
-// #include "Memory.h"
-
 namespace libcasm_ir
 {
     class Value;
@@ -50,6 +42,11 @@ namespace libcasm_ir
     class BranchStatement;
 
     class LocalInstruction;
+
+    class SkipInstruction;
+
+    class ForkInstruction;
+    class MergeInstruction;
 
     class LocationInstruction;
     class LookupInstruction;
@@ -119,6 +116,15 @@ namespace libcasm_ir
         POSTFIX;                                                               \
     PREFIX void visit_epilog( libcasm_ir::LocationInstruction& value )         \
         POSTFIX;                                                               \
+                                                                               \
+    PREFIX void visit_prolog( libcasm_ir::SkipInstruction& value ) POSTFIX;    \
+    PREFIX void visit_epilog( libcasm_ir::SkipInstruction& value ) POSTFIX;    \
+                                                                               \
+    PREFIX void visit_prolog( libcasm_ir::ForkInstruction& value ) POSTFIX;    \
+    PREFIX void visit_epilog( libcasm_ir::ForkInstruction& value ) POSTFIX;    \
+                                                                               \
+    PREFIX void visit_prolog( libcasm_ir::MergeInstruction& value ) POSTFIX;   \
+    PREFIX void visit_epilog( libcasm_ir::MergeInstruction& value ) POSTFIX;   \
                                                                                \
     PREFIX void visit_prolog( libcasm_ir::LookupInstruction& value ) POSTFIX;  \
     PREFIX void visit_epilog( libcasm_ir::LookupInstruction& value ) POSTFIX;  \

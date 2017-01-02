@@ -68,6 +68,10 @@ void Visitor::dispatch( Stage stage, Value* value )
 
         CASE_VALUE( LOCAL_INSTRUCTION, LocalInstruction );
 
+        CASE_VALUE( SKIP_INSTRUCTION, SkipInstruction );
+        CASE_VALUE( FORK_INSTRUCTION, ForkInstruction );
+        CASE_VALUE( MERGE_INSTRUCTION, MergeInstruction );
+
         CASE_VALUE( LOCATION_INSTRUCTION, LocationInstruction );
         CASE_VALUE( LOOKUP_INSTRUCTION, LookupInstruction );
         CASE_VALUE( UPDATE_INSTRUCTION, UpdateInstruction );

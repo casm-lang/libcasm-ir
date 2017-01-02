@@ -23,6 +23,9 @@
 
 #include "Derived.h"
 
+#include "Constant.h"
+#include "Statement.h"
+
 using namespace libcasm_ir;
 
 Derived::Derived( const char* name, Type* result )

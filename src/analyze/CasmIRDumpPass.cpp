@@ -29,23 +29,11 @@ using namespace libcasm_ir;
 char CasmIRDumpPass::id = 0;
 
 static libpass::PassRegistration< CasmIRDumpPass > PASS( "CASM IR Dumping Pass",
-    "generates a ASCII representation of the CASM IR", "ir-dump", 0 );
+    "outputs from the CASM IR an ASCII representation for debugging",
+    "ir-dump-debug", 0 );
 
 bool CasmIRDumpPass::run( libpass::PassResult& pr )
 {
-    // CasmIRNode* node = (CasmIRNode*)pr.getResult< TypeCheckPass >();
-
-    // CasmIRWalker< CasmIRDumpVisitor, bool > dump_walker( *this );
-
-    // dump_walker.suppress_calls = true;
-    // dump_walker.walk_specification( node );
-
-    // // std::cout << this->get_dump() << std::endl;
-
-    // std::ofstream dotfile( "./obj/out.dot" );
-    // dotfile << this->get_dump() << "\n";
-    // dotfile.close();
-
     Specification* value = (Specification*)pr.getResult< CasmIRDumpPass >();
     assert( value );
 
@@ -94,7 +82,7 @@ static const char* indention( Value& value )
 #define DUMP_INSTR                                                             \
     for( auto v : value.getValues() )                                          \
     {                                                                          \
-        printf( ", %s (%s)", v->getLabel(), v->getType()->getName() );         \
+        printf( ", %s [%s]", v->getLabel(), v->getType()->getDescription() );  \
     }
 
 void CasmIRDumpPass::visit_prolog( Specification& value )
@@ -182,6 +170,36 @@ void CasmIRDumpPass::visit_prolog( LocalInstruction& value )
     DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( LocalInstruction& value )
+{
+}
+
+void CasmIRDumpPass::visit_prolog( SkipInstruction& value )
+{
+    DUMP_PREFIX;
+    DUMP_INSTR;
+    DUMP_POSTFIX;
+}
+void CasmIRDumpPass::visit_epilog( SkipInstruction& value )
+{
+}
+
+void CasmIRDumpPass::visit_prolog( ForkInstruction& value )
+{
+    DUMP_PREFIX;
+    DUMP_INSTR;
+    DUMP_POSTFIX;
+}
+void CasmIRDumpPass::visit_epilog( ForkInstruction& value )
+{
+}
+
+void CasmIRDumpPass::visit_prolog( MergeInstruction& value )
+{
+    DUMP_PREFIX;
+    DUMP_INSTR;
+    DUMP_POSTFIX;
+}
+void CasmIRDumpPass::visit_epilog( MergeInstruction& value )
 {
 }
 

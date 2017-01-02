@@ -28,6 +28,8 @@
 
 #include "src/analyze/CasmIRDumpPass.h"
 
+#include "src/transform/CasmIRToSourcePass.h"
+
 #endif /* _LIB_CASMIR_PASS_H_ */
 
 //

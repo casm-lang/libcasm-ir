@@ -29,6 +29,8 @@
 namespace libcasm_ir
 {
     class Statement;
+    class ForkInstruction;
+    class MergeInstruction;
 
     class Block : public Value
     {
@@ -57,12 +59,21 @@ namespace libcasm_ir
         const u1 is_parallel;
         u64 pseudo_state;
         ExecutionSemanticsBlock* scope;
+
+        Block* entry;
+        Block* exit;
+
         std::vector< Block* > blocks;
 
       public:
         ExecutionSemanticsBlock( const char* name, Type* type,
             const u1 is_parallel, ExecutionSemanticsBlock* scope = 0,
             Value::ID id = Value::EXECUTION_SEMANTICS_BLOCK );
+
+        ~ExecutionSemanticsBlock( void );
+
+        Block* getEntryBlock( void ) const;
+        Block* getExitBlock( void ) const;
 
         const u1 isParallel( void ) const;
 

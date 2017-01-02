@@ -106,6 +106,30 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
+    class ForkInstruction : public Instruction
+    {
+      public:
+        ForkInstruction( void );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::FORK_INSTRUCTION;
+        };
+        static bool classof( Value const* obj );
+    };
+
+    class MergeInstruction : public Instruction
+    {
+      public:
+        MergeInstruction( void );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::MERGE_INSTRUCTION;
+        };
+        static bool classof( Value const* obj );
+    };
+
     class LookupInstruction : public Instruction, public UnaryInstruction
     {
       public:

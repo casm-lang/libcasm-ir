@@ -134,6 +134,8 @@ namespace libcasm_ir
 
             ,
             SKIP_INSTRUCTION,
+            FORK_INSTRUCTION,
+            MERGE_INSTRUCTION,
             LOOKUP_INSTRUCTION,
             UPDATE_INSTRUCTION,
             LOCATION_INSTRUCTION,
@@ -178,7 +180,7 @@ namespace libcasm_ir
         ID id;
         u1 type_lock;
 
-        std::vector< Type* > parameters;
+        // std::vector< Type* > parameters;
 
       protected:
         static SymbolTable& getSymbols( void )
@@ -227,6 +229,18 @@ namespace libcasm_ir
         static inline bool isa( const Value* value )
         {
             return isa< TO >( (Value*)value );
+        }
+
+        template < class TO >
+        static inline bool isa( Value& value )
+        {
+            return isa< TO >( &value );
+        }
+
+        template < class TO >
+        static inline bool isa( const Value& value )
+        {
+            return isa< TO >( &value );
         }
 
         virtual void iterate( Traversal order, Visitor* visitor = 0,
