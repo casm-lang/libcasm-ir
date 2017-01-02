@@ -75,14 +75,14 @@ static const char* indention( Value& value )
 }
 
 #define DUMP_PREFIX                                                            \
-    printf( "%-14s: %p, %s, %s%s ", __FUNCTION__, &value, value.getLabel(),    \
+    fprintf( stderr, "%-14s: %p, %s, %s%s ", __FUNCTION__, &value, value.getLabel(), \
         indention( value ), value.getName() )
-#define DUMP_POSTFIX printf( "\n" );
+#define DUMP_POSTFIX fprintf( stderr, "\n" );
 
 #define DUMP_INSTR                                                             \
     for( auto v : value.getValues() )                                          \
     {                                                                          \
-        printf( ", %s [%s]", v->getLabel(), v->getType()->getDescription() );  \
+        fprintf( stderr, ", %s [%s]", v->getLabel(), v->getType()->getDescription() ); \
     }
 
 void CasmIRDumpPass::visit_prolog( Specification& value )
