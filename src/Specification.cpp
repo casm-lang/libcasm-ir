@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2015-2016 CASM Organization
+//  Copyright (c) 2015-2017 CASM Organization
 //  All rights reserved.
 //
 //  Developed by: Philipp Paulweber
