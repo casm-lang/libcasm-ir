@@ -205,8 +205,9 @@ bool CasmIRToSourcePass::run( libpass::PassResult& pr )
         }
     } );
 
-    return false;
+    return true;
 }
+
 
 //
 //  Local variables:

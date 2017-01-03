@@ -39,7 +39,7 @@ bool CasmIRDumpPass::run( libpass::PassResult& pr )
 
     value->iterate( Traversal::PREORDER, this );
 
-    return false;
+    return true;
 }
 
 static const char* indention( Value& value )
@@ -75,14 +75,15 @@ static const char* indention( Value& value )
 }
 
 #define DUMP_PREFIX                                                            \
-    fprintf( stderr, "%-14s: %p, %s, %s%s ", __FUNCTION__, &value, value.getLabel(), \
-        indention( value ), value.getName() )
+    fprintf( stderr, "%-14s: %p, %s, %s%s ", __FUNCTION__, &value,             \
+        value.getLabel(), indention( value ), value.getName() )
 #define DUMP_POSTFIX fprintf( stderr, "\n" );
 
 #define DUMP_INSTR                                                             \
     for( auto v : value.getValues() )                                          \
     {                                                                          \
-        fprintf( stderr, ", %s [%s]", v->getLabel(), v->getType()->getDescription() ); \
+        fprintf( stderr, ", %s [%s]", v->getLabel(),                           \
+            v->getType()->getDescription() );                                  \
     }
 
 void CasmIRDumpPass::visit_prolog( Specification& value )
