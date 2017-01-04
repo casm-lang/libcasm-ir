@@ -82,9 +82,6 @@ template < class T >
 static void constant(
     FILE* stream, ConstantOf< T >& value, const char* value_str )
 {
-    fprintf( stream, "@%s = %s %s\n", value.getLabel(),
-        value.getType()->getName(),
-        ( value.isDefined() ? value_str : "undef" ) );
 }
 
 bool CasmIRToSourcePass::run( libpass::PassResult& pr )
@@ -98,55 +95,16 @@ bool CasmIRToSourcePass::run( libpass::PassResult& pr )
 
         if( Value::isa< Constant >( value ) )
         {
-            if( Value::isa< IntegerConstant >( value ) )
-            {
-                IntegerConstant& val = static_cast< IntegerConstant& >( value );
-
-                constant(
-                    stream, val, std::to_string( val.getValue() ).c_str() );
-            }
-            else if( Value::isa< StringConstant >( value ) )
-            {
-                StringConstant& val = static_cast< StringConstant& >( value );
-
-                constant( stream,
-                    val,
-                    std::string( "\"" + std::string( val.getValue() ) + "\"" )
-                        .c_str() );
-            }
-            else if( Value::isa< AgentConstant >( value ) )
-            {
-                AgentConstant& val = static_cast< AgentConstant& >( value );
-
-                constant( stream, val, "self" );
-            }
-            else if( Value::isa< RuleReferenceConstant >( value ) )
-            {
-                RuleReferenceConstant& rule_ref
-                    = static_cast< RuleReferenceConstant& >( value );
-                Rule* rule = rule_ref.getValue();
-
-                std::string tmp = "@";
-                if( rule )
-                {
-                    tmp += rule->getName();
-                }
-
-                constant( stream, rule_ref, tmp.c_str() );
-            }
-            // else if( Value::isa< BitConstant >( value ) )
-            // {
-            //     constant( stream, static_cast< BitConstant& >( value ) );
-            // }
-            else
-            {
-                assert( !" unimplemented constant !!! " );
-            }
+            fprintf( stream, "@%s = %s %s\n", value.getLabel(),
+                value.getType()->getName(), value.getName() );
         }
         else if( Value::isa< Agent >( value ) )
         {
-            fprintf( stream, "@%s = %s ;; agent\n", value.getLabel(),
-                value.getType()->getName() );
+            // Agent& val = static_cast< Agent& >( value );
+
+            fprintf(
+                stream, "@%s = init ?TODO? ;; agent\n", value.getLabel() ); //,
+            // val.getInitRule()->getName() ); // getType()->getName() );
         }
         else if( Value::isa< Function >( value ) )
         {
@@ -162,6 +120,22 @@ bool CasmIRToSourcePass::run( libpass::PassResult& pr )
         {
             fprintf( stream, "@%s %s = \n", value.getName(),
                 value.getType()->getName() );
+        }
+        else if( Value::isa< Statement >( value ) )
+        {
+            Statement& val = static_cast< Statement& >( value );
+
+            if( val.getInstructions().size() == 1
+                and ( Value::isa< ForkInstruction >(
+                          val.getInstructions()[ 0 ] )
+                        or Value::isa< MergeInstruction >(
+                               val.getInstructions()[ 0 ] ) ) )
+            {
+                return;
+            }
+
+            fprintf( stream, "%s$%s: ;; %s\n", indention( val ),
+                value.getLabel(), value.getName() );
         }
         else if( Value::isa< Instruction >( value ) )
         {

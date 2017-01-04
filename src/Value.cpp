@@ -200,6 +200,12 @@ void Value::iterate(
             p->iterate( order, visitor, action );
         }
 
+        for( Value* p :
+            ( obj->has< Builtin >() ? obj->get< Builtin >() : empty ) )
+        {
+            p->iterate( order, visitor, action );
+        }
+
         for( Value* p : ( obj->has< Rule >() ? obj->get< Rule >() : empty ) )
         {
             p->iterate( order, visitor, action );
@@ -208,11 +214,6 @@ void Value::iterate(
     else if( Value::isa< Rule >( this ) )
     {
         Rule* obj = ( (Rule*)this );
-
-        // for( Value* p : obj->getParameters() )
-        // {
-        //     p->iterate( order, visitor, action );
-        // }
 
         if( visitor )
         {
@@ -260,9 +261,12 @@ void Value::iterate(
             instr->iterate( order, visitor, action );
         }
 
-        if( visitor && not Value::isa< TrivialStatement >( this ) )
+        if( not Value::isa< TrivialStatement >( this ) )
         {
-            visitor->dispatch( Visitor::Stage::INTERLOG, this );
+            if( visitor )
+            {
+                visitor->dispatch( Visitor::Stage::INTERLOG, this );
+            }
 
             for( ExecutionSemanticsBlock* sco : stmt->getBlocks() )
             {

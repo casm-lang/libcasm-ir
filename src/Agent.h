@@ -25,11 +25,11 @@
 #define _LIB_CASMIR_AGENT_H_
 
 #include "User.h"
-#include "Value.h"
 
 namespace libcasm_ir
 {
     class Rule;
+    class RuleReferenceConstant;
 
     class Agent : public User
     {

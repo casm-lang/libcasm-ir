@@ -24,6 +24,7 @@
 #ifndef _LIB_CASMIR_BLOCK_H_
 #define _LIB_CASMIR_BLOCK_H_
 
+#include "../stdhl/cpp/Binding.h"
 #include "Value.h"
 
 namespace libcasm_ir

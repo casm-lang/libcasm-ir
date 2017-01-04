@@ -183,6 +183,50 @@ void CasmIRDumpPass::visit_epilog( LocalInstruction& value )
 {
 }
 
+void CasmIRDumpPass::visit_prolog( AssertInstruction& value )
+{
+    DUMP_PREFIX;
+    DUMP_INSTR;
+    DUMP_POSTFIX;
+}
+void CasmIRDumpPass::visit_epilog( AssertInstruction& value )
+{
+}
+
+void CasmIRDumpPass::visit_prolog( SelectInstruction& value )
+{
+    DUMP_PREFIX;
+
+    i32 cnt = -1;
+    for( auto v : value.getValues() )
+    {
+        cnt++;
+        if( cnt == 0 or ( cnt % 2 ) == 1 )
+        {
+            if( Value::isa< Instruction >( v ) or Value::isa< Constant >( v ) )
+            {
+                fprintf( stderr, ", %s [%s]", v->getLabel(),
+                    v->getType()->getDescription() );
+            }
+            else
+            {
+                fprintf( stderr, " : %s", v->getLabel() );
+            }
+        }
+        else
+        {
+            assert( Value::isa< ExecutionSemanticsBlock >( v ) );
+
+            fprintf( stderr, " : %s", v->getLabel() );
+        }
+    }
+
+    DUMP_POSTFIX;
+}
+void CasmIRDumpPass::visit_epilog( SelectInstruction& value )
+{
+}
+
 void CasmIRDumpPass::visit_prolog( SkipInstruction& value )
 {
     DUMP_PREFIX;
@@ -303,6 +347,37 @@ void CasmIRDumpPass::visit_epilog( EquInstruction& value )
 {
 }
 
+//
+// Constant
+//
+
+void CasmIRDumpPass::visit_prolog( AgentConstant& value )
+{
+    DUMP_PREFIX;
+    DUMP_POSTFIX;
+}
+void CasmIRDumpPass::visit_epilog( AgentConstant& value )
+{
+}
+
+void CasmIRDumpPass::visit_prolog( RuleReferenceConstant& value )
+{
+    DUMP_PREFIX;
+    DUMP_POSTFIX;
+}
+void CasmIRDumpPass::visit_epilog( RuleReferenceConstant& value )
+{
+}
+
+void CasmIRDumpPass::visit_prolog( BooleanConstant& value )
+{
+    DUMP_PREFIX;
+    DUMP_POSTFIX;
+}
+void CasmIRDumpPass::visit_epilog( BooleanConstant& value )
+{
+}
+
 void CasmIRDumpPass::visit_prolog( IntegerConstant& value )
 {
     DUMP_PREFIX;
@@ -318,24 +393,6 @@ void CasmIRDumpPass::visit_prolog( StringConstant& value )
     DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( StringConstant& value )
-{
-}
-
-void CasmIRDumpPass::visit_prolog( RuleReferenceConstant& value )
-{
-    DUMP_PREFIX;
-    DUMP_POSTFIX;
-}
-void CasmIRDumpPass::visit_epilog( RuleReferenceConstant& value )
-{
-}
-
-void CasmIRDumpPass::visit_prolog( AgentConstant& value )
-{
-    DUMP_PREFIX;
-    DUMP_POSTFIX;
-}
-void CasmIRDumpPass::visit_epilog( AgentConstant& value )
 {
 }
 

@@ -367,8 +367,6 @@ namespace libcasm_ir
             return Value::COMPARE_BUILTIN;
         };
         static bool classof( Value const* obj );
-
-        static const TypeAnnotation info;
     };
 
     class LesuBuiltin : public CompareBuiltin

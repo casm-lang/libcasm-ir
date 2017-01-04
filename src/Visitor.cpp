@@ -22,6 +22,7 @@
 //
 
 #include "Visitor.h"
+
 #include "Builtin.h"
 #include "Value.h"
 
@@ -69,6 +70,9 @@ void Visitor::dispatch( Stage stage, Value* value )
 
         CASE_VALUE( LOCAL_INSTRUCTION, LocalInstruction );
 
+        CASE_VALUE( ASSERT_INSTRUCTION, AssertInstruction );
+        CASE_VALUE( SELECT_INSTRUCTION, SelectInstruction );
+
         CASE_VALUE( SKIP_INSTRUCTION, SkipInstruction );
         CASE_VALUE( FORK_INSTRUCTION, ForkInstruction );
         CASE_VALUE( MERGE_INSTRUCTION, MergeInstruction );
@@ -86,10 +90,11 @@ void Visitor::dispatch( Stage stage, Value* value )
         CASE_VALUE( AND_INSTRUCTION, AndInstruction );
         CASE_VALUE( EQU_INSTRUCTION, EquInstruction );
 
+        CASE_VALUE( AGENT_CONSTANT, AgentConstant );
+        CASE_VALUE( RULE_REFERENCE_CONSTANT, RuleReferenceConstant );
+        CASE_VALUE( BOOLEAN_CONSTANT, BooleanConstant );
         CASE_VALUE( INTEGER_CONSTANT, IntegerConstant );
         CASE_VALUE( STRING_CONSTANT, StringConstant );
-        CASE_VALUE( RULE_REFERENCE_CONSTANT, RuleReferenceConstant );
-        CASE_VALUE( AGENT_CONSTANT, AgentConstant );
 
         default:
         {

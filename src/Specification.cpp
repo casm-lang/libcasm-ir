@@ -67,7 +67,7 @@ void Specification::add( Value* value )
     }
     else if( Value::isa< Builtin >( value ) )
     {
-        content[ Constant::classid() ].push_back( value );
+        content[ Builtin::classid() ].push_back( value );
     }
     else
     {

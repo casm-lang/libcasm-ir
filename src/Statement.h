@@ -75,14 +75,8 @@ namespace libcasm_ir
 
     class BranchStatement : public Statement
     {
-      private:
-        std::vector< Block* > blocks;
-
       public:
         BranchStatement( ExecutionSemanticsBlock* scope = 0 );
-
-        // void addBlock( Value* block );
-        // const std::vector< Block* >& getBlocks( void ) const;
 
         void dump( void ) const;
 

@@ -21,30 +21,21 @@
 //  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //
 
-/**
-   @brief    TODO
+#include "libcasm-ir.h"
+#include "gtest/gtest.h"
 
-   TODO
-*/
+using namespace libcasm_ir;
 
-#ifndef _LIB_CASMIR_CASMIR_H_
-#define _LIB_CASMIR_CASMIR_H_
-
-namespace libcasm_ir
+TEST( libcasm_ir__instruction_add, create_invalid )
 {
-    class CasmIR
-    {
-    };
+    EXPECT_EXIT(
+        AddInstruction i( 0, 0 ), ::testing::KilledBySignal( SIGABRT ), "" );
 }
 
-#endif /* _LIB_CASMIR_CASMIR_H_ */
+TEST( libcasm_ir__instruction_add, create_valid )
+{
+    Value* a = Constant::getInteger( 5 );
+    AddInstruction i( a, a );
 
-//
-//  Local variables:
-//  mode: c++
-//  indent-tabs-mode: nil
-//  c-basic-offset: 4
-//  tab-width: 4
-//  End:
-//  vim:noexpandtab:sw=4:ts=4:
-//
+    ASSERT_STREQ( i.getType()->getName(), a->getType()->getName() );
+}

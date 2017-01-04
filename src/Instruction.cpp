@@ -125,7 +125,7 @@ bool Instruction::classof( Value const* obj )
            or CallInstruction::classof( obj )
            or PrintInstruction::classof( obj )
            or AssertInstruction::classof( obj )
-           or SwitchInstruction::classof( obj )
+           or SelectInstruction::classof( obj )
            or OperatorInstruction::classof( obj );
 }
 
@@ -300,14 +300,14 @@ bool AssertInstruction::classof( Value const* obj )
     return obj->getValueID() == classid();
 }
 
-SwitchInstruction::SwitchInstruction( Value* expression )
-: Instruction( ".switch", 0, { expression }, Value::SWITCH_INSTRUCTION )
+SelectInstruction::SelectInstruction( Value* expression )
+: Instruction( ".select", 0, { expression }, Value::SELECT_INSTRUCTION )
 {
     assert( expression->getType() );
     setType( expression->getType()->getResult() );
 }
 
-bool SwitchInstruction::classof( Value const* obj )
+bool SelectInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }

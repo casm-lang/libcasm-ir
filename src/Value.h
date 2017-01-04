@@ -30,8 +30,8 @@
 #ifndef _LIB_CASMIR_VALUE_H_
 #define _LIB_CASMIR_VALUE_H_
 
+#include "../stdhl/cpp/Labeling.h"
 #include "CasmIR.h"
-
 #include "Type.h"
 #include "Visitor.h"
 
@@ -82,7 +82,7 @@ namespace libcasm_ir
 
             ,
             ASSERT_INSTRUCTION,
-            SWITCH_INSTRUCTION
+            SELECT_INSTRUCTION
 
             ,
             SKIP_INSTRUCTION,

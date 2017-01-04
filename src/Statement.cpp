@@ -81,10 +81,6 @@ void Statement::addBlock( ExecutionSemanticsBlock* block )
     // {
     //     assert( blocks.size() < 1 );
     // }
-    else if( Value::isa< BranchStatement >( this ) )
-    {
-        assert( blocks.size() < 2 );
-    }
 
     blocks.push_back( block );
 
@@ -147,18 +143,6 @@ BranchStatement::BranchStatement( ExecutionSemanticsBlock* scope )
 : Statement( ".branch", 0, scope, Value::BRANCH_STATEMENT )
 {
 }
-
-// void BranchStatement::addBlock( Value* block )
-// {
-//     assert( Value::isa< Block >( block ) );
-
-//     blocks.push_back( (Block*)block );
-// }
-
-// const std::vector< Block* >& BranchStatement::getBlocks( void ) const
-// {
-//     return blocks;
-// }
 
 void BranchStatement::dump( void ) const
 {

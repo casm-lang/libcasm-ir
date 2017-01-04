@@ -25,7 +25,7 @@
 #define _LIB_CASMIR_VISITOR_H_
 
 #include "CasmIR.h"
-#include "Type.h"
+//#include "Type.h"
 
 namespace libcasm_ir
 {
@@ -44,6 +44,9 @@ namespace libcasm_ir
     class BranchStatement;
 
     class LocalInstruction;
+
+    class AssertInstruction;
+    class SelectInstruction;
 
     class SkipInstruction;
 
@@ -65,6 +68,7 @@ namespace libcasm_ir
 
     class AgentConstant;
     class RuleReferenceConstant;
+    class BooleanConstant;
     class IntegerConstant;
     class StringConstant;
 
@@ -124,6 +128,12 @@ namespace libcasm_ir
     PREFIX void visit_epilog( libcasm_ir::LocationInstruction& value )         \
         POSTFIX;                                                               \
                                                                                \
+    PREFIX void visit_prolog( libcasm_ir::AssertInstruction& value ) POSTFIX;  \
+    PREFIX void visit_epilog( libcasm_ir::AssertInstruction& value ) POSTFIX;  \
+                                                                               \
+    PREFIX void visit_prolog( libcasm_ir::SelectInstruction& value ) POSTFIX;  \
+    PREFIX void visit_epilog( libcasm_ir::SelectInstruction& value ) POSTFIX;  \
+                                                                               \
     PREFIX void visit_prolog( libcasm_ir::SkipInstruction& value ) POSTFIX;    \
     PREFIX void visit_epilog( libcasm_ir::SkipInstruction& value ) POSTFIX;    \
                                                                                \
@@ -157,19 +167,24 @@ namespace libcasm_ir
     PREFIX void visit_prolog( libcasm_ir::EquInstruction& value ) POSTFIX;     \
     PREFIX void visit_epilog( libcasm_ir::EquInstruction& value ) POSTFIX;     \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::IntegerConstant& value ) POSTFIX;    \
-    PREFIX void visit_epilog( libcasm_ir::IntegerConstant& value ) POSTFIX;    \
+    /* Constant */                                                             \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::StringConstant& value ) POSTFIX;     \
-    PREFIX void visit_epilog( libcasm_ir::StringConstant& value ) POSTFIX;     \
+    PREFIX void visit_prolog( libcasm_ir::AgentConstant& value ) POSTFIX;      \
+    PREFIX void visit_epilog( libcasm_ir::AgentConstant& value ) POSTFIX;      \
                                                                                \
     PREFIX void visit_prolog( libcasm_ir::RuleReferenceConstant& value )       \
         POSTFIX;                                                               \
     PREFIX void visit_epilog( libcasm_ir::RuleReferenceConstant& value )       \
         POSTFIX;                                                               \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::AgentConstant& value ) POSTFIX;      \
-    PREFIX void visit_epilog( libcasm_ir::AgentConstant& value ) POSTFIX
+    PREFIX void visit_prolog( libcasm_ir::BooleanConstant& value ) POSTFIX;    \
+    PREFIX void visit_epilog( libcasm_ir::BooleanConstant& value ) POSTFIX;    \
+                                                                               \
+    PREFIX void visit_prolog( libcasm_ir::IntegerConstant& value ) POSTFIX;    \
+    PREFIX void visit_epilog( libcasm_ir::IntegerConstant& value ) POSTFIX;    \
+                                                                               \
+    PREFIX void visit_prolog( libcasm_ir::StringConstant& value ) POSTFIX;     \
+    PREFIX void visit_epilog( libcasm_ir::StringConstant& value ) POSTFIX
 
 #define LIB_CASMIR_VISITOR_INTERFACE                                           \
     LIB_CASMIR_VISITOR_INTERFACE_(, override final )

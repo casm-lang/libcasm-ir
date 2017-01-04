@@ -214,14 +214,14 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class SwitchInstruction : public Instruction
+    class SelectInstruction : public Instruction
     {
       public:
-        SwitchInstruction( Value* expression );
+        SelectInstruction( Value* expression );
 
         static inline Value::ID classid( void )
         {
-            return Value::SWITCH_INSTRUCTION;
+            return Value::SELECT_INSTRUCTION;
         };
         static bool classof( Value const* obj );
     };

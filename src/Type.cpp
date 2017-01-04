@@ -23,6 +23,8 @@
 
 #include "Type.h"
 
+#include "../stdhl/cpp/Allocator.h"
+
 using namespace libcasm_ir;
 
 Type::Type( const char* name, const char* description, Type::ID id )
