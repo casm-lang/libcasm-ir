@@ -48,7 +48,8 @@ namespace libcasm_ir
 
         enum ID : u8
         {
-            AGENT = 0,
+            _BOTTOM_ = 0,
+            AGENT,
             RULE_REFERENCE,
             BOOLEAN,
             INTEGER,

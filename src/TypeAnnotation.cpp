@@ -92,7 +92,7 @@ Type::ID TypeAnnotation::getResultTypeForRelation(
     }
 
     assert( !" no result type found for requested relation! " );
-    return Type::_TOP_;
+    return Type::_BOTTOM_;
 }
 
 //

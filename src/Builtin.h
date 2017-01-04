@@ -59,17 +59,11 @@ namespace libcasm_ir
         };
         static bool classof( Value const* obj );
 
-        static Builtin* get( const char* name, Type* result );
+        static Builtin* find( const char* name, Type* result );
 
-        static Builtin* getAs( Type* result );
-
-        static Builtin* getAsBoolean( Type* result );
-        static Builtin* getAsInteger( Type* result );
-        static Builtin* getAsBit( Type* result );
-        static Builtin* getAsString( Type* result );
-        static Builtin* getAsFloating( Type* result );
-        static Builtin* getAsRational( Type* result );
-        static Builtin* getAsEnumeration( Type* result );
+        template < typename T >
+        static Builtin* get( Type* result );
+        static Builtin* getAsBuiltin( Type* result );
     };
 
     class CastingBuiltin : public Builtin
@@ -182,6 +176,451 @@ namespace libcasm_ir
 
         static const TypeAnnotation info;
     };
+
+    //
+    // StringifyBuiltin
+    //
+
+    class StringifyBuiltin : public Builtin
+    {
+      public:
+        StringifyBuiltin( const char* name, Type* result,
+            Value::ID id = Value::STRINGIFY_BUILTIN );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::STRINGIFY_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+
+        static const TypeAnnotation info;
+    };
+
+    class DecBuiltin : public StringifyBuiltin
+    {
+      public:
+        DecBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::DEC_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+    };
+
+    class HexBuiltin : public StringifyBuiltin
+    {
+      public:
+        HexBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::HEX_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+    };
+
+    class OctBuiltin : public StringifyBuiltin
+    {
+      public:
+        OctBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::OCT_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+    };
+
+    class BinBuiltin : public StringifyBuiltin
+    {
+      public:
+        BinBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::BIN_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+    };
+
+    //
+    // OperatorBuiltin
+    //
+
+    class OperatorBuiltin : public Builtin
+    {
+      public:
+        OperatorBuiltin( const char* name, Type* result,
+            Value::ID id = Value::OPERATOR_BUILTIN );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::OPERATOR_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+
+        static const TypeAnnotation info;
+    };
+
+    //
+    // ArithmeticBuiltin
+    //
+
+    class ArithmeticBuiltin : public OperatorBuiltin
+    {
+      public:
+        ArithmeticBuiltin( const char* name, Type* result,
+            Value::ID id = Value::ARITHMETIC_BUILTIN );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::ARITHMETIC_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+    };
+
+    class AdduBuiltin : public ArithmeticBuiltin
+    {
+      public:
+        AdduBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::ADDU_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+    };
+
+    class AddsBuiltin : public ArithmeticBuiltin
+    {
+      public:
+        AddsBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::ADDS_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+    };
+
+    class SubuBuiltin : public ArithmeticBuiltin
+    {
+      public:
+        SubuBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::SUBU_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+    };
+
+    class SubsBuiltin : public ArithmeticBuiltin
+    {
+      public:
+        SubsBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::SUBS_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+    };
+
+    class MuluBuiltin : public ArithmeticBuiltin
+    {
+      public:
+        MuluBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::MULU_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+    };
+
+    class MulsBuiltin : public ArithmeticBuiltin
+    {
+      public:
+        MulsBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::MULS_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+    };
+
+    //
+    // CompareBuiltin
+    //
+
+    class CompareBuiltin : public OperatorBuiltin
+    {
+      public:
+        CompareBuiltin( const char* name, Type* result,
+            Value::ID id = Value::COMPARE_BUILTIN );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::COMPARE_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+
+        static const TypeAnnotation info;
+    };
+
+    class LesuBuiltin : public CompareBuiltin
+    {
+      public:
+        LesuBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::LESU_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+    };
+
+    class LessBuiltin : public CompareBuiltin
+    {
+      public:
+        LessBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::LESS_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+    };
+
+    class LequBuiltin : public CompareBuiltin
+    {
+      public:
+        LequBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::LEQU_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+    };
+
+    class LeqsBuiltin : public CompareBuiltin
+    {
+      public:
+        LeqsBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::LEQS_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+    };
+
+    class GreuBuiltin : public CompareBuiltin
+    {
+      public:
+        GreuBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::GREU_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+    };
+
+    class GresBuiltin : public CompareBuiltin
+    {
+      public:
+        GresBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::GRES_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+    };
+
+    class GequBuiltin : public CompareBuiltin
+    {
+      public:
+        GequBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::GEQU_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+    };
+
+    class GeqsBuiltin : public CompareBuiltin
+    {
+      public:
+        GeqsBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::GEQS_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+    };
+
+    //
+    // BitBuiltin
+    //
+
+    class BitBuiltin : public Builtin
+    {
+      public:
+        BitBuiltin( const char* name, Type* result, const TypeAnnotation& info,
+            Value::ID id = Value::BIT_BUILTIN );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::BIT_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+    };
+
+    class ZextBuiltin : public BitBuiltin
+    {
+      public:
+        ZextBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::ZEXT_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+
+        static const TypeAnnotation info;
+    };
+
+    class SextBuiltin : public BitBuiltin
+    {
+      public:
+        SextBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::SEXT_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+
+        static const TypeAnnotation info;
+    };
+
+    class TruncBuiltin : public BitBuiltin
+    {
+      public:
+        TruncBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::TRUNC_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+
+        static const TypeAnnotation info;
+    };
+
+    class ShlBuiltin : public BitBuiltin
+    {
+      public:
+        ShlBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::SHL_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+
+        static const TypeAnnotation info;
+    };
+
+    class ShrBuiltin : public BitBuiltin
+    {
+      public:
+        ShrBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::SHR_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+
+        static const TypeAnnotation info;
+    };
+
+    class AshrBuiltin : public BitBuiltin
+    {
+      public:
+        AshrBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::ASHR_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+
+        static const TypeAnnotation info;
+    };
+
+    class ClzBuiltin : public BitBuiltin
+    {
+      public:
+        ClzBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::CLZ_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+
+        static const TypeAnnotation info;
+    };
+
+    class CloBuiltin : public BitBuiltin
+    {
+      public:
+        CloBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::CLO_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+
+        static const TypeAnnotation info;
+    };
+
+    class ClsBuiltin : public BitBuiltin
+    {
+      public:
+        ClsBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::CLS_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+
+        static const TypeAnnotation info;
+    };
+
+    //
+    // MathBuiltin
+    //
+
+    // TODO: PPA:
+
+    //
+    // ListBuiltin
+    //
+
+    // TODO: PPA:
 }
 
 #endif /* _LIB_CASMIR_BUILTIN_H_ */
