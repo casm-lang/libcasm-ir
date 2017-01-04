@@ -22,6 +22,7 @@
 //
 
 #include "Agent.h"
+#include "Constant.h"
 
 using namespace libcasm_ir;
 
@@ -38,13 +39,21 @@ Agent::Agent()
 
 RuleReferenceConstant* Agent::getInitRuleReference( void ) const
 {
+    assert( rule_ptr_init );
     return rule_ptr_init;
 }
 
-void Agent::setInitRuleReference( RuleReferenceConstant* init )
+void Agent::setInitRuleReference( Value* init )
 {
-    assert( init );
-    rule_ptr_init = init;
+    assert( init and Value::isa< RuleReferenceConstant >( init ) );
+    rule_ptr_init = static_cast< RuleReferenceConstant* >( rule_ptr_init );
+}
+
+Rule* Agent::getInitRule( void )
+{
+    RuleReferenceConstant* rule_ref = getInitRuleReference();
+    assert( rule_ref->isDefined() );
+    return rule_ref->getValue();
 }
 
 void Agent::dump( void ) const

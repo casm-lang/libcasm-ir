@@ -111,7 +111,7 @@ void Value::dump( void ) const
             ( (Function*)this )->dump();
             break;
         case Value::BUILTIN:
-            ( (Function*)this )->dump();
+            ( (Builtin*)this )->dump();
             break;
 
         case Value::BLOCK:
@@ -138,7 +138,7 @@ void Value::dump( void ) const
             break;
 
         case Value::CONSTANT:
-            ( (ConstantValue*)this )->dump();
+            ( (Constant*)this )->dump();
             break;
         case Value::IDENTIFIER:
             ( (Identifier*)this )->dump();
@@ -195,14 +195,7 @@ void Value::iterate(
         }
 
         for( Value* p :
-            ( obj->has< ConstantValue >() ? obj->get< ConstantValue >()
-                                          : empty ) )
-        {
-            p->iterate( order, visitor, action );
-        }
-
-        for( Value* p :
-            ( obj->has< Derived >() ? obj->get< Derived >() : empty ) )
+            ( obj->has< Constant >() ? obj->get< Constant >() : empty ) )
         {
             p->iterate( order, visitor, action );
         }

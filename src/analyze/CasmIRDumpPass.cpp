@@ -104,6 +104,15 @@ void CasmIRDumpPass::visit_epilog( Agent& value )
 {
 }
 
+void CasmIRDumpPass::visit_prolog( Builtin& value )
+{
+    DUMP_PREFIX;
+    DUMP_POSTFIX;
+}
+void CasmIRDumpPass::visit_epilog( Builtin& value )
+{
+}
+
 void CasmIRDumpPass::visit_prolog( Function& value )
 {
     DUMP_PREFIX;
@@ -231,6 +240,16 @@ void CasmIRDumpPass::visit_prolog( UpdateInstruction& value )
     DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( UpdateInstruction& value )
+{
+}
+
+void CasmIRDumpPass::visit_prolog( CallInstruction& value )
+{
+    DUMP_PREFIX;
+    DUMP_INSTR;
+    DUMP_POSTFIX;
+}
+void CasmIRDumpPass::visit_epilog( CallInstruction& value )
 {
 }
 

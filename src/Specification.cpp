@@ -61,13 +61,13 @@ void Specification::add( Value* value )
     {
         content[ Agent::classid() ].push_back( value );
     }
-    else if( Value::isa< ConstantValue >( value ) )
+    else if( Value::isa< Constant >( value ) )
     {
-        content[ ConstantValue::classid() ].push_back( value );
+        content[ Constant::classid() ].push_back( value );
     }
     else if( Value::isa< Builtin >( value ) )
     {
-        content[ ConstantValue::classid() ].push_back( value );
+        content[ Constant::classid() ].push_back( value );
     }
     else
     {

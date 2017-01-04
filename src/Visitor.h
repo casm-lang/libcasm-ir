@@ -32,7 +32,9 @@ namespace libcasm_ir
     class Value;
     class Specification;
     class Agent;
+
     class Function;
+    class Builtin;
     class Rule;
 
     class ParallelBlock;
@@ -51,6 +53,8 @@ namespace libcasm_ir
     class LocationInstruction;
     class LookupInstruction;
     class UpdateInstruction;
+
+    class CallInstruction;
     class PrintInstruction;
 
     class AddInstruction;
@@ -96,6 +100,9 @@ namespace libcasm_ir
     PREFIX void visit_interlog( libcasm_ir::Rule& value ) POSTFIX;             \
     PREFIX void visit_epilog( libcasm_ir::Rule& value ) POSTFIX;               \
                                                                                \
+    PREFIX void visit_prolog( libcasm_ir::Builtin& value ) POSTFIX;            \
+    PREFIX void visit_epilog( libcasm_ir::Builtin& value ) POSTFIX;            \
+                                                                               \
     PREFIX void visit_prolog( libcasm_ir::ParallelBlock& value ) POSTFIX;      \
     PREFIX void visit_epilog( libcasm_ir::ParallelBlock& value ) POSTFIX;      \
                                                                                \
@@ -131,6 +138,9 @@ namespace libcasm_ir
                                                                                \
     PREFIX void visit_prolog( libcasm_ir::UpdateInstruction& value ) POSTFIX;  \
     PREFIX void visit_epilog( libcasm_ir::UpdateInstruction& value ) POSTFIX;  \
+                                                                               \
+    PREFIX void visit_prolog( libcasm_ir::CallInstruction& value ) POSTFIX;    \
+    PREFIX void visit_epilog( libcasm_ir::CallInstruction& value ) POSTFIX;    \
                                                                                \
     PREFIX void visit_prolog( libcasm_ir::PrintInstruction& value ) POSTFIX;   \
     PREFIX void visit_epilog( libcasm_ir::PrintInstruction& value ) POSTFIX;   \

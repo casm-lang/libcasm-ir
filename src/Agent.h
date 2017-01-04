@@ -24,13 +24,12 @@
 #ifndef _LIB_CASMIR_AGENT_H_
 #define _LIB_CASMIR_AGENT_H_
 
-#include "Constant.h"
 #include "User.h"
 #include "Value.h"
 
 namespace libcasm_ir
 {
-    class RuleReferenceConstant;
+    class Rule;
 
     class Agent : public User
     {
@@ -44,7 +43,9 @@ namespace libcasm_ir
 
         RuleReferenceConstant* getInitRuleReference( void ) const;
 
-        void setInitRuleReference( RuleReferenceConstant* init );
+        void setInitRuleReference( Value* init );
+
+        Rule* getInitRule( void );
 
         void dump( void ) const;
 

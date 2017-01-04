@@ -32,7 +32,7 @@ TEST( libcasm_ir, example )
 
 TEST( libcasm_ir, example2 )
 {
-    libcasm_ir::IntegerConstant* a = libcasm_ir::IntegerConstant::create( 5 );
+    libcasm_ir::Value* a = libcasm_ir::Constant::getInteger( 5 );
     libcasm_ir::AddInstruction i( a, a );
 
     ASSERT_EQ( i.getType()->getID(), a->getType()->getID() );

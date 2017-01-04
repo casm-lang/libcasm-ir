@@ -80,7 +80,7 @@ static const char* indention( Value& value )
 
 template < class T >
 static void constant(
-    FILE* stream, Constant< T >& value, const char* value_str )
+    FILE* stream, ConstantOf< T >& value, const char* value_str )
 {
     fprintf( stream, "@%s = %s %s\n", value.getLabel(),
         value.getType()->getName(),
@@ -96,7 +96,7 @@ bool CasmIRToSourcePass::run( libpass::PassResult& pr )
         assert( value_ptr );
         Value& value = *value_ptr;
 
-        if( Value::isa< ConstantValue >( value ) )
+        if( Value::isa< Constant >( value ) )
         {
             if( Value::isa< IntegerConstant >( value ) )
             {
@@ -153,6 +153,11 @@ bool CasmIRToSourcePass::run( libpass::PassResult& pr )
             fprintf( stream, "@%s = %s ;; function '%s'\n", value.getLabel(),
                 value.getType()->getName(), value.getName() );
         }
+        else if( Value::isa< Builtin >( value ) )
+        {
+            fprintf( stream, "@%s = %s %s\n", value.getLabel(),
+                value.getType()->getName(), value.getName() );
+        }
         else if( Value::isa< Rule >( value ) )
         {
             fprintf( stream, "@%s %s = \n", value.getName(),
@@ -188,13 +193,13 @@ bool CasmIRToSourcePass::run( libpass::PassResult& pr )
                         first = false;
                     }
 
-                    if( not Value::isa< Instruction >( v ) )
+                    if( Value::isa< Instruction >( v ) )
                     {
-                        tmp += "@";
+                        tmp += "%";
                     }
                     else
                     {
-                        tmp += "%";
+                        tmp += "@";
                     }
                     tmp += v->getLabel();
                 }

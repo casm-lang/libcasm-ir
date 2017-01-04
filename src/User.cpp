@@ -37,7 +37,7 @@ bool User::classof( Value const* obj )
     return obj->getValueID() == classid() or Agent::classof( obj )
            or Rule::classof( obj ) or Derived::classof( obj )
            or Function::classof( obj ) or Builtin::classof( obj )
-           or ConstantValue::classof( obj ) or Instruction::classof( obj );
+           or Constant::classof( obj ) or Instruction::classof( obj );
 }
 
 //

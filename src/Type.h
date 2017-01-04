@@ -83,7 +83,7 @@ namespace libcasm_ir
         // std::vector< Type* > subtypes;
 
       protected:
-        static std::unordered_map< std::string, Type* >& id2str( void )
+        static std::unordered_map< std::string, Type* >& str2obj( void )
         {
             static std::unordered_map< std::string, Type* > cache;
             return cache;
@@ -158,6 +158,8 @@ namespace libcasm_ir
 
       public:
         BitType( u8 size );
+
+        const u8 getSize( void ) const;
     };
 
     class StringType : public PrimitiveType

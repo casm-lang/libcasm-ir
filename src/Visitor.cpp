@@ -22,6 +22,7 @@
 //
 
 #include "Visitor.h"
+#include "Builtin.h"
 #include "Value.h"
 
 using namespace libcasm_ir;
@@ -76,6 +77,7 @@ void Visitor::dispatch( Stage stage, Value* value )
         CASE_VALUE( LOOKUP_INSTRUCTION, LookupInstruction );
         CASE_VALUE( UPDATE_INSTRUCTION, UpdateInstruction );
 
+        CASE_VALUE( CALL_INSTRUCTION, CallInstruction );
         CASE_VALUE( PRINT_INSTRUCTION, PrintInstruction );
 
         CASE_VALUE( ADD_INSTRUCTION, AddInstruction );
@@ -91,6 +93,23 @@ void Visitor::dispatch( Stage stage, Value* value )
 
         default:
         {
+            if( Value::isa< Builtin >( value ) )
+            {
+                if( stage == Stage::PROLOG )
+                {
+                    visit_prolog( *( (Builtin*)value ) );
+                }
+                else if( stage == Stage::EPILOG )
+                {
+                    visit_epilog( *( (Builtin*)value ) );
+                }
+                else
+                {
+                    assert( !"invalid visitor stage value!" );
+                }
+                break;
+            }
+
             fprintf( stderr,
                 "%s:%i: error: unimplemented value name '%s' with id '%i' to "
                 "dispatch\n",

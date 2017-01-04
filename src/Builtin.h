@@ -35,17 +35,13 @@ namespace libcasm_ir
     class Builtin : public User, public TypeAnnotation
     {
       private:
-        static std::unordered_map< u8, Builtin* >& id2obj( void )
-        {
-            static std::unordered_map< u8, Builtin* > cache;
-            return cache;
-        };
-
         static std::unordered_map< std::string, Builtin* >& str2obj( void )
         {
             static std::unordered_map< std::string, Builtin* > cache;
             return cache;
         };
+
+        const char* description;
 
       public:
         Builtin( const char* name, Type* result, const TypeAnnotation& info,
@@ -55,11 +51,25 @@ namespace libcasm_ir
 
         void dump( void ) const;
 
+        const char* getDescription( void );
+
         static inline Value::ID classid( void )
         {
             return Value::BUILTIN;
         };
         static bool classof( Value const* obj );
+
+        static Builtin* get( const char* name, Type* result );
+
+        static Builtin* getAs( Type* result );
+
+        static Builtin* getAsBoolean( Type* result );
+        static Builtin* getAsInteger( Type* result );
+        static Builtin* getAsBit( Type* result );
+        static Builtin* getAsString( Type* result );
+        static Builtin* getAsFloating( Type* result );
+        static Builtin* getAsRational( Type* result );
+        static Builtin* getAsEnumeration( Type* result );
     };
 
     class CastingBuiltin : public Builtin
@@ -78,7 +88,7 @@ namespace libcasm_ir
     class AsBooleanBuiltin : public CastingBuiltin
     {
       public:
-        AsBooleanBuiltin( void );
+        AsBooleanBuiltin( Type* result );
 
         static inline Value::ID classid( void )
         {
@@ -117,24 +127,10 @@ namespace libcasm_ir
         static const TypeAnnotation info;
     };
 
-    class AsEnumerationBuiltin : public CastingBuiltin
-    {
-      public:
-        AsEnumerationBuiltin( Type* result, const char* token );
-
-        static inline Value::ID classid( void )
-        {
-            return Value::AS_ENUMERATION_BUILTIN;
-        };
-        static bool classof( Value const* obj );
-
-        static const TypeAnnotation info;
-    };
-
     class AsStringBuiltin : public CastingBuiltin
     {
       public:
-        AsStringBuiltin( void );
+        AsStringBuiltin( Type* result );
 
         static inline Value::ID classid( void )
         {
@@ -148,11 +144,39 @@ namespace libcasm_ir
     class AsFloatingBuiltin : public CastingBuiltin
     {
       public:
-        AsFloatingBuiltin( void );
+        AsFloatingBuiltin( Type* result );
 
         static inline Value::ID classid( void )
         {
             return Value::AS_FLOATING_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+
+        static const TypeAnnotation info;
+    };
+
+    class AsRationalBuiltin : public CastingBuiltin
+    {
+      public:
+        AsRationalBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::AS_RATIONAL_BUILTIN;
+        };
+        static bool classof( Value const* obj );
+
+        static const TypeAnnotation info;
+    };
+
+    class AsEnumerationBuiltin : public CastingBuiltin
+    {
+      public:
+        AsEnumerationBuiltin( Type* result );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::AS_ENUMERATION_BUILTIN;
         };
         static bool classof( Value const* obj );
 

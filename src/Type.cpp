@@ -50,58 +50,58 @@ Type* Type::getResult( void ) const
 Type* Type::getAgent( void )
 {
     static AgentType cache = AgentType();
-    return id2str().emplace( cache.getName(), &cache ).first->second;
+    return str2obj().emplace( cache.getName(), &cache ).first->second;
 }
 
 Type* Type::getRuleReference( void )
 {
     static RuleReferenceType cache = RuleReferenceType();
-    return id2str().emplace( cache.getName(), &cache ).first->second;
+    return str2obj().emplace( cache.getName(), &cache ).first->second;
 }
 
 Type* Type::getBoolean( void )
 {
     static BooleanType cache = BooleanType();
-    return id2str().emplace( cache.getName(), &cache ).first->second;
+    return str2obj().emplace( cache.getName(), &cache ).first->second;
 }
 
 Type* Type::getInteger( void )
 {
     static IntegerType cache = IntegerType();
-    return id2str().emplace( cache.getName(), &cache ).first->second;
+    return str2obj().emplace( cache.getName(), &cache ).first->second;
 }
 
 Type* Type::getBit( u8 size )
 {
     BitType tmp( size );
 
-    auto cache = id2str().find( tmp.getName() );
-    if( cache != id2str().end() )
+    auto cache = str2obj().find( tmp.getName() );
+    if( cache != str2obj().end() )
     {
         return cache->second;
     }
 
     Type* ptr = new BitType( tmp );
-    id2str()[ tmp.getName() ] = ptr;
+    str2obj()[ tmp.getName() ] = ptr;
     return ptr;
 }
 
 Type* Type::getString( void )
 {
     static StringType cache = StringType();
-    return id2str().emplace( cache.getName(), &cache ).first->second;
+    return str2obj().emplace( cache.getName(), &cache ).first->second;
 }
 
 Type* Type::getFloating( void )
 {
     static FloatingType cache = FloatingType();
-    return id2str().emplace( cache.getName(), &cache ).first->second;
+    return str2obj().emplace( cache.getName(), &cache ).first->second;
 }
 
 Type* Type::getRational( void )
 {
     static RationalType cache = RationalType();
-    return id2str().emplace( cache.getName(), &cache ).first->second;
+    return str2obj().emplace( cache.getName(), &cache ).first->second;
 }
 
 Type* Type::getEnumeration( const char* name )
@@ -114,14 +114,14 @@ Type* Type::getRelation( Type* result, std::vector< Type* > arguments )
 {
     RelationType tmp( result, arguments );
 
-    auto cache = id2str().find( tmp.getName() );
-    if( cache != id2str().end() )
+    auto cache = str2obj().find( tmp.getName() );
+    if( cache != str2obj().end() )
     {
         return cache->second;
     }
 
     Type* ptr = new RelationType( tmp );
-    id2str()[ tmp.getName() ] = ptr;
+    str2obj()[ tmp.getName() ] = ptr;
     return ptr;
 }
 
@@ -170,6 +170,11 @@ BitType::BitType( u8 size )
 {
 }
 
+const u8 BitType::getSize( void ) const
+{
+    return size;
+}
+
 StringType::StringType()
 : PrimitiveType( "s", "String", Type::STRING )
 {
@@ -211,7 +216,7 @@ const char* RelationType::getName( void )
                 tmp += ", ";
             }
             tmp += argument->getName();
-            first = true;
+            first = false;
         }
 
         tmp += " -> ";
@@ -237,7 +242,7 @@ const char* RelationType::getDescription( void )
                 tmp += " x ";
             }
             tmp += argument->getDescription();
-            first = true;
+            first = false;
         }
 
         tmp += " -> ";

@@ -50,7 +50,7 @@ void Statement::add( Value* instruction )
     // printf( "%s: %p\n", __FUNCTION__, instruction );
     assert( instruction and Value::isa< Instruction >( instruction ) );
 
-    // if( Value::isa< ConstantValue >( instruction ) )
+    // if( Value::isa< Constant >( instruction ) )
     // {
     //     // printf( "%s: %p --> Constant, omitted\n", __FUNCTION__,
     //     instruction

@@ -31,18 +31,19 @@ namespace libcasm_ir
     class Statement;
 
     template < typename V >
-    class Constant : public User
+    class ConstantOf : public User
     {
       private:
         V value;
         u1 defined;
+        const char* description;
 
       protected:
-        Constant( const char* name, Type* type, V value, u1 defined,
+        ConstantOf( const char* name, Type* type, V value, u1 defined,
             Value::ID id = Value::CONSTANT );
 
       public:
-        ~Constant( void );
+        ~ConstantOf( void );
 
         const V getValue( void ) const;
 
@@ -56,6 +57,8 @@ namespace libcasm_ir
             return not defined;
         }
 
+        const char* getDescription( void );
+
         static inline Value::ID classid( void )
         {
             return Value::CONSTANT;
@@ -66,24 +69,41 @@ namespace libcasm_ir
         void setValue( V val );
     };
 
-    class ConstantValue : public Constant< u1 >
+    class Constant : public ConstantOf< u1 >
     {
+      private:
+        static std::unordered_map< std::string, Value* >& str2obj( void )
+        {
+            static std::unordered_map< std::string, Value* > cache;
+            return cache;
+        };
+
       public:
         static inline Value::ID classid( void )
         {
             return Value::CONSTANT;
         };
         static bool classof( Value const* obj );
+
+        static Value* getUndef( Type* result );
+
+        static Value* getAgent( Type::Agent value );
+        static Value* getRuleReference( const char* value );
+        static Value* getBoolean( Type::Boolean value );
+        static Value* getInteger( Type::Integer value );
+        static Value* getBit( Type* result, u64 value );
+        static Value* getString( const char* value );
+        // static Value* get( void );
     };
 
-    class AgentConstant : public Constant< Type::Agent >
+    class AgentConstant : public ConstantOf< Type::Agent >
     {
       private:
         AgentConstant( Type::Agent value, u1 defined );
 
       public:
-        static AgentConstant* create( Type::Agent value );
-        static AgentConstant* create( void );
+        AgentConstant( Type::Agent value );
+        AgentConstant( void );
 
         void dump( void ) const;
 
@@ -94,17 +114,17 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class RuleReferenceConstant : public Constant< Type::RuleReference >
+    class RuleReferenceConstant : public ConstantOf< Type::RuleReference >
     {
       private:
         const char* resolve_identifier;
-
-        RuleReferenceConstant( Type::RuleReference value, u1 defined );
+        RuleReferenceConstant(
+            Type::RuleReference value, const char* name, u1 defined );
 
       public:
-        static RuleReferenceConstant* create( Type::RuleReference value );
-        static RuleReferenceConstant* create( const char* name );
-        static RuleReferenceConstant* create( void );
+        RuleReferenceConstant( Type::RuleReference value );
+        RuleReferenceConstant( const char* name );
+        RuleReferenceConstant( void );
 
         void setResolveIdentifier( const char* name );
         void resolve( void );
@@ -120,14 +140,14 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class BooleanConstant : public Constant< Type::Boolean >
+    class BooleanConstant : public ConstantOf< Type::Boolean >
     {
       private:
         BooleanConstant( Type::Boolean value, u1 defined );
 
       public:
-        static BooleanConstant* create( Type::Boolean value );
-        static BooleanConstant* create( void );
+        BooleanConstant( Type::Boolean value );
+        BooleanConstant( void );
 
         void dump( void ) const;
 
@@ -138,14 +158,14 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class IntegerConstant : public Constant< Type::Integer >
+    class IntegerConstant : public ConstantOf< Type::Integer >
     {
       private:
         IntegerConstant( Type::Integer value, u1 defined );
 
       public:
-        static IntegerConstant* create( Type::Integer value );
-        static IntegerConstant* create( void );
+        IntegerConstant( Type::Integer value );
+        IntegerConstant( void );
 
         void dump( void ) const;
 
@@ -156,15 +176,15 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class BitConstant : public Constant< Type::Bit >
+    class BitConstant : public ConstantOf< Type::Bit >
     {
       private:
         u64 value[ 1 ];
-        BitConstant( Type* type, u64 value, u1 defined );
+        BitConstant( Type* result, u64 value, u1 defined );
 
       public:
-        static BitConstant* create( u64 value, u16 bitsize );
-        static BitConstant* create( u16 bitsize );
+        BitConstant( Type* result, u64 value );
+        BitConstant( Type* result );
 
         void dump( void ) const;
 
@@ -175,15 +195,15 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class StringConstant : public Constant< Type::String >
+    class StringConstant : public ConstantOf< Type::String >
     {
       private:
         StringConstant( Type::String value, u1 defined );
 
       public:
-        static StringConstant* create( Type::String value );
-        static StringConstant* create( const char* value );
-        static StringConstant* create( void );
+        StringConstant( Type::String value );
+        StringConstant( const char* value );
+        StringConstant( void );
 
         void dump( void ) const;
 
@@ -194,7 +214,7 @@ namespace libcasm_ir
         static bool classof( Value const* obj );
     };
 
-    class Identifier : public Constant< const char* >
+    class Identifier : public ConstantOf< const char* >
     {
       private:
         Identifier( Type* type, const char* value );

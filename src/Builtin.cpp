@@ -25,23 +25,13 @@
 
 using namespace libcasm_ir;
 
-static Builtin pre_defined[]
-    = { AsBooleanBuiltin(), AsIntegerBuiltin( Type::getInteger() )
-        //, AsIntegerBuiltin( ... ) // ranged Integer is dynamically created!
-        //, AsBitBuiltin() // is dynamically created!
-        //, AsEnumerationBuiltin() // is dynamically created!
-        ,
-        AsStringBuiltin(), AsFloatingBuiltin() };
-
 Builtin::Builtin(
     const char* name, Type* result, const TypeAnnotation& info, Value::ID id )
 : User( name, result, id )
 , TypeAnnotation( info )
+, description( 0 )
 {
     getSymbols()[ ".builtin" ].insert( this );
-
-    id2obj()[ (u8)id ] = this;
-    str2obj()[ std::string( name ) ] = this;
 }
 
 Builtin::~Builtin( void )
@@ -55,9 +45,189 @@ void Builtin::dump( void ) const
     debug();
 }
 
+const char* Builtin::getDescription( void )
+{
+    if( not description )
+    {
+        std::string tmp = "";
+        tmp += getType()->getName();
+        tmp += " ";
+        tmp += getName();
+
+        description = libstdhl::Allocator::string( tmp );
+    }
+
+    return description;
+}
+
 bool Builtin::classof( Value const* obj )
 {
     return obj->getValueID() == classid() or CastingBuiltin::classof( obj );
+}
+
+Builtin* Builtin::get( const char* name, Type* result )
+{
+    std::string tmp = name;
+    if( tmp.rfind( "as", 0 ) == 0 )
+    {
+        return getAs( result );
+    }
+    else
+    {
+        libstdhl::Log::error(
+            "could not find a builtin for '%s'", tmp.c_str() );
+        return 0;
+    }
+}
+
+Builtin* Builtin::getAs( Type* result )
+{
+    assert( result );
+
+    std::string tmp = "as";
+    tmp += result->getDescription();
+
+    auto cache = str2obj().find( tmp );
+    if( cache != str2obj().end() )
+    {
+        return cache->second;
+    }
+
+    switch( result->getResult()->getID() )
+    {
+        case Type::BOOLEAN:
+        {
+            return getAsBoolean( result );
+        }
+        case Type::INTEGER:
+        {
+            return getAsInteger( result );
+        }
+        case Type::BIT:
+        {
+            return getAsBit( result );
+        }
+        case Type::STRING:
+        {
+            return getAsString( result );
+        }
+        case Type::FLOATING:
+        {
+            return getAsFloating( result );
+        }
+        case Type::RATIONAL:
+        {
+            return getAsRational( result );
+        }
+        case Type::ENUMERATION:
+        {
+            return getAsEnumeration( result );
+        }
+        default:
+        {
+            libstdhl::Log::error(
+                "could not find a builtin for '%s'", tmp.c_str() );
+            return 0;
+        }
+    }
+}
+
+Builtin* Builtin::getAsBoolean( Type* result )
+{
+    AsBooleanBuiltin tmp = AsBooleanBuiltin( result );
+
+    auto cache = str2obj().find( tmp.getDescription() );
+    if( cache != str2obj().end() )
+    {
+        return cache->second;
+    }
+
+    Builtin* ptr = new AsBooleanBuiltin( tmp );
+    return str2obj().emplace( tmp.getDescription(), ptr ).first->second;
+}
+
+Builtin* Builtin::getAsInteger( Type* result )
+{
+    AsIntegerBuiltin tmp = AsIntegerBuiltin( result );
+
+    auto cache = str2obj().find( tmp.getDescription() );
+    if( cache != str2obj().end() )
+    {
+        return cache->second;
+    }
+
+    Builtin* ptr = new AsIntegerBuiltin( tmp );
+    return str2obj().emplace( tmp.getDescription(), ptr ).first->second;
+}
+
+Builtin* Builtin::getAsBit( Type* result )
+{
+    AsBitBuiltin tmp = AsBitBuiltin( result );
+
+    auto cache = str2obj().find( tmp.getDescription() );
+    if( cache != str2obj().end() )
+    {
+        return cache->second;
+    }
+
+    Builtin* ptr = new AsBitBuiltin( tmp );
+    return str2obj().emplace( tmp.getDescription(), ptr ).first->second;
+}
+
+Builtin* Builtin::getAsString( Type* result )
+{
+    AsStringBuiltin tmp = AsStringBuiltin( result );
+
+    auto cache = str2obj().find( tmp.getDescription() );
+    if( cache != str2obj().end() )
+    {
+        return cache->second;
+    }
+
+    Builtin* ptr = new AsStringBuiltin( tmp );
+    return str2obj().emplace( tmp.getDescription(), ptr ).first->second;
+}
+
+Builtin* Builtin::getAsFloating( Type* result )
+{
+    AsFloatingBuiltin tmp = AsFloatingBuiltin( result );
+
+    auto cache = str2obj().find( tmp.getDescription() );
+    if( cache != str2obj().end() )
+    {
+        return cache->second;
+    }
+
+    Builtin* ptr = new AsFloatingBuiltin( tmp );
+    return str2obj().emplace( tmp.getDescription(), ptr ).first->second;
+}
+
+Builtin* Builtin::getAsRational( Type* result )
+{
+    AsRationalBuiltin tmp = AsRationalBuiltin( result );
+
+    auto cache = str2obj().find( tmp.getDescription() );
+    if( cache != str2obj().end() )
+    {
+        return cache->second;
+    }
+
+    Builtin* ptr = new AsRationalBuiltin( tmp );
+    return str2obj().emplace( tmp.getDescription(), ptr ).first->second;
+}
+
+Builtin* Builtin::getAsEnumeration( Type* result )
+{
+    AsEnumerationBuiltin tmp = AsEnumerationBuiltin( result );
+
+    auto cache = str2obj().find( tmp.getDescription() );
+    if( cache != str2obj().end() )
+    {
+        return cache->second;
+    }
+
+    Builtin* ptr = new AsEnumerationBuiltin( tmp );
+    return str2obj().emplace( tmp.getDescription(), ptr ).first->second;
 }
 
 //
@@ -83,9 +253,8 @@ bool CastingBuiltin::classof( Value const* obj )
 // AsBooleanBuiltin
 //
 
-AsBooleanBuiltin::AsBooleanBuiltin( void )
-: CastingBuiltin(
-      "asBoolean", Type::getBoolean(), info, Value::AS_BOOLEAN_BUILTIN )
+AsBooleanBuiltin::AsBooleanBuiltin( Type* result )
+: CastingBuiltin( "asBoolean", result, info, Value::AS_BOOLEAN_BUILTIN )
 {
 }
 const TypeAnnotation AsBooleanBuiltin::info( TypeAnnotation::Data{
@@ -134,28 +303,11 @@ bool AsBitBuiltin::classof( Value const* obj )
 }
 
 //
-// AsEnumerationBuiltin
-//
-
-AsEnumerationBuiltin::AsEnumerationBuiltin( Type* result, const char* token )
-: CastingBuiltin( token, result, info, Value::AS_ENUMERATION_BUILTIN )
-{
-}
-const TypeAnnotation AsEnumerationBuiltin::info(
-    TypeAnnotation::Data{ { Type::ENUMERATION, { Type::INTEGER } },
-        { Type::ENUMERATION, { Type::BIT } } } );
-bool AsEnumerationBuiltin::classof( Value const* obj )
-{
-    return obj->getValueID() == classid();
-}
-
-//
 // AsStringBuiltin
 //
 
-AsStringBuiltin::AsStringBuiltin( void )
-: CastingBuiltin(
-      "asString", Type::getString(), info, Value::AS_STRING_BUILTIN )
+AsStringBuiltin::AsStringBuiltin( Type* result )
+: CastingBuiltin( "asString", result, info, Value::AS_STRING_BUILTIN )
 {
 }
 const TypeAnnotation AsStringBuiltin::info( TypeAnnotation::Data{
@@ -172,9 +324,8 @@ bool AsStringBuiltin::classof( Value const* obj )
 // AsFloatingBuiltin
 //
 
-AsFloatingBuiltin::AsFloatingBuiltin( void )
-: CastingBuiltin(
-      "asFloating", Type::getFloating(), info, Value::AS_FLOATING_BUILTIN )
+AsFloatingBuiltin::AsFloatingBuiltin( Type* result )
+: CastingBuiltin( "asFloating", result, info, Value::AS_FLOATING_BUILTIN )
 {
 }
 const TypeAnnotation AsFloatingBuiltin::info( TypeAnnotation::Data{
@@ -187,7 +338,40 @@ bool AsFloatingBuiltin::classof( Value const* obj )
     return obj->getValueID() == classid();
 }
 
-// asRational : TODO: PPA: !!!
+//
+// AsRationalBuiltin
+//
+
+AsRationalBuiltin::AsRationalBuiltin( Type* result )
+: CastingBuiltin( "asRational", result, info, Value::AS_FLOATING_BUILTIN )
+{
+}
+const TypeAnnotation AsRationalBuiltin::info( TypeAnnotation::Data{
+    { Type::RATIONAL, { Type::RATIONAL } }
+    // TODO: PPA: add more relations for possible input types!
+} );
+bool AsRationalBuiltin::classof( Value const* obj )
+{
+    return obj->getValueID() == classid();
+}
+
+//
+// AsEnumerationBuiltin
+//
+
+AsEnumerationBuiltin::AsEnumerationBuiltin( Type* result )
+: CastingBuiltin( libstdhl::Allocator::string(
+                      "as" + std::string( result->getDescription() ) ),
+      result, info, Value::AS_ENUMERATION_BUILTIN )
+{
+}
+const TypeAnnotation AsEnumerationBuiltin::info(
+    TypeAnnotation::Data{ { Type::ENUMERATION, { Type::INTEGER } },
+        { Type::ENUMERATION, { Type::BIT } } } );
+bool AsEnumerationBuiltin::classof( Value const* obj )
+{
+    return obj->getValueID() == classid();
+}
 
 // Stringify built-ins:
 
