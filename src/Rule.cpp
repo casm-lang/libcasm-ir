@@ -29,18 +29,17 @@
 using namespace libcasm_ir;
 
 Rule::Rule( const char* name, Type* result )
-: User( name, result, Value::RULE )
+: User( libstdhl::Allocator::string( "@" + std::string( name ) ),
+      result,
+      Value::RULE )
 {
-    ident = Identifier::create( result, name );
-
+    ident = Identifier::create( result, getName() );
     getSymbols()[ ".rule" ].insert( this );
-    getSymbols()[ ".identifier" ].insert( this );
 }
 
 Rule::~Rule( void )
 {
     getSymbols()[ ".rule" ].erase( this );
-    getSymbols()[ ".identifier" ].insert( this );
 }
 
 ParallelBlock* Rule::getContext( void ) const

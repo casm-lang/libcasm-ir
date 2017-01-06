@@ -47,27 +47,27 @@ void Specification::add( Value* value )
 
     if( Value::isa< Rule >( value ) )
     {
-        content[ Rule::classid() ].push_back( value );
+        content[ Rule::classid() ].emplace( value->getName(), value );
     }
     else if( Value::isa< Derived >( value ) )
     {
-        content[ Derived::classid() ].push_back( value );
+        content[ Derived::classid() ].emplace( value->getName(), value );
     }
     else if( Value::isa< Function >( value ) )
     {
-        content[ Function::classid() ].push_back( value );
+        content[ Function::classid() ].emplace( value->getName(), value );
     }
     else if( Value::isa< Agent >( value ) )
     {
-        content[ Agent::classid() ].push_back( value );
+        content[ Agent::classid() ].emplace( value->getName(), value );
     }
     else if( Value::isa< Constant >( value ) )
     {
-        content[ Constant::classid() ].push_back( value );
+        content[ Constant::classid() ].emplace( value->getName(), value );
     }
     else if( Value::isa< Builtin >( value ) )
     {
-        content[ Builtin::classid() ].push_back( value );
+        content[ Builtin::classid() ].emplace( value->getName(), value );
     }
     else
     {

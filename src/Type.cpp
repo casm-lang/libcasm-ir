@@ -49,6 +49,12 @@ Type* Type::getResult( void ) const
     return (Type*)this;
 }
 
+Type* Type::getLabel( void )
+{
+    static LabelType cache = LabelType();
+    return str2obj().emplace( cache.getName(), &cache ).first->second;
+}
+
 Type* Type::getAgent( void )
 {
     static AgentType cache = AgentType();
@@ -141,6 +147,11 @@ const char* PrimitiveType::getName( void )
 const char* PrimitiveType::getDescription( void )
 {
     return description;
+}
+
+LabelType::LabelType()
+: PrimitiveType( "label", "Label", Type::LABEL )
+{
 }
 
 AgentType::AgentType()

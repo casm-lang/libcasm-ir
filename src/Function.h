@@ -49,6 +49,11 @@ namespace libcasm_ir
             return Value::FUNCTION;
         };
         static bool classof( Value const* obj );
+
+        virtual const char* getLabel( void ) override final
+        {
+            return getName();
+        }
     };
 }
 

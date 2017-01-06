@@ -37,51 +37,62 @@ static FILE* stream = stdout;
 
 static const char* indention( Value& value )
 {
-    string ind = "";
-    Value* p = ( &value );
-    while( p != 0 )
+    if( Value::isa< Instruction >( value ) )
     {
-        if( Value::isa< ExecutionSemanticsBlock >( p ) )
-        {
-            p = (Value*)( (ExecutionSemanticsBlock*)p )->getScope();
-
-            if( p == 0 )
-            {
-                continue;
-            }
-        }
-        else if( Value::isa< Instruction >( p ) )
-        {
-            u1 skip = Value::isa< ForkInstruction >( p )
-                      or Value::isa< MergeInstruction >( p );
-
-            p = (Value*)( (Instruction*)p )->getStatement();
-
-            if( skip )
-            {
-                continue;
-            }
-        }
-        else if( Value::isa< Statement >( p ) )
-        {
-            p = (Value*)( (Statement*)p )->getScope();
-            continue;
-        }
-        else
-        {
-            assert( 0 );
-        }
-
-        ind += "  ";
+        return "  ";
+    }
+    else
+    {
+        return "";
     }
 
-    return libstdhl::Allocator::string( ind );
-}
+    // string ind = "";
+    // Value* p = ( &value );
+    // while( p != 0 )
+    // {
+    //     if( Value::isa< ExecutionSemanticsBlock >( p ) )
+    //     {
+    //         p = (Value*)( (ExecutionSemanticsBlock*)p )->getScope();
 
-template < class T >
-static void constant(
-    FILE* stream, ConstantOf< T >& value, const char* value_str )
-{
+    //         if( p == 0 )
+    //         {
+    //             continue;
+    //         }
+    //     }
+    //     else if( Value::isa< Instruction >( p ) )
+    //     {
+    //         p = (Value*)( (Instruction*)p )->getStatement();
+    //     }
+    //     else if( Value::isa< Statement >( p ) )
+    //     {
+    //         ExecutionSemanticsBlock* scope = ( (Statement*)p )->getScope();
+    //         u1 skip = false;
+
+    //         if( scope )
+    //         {
+    //             if( scope->getEntryBlock() == p or scope->getExitBlock() == p
+    //             )
+    //             {
+    //                 skip = true;
+    //             }
+    //         }
+
+    //         p = (Value*)( (Statement*)p )->getScope();
+
+    //         if( skip )
+    //         {
+    //             continue;
+    //         }
+    //     }
+    //     else
+    //     {
+    //         assert( 0 );
+    //     }
+
+    //     ind += "  ";
+    // }
+
+    // return libstdhl::Allocator::string( ind );
 }
 
 bool CasmIRToSourcePass::run( libpass::PassResult& pr )
@@ -95,68 +106,132 @@ bool CasmIRToSourcePass::run( libpass::PassResult& pr )
 
         if( Value::isa< Constant >( value ) )
         {
-            fprintf( stream, "@%s = %s %s\n", value.getLabel(),
+            static u1 first = true;
+
+            if( first )
+            {
+                first = false;
+                fprintf( stream, "\n" );
+            }
+
+            fprintf( stream, "%s = %s %s\n", value.getLabel(),
                 value.getType()->getName(), value.getName() );
         }
         else if( Value::isa< Agent >( value ) )
         {
-            // Agent& val = static_cast< Agent& >( value );
+            static u1 first = true;
 
+            if( first )
+            {
+                first = false;
+                fprintf( stream, "\n" );
+            }
+
+            // Agent& val = static_cast< Agent& >( value );
+            
             fprintf(
-                stream, "@%s = init ?TODO? ;; agent\n", value.getLabel() ); //,
+                stream, "%s = init %s\n", value.getLabel(), "'rule'" ); //,
             // val.getInitRule()->getName() ); // getType()->getName() );
         }
         else if( Value::isa< Function >( value ) )
         {
-            fprintf( stream, "@%s = %s ;; function '%s'\n", value.getLabel(),
-                value.getType()->getName(), value.getName() );
+            static u1 first = true;
+
+            if( first )
+            {
+                first = false;
+                fprintf( stream, "\n" );
+            }
+
+            fprintf( stream, "%s = %s\n", value.getName(),
+                value.getType()->getName() );
         }
         else if( Value::isa< Builtin >( value ) )
         {
-            fprintf( stream, "@%s = %s %s\n", value.getLabel(),
+            static u1 first = true;
+
+            if( first )
+            {
+                first = false;
+                fprintf( stream, "\n" );
+            }
+
+            fprintf( stream, "%s = %s %s\n", value.getLabel(),
                 value.getType()->getName(), value.getName() );
         }
         else if( Value::isa< Rule >( value ) )
         {
-            fprintf( stream, "@%s %s = \n", value.getName(),
-                value.getType()->getName() );
+            fprintf( stream,
+                "\n"
+                "%s %s = \n"
+                "{\n",
+                value.getName(), value.getType()->getName() );
         }
         else if( Value::isa< Statement >( value ) )
         {
-            Statement& val = static_cast< Statement& >( value );
+            Statement& stmt = static_cast< Statement& >( value );
 
-            if( val.getInstructions().size() == 1
-                and ( Value::isa< ForkInstruction >(
-                          val.getInstructions()[ 0 ] )
-                        or Value::isa< MergeInstruction >(
-                               val.getInstructions()[ 0 ] ) ) )
+            const char* nline = "\n";
+            const char* label = value.getLabel();
+            std::string scope = "";
+
+            if( stmt.getScope()->getEntryBlock() == &stmt )
             {
-                return;
+                label = stmt.getScope()->getLabel();
             }
 
-            fprintf( stream, "%s$%s: ;; %s\n", indention( val ),
-                value.getLabel(), value.getName() );
+            if( stmt.getScope()->getParent() )
+            {
+                scope += stmt.getScope()->getParent()->getLabel();
+            }
+            else
+            {
+                if( stmt.getScope()->getEntryBlock() == &stmt )
+                {
+                    nline = "";
+                    scope = "entry";
+                }
+                else if( stmt.getScope()->getExitBlock() == &stmt )
+                {
+                    scope = "exit";
+                }
+                else
+                {
+                    stmt.getScope()->getLabel();
+                }
+            }
+            
+            fprintf( stream, "%s%s%s: %s\n", nline, indention( value ), label,
+                scope.c_str() );
         }
         else if( Value::isa< Instruction >( value ) )
         {
-            Instruction& val = static_cast< Instruction& >( value );
+            Instruction& instr = static_cast< Instruction& >( value );
 
-            if( Value::isa< ForkInstruction >( val ) )
+            if( Value::isa< ForkInstruction >( instr ) )
             {
-                fprintf( stream, "%s%s\n", indention( val ),
-                    val.getStatement()->getScope()->isParallel() ? "{" : "{|" );
+                fprintf( stream,
+                    "%s%s %s %s %s\n",
+                    indention( instr ),
+                    instr.getName(),
+                    instr.getStatement()->getScope()->getName(),
+                    instr.getStatement()->getScope()->getType()->getName(),
+                    instr.getStatement()->getScope()->getLabel() );
             }
-            else if( Value::isa< MergeInstruction >( val ) )
+            else if( Value::isa< MergeInstruction >( instr ) )
             {
-                fprintf( stream, "%s%s\n", indention( val ),
-                    val.getStatement()->getScope()->isParallel() ? "}" : "|}" );
+                fprintf( stream, "%s%s %s %s %s\n", indention( instr ),
+                    instr.getStatement()->getScope()->getName(),
+                    instr.getName(),
+                    instr.getStatement()->getScope()->getType()->getName(),
+                    instr.getStatement()->getScope()->getLabel() );
             }
             else
             {
                 std::string tmp = "";
                 u1 first = true;
 
-                for( auto v : val.getValues() )
+                for( auto v : instr.getValues() )
                 {
                     if( not first )
                     {
@@ -167,19 +242,45 @@ bool CasmIRToSourcePass::run( libpass::PassResult& pr )
                         first = false;
                     }
 
-                    if( Value::isa< Instruction >( v ) )
-                    {
-                        tmp += "%";
-                    }
-                    else
-                    {
-                        tmp += "@";
-                    }
+                    tmp += v->getType()->getName();
+                    tmp += " ";
                     tmp += v->getLabel();
+
+                    // if( Value::isa< Instruction >( v )
+                    //     or Value::isa< Block >( v ) )
+                    // {
+                    //     tmp += "%";
+                    // }
+                    // else
+                    // {
+                    //     tmp += "@";
+                    // }
+
+                    // if( Value::isa< Function >( v ) )
+                    // {
+                    //     tmp += v->getName();
+                    // }
+                    // else
+                    // {
+                    //     tmp += v->getLabel();
+                    // }
                 }
 
-                fprintf( stream, "%s%%%s = %s %s\n", indention( val ),
-                    val.getLabel(), &val.getName()[ 1 ], tmp.c_str() );
+                fprintf( stream, "%s%s = %s %s\n", indention( instr ),
+                    instr.getLabel(), instr.getName(), tmp.c_str() );
+            }
+
+            const Statement* stmt = instr.getStatement();
+            assert( stmt );
+            ExecutionSemanticsBlock* scope = stmt->getScope();
+            assert( scope );
+            // ExecutionSemanticsBlock* blk
+            //     = static_cast< ExecutionSemanticsBlock* >( scope );
+
+            if( scope->getScope() == 0 and scope->getExitBlock() == stmt )
+            {
+                // reached rule, this blk is the top level exec.sem.blk
+                fprintf( stream, "}\n" );
             }
         }
     } );

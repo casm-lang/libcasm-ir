@@ -27,8 +27,8 @@
 
 using namespace libcasm_ir;
 
-Block::Block( const char* name, Type* type, Value::ID id )
-: Value( name, type, id )
+Block::Block( const char* name, Value::ID id )
+: Value( name, Type::getLabel(), id )
 , parent( 0 )
 {
 }
@@ -57,9 +57,9 @@ bool Block::classof( Value const* obj )
            or Statement::classof( obj );
 }
 
-ExecutionSemanticsBlock::ExecutionSemanticsBlock( const char* name, Type* type,
+ExecutionSemanticsBlock::ExecutionSemanticsBlock( const char* name,
     const u1 is_parallel, ExecutionSemanticsBlock* scope, Value::ID id )
-: Block( name, type, id )
+: Block( name, id )
 , is_parallel( is_parallel )
 , pseudo_state( 0 )
 , scope( scope )
@@ -68,8 +68,10 @@ ExecutionSemanticsBlock::ExecutionSemanticsBlock( const char* name, Type* type,
 {
     setScope( scope );
 
-    TrivialStatement* tmp = new TrivialStatement( this );
-    tmp->add( new ForkInstruction() );
+    Statement* tmp = new TrivialStatement( this );
+    Instruction* instr = new ForkInstruction();
+    // instr->add(  )
+    tmp->add( instr );
     entry = tmp;
 
     tmp = new TrivialStatement( this );
@@ -139,6 +141,14 @@ void ExecutionSemanticsBlock::add( Block* block )
         inner->setScope( this );
         inner->setParent( this );
     }
+    else if( Value::isa< Statement >( block ) )
+    {
+        block->setParent( this );
+    }
+    else
+    {
+        assert( !" invalid block to add " );
+    }
 
     blocks.push_back( block );
 }
@@ -157,7 +167,7 @@ void ExecutionSemanticsBlock::dump( void ) const
 }
 
 ParallelBlock::ParallelBlock( ExecutionSemanticsBlock* scope )
-: ExecutionSemanticsBlock( ".par", 0, true, scope, Value::PARALLEL_BLOCK )
+: ExecutionSemanticsBlock( "par", true, scope, Value::PARALLEL_BLOCK )
 {
 }
 
@@ -167,7 +177,7 @@ void ParallelBlock::dump( void ) const
 }
 
 SequentialBlock::SequentialBlock( ExecutionSemanticsBlock* scope )
-: ExecutionSemanticsBlock( ".seq", 0, false, scope, Value::SEQUENTIAL_BLOCK )
+: ExecutionSemanticsBlock( "seq", false, scope, Value::SEQUENTIAL_BLOCK )
 {
 }
 

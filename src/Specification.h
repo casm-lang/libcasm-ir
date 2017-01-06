@@ -33,8 +33,8 @@ namespace libcasm_ir
     class Specification : public Value
     {
       private:
-        std::unordered_map< u32, std::vector< Value* > > content;
-        std::vector< Value* > content_list;
+        std::unordered_map< u8, std::unordered_map< std::string, Value* > >
+            content;
 
       public:
         Specification( const char* name );
@@ -50,7 +50,7 @@ namespace libcasm_ir
         }
 
         template < class C >
-        const std::vector< Value* >& get( void ) const
+        const std::unordered_map< std::string, Value* >& get( void ) const
         {
             auto result = content.find( C::classid() );
             assert( result != content.end() );

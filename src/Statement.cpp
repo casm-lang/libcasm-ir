@@ -29,10 +29,11 @@
 using namespace libcasm_ir;
 
 Statement::Statement(
-    const char* name, Type* type, ExecutionSemanticsBlock* scope, Value::ID id )
-: Block( name, type, id )
+    const char* name, ExecutionSemanticsBlock* scope, Value::ID id )
+: Block( name, id )
 , scope( scope )
 {
+    setParent( scope );
 }
 
 ExecutionSemanticsBlock* Statement::getScope( void ) const
@@ -48,23 +49,20 @@ const std::vector< Value* >& Statement::getInstructions( void ) const
 void Statement::add( Value* instruction )
 {
     // printf( "%s: %p\n", __FUNCTION__, instruction );
-    assert( instruction and Value::isa< Instruction >( instruction ) );
 
-    // if( Value::isa< Constant >( instruction ) )
-    // {
-    //     // printf( "%s: %p --> Constant, omitted\n", __FUNCTION__,
-    //     instruction
-    //     // );
-    //     return;
-    // }
-
-    // if( Value::isa< Instruction >( instruction ) )
+    if( Value::isa< Constant >( instruction ) )
     {
-        // printf( "%s: %p --> Instruction\n", __FUNCTION__, instruction );
-        static_cast< Instruction* >( instruction )->setStatement( this );
+        // printf( "%s: %p --> Constant, omitted\n", __FUNCTION__, instruction
+        // );
+        return;
     }
 
-    instructions.push_back( instruction );
+    assert( instruction and Value::isa< Instruction >( instruction ) );
+
+    Instruction* instr = static_cast< Instruction* >( instruction );
+    instr->setStatement( this );
+    instructions.push_back( instr );
+
     // printf( "[Stmt] add: %p\n", instruction );
 }
 
@@ -118,7 +116,7 @@ bool Statement::classof( Value const* obj )
 }
 
 TrivialStatement::TrivialStatement( ExecutionSemanticsBlock* scope )
-: Statement( ".statement", 0, scope, Value::TRIVIAL_STATEMENT )
+: Statement( "statement", scope, Value::TRIVIAL_STATEMENT )
 {
 }
 
@@ -140,7 +138,7 @@ bool TrivialStatement::classof( Value const* obj )
 }
 
 BranchStatement::BranchStatement( ExecutionSemanticsBlock* scope )
-: Statement( ".branch", 0, scope, Value::BRANCH_STATEMENT )
+: Statement( "branch", scope, Value::BRANCH_STATEMENT )
 {
 }
 

@@ -210,6 +210,8 @@ namespace libcasm_ir
 
         Type* getType( void ) const;
 
+        u1 hasType( void ) const;
+
       protected:
         void setType( Type* type );
 
@@ -261,12 +263,12 @@ namespace libcasm_ir
         virtual void iterate(
             Traversal order, std::function< void( Value* ) > action ) final;
 
-        virtual u64 getLabelID( void )
-        {
-            static u64 cnt = -1;
-            cnt++;
-            return cnt;
-        }
+        // virtual u64 getLabelID( void )
+        // {
+        //     static u64 cnt = -1;
+        //     cnt++;
+        //     return cnt;
+        // }
     };
 }
 

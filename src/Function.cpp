@@ -26,18 +26,18 @@
 using namespace libcasm_ir;
 
 Function::Function( const char* name, Type* result )
-: User( name, result, Value::FUNCTION )
+: User( libstdhl::Allocator::string( "@" + std::string( name ) ), result,
+      Value::FUNCTION )
 , ident( 0 )
 {
-    ident = Identifier::create( result, name );
+    ident = Identifier::create( result, getName() );
+
     getSymbols()[ ".function" ].insert( this );
-    getSymbols()[ ".identifier" ].insert( ident );
 }
 
 Function::~Function( void )
 {
     getSymbols()[ ".function" ].erase( this );
-    getSymbols()[ ".identifier" ].erase( ident );
 }
 
 void Function::dump( void ) const

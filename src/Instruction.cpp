@@ -177,7 +177,7 @@ bool BinaryInstruction::classof( Value const* obj )
 }
 
 SkipInstruction::SkipInstruction( void )
-: Instruction( ".skip", 0, {}, Value::SKIP_INSTRUCTION )
+: Instruction( "skip", 0, {}, Value::SKIP_INSTRUCTION )
 {
 }
 
@@ -187,7 +187,7 @@ bool SkipInstruction::classof( Value const* obj )
 }
 
 ForkInstruction::ForkInstruction( void )
-: Instruction( ".fork", 0, {}, Value::FORK_INSTRUCTION )
+: Instruction( "fork", 0, {}, Value::FORK_INSTRUCTION )
 {
 }
 
@@ -197,7 +197,7 @@ bool ForkInstruction::classof( Value const* obj )
 }
 
 MergeInstruction::MergeInstruction( void )
-: Instruction( ".merge", 0, {}, Value::MERGE_INSTRUCTION )
+: Instruction( "merge", 0, {}, Value::MERGE_INSTRUCTION )
 {
 }
 
@@ -207,7 +207,7 @@ bool MergeInstruction::classof( Value const* obj )
 }
 
 LookupInstruction::LookupInstruction( Value* location )
-: Instruction( ".lookup", 0, { location }, Value::LOOKUP_INSTRUCTION )
+: Instruction( "lookup", 0, { location }, Value::LOOKUP_INSTRUCTION )
 , UnaryInstruction( this )
 {
     assert( location->getType() );
@@ -220,7 +220,7 @@ bool LookupInstruction::classof( Value const* obj )
 }
 
 UpdateInstruction::UpdateInstruction( Value* location, Value* expr )
-: Instruction( ".update", 0, { location, expr }, Value::UPDATE_INSTRUCTION )
+: Instruction( "update", 0, { location, expr }, Value::UPDATE_INSTRUCTION )
 , BinaryInstruction( this )
 {
     assert( location->getType() );
@@ -234,7 +234,7 @@ bool UpdateInstruction::classof( Value const* obj )
 }
 
 LocalInstruction::LocalInstruction( Value* ident, Value* expr )
-: Instruction( ".local", 0, { ident, expr }, Value::LOCAL_INSTRUCTION )
+: Instruction( "local", 0, { ident, expr }, Value::LOCAL_INSTRUCTION )
 , BinaryInstruction( this )
 {
     assert( expr->getType() );
@@ -247,7 +247,7 @@ bool LocalInstruction::classof( Value const* obj )
 }
 
 LocationInstruction::LocationInstruction( Value* function )
-: Instruction( ".location", 0, { function }, Value::LOCATION_INSTRUCTION )
+: Instruction( "location", 0, { function }, Value::LOCATION_INSTRUCTION )
 {
     assert( function->getType() );
     setType( function->getType() );
@@ -259,7 +259,7 @@ bool LocationInstruction::classof( Value const* obj )
 }
 
 CallInstruction::CallInstruction( Value* symbol )
-: Instruction( ".call", 0, { symbol }, Value::CALL_INSTRUCTION )
+: Instruction( "call", 0, { symbol }, Value::CALL_INSTRUCTION )
 {
     if( Value::isa< Builtin >( symbol ) or Value::isa< Derived >( symbol ) )
     {
@@ -274,7 +274,7 @@ bool CallInstruction::classof( Value const* obj )
 }
 
 PrintInstruction::PrintInstruction( Value* channel )
-: Instruction( ".print", Type::getString(), {}, Value::PRINT_INSTRUCTION )
+: Instruction( "print", Type::getString(), {}, Value::PRINT_INSTRUCTION )
 {
     if( channel )
     {
@@ -288,7 +288,7 @@ bool PrintInstruction::classof( Value const* obj )
 }
 
 AssertInstruction::AssertInstruction( Value* condition )
-: Instruction( ".assert", 0, { condition }, Value::ASSERT_INSTRUCTION )
+: Instruction( "assert", 0, { condition }, Value::ASSERT_INSTRUCTION )
 , UnaryInstruction( this )
 {
     assert( condition->getType() );
@@ -301,7 +301,7 @@ bool AssertInstruction::classof( Value const* obj )
 }
 
 SelectInstruction::SelectInstruction( Value* expression )
-: Instruction( ".select", 0, { expression }, Value::SELECT_INSTRUCTION )
+: Instruction( "select", 0, { expression }, Value::SELECT_INSTRUCTION )
 {
     assert( expression->getType() );
     setType( expression->getType()->getResult() );
@@ -408,7 +408,7 @@ bool LogicalInstruction::classof( Value const* obj )
 }
 
 AddInstruction::AddInstruction( Value* lhs, Value* rhs )
-: ArithmeticInstruction( ".add", 0, { lhs, rhs }, info, Value::ADD_INSTRUCTION )
+: ArithmeticInstruction( "add", 0, { lhs, rhs }, info, Value::ADD_INSTRUCTION )
 , BinaryInstruction( this )
 {
 }
@@ -434,7 +434,7 @@ bool AddInstruction::classof( Value const* obj )
 }
 
 SubInstruction::SubInstruction( Value* lhs, Value* rhs )
-: ArithmeticInstruction( ".sub", 0, { lhs, rhs }, info, Value::SUB_INSTRUCTION )
+: ArithmeticInstruction( "sub", 0, { lhs, rhs }, info, Value::SUB_INSTRUCTION )
 , BinaryInstruction( this )
 {
 }
@@ -452,7 +452,7 @@ bool SubInstruction::classof( Value const* obj )
 }
 
 MulInstruction::MulInstruction( Value* lhs, Value* rhs )
-: ArithmeticInstruction( ".mul", 0, { lhs, rhs }, info, Value::MUL_INSTRUCTION )
+: ArithmeticInstruction( "mul", 0, { lhs, rhs }, info, Value::MUL_INSTRUCTION )
 , BinaryInstruction( this )
 {
 }
@@ -470,7 +470,7 @@ bool MulInstruction::classof( Value const* obj )
 }
 
 DivInstruction::DivInstruction( Value* lhs, Value* rhs )
-: ArithmeticInstruction( ".div", 0, { lhs, rhs }, info, Value::DIV_INSTRUCTION )
+: ArithmeticInstruction( "div", 0, { lhs, rhs }, info, Value::DIV_INSTRUCTION )
 , BinaryInstruction( this )
 {
 }
@@ -492,7 +492,7 @@ bool DivInstruction::classof( Value const* obj )
 }
 
 ModInstruction::ModInstruction( Value* lhs, Value* rhs )
-: ArithmeticInstruction( ".mod", 0, { lhs, rhs }, info, Value::MOD_INSTRUCTION )
+: ArithmeticInstruction( "mod", 0, { lhs, rhs }, info, Value::MOD_INSTRUCTION )
 , BinaryInstruction( this )
 {
 }
@@ -510,7 +510,7 @@ bool ModInstruction::classof( Value const* obj )
 }
 
 EquInstruction::EquInstruction( Value* lhs, Value* rhs )
-: CompareInstruction( ".equ", { lhs, rhs }, info, Value::EQU_INSTRUCTION )
+: CompareInstruction( "equ", { lhs, rhs }, info, Value::EQU_INSTRUCTION )
 , BinaryInstruction( this )
 {
 }
@@ -528,7 +528,7 @@ bool EquInstruction::classof( Value const* obj )
 }
 
 NeqInstruction::NeqInstruction( Value* lhs, Value* rhs )
-: CompareInstruction( ".neq", { lhs, rhs }, info, Value::NEQ_INSTRUCTION )
+: CompareInstruction( "neq", { lhs, rhs }, info, Value::NEQ_INSTRUCTION )
 , BinaryInstruction( this )
 {
 }
@@ -546,7 +546,7 @@ bool NeqInstruction::classof( Value const* obj )
 }
 
 LthInstruction::LthInstruction( Value* lhs, Value* rhs )
-: CompareInstruction( ".lth", { lhs, rhs }, info, Value::LTH_INSTRUCTION )
+: CompareInstruction( "lth", { lhs, rhs }, info, Value::LTH_INSTRUCTION )
 , BinaryInstruction( this )
 {
 }
@@ -564,7 +564,7 @@ bool LthInstruction::classof( Value const* obj )
 }
 
 LeqInstruction::LeqInstruction( Value* lhs, Value* rhs )
-: CompareInstruction( ".leq", { lhs, rhs }, info, Value::LEQ_INSTRUCTION )
+: CompareInstruction( "leq", { lhs, rhs }, info, Value::LEQ_INSTRUCTION )
 , BinaryInstruction( this )
 {
 }
@@ -582,7 +582,7 @@ bool LeqInstruction::classof( Value const* obj )
 }
 
 GthInstruction::GthInstruction( Value* lhs, Value* rhs )
-: CompareInstruction( ".gth", { lhs, rhs }, info, Value::GTH_INSTRUCTION )
+: CompareInstruction( "gth", { lhs, rhs }, info, Value::GTH_INSTRUCTION )
 , BinaryInstruction( this )
 {
 }
@@ -600,7 +600,7 @@ bool GthInstruction::classof( Value const* obj )
 }
 
 GeqInstruction::GeqInstruction( Value* lhs, Value* rhs )
-: CompareInstruction( ".geq", { lhs, rhs }, info, Value::GEQ_INSTRUCTION )
+: CompareInstruction( "geq", { lhs, rhs }, info, Value::GEQ_INSTRUCTION )
 , BinaryInstruction( this )
 {
 }
@@ -615,7 +615,7 @@ bool GeqInstruction::classof( Value const* obj )
 }
 
 OrInstruction::OrInstruction( Value* lhs, Value* rhs )
-: LogicalInstruction( ".or", 0, { lhs, rhs }, info, Value::OR_INSTRUCTION )
+: LogicalInstruction( "or", 0, { lhs, rhs }, info, Value::OR_INSTRUCTION )
 , BinaryInstruction( this )
 {
 }
@@ -637,7 +637,7 @@ bool OrInstruction::classof( Value const* obj )
 }
 
 XorInstruction::XorInstruction( Value* lhs, Value* rhs )
-: LogicalInstruction( ".xor", 0, { lhs, rhs }, info, Value::XOR_INSTRUCTION )
+: LogicalInstruction( "xor", 0, { lhs, rhs }, info, Value::XOR_INSTRUCTION )
 , BinaryInstruction( this )
 {
 }
@@ -659,7 +659,7 @@ bool XorInstruction::classof( Value const* obj )
 }
 
 AndInstruction::AndInstruction( Value* lhs, Value* rhs )
-: LogicalInstruction( ".and", 0, { lhs, rhs }, info, Value::AND_INSTRUCTION )
+: LogicalInstruction( "and", 0, { lhs, rhs }, info, Value::AND_INSTRUCTION )
 , BinaryInstruction( this )
 {
 }
@@ -681,7 +681,7 @@ bool AndInstruction::classof( Value const* obj )
 }
 
 NotInstruction::NotInstruction( Value* lhs )
-: LogicalInstruction( ".not", 0, { lhs }, info, Value::NOT_INSTRUCTION )
+: LogicalInstruction( "not", 0, { lhs }, info, Value::NOT_INSTRUCTION )
 , UnaryInstruction( this )
 {
     Type* ty = get()->getType();
@@ -714,7 +714,7 @@ bool NotInstruction::classof( Value const* obj )
 }
 
 // MovInstruction::MovInstruction( Value* lhs )
-// : UnaryInstruction( ".mov", 0, lhs, Value::MOV_INSTRUCTION )
+// : UnaryInstruction( "mov", 0, lhs, Value::MOV_INSTRUCTION )
 // {
 //     assert( get()->getType() );
 //     setType( get()->getType() );

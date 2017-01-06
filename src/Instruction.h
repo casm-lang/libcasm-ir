@@ -57,6 +57,17 @@ namespace libcasm_ir
             return Value::INSTRUCTION;
         };
         static bool classof( Value const* obj );
+
+        virtual const char* getLabelName( void ) override final
+        {
+            return "%r";
+        }
+
+        virtual u64 getLabelID( void ) override final
+        {
+            static u64 cnt = 0;
+            return cnt++;
+        }
     };
 
     class UnaryInstruction : public CasmIR

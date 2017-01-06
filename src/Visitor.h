@@ -88,6 +88,8 @@ namespace libcasm_ir
             EPILOG
         };
 
+        virtual ~Visitor( void ) = default;
+
         virtual void dispatch( Stage stage, Value* value ) final;
 
 #define LIB_CASMIR_VISITOR_INTERFACE_( PREFIX, POSTFIX )                       \

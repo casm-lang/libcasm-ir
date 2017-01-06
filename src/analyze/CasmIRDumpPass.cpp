@@ -137,6 +137,7 @@ void CasmIRDumpPass::visit_epilog( Rule& value )
 void CasmIRDumpPass::visit_prolog( ParallelBlock& value )
 {
     DUMP_PREFIX;
+    fprintf( stderr, " (%p, %p) ", value.getScope(), value.getParent() );
     DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( ParallelBlock& value )
@@ -146,6 +147,7 @@ void CasmIRDumpPass::visit_epilog( ParallelBlock& value )
 void CasmIRDumpPass::visit_prolog( SequentialBlock& value )
 {
     DUMP_PREFIX;
+    fprintf( stderr, " (%p, %p) ", value.getScope(), value.getParent() );
     DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( SequentialBlock& value )
@@ -155,6 +157,7 @@ void CasmIRDumpPass::visit_epilog( SequentialBlock& value )
 void CasmIRDumpPass::visit_prolog( TrivialStatement& value )
 {
     DUMP_PREFIX;
+    fprintf( stderr, " (%p, %p) ", value.getScope(), value.getParent() );
     DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( TrivialStatement& value )
@@ -164,6 +167,7 @@ void CasmIRDumpPass::visit_epilog( TrivialStatement& value )
 void CasmIRDumpPass::visit_prolog( BranchStatement& value )
 {
     DUMP_PREFIX;
+    fprintf( stderr, " (%p, %p) ", value.getScope(), value.getParent() );
     DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_interlog( BranchStatement& value )

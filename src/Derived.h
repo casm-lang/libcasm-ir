@@ -58,6 +58,11 @@ namespace libcasm_ir
             return Value::DERIVED;
         };
         static bool classof( Value const* obj );
+
+        virtual const char* getLabel( void ) override final
+        {
+            return getName();
+        }
     };
 }
 

@@ -39,7 +39,7 @@ namespace libcasm_ir
         Value* parent;
 
       public:
-        Block( const char* name, Type* type, Value::ID id = Value::BLOCK );
+        Block( const char* name, Value::ID id = Value::BLOCK );
 
         void setParent( Value* parent );
         Value* getParent( void ) const;
@@ -51,6 +51,17 @@ namespace libcasm_ir
             return Value::BLOCK;
         };
         static bool classof( Value const* obj );
+
+        virtual const char* getLabelName( void ) override final
+        {
+            return "%blk";
+        }
+
+        virtual u64 getLabelID( void ) override final
+        {
+            static u64 cnt = 0;
+            return cnt++;
+        }
     };
 
     class ExecutionSemanticsBlock : public Block,
@@ -67,8 +78,8 @@ namespace libcasm_ir
         std::vector< Block* > blocks;
 
       public:
-        ExecutionSemanticsBlock( const char* name, Type* type,
-            const u1 is_parallel, ExecutionSemanticsBlock* scope = 0,
+        ExecutionSemanticsBlock( const char* name, const u1 is_parallel,
+            ExecutionSemanticsBlock* scope = 0,
             Value::ID id = Value::EXECUTION_SEMANTICS_BLOCK );
 
         ~ExecutionSemanticsBlock( void );

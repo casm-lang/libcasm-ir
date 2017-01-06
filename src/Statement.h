@@ -38,7 +38,7 @@ namespace libcasm_ir
         std::vector< ExecutionSemanticsBlock* > blocks;
 
       public:
-        Statement( const char* name, Type* type, ExecutionSemanticsBlock* scope,
+        Statement( const char* name, ExecutionSemanticsBlock* scope,
             Value::ID id = Value::STATEMENT );
 
         ExecutionSemanticsBlock* getScope( void ) const;

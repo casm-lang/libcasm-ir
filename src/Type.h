@@ -50,6 +50,8 @@ namespace libcasm_ir
         enum ID : u8
         {
             _BOTTOM_ = 0,
+            LABEL,
+
             AGENT,
             RULE_REFERENCE,
             BOOLEAN,
@@ -104,6 +106,8 @@ namespace libcasm_ir
 
         // PPA: add isTYPEetc. CHECKS
 
+        static Type* getLabel( void );
+
         static Type* getAgent( void );
         static Type* getRuleReference( void );
         static Type* getBoolean( void );
@@ -127,6 +131,12 @@ namespace libcasm_ir
 
         const char* getName( void ) override final;
         const char* getDescription( void ) override final;
+    };
+
+    class LabelType : public PrimitiveType
+    {
+      public:
+        LabelType();
     };
 
     class AgentType : public PrimitiveType

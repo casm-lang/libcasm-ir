@@ -27,15 +27,24 @@
 using namespace libcasm_ir;
 
 Agent::Agent()
-: User( ".agent", Type::getAgent(), Value::AGENT )
+: User( "$", Type::getAgent(), Value::AGENT )
 {
-    // getSymbols()[ ".agent" ].insert( this );
+    getSymbols()[ ".agent" ].insert( this );
+
+    static Agent* check = 0;
+
+    assert(
+        not check
+        and " currently only a single execution agent behavior is "
+            "supported! " );
+
+    check = this;
 }
 
-// Agent::~Agent( void )
-// {
-//     // getSymbols()[ ".agent" ].erase( this );
-// }
+Agent::~Agent( void )
+{
+    getSymbols()[ ".agent" ].erase( this );
+}
 
 RuleReferenceConstant* Agent::getInitRuleReference( void ) const
 {

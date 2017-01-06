@@ -30,8 +30,49 @@ namespace libcasm_ir
 {
     class Statement;
 
+    class Constant : public User
+    {
+      private:
+        static std::unordered_map< std::string, Value* >& str2obj( void )
+        {
+            static std::unordered_map< std::string, Value* > cache;
+            return cache;
+        };
+
+      public:
+        Constant( const char* name, Type* type, Value::ID id = Value::CONSTANT )
+        : User( name, type, id ){};
+
+        static inline Value::ID classid( void )
+        {
+            return Value::CONSTANT;
+        };
+        static bool classof( Value const* obj );
+
+        virtual const char* getLabelName( void ) override final
+        {
+            return "%c";
+        }
+
+        virtual u64 getLabelID( void ) override final
+        {
+            static u64 cnt = 0;
+            return cnt++;
+        }
+
+        static Value* getUndef( Type* result );
+
+        static Value* getAgent( Type::Agent value );
+        static Value* getRuleReference( const char* value );
+        static Value* getBoolean( Type::Boolean value );
+        static Value* getInteger( Type::Integer value );
+        static Value* getBit( Type* result, u64 value );
+        static Value* getString( const char* value );
+        // static Value* get( void );
+    };
+
     template < typename V >
-    class ConstantOf : public User
+    class ConstantOf : public Constant
     {
       private:
         V value;
@@ -67,33 +108,6 @@ namespace libcasm_ir
 
       protected:
         void setValue( V val );
-    };
-
-    class Constant : public ConstantOf< u1 >
-    {
-      private:
-        static std::unordered_map< std::string, Value* >& str2obj( void )
-        {
-            static std::unordered_map< std::string, Value* > cache;
-            return cache;
-        };
-
-      public:
-        static inline Value::ID classid( void )
-        {
-            return Value::CONSTANT;
-        };
-        static bool classof( Value const* obj );
-
-        static Value* getUndef( Type* result );
-
-        static Value* getAgent( Type::Agent value );
-        static Value* getRuleReference( const char* value );
-        static Value* getBoolean( Type::Boolean value );
-        static Value* getInteger( Type::Integer value );
-        static Value* getBit( Type* result, u64 value );
-        static Value* getString( const char* value );
-        // static Value* get( void );
     };
 
     class AgentConstant : public ConstantOf< Type::Agent >

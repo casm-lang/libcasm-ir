@@ -71,6 +71,11 @@ Type* Value::getType( void ) const
     return type;
 }
 
+u1 Value::hasType( void ) const
+{
+    return type ? true : false;
+}
+
 void Value::setType( Type* type )
 {
     assert( !type_lock );
@@ -175,40 +180,40 @@ void Value::iterate(
     if( Value::isa< Specification >( this ) )
     {
         Specification* obj = ( (Specification*)this );
-        const std::vector< Value* > empty = {};
+        const std::unordered_map< std::string, Value* > empty = {};
 
-        for( Value* p : ( obj->has< Agent >() ? obj->get< Agent >() : empty ) )
+        for( auto p : ( obj->has< Agent >() ? obj->get< Agent >() : empty ) )
         {
-            p->iterate( order, visitor, action );
+            p.second->iterate( order, visitor, action );
         }
 
-        for( Value* p :
+        for( auto p :
             ( obj->has< Function >() ? obj->get< Function >() : empty ) )
         {
-            p->iterate( order, visitor, action );
+            p.second->iterate( order, visitor, action );
         }
 
-        for( Value* p :
+        for( auto p :
             ( obj->has< Derived >() ? obj->get< Derived >() : empty ) )
         {
-            p->iterate( order, visitor, action );
+            p.second->iterate( order, visitor, action );
         }
 
-        for( Value* p :
+        for( auto p :
             ( obj->has< Constant >() ? obj->get< Constant >() : empty ) )
         {
-            p->iterate( order, visitor, action );
+            p.second->iterate( order, visitor, action );
         }
 
-        for( Value* p :
+        for( auto p :
             ( obj->has< Builtin >() ? obj->get< Builtin >() : empty ) )
         {
-            p->iterate( order, visitor, action );
+            p.second->iterate( order, visitor, action );
         }
 
-        for( Value* p : ( obj->has< Rule >() ? obj->get< Rule >() : empty ) )
+        for( auto p : ( obj->has< Rule >() ? obj->get< Rule >() : empty ) )
         {
-            p->iterate( order, visitor, action );
+            p.second->iterate( order, visitor, action );
         }
     }
     else if( Value::isa< Rule >( this ) )

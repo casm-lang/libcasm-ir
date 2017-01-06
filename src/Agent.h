@@ -39,7 +39,7 @@ namespace libcasm_ir
       public:
         Agent( void );
 
-        // ~Agent( void );
+        ~Agent( void );
 
         RuleReferenceConstant* getInitRuleReference( void ) const;
 
@@ -54,6 +54,11 @@ namespace libcasm_ir
             return Value::AGENT;
         };
         static bool classof( Value const* obj );
+
+        virtual const char* getLabel( void ) override final
+        {
+            return getName();
+        }
     };
 }
 

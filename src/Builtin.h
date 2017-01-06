@@ -59,6 +59,17 @@ namespace libcasm_ir
         };
         static bool classof( Value const* obj );
 
+        virtual const char* getLabelName( void ) override final
+        {
+            return "@b";
+        }
+
+        virtual u64 getLabelID( void ) override final
+        {
+            static u64 cnt = 0;
+            return cnt++;
+        }
+
         static Builtin* find( const char* name, Type* result );
 
         template < typename T >

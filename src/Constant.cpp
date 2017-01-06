@@ -28,58 +28,6 @@
 
 using namespace libcasm_ir;
 
-template < typename V >
-ConstantOf< V >::ConstantOf(
-    const char* name, Type* type, V value, u1 defined, Value::ID id )
-: User( name, type, id )
-, value( value )
-, defined( defined )
-, description( 0 )
-{
-    getSymbols()[ ".constant" ].insert( this );
-}
-
-template < typename V >
-ConstantOf< V >::~ConstantOf( void )
-{
-    getSymbols()[ ".constant" ].erase( this );
-}
-
-template < typename T >
-bool ConstantOf< T >::classof( Value const* obj )
-{
-    assert( !"invalid to check 'classof' ConstantOf< V >, use Constant" );
-    return false;
-}
-
-template < typename V >
-const V ConstantOf< V >::getValue( void ) const
-{
-    return value;
-}
-
-template < typename V >
-void ConstantOf< V >::setValue( V val )
-{
-    value = val;
-}
-
-template < typename V >
-const char* ConstantOf< V >::getDescription( void )
-{
-    if( not description )
-    {
-        std::string tmp = "";
-        tmp += getType()->getName();
-        tmp += " ";
-        tmp += getName();
-
-        description = libstdhl::Allocator::string( tmp );
-    }
-
-    return description;
-}
-
 bool Constant::classof( Value const* obj )
 {
     return obj->getValueID() == classid() or AgentConstant::classof( obj )
@@ -262,7 +210,64 @@ Value* Constant::getString( const char* value )
     return str2obj().emplace( tmp.getDescription(), ptr ).first->second;
 }
 
-// TODO: PPA: add other constants here!!!
+//
+// ConstantOf< T >
+//
+
+template < typename V >
+ConstantOf< V >::ConstantOf(
+    const char* name, Type* type, V value, u1 defined, Value::ID id )
+: Constant( name, type, id )
+, value( value )
+, defined( defined )
+, description( 0 )
+{
+    getSymbols()[ ".constant" ].insert( this );
+}
+
+template < typename V >
+ConstantOf< V >::~ConstantOf( void )
+{
+    getSymbols()[ ".constant" ].erase( this );
+}
+
+template < typename T >
+bool ConstantOf< T >::classof( Value const* obj )
+{
+    return Constant::classof( obj );
+}
+
+template < typename V >
+const V ConstantOf< V >::getValue( void ) const
+{
+    return value;
+}
+
+template < typename V >
+void ConstantOf< V >::setValue( V val )
+{
+    value = val;
+}
+
+template < typename V >
+const char* ConstantOf< V >::getDescription( void )
+{
+    if( not description )
+    {
+        std::string tmp = "";
+        tmp += getType()->getName();
+        tmp += " ";
+        tmp += getName();
+
+        description = libstdhl::Allocator::string( tmp );
+    }
+
+    return description;
+}
+
+//
+// Constants
+//
 
 AgentConstant::AgentConstant( Type::Agent value, u1 defined )
 : ConstantOf< Type::Agent >( ( defined ? "self" : "undef" ), Type::getAgent(),
