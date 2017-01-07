@@ -443,6 +443,10 @@ const TypeAnnotation SubInstruction::info( TypeAnnotation::Data{
     { Type::INTEGER,
         {
             Type::INTEGER, Type::INTEGER,
+        } },
+    { Type::BIT,
+        {
+            Type::BIT, Type::BIT,
         } }
 
 } );
@@ -461,6 +465,10 @@ const TypeAnnotation MulInstruction::info( TypeAnnotation::Data{
     { Type::INTEGER,
         {
             Type::INTEGER, Type::INTEGER,
+        } },
+    { Type::BIT,
+        {
+            Type::BIT, Type::BIT,
         } }
 
 } );
@@ -518,7 +526,31 @@ const TypeAnnotation EquInstruction::info( TypeAnnotation::Data{
 
     { Type::BOOLEAN,
         {
+            Type::RULE_REFERENCE, Type::RULE_REFERENCE,
+        } },
+    { Type::BOOLEAN,
+        {
+            Type::BOOLEAN, Type::BOOLEAN,
+        } },
+    { Type::BOOLEAN,
+        {
             Type::INTEGER, Type::INTEGER,
+        } },
+    { Type::BOOLEAN,
+        {
+            Type::BIT, Type::BIT,
+        } },
+    { Type::BOOLEAN,
+        {
+            Type::STRING, Type::STRING,
+        } },
+    { Type::BOOLEAN,
+        {
+            Type::RATIONAL, Type::RATIONAL,
+        } },
+    { Type::BOOLEAN,
+        {
+            Type::ENUMERATION, Type::ENUMERATION,
         } }
 
 } );
@@ -536,7 +568,31 @@ const TypeAnnotation NeqInstruction::info( TypeAnnotation::Data{
 
     { Type::BOOLEAN,
         {
+            Type::RULE_REFERENCE, Type::RULE_REFERENCE,
+        } },
+    { Type::BOOLEAN,
+        {
+            Type::BOOLEAN, Type::BOOLEAN,
+        } },
+    { Type::BOOLEAN,
+        {
             Type::INTEGER, Type::INTEGER,
+        } },
+    { Type::BOOLEAN,
+        {
+            Type::BIT, Type::BIT,
+        } },
+    { Type::BOOLEAN,
+        {
+            Type::STRING, Type::STRING,
+        } },
+    { Type::BOOLEAN,
+        {
+            Type::RATIONAL, Type::RATIONAL,
+        } },
+    { Type::BOOLEAN,
+        {
+            Type::ENUMERATION, Type::ENUMERATION,
         } }
 
 } );

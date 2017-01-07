@@ -60,6 +60,7 @@ void Visitor::dispatch( Stage stage, Value* value )
         CASE_VALUE( AGENT, Agent );
 
         CASE_VALUE( FUNCTION, Function );
+        CASE_VALUE_INTER( DERIVED, Derived );
         CASE_VALUE_INTER( RULE, Rule );
 
         CASE_VALUE( PARALLEL_BLOCK, ParallelBlock );
@@ -85,15 +86,24 @@ void Visitor::dispatch( Stage stage, Value* value )
         CASE_VALUE( PRINT_INSTRUCTION, PrintInstruction );
 
         CASE_VALUE( ADD_INSTRUCTION, AddInstruction );
+        CASE_VALUE( SUB_INSTRUCTION, SubInstruction );
+        CASE_VALUE( MUL_INSTRUCTION, MulInstruction );
+        CASE_VALUE( MOD_INSTRUCTION, ModInstruction );
         CASE_VALUE( DIV_INSTRUCTION, DivInstruction );
 
         CASE_VALUE( AND_INSTRUCTION, AndInstruction );
+        CASE_VALUE( XOR_INSTRUCTION, XorInstruction );
+        CASE_VALUE( OR_INSTRUCTION, OrInstruction );
+
         CASE_VALUE( EQU_INSTRUCTION, EquInstruction );
+        CASE_VALUE( NEQ_INSTRUCTION, NeqInstruction );
+        CASE_VALUE( LTH_INSTRUCTION, LthInstruction );
 
         CASE_VALUE( AGENT_CONSTANT, AgentConstant );
         CASE_VALUE( RULE_REFERENCE_CONSTANT, RuleReferenceConstant );
         CASE_VALUE( BOOLEAN_CONSTANT, BooleanConstant );
         CASE_VALUE( INTEGER_CONSTANT, IntegerConstant );
+        CASE_VALUE( BIT_CONSTANT, BitConstant );
         CASE_VALUE( STRING_CONSTANT, StringConstant );
 
         default:

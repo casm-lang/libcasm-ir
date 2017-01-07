@@ -122,6 +122,18 @@ void CasmIRDumpPass::visit_epilog( Function& value )
 {
 }
 
+void CasmIRDumpPass::visit_prolog( Derived& value )
+{
+    DUMP_PREFIX;
+    DUMP_POSTFIX;
+}
+void CasmIRDumpPass::visit_interlog( Derived& value )
+{
+}
+void CasmIRDumpPass::visit_epilog( Derived& value )
+{
+}
+
 void CasmIRDumpPass::visit_prolog( Rule& value )
 {
     DUMP_PREFIX;
@@ -320,6 +332,33 @@ void CasmIRDumpPass::visit_prolog( AddInstruction& value )
 void CasmIRDumpPass::visit_epilog( AddInstruction& value )
 {
 }
+void CasmIRDumpPass::visit_prolog( SubInstruction& value )
+{
+    DUMP_PREFIX;
+    DUMP_INSTR;
+    DUMP_POSTFIX;
+}
+void CasmIRDumpPass::visit_epilog( SubInstruction& value )
+{
+}
+void CasmIRDumpPass::visit_prolog( MulInstruction& value )
+{
+    DUMP_PREFIX;
+    DUMP_INSTR;
+    DUMP_POSTFIX;
+}
+void CasmIRDumpPass::visit_epilog( MulInstruction& value )
+{
+}
+void CasmIRDumpPass::visit_prolog( ModInstruction& value )
+{
+    DUMP_PREFIX;
+    DUMP_INSTR;
+    DUMP_POSTFIX;
+}
+void CasmIRDumpPass::visit_epilog( ModInstruction& value )
+{
+}
 
 void CasmIRDumpPass::visit_prolog( DivInstruction& value )
 {
@@ -341,6 +380,26 @@ void CasmIRDumpPass::visit_epilog( AndInstruction& value )
 {
 }
 
+void CasmIRDumpPass::visit_prolog( XorInstruction& value )
+{
+    DUMP_PREFIX;
+    DUMP_INSTR;
+    DUMP_POSTFIX;
+}
+void CasmIRDumpPass::visit_epilog( XorInstruction& value )
+{
+}
+
+void CasmIRDumpPass::visit_prolog( OrInstruction& value )
+{
+    DUMP_PREFIX;
+    DUMP_INSTR;
+    DUMP_POSTFIX;
+}
+void CasmIRDumpPass::visit_epilog( OrInstruction& value )
+{
+}
+
 void CasmIRDumpPass::visit_prolog( EquInstruction& value )
 {
     DUMP_PREFIX;
@@ -348,6 +407,26 @@ void CasmIRDumpPass::visit_prolog( EquInstruction& value )
     DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( EquInstruction& value )
+{
+}
+
+void CasmIRDumpPass::visit_prolog( NeqInstruction& value )
+{
+    DUMP_PREFIX;
+    DUMP_INSTR;
+    DUMP_POSTFIX;
+}
+void CasmIRDumpPass::visit_epilog( NeqInstruction& value )
+{
+}
+
+void CasmIRDumpPass::visit_prolog( LthInstruction& value )
+{
+    DUMP_PREFIX;
+    DUMP_INSTR;
+    DUMP_POSTFIX;
+}
+void CasmIRDumpPass::visit_epilog( LthInstruction& value )
 {
 }
 
@@ -388,6 +467,15 @@ void CasmIRDumpPass::visit_prolog( IntegerConstant& value )
     DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( IntegerConstant& value )
+{
+}
+
+void CasmIRDumpPass::visit_prolog( BitConstant& value )
+{
+    DUMP_PREFIX;
+    DUMP_POSTFIX;
+}
+void CasmIRDumpPass::visit_epilog( BitConstant& value )
 {
 }
 

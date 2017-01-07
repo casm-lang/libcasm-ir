@@ -34,8 +34,9 @@ namespace libcasm_ir
     class Agent;
 
     class Function;
-    class Builtin;
     class Rule;
+    class Derived;
+    class Builtin;
 
     class ParallelBlock;
     class SequentialBlock;
@@ -61,15 +62,24 @@ namespace libcasm_ir
     class PrintInstruction;
 
     class AddInstruction;
+    class SubInstruction;
+    class MulInstruction;
+    class ModInstruction;
     class DivInstruction;
 
     class AndInstruction;
+    class XorInstruction;
+    class OrInstruction;
+
     class EquInstruction;
+    class NeqInstruction;
+    class LthInstruction;
 
     class AgentConstant;
     class RuleReferenceConstant;
     class BooleanConstant;
     class IntegerConstant;
+    class BitConstant;
     class StringConstant;
 
     enum class Traversal
@@ -101,6 +111,10 @@ namespace libcasm_ir
                                                                                \
     PREFIX void visit_prolog( libcasm_ir::Function& value ) POSTFIX;           \
     PREFIX void visit_epilog( libcasm_ir::Function& value ) POSTFIX;           \
+                                                                               \
+    PREFIX void visit_prolog( libcasm_ir::Derived& value ) POSTFIX;            \
+    PREFIX void visit_interlog( libcasm_ir::Derived& value ) POSTFIX;          \
+    PREFIX void visit_epilog( libcasm_ir::Derived& value ) POSTFIX;            \
                                                                                \
     PREFIX void visit_prolog( libcasm_ir::Rule& value ) POSTFIX;               \
     PREFIX void visit_interlog( libcasm_ir::Rule& value ) POSTFIX;             \
@@ -157,17 +171,44 @@ namespace libcasm_ir
     PREFIX void visit_prolog( libcasm_ir::PrintInstruction& value ) POSTFIX;   \
     PREFIX void visit_epilog( libcasm_ir::PrintInstruction& value ) POSTFIX;   \
                                                                                \
+    /* ArithmeticInstruction */                                                \
+                                                                               \
     PREFIX void visit_prolog( libcasm_ir::AddInstruction& value ) POSTFIX;     \
     PREFIX void visit_epilog( libcasm_ir::AddInstruction& value ) POSTFIX;     \
+                                                                               \
+    PREFIX void visit_prolog( libcasm_ir::SubInstruction& value ) POSTFIX;     \
+    PREFIX void visit_epilog( libcasm_ir::SubInstruction& value ) POSTFIX;     \
+                                                                               \
+    PREFIX void visit_prolog( libcasm_ir::MulInstruction& value ) POSTFIX;     \
+    PREFIX void visit_epilog( libcasm_ir::MulInstruction& value ) POSTFIX;     \
+                                                                               \
+    PREFIX void visit_prolog( libcasm_ir::ModInstruction& value ) POSTFIX;     \
+    PREFIX void visit_epilog( libcasm_ir::ModInstruction& value ) POSTFIX;     \
                                                                                \
     PREFIX void visit_prolog( libcasm_ir::DivInstruction& value ) POSTFIX;     \
     PREFIX void visit_epilog( libcasm_ir::DivInstruction& value ) POSTFIX;     \
                                                                                \
+    /* LogicalInstruction */                                                   \
+                                                                               \
     PREFIX void visit_prolog( libcasm_ir::AndInstruction& value ) POSTFIX;     \
     PREFIX void visit_epilog( libcasm_ir::AndInstruction& value ) POSTFIX;     \
                                                                                \
+    PREFIX void visit_prolog( libcasm_ir::XorInstruction& value ) POSTFIX;     \
+    PREFIX void visit_epilog( libcasm_ir::XorInstruction& value ) POSTFIX;     \
+                                                                               \
+    PREFIX void visit_prolog( libcasm_ir::OrInstruction& value ) POSTFIX;      \
+    PREFIX void visit_epilog( libcasm_ir::OrInstruction& value ) POSTFIX;      \
+                                                                               \
+    /* CompareInstruction */                                                   \
+                                                                               \
     PREFIX void visit_prolog( libcasm_ir::EquInstruction& value ) POSTFIX;     \
     PREFIX void visit_epilog( libcasm_ir::EquInstruction& value ) POSTFIX;     \
+                                                                               \
+    PREFIX void visit_prolog( libcasm_ir::NeqInstruction& value ) POSTFIX;     \
+    PREFIX void visit_epilog( libcasm_ir::NeqInstruction& value ) POSTFIX;     \
+                                                                               \
+    PREFIX void visit_prolog( libcasm_ir::LthInstruction& value ) POSTFIX;     \
+    PREFIX void visit_epilog( libcasm_ir::LthInstruction& value ) POSTFIX;     \
                                                                                \
     /* Constant */                                                             \
                                                                                \
@@ -184,6 +225,9 @@ namespace libcasm_ir
                                                                                \
     PREFIX void visit_prolog( libcasm_ir::IntegerConstant& value ) POSTFIX;    \
     PREFIX void visit_epilog( libcasm_ir::IntegerConstant& value ) POSTFIX;    \
+                                                                               \
+    PREFIX void visit_prolog( libcasm_ir::BitConstant& value ) POSTFIX;        \
+    PREFIX void visit_epilog( libcasm_ir::BitConstant& value ) POSTFIX;        \
                                                                                \
     PREFIX void visit_prolog( libcasm_ir::StringConstant& value ) POSTFIX;     \
     PREFIX void visit_epilog( libcasm_ir::StringConstant& value ) POSTFIX

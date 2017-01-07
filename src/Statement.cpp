@@ -33,7 +33,10 @@ Statement::Statement(
 : Block( name, id )
 , scope( scope )
 {
-    setParent( scope );
+    if( scope )
+    {
+        setParent( scope );
+    }
 }
 
 ExecutionSemanticsBlock* Statement::getScope( void ) const
