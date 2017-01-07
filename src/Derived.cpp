@@ -29,7 +29,8 @@
 using namespace libcasm_ir;
 
 Derived::Derived( const char* name, Type* result )
-: User( name, result, Value::DERIVED )
+: User( libstdhl::Allocator::string( "@" + std::string( name ) ), result,
+      Value::DERIVED )
 {
     ident = Identifier::create( result, name );
 

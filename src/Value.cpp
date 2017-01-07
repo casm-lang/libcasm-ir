@@ -230,6 +230,20 @@ void Value::iterate(
 
         context->iterate( order, visitor, action );
     }
+    else if( Value::isa< Derived >( this ) )
+    {
+        Derived* obj = ( (Derived*)this );
+
+        if( visitor )
+        {
+            visitor->dispatch( Visitor::Stage::INTERLOG, this );
+        }
+        
+        Value* context = obj->getContext();
+        assert( context );
+        
+        context->iterate( order, visitor, action );
+    }
     else if( Value::isa< ExecutionSemanticsBlock >( this ) )
     {
         ExecutionSemanticsBlock* val

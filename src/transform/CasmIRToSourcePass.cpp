@@ -159,6 +159,14 @@ bool CasmIRToSourcePass::run( libpass::PassResult& pr )
             fprintf( stream, "%s = %s %s\n", value.getLabel(),
                 value.getType()->getName(), value.getName() );
         }
+        else if( Value::isa< Derived >( value ) )
+        {
+            fprintf( stream,
+                "\n"
+                "%s %s = \n"
+                "[\n",
+                value.getName(), value.getType()->getName() );
+        }
         else if( Value::isa< Rule >( value ) )
         {
             fprintf( stream,
@@ -175,31 +183,39 @@ bool CasmIRToSourcePass::run( libpass::PassResult& pr )
             const char* label = value.getLabel();
             std::string scope = "";
 
-            if( stmt.getScope()->getEntryBlock() == &stmt )
+            if( not stmt.getScope() )
             {
-                label = stmt.getScope()->getLabel();
-            }
-
-            if( stmt.getScope()->getParent() )
-            {
-                scope += stmt.getScope()->getParent()->getLabel();
+                nline = "";
             }
             else
             {
                 if( stmt.getScope()->getEntryBlock() == &stmt )
                 {
-                    nline = "";
-                    scope = "entry";
+                    label = stmt.getScope()->getLabel();
                 }
-                else if( stmt.getScope()->getExitBlock() == &stmt )
+
+                if( stmt.getScope()->getParent() )
                 {
-                    scope = "exit";
+                    scope += stmt.getScope()->getParent()->getLabel();
                 }
                 else
                 {
-                    stmt.getScope()->getLabel();
+                    if( stmt.getScope()->getEntryBlock() == &stmt )
+                    {
+                        nline = "";
+                        scope = "entry";
+                    }
+                    else if( stmt.getScope()->getExitBlock() == &stmt )
+                    {
+                        scope = "exit";
+                    }
+                    else
+                    {
+                        stmt.getScope()->getLabel();
+                    }
                 }
             }
+            
             
             fprintf( stream, "%s%s%s: %s\n", nline, indention( value ), label,
                 scope.c_str() );
@@ -273,14 +289,19 @@ bool CasmIRToSourcePass::run( libpass::PassResult& pr )
             const Statement* stmt = instr.getStatement();
             assert( stmt );
             ExecutionSemanticsBlock* scope = stmt->getScope();
-            assert( scope );
-            // ExecutionSemanticsBlock* blk
-            //     = static_cast< ExecutionSemanticsBlock* >( scope );
 
-            if( scope->getScope() == 0 and scope->getExitBlock() == stmt )
+            if( not scope )
             {
-                // reached rule, this blk is the top level exec.sem.blk
-                fprintf( stream, "}\n" );
+                // end of derived!
+                fprintf( stream, "]\n" );
+            }
+            else
+            {
+                if( scope->getScope() == 0 and scope->getExitBlock() == stmt )
+                {
+                    // reached end of rule, this blk is the top level exec.sem.blk
+                    fprintf( stream, "}\n" );
+                }
             }
         }
     } );

@@ -23,6 +23,7 @@
 
 #include "Instruction.h"
 #include "Derived.h"
+#include "Rule.h"
 
 using namespace libcasm_ir;
 
@@ -261,11 +262,11 @@ bool LocationInstruction::classof( Value const* obj )
 CallInstruction::CallInstruction( Value* symbol )
 : Instruction( "call", 0, { symbol }, Value::CALL_INSTRUCTION )
 {
-    if( Value::isa< Builtin >( symbol ) or Value::isa< Derived >( symbol ) )
-    {
-        assert( symbol->getType() );
-        setType( symbol->getType()->getResult() );
-    }
+    assert( Value::isa< Rule >( symbol ) or Value::isa< Derived >( symbol )
+            or Value::isa< Builtin >( symbol ) );
+
+    assert( symbol->getType() );
+    setType( symbol->getType()->getResult() );
 }
 
 bool CallInstruction::classof( Value const* obj )
