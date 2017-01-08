@@ -86,7 +86,10 @@ namespace libcasm_ir
       public:
         ~ConstantOf( void );
 
-        const V getValue( void ) const;
+        const V getValue( void ) const
+        {
+            return value;
+        }
 
         const u1 isDefined( void ) const
         {

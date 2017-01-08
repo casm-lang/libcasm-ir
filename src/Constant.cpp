@@ -238,12 +238,6 @@ bool ConstantOf< T >::classof( Value const* obj )
 }
 
 template < typename V >
-const V ConstantOf< V >::getValue( void ) const
-{
-    return value;
-}
-
-template < typename V >
 void ConstantOf< V >::setValue( V val )
 {
     value = val;
