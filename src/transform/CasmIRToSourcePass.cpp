@@ -128,9 +128,8 @@ bool CasmIRToSourcePass::run( libpass::PassResult& pr )
             }
 
             // Agent& val = static_cast< Agent& >( value );
-            
-            fprintf(
-                stream, "%s = init %s\n", value.getLabel(), "'rule'" ); //,
+
+            fprintf( stream, "%s = init %s\n", value.getLabel(), "'rule'" ); //,
             // val.getInitRule()->getName() ); // getType()->getName() );
         }
         else if( Value::isa< Function >( value ) )
@@ -215,8 +214,7 @@ bool CasmIRToSourcePass::run( libpass::PassResult& pr )
                     }
                 }
             }
-            
-            
+
             fprintf( stream, "%s%s%s: %s\n", nline, indention( value ), label,
                 scope.c_str() );
         }
@@ -299,7 +297,8 @@ bool CasmIRToSourcePass::run( libpass::PassResult& pr )
             {
                 if( scope->getScope() == 0 and scope->getExitBlock() == stmt )
                 {
-                    // reached end of rule, this blk is the top level exec.sem.blk
+                    // reached end of rule, this blk is the top level
+                    // exec.sem.blk
                     fprintf( stream, "}\n" );
                 }
             }

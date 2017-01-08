@@ -188,18 +188,6 @@ void Value::iterate(
         }
 
         for( auto p :
-            ( obj->has< Function >() ? obj->get< Function >() : empty ) )
-        {
-            p.second->iterate( order, visitor, action );
-        }
-
-        for( auto p :
-            ( obj->has< Derived >() ? obj->get< Derived >() : empty ) )
-        {
-            p.second->iterate( order, visitor, action );
-        }
-
-        for( auto p :
             ( obj->has< Constant >() ? obj->get< Constant >() : empty ) )
         {
             p.second->iterate( order, visitor, action );
@@ -207,6 +195,18 @@ void Value::iterate(
 
         for( auto p :
             ( obj->has< Builtin >() ? obj->get< Builtin >() : empty ) )
+        {
+            p.second->iterate( order, visitor, action );
+        }
+
+        for( auto p :
+            ( obj->has< Function >() ? obj->get< Function >() : empty ) )
+        {
+            p.second->iterate( order, visitor, action );
+        }
+
+        for( auto p :
+            ( obj->has< Derived >() ? obj->get< Derived >() : empty ) )
         {
             p.second->iterate( order, visitor, action );
         }
@@ -238,10 +238,10 @@ void Value::iterate(
         {
             visitor->dispatch( Visitor::Stage::INTERLOG, this );
         }
-        
+
         Value* context = obj->getContext();
         assert( context );
-        
+
         context->iterate( order, visitor, action );
     }
     else if( Value::isa< ExecutionSemanticsBlock >( this ) )

@@ -75,8 +75,8 @@ static const char* indention( Value& value )
 }
 
 #define DUMP_PREFIX                                                            \
-    fprintf( stderr, "%-14s: %p, %s, %s%s ", __FUNCTION__, &value,             \
-        value.getLabel(), indention( value ), value.getName() )
+    fprintf( stderr, "%p: %s, %s%s ", &value, value.getLabel(),                \
+        indention( value ), value.getName() )
 #define DUMP_POSTFIX fprintf( stderr, "\n" );
 
 #define DUMP_INSTR                                                             \
