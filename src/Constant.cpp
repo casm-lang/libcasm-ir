@@ -211,55 +211,6 @@ Value* Constant::getString( const char* value )
 }
 
 //
-// ConstantOf< T >
-//
-
-template < typename V >
-ConstantOf< V >::ConstantOf(
-    const char* name, Type* type, V value, u1 defined, Value::ID id )
-: Constant( name, type, id )
-, value( value )
-, defined( defined )
-, description( 0 )
-{
-    getSymbols()[ ".constant" ].insert( this );
-}
-
-template < typename V >
-ConstantOf< V >::~ConstantOf( void )
-{
-    getSymbols()[ ".constant" ].erase( this );
-}
-
-template < typename T >
-bool ConstantOf< T >::classof( Value const* obj )
-{
-    return Constant::classof( obj );
-}
-
-template < typename V >
-void ConstantOf< V >::setValue( V val )
-{
-    value = val;
-}
-
-template < typename V >
-const char* ConstantOf< V >::getDescription( void )
-{
-    if( not description )
-    {
-        std::string tmp = "";
-        tmp += getType()->getName();
-        tmp += " ";
-        tmp += getName();
-
-        description = libstdhl::Allocator::string( tmp );
-    }
-
-    return description;
-}
-
-//
 // Constants
 //
 

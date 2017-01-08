@@ -81,10 +81,20 @@ namespace libcasm_ir
 
       protected:
         ConstantOf( const char* name, Type* type, V value, u1 defined,
-            Value::ID id = Value::CONSTANT );
+            Value::ID id = Value::CONSTANT )
+        : Constant( name, type, id )
+        , value( value )
+        , defined( defined )
+        , description( 0 )
+        {
+            getSymbols()[ ".constant" ].insert( this );
+        }
 
       public:
-        ~ConstantOf( void );
+        ~ConstantOf( void )
+        {
+            getSymbols()[ ".constant" ].erase( this );
+        }
 
         const V getValue( void ) const
         {
@@ -101,16 +111,36 @@ namespace libcasm_ir
             return not defined;
         }
 
-        const char* getDescription( void );
+        const char* getDescription( void )
+        {
+            if( not description )
+            {
+                std::string tmp = "";
+                tmp += getType()->getName();
+                tmp += " ";
+                tmp += getName();
+
+                description = libstdhl::Allocator::string( tmp );
+            }
+
+            return description;
+        }
 
         static inline Value::ID classid( void )
         {
             return Value::CONSTANT;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static bool classof( Value const* obj )
+        {
+            return Constant::classof( obj );
+        }
 
       protected:
-        void setValue( V val );
+        void setValue( V val )
+        {
+            value = val;
+        }
     };
 
     class AgentConstant : public ConstantOf< Type::Agent >
