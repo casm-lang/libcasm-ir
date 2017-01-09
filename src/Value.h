@@ -182,23 +182,18 @@ namespace libcasm_ir
             // PEEK_BUILTIN,
         };
 
-        typedef std::unordered_map< const char*, std::unordered_set< Value* >,
-            libstdhl::Hash, libstdhl::Equal >
-            SymbolTable;
-
       private:
         const char* name;
         Type* type;
         ID id;
         u1 type_lock;
 
-        // std::vector< Type* > parameters;
-
       protected:
-        static SymbolTable& getSymbols( void )
+        static std::unordered_map< ID, std::unordered_set< Value* > >& id2objs(
+            void )
         {
-            static SymbolTable symbols;
-            return symbols;
+            static std::unordered_map< ID, std::unordered_set< Value* > > cache;
+            return cache;
         }
 
       public:

@@ -256,7 +256,8 @@ RuleReferenceConstant::RuleReferenceConstant( Type::RuleReference value )
 }
 
 RuleReferenceConstant::RuleReferenceConstant( const char* name )
-: RuleReferenceConstant( 0, name, true )
+: RuleReferenceConstant(
+      0, libstdhl::Allocator::string( "@" + std::string( name ) ), true )
 {
 }
 
@@ -303,27 +304,32 @@ RuleReferenceConstant::RuleReferenceConstant( void )
 
 void RuleReferenceConstant::resolve( void )
 {
-    if( !resolve_identifier )
+    if( not resolve_identifier )
     {
         return;
     }
 
-    auto result = getSymbols().find( resolve_identifier );
-    if( result != getSymbols().end() )
+    for( auto value : id2objs()[ Rule::classid() ] )
     {
-        assert( result->second.size() == 1 );
-        Value* val = *( result->second.begin() );
-        assert( Value::isa< Rule >( val ) );
-        setValue( static_cast< Rule* >( val ) );
+        assert( Value::isa< Rule >( value ) );
+
+        if( strcmp( resolve_identifier, value->getName() ) )
+        {
+            setValue( static_cast< Rule* >( value ) );
+            resolve_identifier = 0;
+            break;
+        }
     }
 }
 
 void RuleReferenceConstant::checking( void )
 {
-    for( auto value : getSymbols()[ ".rulepointer" ] )
+    for( auto value : id2objs()[ RuleReferenceConstant::classid() ] )
     {
         assert( Value::isa< RuleReferenceConstant >( value ) );
-        ( (libcasm_ir::RuleReferenceConstant*)value )->resolve();
+        RuleReferenceConstant* rrc
+            = static_cast< RuleReferenceConstant* >( value );
+        rrc->resolve();
     }
 }
 
@@ -456,73 +462,40 @@ bool StringConstant::classof( Value const* obj )
 Identifier::Identifier( Type* type, const char* value )
 : ConstantOf< const char* >( value, type, value, true, Value::IDENTIFIER )
 {
-    getSymbols()[ ".identifier" ].insert( this );
+    // auto result = ident2obj().find( value );
+    // if( result != ident2obj().end() )
+    // {
+    //     assert( !" identifier already used! " );
+    // }
 }
 
 Identifier::~Identifier( void )
 {
-    getSymbols()[ ".identifier" ].erase( this );
 }
 
 Identifier* Identifier::create( Type* type, const char* value, Value* scope )
 {
-    const char* tmp = value;
+    assert( type );
+    assert( value );
 
-    // if( scope )
-    // {
-    //     tmp = libstdhl::Allocator::string( string(scope->getName()) + "::" +
-    //     string(tmp) );
-    //     // std::string tmp;
-    //     // tmp.append( scope->getName() );
-    //     // tmp.append( "::" );
-    //     // tmp.append( value );
-    //     // tmp_scope = tmp.c_str();
-    // }
+    Identifier tmp = Identifier( type, value );
 
-    auto result = getSymbols().find( tmp );
-    if( result != getSymbols().end() )
+    auto cache = ident2obj().find( value );
+    if( cache != ident2obj().end() )
     {
-        assert( result->second.size() == 1 );
-        Value* x = *result->second.begin();
-
-        assert( x->getType()->getID() == type->getID() );
-        // //if( x->getType()->getID() == type->getID() )
-        // //{
-        // printf( "[Ident] found '%s' of type %lu @ %p\n", value,
-        // type->getID(), x );
-        return (Identifier*)x;
-        // //}
+        Value* v = cache->second;
+        assert( strcmp( v->getType()->getName(), type->getName() ) == 0 );
+        return cache->second;
     }
 
-    // printf( "[Ident] creating '%s' of type %lu\n", value, type->getID() );
-    return new Identifier( type, value );
+    Identifier* ptr = new Identifier( tmp );
+    ident2obj()[ value ] = ptr;
+    return ptr;
 }
-
-// Identifier* Identifier::create( Type* type )
-// {
-//     static std::unordered_map< u64, Identifier* > cache;
-//     auto result = cache.find( type->getID() );
-//     Identifier* x = 0;
-
-//     if( result != cache.end() )
-//     {
-//         x = result->second;
-//          assert( x->getType()->getID() == type->getID() );
-//         printf( "[Ident] found 'undef' of type %lu @ %p\n", type->getID(), x
-//         );
-//         return x;
-//     }
-
-//     x = new Identifier( type, 0, false );
-
-//     printf( "[Ident] creating '%s' of type %lu\n", value, type->getID() );
-//     return
-// }
 
 void Identifier::forgetSymbol( const char* value )
 {
-    // printf( "[Ident] forgetting '%s'\n", value );
-    getSymbols().erase( value );
+    ident2obj().erase( value );
 }
 
 void Identifier::dump( void ) const

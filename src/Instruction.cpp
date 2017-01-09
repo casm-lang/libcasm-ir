@@ -23,6 +23,7 @@
 
 #include "Instruction.h"
 #include "Derived.h"
+#include "Function.h"
 #include "Rule.h"
 
 using namespace libcasm_ir;
@@ -250,7 +251,7 @@ bool LocalInstruction::classof( Value const* obj )
 LocationInstruction::LocationInstruction( Value* function )
 : Instruction( "location", 0, { function }, Value::LOCATION_INSTRUCTION )
 {
-    assert( function->getType() );
+    assert( function->getType() and Value::isa< Function >( function ) );
     setType( function->getType() );
 }
 

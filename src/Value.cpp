@@ -45,20 +45,12 @@ Value::Value( const char* name, Type* type, Value::ID id )
 , id( id )
 , type_lock( false )
 {
-    getSymbols()[ name ].insert( this );
-
-    // printf( "[Value] created '%s' @ %p", name, this );
-    // if( type )
-    // {
-    //     printf( " of type '%s' (=0x%lx)", type->getName(), type->getID() );
-    // }
-    // printf( "\n" );
+    id2objs()[ id ].insert( this );
 }
 
 Value::~Value()
 {
-    getSymbols()[ name ].erase( this );
-    // printf( "[Value] deleted '%s' @ %p of type %p\n", name, this, type );
+    id2objs()[ id ].erase( this );
 }
 
 const char* Value::getName( void ) const
@@ -182,11 +174,6 @@ void Value::iterate(
         Specification* obj = ( (Specification*)this );
         const std::unordered_map< std::string, Value* > empty = {};
 
-        for( auto p : ( obj->has< Agent >() ? obj->get< Agent >() : empty ) )
-        {
-            p.second->iterate( order, visitor, action );
-        }
-
         for( auto p :
             ( obj->has< Constant >() ? obj->get< Constant >() : empty ) )
         {
@@ -212,6 +199,11 @@ void Value::iterate(
         }
 
         for( auto p : ( obj->has< Rule >() ? obj->get< Rule >() : empty ) )
+        {
+            p.second->iterate( order, visitor, action );
+        }
+
+        for( auto p : ( obj->has< Agent >() ? obj->get< Agent >() : empty ) )
         {
             p.second->iterate( order, visitor, action );
         }

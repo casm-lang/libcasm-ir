@@ -33,12 +33,10 @@ Builtin::Builtin(
 , TypeAnnotation( info )
 , description( 0 )
 {
-    getSymbols()[ ".builtin" ].insert( this );
 }
 
 Builtin::~Builtin( void )
 {
-    getSymbols()[ ".builtin" ].erase( this );
 }
 
 void Builtin::dump( void ) const

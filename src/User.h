@@ -40,7 +40,8 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::USER;
-        };
+        }
+
         static bool classof( Value const* obj );
     };
 }

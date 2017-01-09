@@ -24,8 +24,6 @@
 #ifndef _LIB_CASMIR_FUNCTION_H_
 #define _LIB_CASMIR_FUNCTION_H_
 
-#include "Constant.h"
-#include "Type.h"
 #include "User.h"
 
 namespace libcasm_ir

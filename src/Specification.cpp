@@ -24,6 +24,7 @@
 #include "Specification.h"
 #include "Agent.h"
 #include "Builtin.h"
+#include "Constant.h"
 #include "Derived.h"
 #include "Function.h"
 #include "Rule.h"
@@ -33,12 +34,10 @@ using namespace libcasm_ir;
 Specification::Specification( const char* name )
 : Value( name, 0, Value::SPECIFICATION )
 {
-    getSymbols()[ ".specification" ].insert( this );
 }
 
 Specification::~Specification( void )
 {
-    getSymbols()[ ".specification" ].erase( this );
 }
 
 void Specification::add( Value* value )

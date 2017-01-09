@@ -215,8 +215,8 @@ bool CasmIRToSourcePass::run( libpass::PassResult& pr )
                 }
             }
 
-            fprintf( stream, "%s%s%s: %s\n", nline, indention( value ), label,
-                scope.c_str() );
+            fprintf( stream, "%s%s%s: %s\n", nline, indention( value ),
+                &label[ 1 ], scope.c_str() );
         }
         else if( Value::isa< Instruction >( value ) )
         {
@@ -259,25 +259,6 @@ bool CasmIRToSourcePass::run( libpass::PassResult& pr )
                     tmp += v->getType()->getName();
                     tmp += " ";
                     tmp += v->getLabel();
-
-                    // if( Value::isa< Instruction >( v )
-                    //     or Value::isa< Block >( v ) )
-                    // {
-                    //     tmp += "%";
-                    // }
-                    // else
-                    // {
-                    //     tmp += "@";
-                    // }
-
-                    // if( Value::isa< Function >( v ) )
-                    // {
-                    //     tmp += v->getName();
-                    // }
-                    // else
-                    // {
-                    //     tmp += v->getLabel();
-                    // }
                 }
 
                 fprintf( stream, "%s%s = %s %s\n", indention( instr ),

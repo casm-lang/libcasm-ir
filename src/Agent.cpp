@@ -29,8 +29,6 @@ using namespace libcasm_ir;
 Agent::Agent()
 : User( "$", Type::getAgent(), Value::AGENT )
 {
-    getSymbols()[ ".agent" ].insert( this );
-
     static Agent* check = 0;
 
     assert(
@@ -43,7 +41,6 @@ Agent::Agent()
 
 Agent::~Agent( void )
 {
-    getSymbols()[ ".agent" ].erase( this );
 }
 
 RuleReferenceConstant* Agent::getInitRuleReference( void ) const

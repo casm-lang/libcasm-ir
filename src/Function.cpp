@@ -23,6 +23,9 @@
 
 #include "Function.h"
 
+#include "Constant.h"
+// #include "Type.h"
+
 using namespace libcasm_ir;
 
 Function::Function( const char* name, Type* result )
@@ -31,13 +34,10 @@ Function::Function( const char* name, Type* result )
 , ident( 0 )
 {
     ident = Identifier::create( result, getName() );
-
-    getSymbols()[ ".function" ].insert( this );
 }
 
 Function::~Function( void )
 {
-    getSymbols()[ ".function" ].erase( this );
 }
 
 void Function::dump( void ) const

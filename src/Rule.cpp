@@ -34,12 +34,10 @@ Rule::Rule( const char* name, Type* result )
       Value::RULE )
 {
     ident = Identifier::create( result, getName() );
-    getSymbols()[ ".rule" ].insert( this );
 }
 
 Rule::~Rule( void )
 {
-    getSymbols()[ ".rule" ].erase( this );
 }
 
 ParallelBlock* Rule::getContext( void ) const

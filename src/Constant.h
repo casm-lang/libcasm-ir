@@ -51,7 +51,7 @@ namespace libcasm_ir
 
         virtual const char* getLabelName( void ) override final
         {
-            return "%c";
+            return "@c";
         }
 
         virtual u64 getLabelID( void ) override final
@@ -87,13 +87,11 @@ namespace libcasm_ir
         , defined( defined )
         , description( 0 )
         {
-            getSymbols()[ ".constant" ].insert( this );
         }
 
       public:
         ~ConstantOf( void )
         {
-            getSymbols()[ ".constant" ].erase( this );
         }
 
         const V getValue( void ) const
@@ -264,6 +262,12 @@ namespace libcasm_ir
     class Identifier : public ConstantOf< const char* >
     {
       private:
+        static std::unordered_map< std::string, Identifier* >& ident2obj( void )
+        {
+            static std::unordered_map< std::string, Identifier* > cache;
+            return cache;
+        }
+
         Identifier( Type* type, const char* value );
 
       public:
