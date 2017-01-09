@@ -490,13 +490,13 @@ Identifier* Identifier::create( Type* type, const char* value, Value* scope )
     }
 
     Identifier* ptr = new Identifier( tmp );
-    ident2obj()[ value ] = ptr;
+    ident2obj()[ std::string( value ) ] = ptr;
     return ptr;
 }
 
 void Identifier::forgetSymbol( const char* value )
 {
-    ident2obj().erase( value );
+    ident2obj().erase( std::string( value ) );
 }
 
 void Identifier::dump( void ) const

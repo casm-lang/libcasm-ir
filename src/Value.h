@@ -191,10 +191,10 @@ namespace libcasm_ir
         u1 type_lock;
 
       protected:
-        static std::unordered_map< ID, std::unordered_set< Value* > >& id2objs(
+        static std::unordered_map< u8, std::unordered_set< Value* > >& id2objs(
             void )
         {
-            static std::unordered_map< ID, std::unordered_set< Value* > > cache;
+            static std::unordered_map< u8, std::unordered_set< Value* > > cache;
             return cache;
         }
 
