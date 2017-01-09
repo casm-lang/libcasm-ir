@@ -41,12 +41,12 @@
 #include "src/Value.h"
 #include "src/Visitor.h"
 
+#include "src/analyze/CasmIRDumpPass.h"
+
+#include "src/transform/CasmIRToSourcePass.h"
+
 namespace libcasm_ir
 {
-    // class CasmIR // TODO: FIXME: PPA: this should be the right class not
-    // src/CasmIR.h !!!
-    // {
-    // };
 }
 
 #endif /* _LIB_CASMIR_H_ */

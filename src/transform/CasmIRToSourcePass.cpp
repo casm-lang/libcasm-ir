@@ -22,7 +22,8 @@
 //
 
 #include "CasmIRToSourcePass.h"
-#include "Specification.h"
+
+#include "libcasm-ir.h"
 
 using namespace libcasm_ir;
 

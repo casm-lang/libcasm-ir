@@ -37,6 +37,8 @@
 
 namespace libcasm_ir
 {
+    class Type;
+
     class Value : public CasmIR, public libstdhl::Labeling
     {
       public:

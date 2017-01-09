@@ -24,8 +24,9 @@
 #ifndef _LIB_CASMIR_CASM_IR_DUMP_PASS_H_
 #define _LIB_CASMIR_CASM_IR_DUMP_PASS_H_
 
-#include "libcasm-ir.all.h"
 #include "libpass.h"
+
+#include "../Visitor.h"
 
 /**
    @brief    TODO
