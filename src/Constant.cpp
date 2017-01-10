@@ -279,7 +279,7 @@ RuleReferenceConstant::RuleReferenceConstant( void )
 //         for( auto r : rsym->second )
 //         {
 //             assert( not rv );
-//             if( Value::isa< Rule >( r ) )
+//             if( isa< Rule >( r ) )
 //             {
 //                 rv = static_cast< Rule* >( rv );
 //             }
@@ -312,7 +312,7 @@ void RuleReferenceConstant::resolve( void )
 
     for( auto value : id2objs()[ Rule::classid() ] )
     {
-        assert( Value::isa< Rule >( value ) );
+        assert( isa< Rule >( value ) );
 
         if( strcmp( resolve_identifier, value->getName() ) )
         {
@@ -327,7 +327,7 @@ void RuleReferenceConstant::checking( void )
 {
     for( auto value : id2objs()[ RuleReferenceConstant::classid() ] )
     {
-        assert( Value::isa< RuleReferenceConstant >( value ) );
+        assert( isa< RuleReferenceConstant >( value ) );
         RuleReferenceConstant* rrc
             = static_cast< RuleReferenceConstant* >( value );
         rrc->resolve();

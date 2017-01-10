@@ -108,7 +108,7 @@ void Visitor::dispatch( Stage stage, Value* value )
 
         default:
         {
-            if( Value::isa< Builtin >( value ) )
+            if( isa< Builtin >( value ) )
             {
                 if( stage == Stage::PROLOG )
                 {

@@ -38,7 +38,7 @@ static FILE* stream = stdout;
 
 static const char* indention( Value& value )
 {
-    if( Value::isa< Instruction >( value ) )
+    if( isa< Instruction >( value ) )
     {
         return "  ";
     }
@@ -51,7 +51,7 @@ static const char* indention( Value& value )
     // Value* p = ( &value );
     // while( p != 0 )
     // {
-    //     if( Value::isa< ExecutionSemanticsBlock >( p ) )
+    //     if( isa< ExecutionSemanticsBlock >( p ) )
     //     {
     //         p = (Value*)( (ExecutionSemanticsBlock*)p )->getScope();
 
@@ -60,11 +60,11 @@ static const char* indention( Value& value )
     //             continue;
     //         }
     //     }
-    //     else if( Value::isa< Instruction >( p ) )
+    //     else if( isa< Instruction >( p ) )
     //     {
     //         p = (Value*)( (Instruction*)p )->getStatement();
     //     }
-    //     else if( Value::isa< Statement >( p ) )
+    //     else if( isa< Statement >( p ) )
     //     {
     //         ExecutionSemanticsBlock* scope = ( (Statement*)p )->getScope();
     //         u1 skip = false;
@@ -105,7 +105,7 @@ bool CasmIRToSourcePass::run( libpass::PassResult& pr )
         assert( value_ptr );
         Value& value = *value_ptr;
 
-        if( Value::isa< Constant >( value ) )
+        if( isa< Constant >( value ) )
         {
             static u1 first = true;
 
@@ -118,7 +118,7 @@ bool CasmIRToSourcePass::run( libpass::PassResult& pr )
             fprintf( stream, "%s = %s %s\n", value.getLabel(),
                 value.getType()->getName(), value.getName() );
         }
-        else if( Value::isa< Agent >( value ) )
+        else if( isa< Agent >( value ) )
         {
             static u1 first = true;
 
@@ -133,7 +133,7 @@ bool CasmIRToSourcePass::run( libpass::PassResult& pr )
             fprintf( stream, "%s = init %s\n", value.getLabel(), "'rule'" ); //,
             // val.getInitRule()->getName() ); // getType()->getName() );
         }
-        else if( Value::isa< Function >( value ) )
+        else if( isa< Function >( value ) )
         {
             static u1 first = true;
 
@@ -146,7 +146,7 @@ bool CasmIRToSourcePass::run( libpass::PassResult& pr )
             fprintf( stream, "%s = %s\n", value.getName(),
                 value.getType()->getName() );
         }
-        else if( Value::isa< Builtin >( value ) )
+        else if( isa< Builtin >( value ) )
         {
             static u1 first = true;
 
@@ -159,7 +159,7 @@ bool CasmIRToSourcePass::run( libpass::PassResult& pr )
             fprintf( stream, "%s = %s %s\n", value.getLabel(),
                 value.getType()->getName(), value.getName() );
         }
-        else if( Value::isa< Derived >( value ) )
+        else if( isa< Derived >( value ) )
         {
             fprintf( stream,
                 "\n"
@@ -167,7 +167,7 @@ bool CasmIRToSourcePass::run( libpass::PassResult& pr )
                 "[\n",
                 value.getName(), value.getType()->getName() );
         }
-        else if( Value::isa< Rule >( value ) )
+        else if( isa< Rule >( value ) )
         {
             fprintf( stream,
                 "\n"
@@ -175,7 +175,7 @@ bool CasmIRToSourcePass::run( libpass::PassResult& pr )
                 "{\n",
                 value.getName(), value.getType()->getName() );
         }
-        else if( Value::isa< Statement >( value ) )
+        else if( isa< Statement >( value ) )
         {
             Statement& stmt = static_cast< Statement& >( value );
 
@@ -219,11 +219,11 @@ bool CasmIRToSourcePass::run( libpass::PassResult& pr )
             fprintf( stream, "%s%s%s: %s\n", nline, indention( value ),
                 &label[ 1 ], scope.c_str() );
         }
-        else if( Value::isa< Instruction >( value ) )
+        else if( isa< Instruction >( value ) )
         {
             Instruction& instr = static_cast< Instruction& >( value );
 
-            if( Value::isa< ForkInstruction >( instr ) )
+            if( isa< ForkInstruction >( instr ) )
             {
                 fprintf( stream,
                     "%s%s %s %s %s\n",
@@ -233,7 +233,7 @@ bool CasmIRToSourcePass::run( libpass::PassResult& pr )
                     instr.getStatement()->getScope()->getType()->getName(),
                     instr.getStatement()->getScope()->getLabel() );
             }
-            else if( Value::isa< MergeInstruction >( instr ) )
+            else if( isa< MergeInstruction >( instr ) )
             {
                 fprintf( stream, "%s%s %s %s %s\n", indention( instr ),
                     instr.getStatement()->getScope()->getName(),

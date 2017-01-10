@@ -53,14 +53,14 @@ void Statement::add( Value* instruction )
 {
     // printf( "%s: %p\n", __FUNCTION__, instruction );
 
-    if( Value::isa< Constant >( instruction ) )
+    if( isa< Constant >( instruction ) )
     {
         // printf( "%s: %p --> Constant, omitted\n", __FUNCTION__, instruction
         // );
         return;
     }
 
-    assert( instruction and Value::isa< Instruction >( instruction ) );
+    assert( instruction and isa< Instruction >( instruction ) );
 
     Instruction* instr = static_cast< Instruction* >( instruction );
     instr->setStatement( this );
@@ -73,12 +73,12 @@ void Statement::addBlock( ExecutionSemanticsBlock* block )
 {
     assert( block );
 
-    if( Value::isa< TrivialStatement >( this ) )
+    if( isa< TrivialStatement >( this ) )
     {
         assert(
             !" trivial statements are not allowed to have inside blocks! " );
     }
-    // else if( Value::isa< ForallStatement >( this ) )
+    // else if( isa< ForallStatement >( this ) )
     // {
     //     assert( blocks.size() < 1 );
     // }
@@ -96,7 +96,7 @@ void Statement::addBlock( ExecutionSemanticsBlock* block )
 const std::vector< ExecutionSemanticsBlock* >& Statement::getBlocks(
     void ) const
 {
-    if( Value::isa< TrivialStatement >( this ) )
+    if( isa< TrivialStatement >( this ) )
     {
         assert( !" trivial statements do not contain inside blocks! " );
     }

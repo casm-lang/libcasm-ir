@@ -35,6 +35,68 @@ namespace libcasm_ir
     class CasmIR
     {
     };
+
+    class Value;
+
+    //
+    // is-a relation
+    //
+
+    template < class TO >
+    static inline bool isa( Value* value )
+    {
+        return TO::classof( value );
+    }
+
+    template < class TO >
+    static inline bool isa( const Value* value )
+    {
+        return isa< TO >( (Value*)value );
+    }
+
+    template < class TO >
+    static inline bool isa( Value& value )
+    {
+        return isa< TO >( &value );
+    }
+
+    template < class TO >
+    static inline bool isa( const Value& value )
+    {
+        return isa< TO >( &value );
+    }
+
+    //
+    // casting utility
+    //
+
+    template < class TO >
+    static inline TO* cast( Value* value )
+    {
+        assert( isa< TO >( value ) );
+        return static_cast< TO* >( value );
+    }
+
+    template < class TO >
+    static inline const TO* cast( const Value* value )
+    {
+        assert( isa< TO >( value ) );
+        return static_cast< const TO* >( value );
+    }
+
+    template < class TO >
+    static inline TO& cast( Value& value )
+    {
+        assert( isa< TO >( value ) );
+        return static_cast< TO& >( value );
+    }
+
+    template < class TO >
+    static inline const TO& cast( const Value& value )
+    {
+        assert( isa< TO >( value ) );
+        return static_cast< const TO& >( value );
+    }
 }
 
 #endif /* _LIB_CASMIR_CASMIR_H_ */

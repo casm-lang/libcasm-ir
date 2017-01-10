@@ -52,8 +52,7 @@ void Derived::setContext( TrivialStatement* scope )
 
 void Derived::addParameter( Value* value )
 {
-    assert( Value::isa< Identifier >( value )
-            and "parameter must be an identifier" );
+    assert( isa< Identifier >( value ) and "parameter must be an identifier" );
 
     parameter.push_back( value );
 }

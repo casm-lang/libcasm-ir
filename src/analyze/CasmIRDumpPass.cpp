@@ -50,15 +50,15 @@ static const char* indention( Value& value )
     Value* p = ( &value );
     while( p != 0 )
     {
-        if( Value::isa< ExecutionSemanticsBlock >( p ) )
+        if( isa< ExecutionSemanticsBlock >( p ) )
         {
             p = (Value*)( (ExecutionSemanticsBlock*)p )->getScope();
         }
-        else if( Value::isa< Instruction >( p ) )
+        else if( isa< Instruction >( p ) )
         {
             p = (Value*)( (Instruction*)p )->getStatement();
         }
-        else if( Value::isa< Statement >( p ) )
+        else if( isa< Statement >( p ) )
         {
             p = (Value*)( (Statement*)p )->getScope();
         }
@@ -220,7 +220,7 @@ void CasmIRDumpPass::visit_prolog( SelectInstruction& value )
         cnt++;
         if( cnt == 0 or ( cnt % 2 ) == 1 )
         {
-            if( Value::isa< Instruction >( v ) or Value::isa< Constant >( v ) )
+            if( isa< Instruction >( v ) or isa< Constant >( v ) )
             {
                 fprintf( stderr, ", %s [%s]", v->getLabel(),
                     v->getType()->getDescription() );
@@ -232,7 +232,7 @@ void CasmIRDumpPass::visit_prolog( SelectInstruction& value )
         }
         else
         {
-            assert( Value::isa< ExecutionSemanticsBlock >( v ) );
+            assert( isa< ExecutionSemanticsBlock >( v ) );
 
             fprintf( stderr, " : %s", v->getLabel() );
         }

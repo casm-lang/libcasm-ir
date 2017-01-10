@@ -134,14 +134,14 @@ void ExecutionSemanticsBlock::add( Block* block )
 {
     assert( block );
 
-    if( Value::isa< ExecutionSemanticsBlock >( block ) )
+    if( isa< ExecutionSemanticsBlock >( block ) )
     {
         ExecutionSemanticsBlock* inner
             = static_cast< ExecutionSemanticsBlock* >( block );
         inner->setScope( this );
         inner->setParent( this );
     }
-    else if( Value::isa< Statement >( block ) )
+    else if( isa< Statement >( block ) )
     {
         block->setParent( this );
     }

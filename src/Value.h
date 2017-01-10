@@ -230,42 +230,11 @@ namespace libcasm_ir
             return true;
         }
 
-        template < class TO >
-        static inline bool isa( Value* value )
-        {
-            return TO::classof( value );
-        }
-
-        template < class TO >
-        static inline bool isa( const Value* value )
-        {
-            return isa< TO >( (Value*)value );
-        }
-
-        template < class TO >
-        static inline bool isa( Value& value )
-        {
-            return isa< TO >( &value );
-        }
-
-        template < class TO >
-        static inline bool isa( const Value& value )
-        {
-            return isa< TO >( &value );
-        }
-
         virtual void iterate( Traversal order, Visitor* visitor = 0,
             std::function< void( Value* ) > action = []( Value* ) {} ) final;
 
         virtual void iterate(
             Traversal order, std::function< void( Value* ) > action ) final;
-
-        // virtual u64 getLabelID( void )
-        // {
-        //     static u64 cnt = -1;
-        //     cnt++;
-        //     return cnt;
-        // }
     };
 }
 

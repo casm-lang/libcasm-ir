@@ -51,7 +51,7 @@ RuleReferenceConstant* Agent::getInitRuleReference( void ) const
 
 void Agent::setInitRuleReference( Value* init )
 {
-    assert( init and Value::isa< RuleReferenceConstant >( init ) );
+    assert( init and isa< RuleReferenceConstant >( init ) );
     rule_ptr_init = static_cast< RuleReferenceConstant* >( rule_ptr_init );
 }
 

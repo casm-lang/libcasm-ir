@@ -145,7 +145,7 @@ void Value::dump( void ) const
             break;
 
         default:
-            if( Value::isa< Instruction >( this ) )
+            if( isa< Instruction >( this ) )
             {
                 ( (Instruction*)this )->dump();
             }
@@ -169,7 +169,7 @@ void Value::iterate(
         visitor->dispatch( Visitor::Stage::PROLOG, this );
     }
 
-    if( Value::isa< Specification >( this ) )
+    if( isa< Specification >( this ) )
     {
         Specification* obj = ( (Specification*)this );
         const std::unordered_map< std::string, Value* > empty = {};
@@ -208,7 +208,7 @@ void Value::iterate(
             p.second->iterate( order, visitor, action );
         }
     }
-    else if( Value::isa< Rule >( this ) )
+    else if( isa< Rule >( this ) )
     {
         Rule* obj = ( (Rule*)this );
 
@@ -222,7 +222,7 @@ void Value::iterate(
 
         context->iterate( order, visitor, action );
     }
-    else if( Value::isa< Derived >( this ) )
+    else if( isa< Derived >( this ) )
     {
         Derived* obj = ( (Derived*)this );
 
@@ -236,7 +236,7 @@ void Value::iterate(
 
         context->iterate( order, visitor, action );
     }
-    else if( Value::isa< ExecutionSemanticsBlock >( this ) )
+    else if( isa< ExecutionSemanticsBlock >( this ) )
     {
         ExecutionSemanticsBlock* val
             = static_cast< ExecutionSemanticsBlock* >( this );
@@ -260,7 +260,7 @@ void Value::iterate(
             exit->iterate( order, visitor, action );
         }
     }
-    else if( Value::isa< Statement >( this ) )
+    else if( isa< Statement >( this ) )
     {
         Statement* stmt = (Statement*)this;
         assert( stmt->getInstructions().size() > 0
@@ -272,7 +272,7 @@ void Value::iterate(
             instr->iterate( order, visitor, action );
         }
 
-        if( not Value::isa< TrivialStatement >( this ) )
+        if( not isa< TrivialStatement >( this ) )
         {
             if( visitor )
             {

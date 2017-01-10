@@ -46,7 +46,7 @@ void Instruction::setStatement( Statement* stmt )
 
     for( auto value : values )
     {
-        if( Value::isa< Instruction >( value ) )
+        if( isa< Instruction >( value ) )
         {
             Instruction* instr = (Instruction*)value;
             if( instr->getStatement() == 0 )
@@ -75,8 +75,7 @@ void Instruction::add( Value* value )
 {
     assert( value );
 
-    if( Value::isa< UnaryInstruction >( this )
-        or Value::isa< BinaryInstruction >( this ) )
+    if( isa< UnaryInstruction >( this ) or isa< BinaryInstruction >( this ) )
     {
         assert(
             !" impossible to add more arguments to this instruction type " );
@@ -251,7 +250,7 @@ bool LocalInstruction::classof( Value const* obj )
 LocationInstruction::LocationInstruction( Value* function )
 : Instruction( "location", 0, { function }, Value::LOCATION_INSTRUCTION )
 {
-    assert( function->getType() and Value::isa< Function >( function ) );
+    assert( function->getType() and isa< Function >( function ) );
     setType( function->getType() );
 }
 
@@ -263,8 +262,8 @@ bool LocationInstruction::classof( Value const* obj )
 CallInstruction::CallInstruction( Value* symbol )
 : Instruction( "call", 0, { symbol }, Value::CALL_INSTRUCTION )
 {
-    assert( Value::isa< Rule >( symbol ) or Value::isa< Derived >( symbol )
-            or Value::isa< Builtin >( symbol ) );
+    assert( isa< Rule >( symbol ) or isa< Derived >( symbol )
+            or isa< Builtin >( symbol ) );
 
     assert( symbol->getType() );
     setType( symbol->getType()->getResult() );
