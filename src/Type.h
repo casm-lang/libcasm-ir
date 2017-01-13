@@ -65,27 +65,13 @@ namespace libcasm_ir
             _TOP_
         };
 
-        // enum STATE : u8
-        // {
-        //     UNCHANGED,
-        //     CHANGED,
-        //     LOCKED
-        // };
-
       protected:
         const char* name;
         const char* description;
 
       private:
         ID id;
-
-        // u64 type_uid_hash;
-        // STATE type_state;
-        // i16 bitsize;
-        // std::string description;
-        // std::vector< Type* > parameters;
-        // std::vector< Type* > subtypes;
-
+        
       protected:
         static std::unordered_map< std::string, Type* >& str2obj( void )
         {

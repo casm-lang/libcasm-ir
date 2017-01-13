@@ -30,6 +30,8 @@
 #ifndef _LIB_CASMIR_CASMIR_H_
 #define _LIB_CASMIR_CASMIR_H_
 
+#include "../stdhl/cpp/Default.h"
+
 namespace libcasm_ir
 {
     class CasmIR
