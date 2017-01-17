@@ -171,7 +171,6 @@ BooleanType::BooleanType()
 
 IntegerType::IntegerType()
 : PrimitiveType( "i", "Integer", Type::INTEGER )
-
 {
 }
 

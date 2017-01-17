@@ -28,6 +28,7 @@ using namespace libcasm_ir;
 
 Agent::Agent()
 : User( "$", Type::getAgent(), Value::AGENT )
+, rule_ptr_init( 0 )
 {
     static Agent* check = 0;
 
@@ -52,7 +53,7 @@ RuleReferenceConstant* Agent::getInitRuleReference( void ) const
 void Agent::setInitRuleReference( Value* init )
 {
     assert( init and isa< RuleReferenceConstant >( init ) );
-    rule_ptr_init = static_cast< RuleReferenceConstant* >( rule_ptr_init );
+    rule_ptr_init = static_cast< RuleReferenceConstant* >( init );
 }
 
 Rule* Agent::getInitRule( void )

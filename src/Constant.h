@@ -63,6 +63,7 @@ namespace libcasm_ir
         static Value* getUndef( Type* result );
 
         static Value* getAgent( Type::Agent value );
+        static Value* getRuleReference( Type::RuleReference value );
         static Value* getRuleReference( const char* value );
         static Value* getBoolean( Type::Boolean value );
         static Value* getInteger( Type::Integer value );

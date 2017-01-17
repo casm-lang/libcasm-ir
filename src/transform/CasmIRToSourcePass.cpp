@@ -46,54 +46,6 @@ static const char* indention( Value& value )
     {
         return "";
     }
-
-    // string ind = "";
-    // Value* p = ( &value );
-    // while( p != 0 )
-    // {
-    //     if( isa< ExecutionSemanticsBlock >( p ) )
-    //     {
-    //         p = (Value*)( (ExecutionSemanticsBlock*)p )->getScope();
-
-    //         if( p == 0 )
-    //         {
-    //             continue;
-    //         }
-    //     }
-    //     else if( isa< Instruction >( p ) )
-    //     {
-    //         p = (Value*)( (Instruction*)p )->getStatement();
-    //     }
-    //     else if( isa< Statement >( p ) )
-    //     {
-    //         ExecutionSemanticsBlock* scope = ( (Statement*)p )->getScope();
-    //         u1 skip = false;
-
-    //         if( scope )
-    //         {
-    //             if( scope->getEntryBlock() == p or scope->getExitBlock() == p
-    //             )
-    //             {
-    //                 skip = true;
-    //             }
-    //         }
-
-    //         p = (Value*)( (Statement*)p )->getScope();
-
-    //         if( skip )
-    //         {
-    //             continue;
-    //         }
-    //     }
-    //     else
-    //     {
-    //         assert( 0 );
-    //     }
-
-    //     ind += "  ";
-    // }
-
-    // return libstdhl::Allocator::string( ind );
 }
 
 bool CasmIRToSourcePass::run( libpass::PassResult& pr )
@@ -128,10 +80,11 @@ bool CasmIRToSourcePass::run( libpass::PassResult& pr )
                 fprintf( stream, "\n" );
             }
 
-            // Agent& val = static_cast< Agent& >( value );
+            Agent& val = static_cast< Agent& >( value );
 
-            fprintf( stream, "%s = init %s\n", value.getLabel(), "'rule'" ); //,
-            // val.getInitRule()->getName() ); // getType()->getName() );
+            fprintf( stream, "%s = init %s %s\n", value.getLabel(),
+                val.getInitRule()->getType()->getName(),
+                val.getInitRule()->getName() );
         }
         else if( isa< Function >( value ) )
         {

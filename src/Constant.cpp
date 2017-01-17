@@ -141,6 +141,20 @@ Value* Constant::getAgent( Type::Agent value )
     return str2obj().emplace( tmp.getDescription(), ptr ).first->second;
 }
 
+Value* Constant::getRuleReference( Type::RuleReference value )
+{
+    RuleReferenceConstant tmp = RuleReferenceConstant( value );
+
+    auto cache = str2obj().find( tmp.getDescription() );
+    if( cache != str2obj().end() )
+    {
+        return cache->second;
+    }
+
+    Value* ptr = new RuleReferenceConstant( tmp );
+    return str2obj().emplace( tmp.getDescription(), ptr ).first->second;
+}
+
 Value* Constant::getRuleReference( const char* value )
 {
     RuleReferenceConstant tmp = RuleReferenceConstant( value );

@@ -71,7 +71,7 @@ namespace libcasm_ir
 
       private:
         ID id;
-        
+
       protected:
         static std::unordered_map< std::string, Type* >& str2obj( void )
         {
