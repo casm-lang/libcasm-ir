@@ -72,9 +72,11 @@ namespace libcasm_ir
 
         static Builtin* find( const char* name, Type* result );
 
+        static Builtin* getAsBuiltin( Type* result );
+
+      private:
         template < typename T >
         static Builtin* get( Type* result );
-        static Builtin* getAsBuiltin( Type* result );
     };
 
     class CastingBuiltin : public Builtin
