@@ -87,10 +87,22 @@ namespace libcasm_ir
 
         virtual const char* getName( void ) = 0;
         virtual const char* getDescription( void ) = 0;
+        virtual const std::vector< Type* >& getArguments( void ) = 0;
 
         Type* getResult( void ) const;
 
-        // PPA: add isTYPEetc. CHECKS
+        u1 isLabel( void ) const;
+
+        u1 isAgent( void ) const;
+        u1 isRuleReference( void ) const;
+        u1 isBoolean( void ) const;
+        u1 isInteger( void ) const;
+        u1 isBit( void ) const;
+        u1 isString( void ) const;
+        u1 isFloating( void ) const;
+        u1 isRational( void ) const;
+        u1 isEnumeration( void ) const;
+        u1 isRelation( void ) const;
 
         static Type* getLabel( void );
 
@@ -105,9 +117,6 @@ namespace libcasm_ir
         static Type* getEnumeration( const char* name );
         static Type* getRelation(
             Type* result, std::vector< Type* > arguments );
-
-      private:
-        void setID( ID id );
     };
 
     class PrimitiveType : public Type
@@ -117,6 +126,7 @@ namespace libcasm_ir
 
         const char* getName( void ) override final;
         const char* getDescription( void ) override final;
+        const std::vector< Type* >& getArguments( void ) override final;
     };
 
     class LabelType : public PrimitiveType
@@ -197,9 +207,9 @@ namespace libcasm_ir
 
         const char* getName( void ) override final;
         const char* getDescription( void ) override final;
+        const std::vector< Type* >& getArguments( void ) override final;
 
         const Type* getResult( void ) const;
-        const std::vector< Type* >& getArguments( void ) const;
     };
 }
 

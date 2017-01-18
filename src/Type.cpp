@@ -39,6 +39,52 @@ const Type::ID Type::getID( void ) const
     return id;
 }
 
+u1 Type::isLabel( void ) const
+{
+    return getID() == Type::LABEL;
+}
+
+u1 Type::isAgent( void ) const
+{
+    return getID() == Type::AGENT;
+}
+u1 Type::isRuleReference( void ) const
+{
+    return getID() == Type::RULE_REFERENCE;
+}
+u1 Type::isBoolean( void ) const
+{
+    return getID() == Type::BOOLEAN;
+}
+u1 Type::isInteger( void ) const
+{
+    return getID() == Type::INTEGER;
+}
+u1 Type::isBit( void ) const
+{
+    return getID() == Type::BIT;
+}
+u1 Type::isString( void ) const
+{
+    return getID() == Type::STRING;
+}
+u1 Type::isFloating( void ) const
+{
+    return getID() == Type::FLOATING;
+}
+u1 Type::isRational( void ) const
+{
+    return getID() == Type::RATIONAL;
+}
+u1 Type::isEnumeration( void ) const
+{
+    return getID() == Type::ENUMERATION;
+}
+u1 Type::isRelation( void ) const
+{
+    return getID() == Type::RELATION;
+}
+
 Type* Type::getResult( void ) const
 {
     if( getID() == Type::RELATION )
@@ -147,6 +193,12 @@ const char* PrimitiveType::getName( void )
 const char* PrimitiveType::getDescription( void )
 {
     return description;
+}
+
+const std::vector< Type* >& PrimitiveType::getArguments( void )
+{
+    static std::vector< Type* > empty = {};
+    return empty;
 }
 
 LabelType::LabelType()
@@ -267,14 +319,14 @@ const char* RelationType::getDescription( void )
     return description;
 }
 
+const std::vector< Type* >& RelationType::getArguments( void )
+{
+    return arguments;
+}
+
 const Type* RelationType::getResult( void ) const
 {
     return result;
-}
-
-const std::vector< Type* >& RelationType::getArguments( void ) const
-{
-    return arguments;
 }
 
 //
