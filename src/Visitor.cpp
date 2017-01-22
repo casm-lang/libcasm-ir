@@ -23,7 +23,14 @@
 
 #include "Visitor.h"
 
+#include "Agent.h"
 #include "Builtin.h"
+#include "Constant.h"
+#include "Derived.h"
+#include "Function.h"
+#include "Instruction.h"
+#include "Rule.h"
+#include "Specification.h"
 #include "Value.h"
 
 using namespace libcasm_ir;
@@ -31,9 +38,9 @@ using namespace libcasm_ir;
 #define CASE_VALUE( VID, CLASS )                                               \
     case Value::ID::VID:                                                       \
         if( stage == Stage::PROLOG )                                           \
-            visit_prolog( *( (CLASS*)value ) );                                \
+            visit_prolog( static_cast< CLASS& >( value ), cxt );               \
         else if( stage == Stage::EPILOG )                                      \
-            visit_epilog( *( (CLASS*)value ) );                                \
+            visit_epilog( static_cast< CLASS& >( value ), cxt );               \
         else                                                                   \
             assert( !"invalid visitor stage value!" );                         \
         break
@@ -41,20 +48,18 @@ using namespace libcasm_ir;
 #define CASE_VALUE_INTER( VID, CLASS )                                         \
     case Value::ID::VID:                                                       \
         if( stage == Stage::PROLOG )                                           \
-            visit_prolog( *( (CLASS*)value ) );                                \
+            visit_prolog( static_cast< CLASS& >( value ), cxt );               \
         else if( stage == Stage::INTERLOG )                                    \
-            visit_interlog( *( (CLASS*)value ) );                              \
+            visit_interlog( static_cast< CLASS& >( value ), cxt );             \
         else if( stage == Stage::EPILOG )                                      \
-            visit_epilog( *( (CLASS*)value ) );                                \
+            visit_epilog( static_cast< CLASS& >( value ), cxt );               \
         else                                                                   \
             assert( !"invalid visitor stage value!" );                         \
         break
 
-void Visitor::dispatch( Stage stage, Value* value )
+void Visitor::dispatch( Stage stage, Value& value, Context& cxt )
 {
-    assert( value );
-
-    switch( value->getValueID() )
+    switch( value.getValueID() )
     {
         CASE_VALUE( SPECIFICATION, Specification );
         CASE_VALUE( AGENT, Agent );
@@ -110,13 +115,15 @@ void Visitor::dispatch( Stage stage, Value* value )
         {
             if( isa< Builtin >( value ) )
             {
+                Builtin& b = static_cast< Builtin& >( value );
+
                 if( stage == Stage::PROLOG )
                 {
-                    visit_prolog( *( (Builtin*)value ) );
+                    visit_prolog( b, cxt );
                 }
                 else if( stage == Stage::EPILOG )
                 {
-                    visit_epilog( *( (Builtin*)value ) );
+                    visit_epilog( b, cxt );
                 }
                 else
                 {
@@ -128,7 +135,7 @@ void Visitor::dispatch( Stage stage, Value* value )
             fprintf( stderr,
                 "%s:%i: error: unimplemented value name '%s' with id '%i' to "
                 "dispatch\n",
-                __FILE__, __LINE__, value->getName(), value->getValueID() );
+                __FILE__, __LINE__, value.getName(), value.getValueID() );
             assert( 0 );
             break;
         }

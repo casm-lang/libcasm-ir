@@ -156,151 +156,161 @@ void Value::dump( void ) const
     }
 }
 
-void Value::iterate(
-    Traversal order, Visitor* visitor, std::function< void( Value* ) > action )
+void Value::iterate( Traversal order,
+    Visitor* visitor,
+    Context* context,
+    std::function< void( Value&, Context& ) >
+        action )
 {
+    static Context default_context = Context();
+
+    Context* cxt = context ? context : &default_context;
+
+    Value& value = static_cast< Value& >( *this );
+
     if( order == Traversal::PREORDER )
     {
-        action( /*order, */ this );
+        action( /*order, */ value, *cxt );
     }
 
     if( visitor )
     {
-        visitor->dispatch( Visitor::Stage::PROLOG, this );
+        visitor->dispatch( Visitor::Stage::PROLOG, value, *cxt );
     }
 
-    if( isa< Specification >( this ) )
+    if( isa< Specification >( value ) )
     {
-        Specification* obj = ( (Specification*)this );
+        Specification& obj = static_cast< Specification& >( value );
+
         const std::unordered_map< std::string, Value* > empty = {};
 
         for( auto p :
-            ( obj->has< Constant >() ? obj->get< Constant >() : empty ) )
+            ( obj.has< Constant >() ? obj.get< Constant >() : empty ) )
         {
-            p.second->iterate( order, visitor, action );
+            p.second->iterate( order, visitor, cxt, action );
+        }
+
+        for( auto p : ( obj.has< Builtin >() ? obj.get< Builtin >() : empty ) )
+        {
+            p.second->iterate( order, visitor, cxt, action );
         }
 
         for( auto p :
-            ( obj->has< Builtin >() ? obj->get< Builtin >() : empty ) )
+            ( obj.has< Function >() ? obj.get< Function >() : empty ) )
         {
-            p.second->iterate( order, visitor, action );
+            p.second->iterate( order, visitor, cxt, action );
         }
 
-        for( auto p :
-            ( obj->has< Function >() ? obj->get< Function >() : empty ) )
+        for( auto p : ( obj.has< Derived >() ? obj.get< Derived >() : empty ) )
         {
-            p.second->iterate( order, visitor, action );
+            p.second->iterate( order, visitor, cxt, action );
         }
 
-        for( auto p :
-            ( obj->has< Derived >() ? obj->get< Derived >() : empty ) )
+        for( auto p : ( obj.has< Rule >() ? obj.get< Rule >() : empty ) )
         {
-            p.second->iterate( order, visitor, action );
+            p.second->iterate( order, visitor, cxt, action );
         }
 
-        for( auto p : ( obj->has< Rule >() ? obj->get< Rule >() : empty ) )
+        for( auto p : ( obj.has< Agent >() ? obj.get< Agent >() : empty ) )
         {
-            p.second->iterate( order, visitor, action );
-        }
-
-        for( auto p : ( obj->has< Agent >() ? obj->get< Agent >() : empty ) )
-        {
-            p.second->iterate( order, visitor, action );
+            p.second->iterate( order, visitor, cxt, action );
         }
     }
-    else if( isa< Rule >( this ) )
+    else if( isa< Rule >( value ) )
     {
-        Rule* obj = ( (Rule*)this );
+        Rule& obj = static_cast< Rule& >( value );
 
         if( visitor )
         {
-            visitor->dispatch( Visitor::Stage::INTERLOG, this );
+            visitor->dispatch( Visitor::Stage::INTERLOG, value, *cxt );
         }
 
-        Value* context = obj->getContext();
+        Value* context = obj.getContext();
         assert( context );
 
-        context->iterate( order, visitor, action );
+        context->iterate( order, visitor, cxt, action );
     }
-    else if( isa< Derived >( this ) )
+    else if( isa< Derived >( value ) )
     {
-        Derived* obj = ( (Derived*)this );
+        Derived& obj = static_cast< Derived& >( value );
 
         if( visitor )
         {
-            visitor->dispatch( Visitor::Stage::INTERLOG, this );
+            visitor->dispatch( Visitor::Stage::INTERLOG, value, *cxt );
         }
 
-        Value* context = obj->getContext();
+        Value* context = obj.getContext();
         assert( context );
 
-        context->iterate( order, visitor, action );
+        context->iterate( order, visitor, cxt, action );
     }
-    else if( isa< ExecutionSemanticsBlock >( this ) )
+    else if( isa< ExecutionSemanticsBlock >( value ) )
     {
-        ExecutionSemanticsBlock* val
-            = static_cast< ExecutionSemanticsBlock* >( this );
+        ExecutionSemanticsBlock& obj
+            = static_cast< ExecutionSemanticsBlock& >( value );
 
-        Block* entry = val->getEntryBlock();
-        Block* exit = val->getExitBlock();
+        Block* entry = obj.getEntryBlock();
+        Block* exit = obj.getExitBlock();
 
         if( entry )
         {
-            entry->iterate( order, visitor, action );
+            entry->iterate( order, visitor, cxt, action );
         }
 
-        for( Value* block : val->getBlocks() )
+        for( Value* block : obj.getBlocks() )
         {
             assert( block );
-            block->iterate( order, visitor, action );
+            block->iterate( order, visitor, cxt, action );
         }
 
         if( exit )
         {
-            exit->iterate( order, visitor, action );
+            exit->iterate( order, visitor, cxt, action );
         }
     }
-    else if( isa< Statement >( this ) )
+    else if( isa< Statement >( value ) )
     {
-        Statement* stmt = (Statement*)this;
-        assert( stmt->getInstructions().size() > 0
+        Statement& obj = static_cast< Statement& >( value );
+
+        assert( obj.getInstructions().size() > 0
                 and " a statement must contain at least one instruction " );
 
-        for( Value* instr : stmt->getInstructions() )
+        for( Value* instr : obj.getInstructions() )
         {
             assert( instr );
-            instr->iterate( order, visitor, action );
+            instr->iterate( order, visitor, cxt, action );
         }
 
-        if( not isa< TrivialStatement >( this ) )
+        if( not isa< TrivialStatement >( value ) )
         {
             if( visitor )
             {
-                visitor->dispatch( Visitor::Stage::INTERLOG, this );
+                visitor->dispatch( Visitor::Stage::INTERLOG, value, *cxt );
             }
 
-            for( ExecutionSemanticsBlock* sco : stmt->getBlocks() )
+            for( ExecutionSemanticsBlock* sco : obj.getBlocks() )
             {
                 assert( sco );
-                sco->iterate( order, visitor, action );
+                sco->iterate( order, visitor, cxt, action );
             }
         }
     }
 
     if( visitor )
     {
-        visitor->dispatch( Visitor::Stage::EPILOG, this );
+        visitor->dispatch( Visitor::Stage::EPILOG, value, *cxt );
     }
 
     if( order == Traversal::POSTORDER )
     {
-        action( /*order, */ this );
+        action( /*order, */ value, *cxt );
     }
 }
 
-void Value::iterate( Traversal order, std::function< void( Value* ) > action )
+void Value::iterate(
+    Traversal order, std::function< void( Value&, Context& ) > action )
 {
-    iterate( order, 0, action );
+    iterate( order, nullptr, nullptr, action );
 }
 
 //

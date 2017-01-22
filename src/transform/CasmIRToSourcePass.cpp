@@ -53,10 +53,7 @@ bool CasmIRToSourcePass::run( libpass::PassResult& pr )
     Specification* value = (Specification*)pr.getResult< CasmIRDumpPass >();
     assert( value );
 
-    value->iterate( Traversal::PREORDER, []( Value* value_ptr ) {
-        assert( value_ptr );
-        Value& value = *value_ptr;
-
+    value->iterate( Traversal::PREORDER, []( Value& value, Context& ) {
         if( isa< Constant >( value ) )
         {
             static u1 first = true;

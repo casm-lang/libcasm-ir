@@ -88,7 +88,11 @@ namespace libcasm_ir
         POSTORDER
     };
 
-    class Visitor //: public CasmIR
+    class Context : public CasmIR
+    {
+    };
+
+    class Visitor : public CasmIR
     {
       public:
         enum class Stage
@@ -100,140 +104,214 @@ namespace libcasm_ir
 
         virtual ~Visitor( void ) = default;
 
-        virtual void dispatch( Stage stage, Value* value ) final;
+        virtual void dispatch( Stage stage, Value& value, Context& cxt ) final;
 
 #define LIB_CASMIR_VISITOR_INTERFACE_( PREFIX, POSTFIX )                       \
-    PREFIX void visit_prolog( libcasm_ir::Specification& value ) POSTFIX;      \
-    PREFIX void visit_epilog( libcasm_ir::Specification& value ) POSTFIX;      \
+    PREFIX void visit_prolog(                                                  \
+        libcasm_ir::Specification& value, libcasm_ir::Context& cxt ) POSTFIX;  \
+    PREFIX void visit_epilog(                                                  \
+        libcasm_ir::Specification& value, libcasm_ir::Context& cxt ) POSTFIX;  \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::Agent& value ) POSTFIX;              \
-    PREFIX void visit_epilog( libcasm_ir::Agent& value ) POSTFIX;              \
+    PREFIX void visit_prolog(                                                  \
+        libcasm_ir::Agent& value, libcasm_ir::Context& cxt ) POSTFIX;          \
+    PREFIX void visit_epilog(                                                  \
+        libcasm_ir::Agent& value, libcasm_ir::Context& cxt ) POSTFIX;          \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::Function& value ) POSTFIX;           \
-    PREFIX void visit_epilog( libcasm_ir::Function& value ) POSTFIX;           \
+    PREFIX void visit_prolog(                                                  \
+        libcasm_ir::Function& value, libcasm_ir::Context& cxt ) POSTFIX;       \
+    PREFIX void visit_epilog(                                                  \
+        libcasm_ir::Function& value, libcasm_ir::Context& cxt ) POSTFIX;       \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::Derived& value ) POSTFIX;            \
-    PREFIX void visit_interlog( libcasm_ir::Derived& value ) POSTFIX;          \
-    PREFIX void visit_epilog( libcasm_ir::Derived& value ) POSTFIX;            \
+    PREFIX void visit_prolog(                                                  \
+        libcasm_ir::Derived& value, libcasm_ir::Context& cxt ) POSTFIX;        \
+    PREFIX void visit_interlog(                                                \
+        libcasm_ir::Derived& value, libcasm_ir::Context& cxt ) POSTFIX;        \
+    PREFIX void visit_epilog(                                                  \
+        libcasm_ir::Derived& value, libcasm_ir::Context& cxt ) POSTFIX;        \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::Rule& value ) POSTFIX;               \
-    PREFIX void visit_interlog( libcasm_ir::Rule& value ) POSTFIX;             \
-    PREFIX void visit_epilog( libcasm_ir::Rule& value ) POSTFIX;               \
+    PREFIX void visit_prolog(                                                  \
+        libcasm_ir::Rule& value, libcasm_ir::Context& cxt ) POSTFIX;           \
+    PREFIX void visit_interlog(                                                \
+        libcasm_ir::Rule& value, libcasm_ir::Context& cxt ) POSTFIX;           \
+    PREFIX void visit_epilog(                                                  \
+        libcasm_ir::Rule& value, libcasm_ir::Context& cxt ) POSTFIX;           \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::Builtin& value ) POSTFIX;            \
-    PREFIX void visit_epilog( libcasm_ir::Builtin& value ) POSTFIX;            \
+    PREFIX void visit_prolog(                                                  \
+        libcasm_ir::Builtin& value, libcasm_ir::Context& cxt ) POSTFIX;        \
+    PREFIX void visit_epilog(                                                  \
+        libcasm_ir::Builtin& value, libcasm_ir::Context& cxt ) POSTFIX;        \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::ParallelBlock& value ) POSTFIX;      \
-    PREFIX void visit_epilog( libcasm_ir::ParallelBlock& value ) POSTFIX;      \
+    PREFIX void visit_prolog(                                                  \
+        libcasm_ir::ParallelBlock& value, libcasm_ir::Context& cxt ) POSTFIX;  \
+    PREFIX void visit_epilog(                                                  \
+        libcasm_ir::ParallelBlock& value, libcasm_ir::Context& cxt ) POSTFIX;  \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::SequentialBlock& value ) POSTFIX;    \
-    PREFIX void visit_epilog( libcasm_ir::SequentialBlock& value ) POSTFIX;    \
+    PREFIX void visit_prolog( libcasm_ir::SequentialBlock& value,              \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
+    PREFIX void visit_epilog( libcasm_ir::SequentialBlock& value,              \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::TrivialStatement& value ) POSTFIX;   \
-    PREFIX void visit_epilog( libcasm_ir::TrivialStatement& value ) POSTFIX;   \
+    PREFIX void visit_prolog( libcasm_ir::TrivialStatement& value,             \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
+    PREFIX void visit_epilog( libcasm_ir::TrivialStatement& value,             \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::BranchStatement& value ) POSTFIX;    \
-    PREFIX void visit_interlog( libcasm_ir::BranchStatement& value ) POSTFIX;  \
-    PREFIX void visit_epilog( libcasm_ir::BranchStatement& value ) POSTFIX;    \
+    PREFIX void visit_prolog( libcasm_ir::BranchStatement& value,              \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
+    PREFIX void visit_interlog( libcasm_ir::BranchStatement& value,            \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
+    PREFIX void visit_epilog( libcasm_ir::BranchStatement& value,              \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::LocalInstruction& value ) POSTFIX;   \
-    PREFIX void visit_epilog( libcasm_ir::LocalInstruction& value ) POSTFIX;   \
+    PREFIX void visit_prolog( libcasm_ir::LocalInstruction& value,             \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
+    PREFIX void visit_epilog( libcasm_ir::LocalInstruction& value,             \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::LocationInstruction& value )         \
-        POSTFIX;                                                               \
-    PREFIX void visit_epilog( libcasm_ir::LocationInstruction& value )         \
-        POSTFIX;                                                               \
+    PREFIX void visit_prolog( libcasm_ir::LocationInstruction& value,          \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
+    PREFIX void visit_epilog( libcasm_ir::LocationInstruction& value,          \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::AssertInstruction& value ) POSTFIX;  \
-    PREFIX void visit_epilog( libcasm_ir::AssertInstruction& value ) POSTFIX;  \
+    PREFIX void visit_prolog( libcasm_ir::AssertInstruction& value,            \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
+    PREFIX void visit_epilog( libcasm_ir::AssertInstruction& value,            \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::SelectInstruction& value ) POSTFIX;  \
-    PREFIX void visit_epilog( libcasm_ir::SelectInstruction& value ) POSTFIX;  \
+    PREFIX void visit_prolog( libcasm_ir::SelectInstruction& value,            \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
+    PREFIX void visit_epilog( libcasm_ir::SelectInstruction& value,            \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::SkipInstruction& value ) POSTFIX;    \
-    PREFIX void visit_epilog( libcasm_ir::SkipInstruction& value ) POSTFIX;    \
+    PREFIX void visit_prolog( libcasm_ir::SkipInstruction& value,              \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
+    PREFIX void visit_epilog( libcasm_ir::SkipInstruction& value,              \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::ForkInstruction& value ) POSTFIX;    \
-    PREFIX void visit_epilog( libcasm_ir::ForkInstruction& value ) POSTFIX;    \
+    PREFIX void visit_prolog( libcasm_ir::ForkInstruction& value,              \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
+    PREFIX void visit_epilog( libcasm_ir::ForkInstruction& value,              \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::MergeInstruction& value ) POSTFIX;   \
-    PREFIX void visit_epilog( libcasm_ir::MergeInstruction& value ) POSTFIX;   \
+    PREFIX void visit_prolog( libcasm_ir::MergeInstruction& value,             \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
+    PREFIX void visit_epilog( libcasm_ir::MergeInstruction& value,             \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::LookupInstruction& value ) POSTFIX;  \
-    PREFIX void visit_epilog( libcasm_ir::LookupInstruction& value ) POSTFIX;  \
+    PREFIX void visit_prolog( libcasm_ir::LookupInstruction& value,            \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
+    PREFIX void visit_epilog( libcasm_ir::LookupInstruction& value,            \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::UpdateInstruction& value ) POSTFIX;  \
-    PREFIX void visit_epilog( libcasm_ir::UpdateInstruction& value ) POSTFIX;  \
+    PREFIX void visit_prolog( libcasm_ir::UpdateInstruction& value,            \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
+    PREFIX void visit_epilog( libcasm_ir::UpdateInstruction& value,            \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::CallInstruction& value ) POSTFIX;    \
-    PREFIX void visit_epilog( libcasm_ir::CallInstruction& value ) POSTFIX;    \
+    PREFIX void visit_prolog( libcasm_ir::CallInstruction& value,              \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
+    PREFIX void visit_epilog( libcasm_ir::CallInstruction& value,              \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::PrintInstruction& value ) POSTFIX;   \
-    PREFIX void visit_epilog( libcasm_ir::PrintInstruction& value ) POSTFIX;   \
+    PREFIX void visit_prolog( libcasm_ir::PrintInstruction& value,             \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
+    PREFIX void visit_epilog( libcasm_ir::PrintInstruction& value,             \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
                                                                                \
     /* ArithmeticInstruction */                                                \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::AddInstruction& value ) POSTFIX;     \
-    PREFIX void visit_epilog( libcasm_ir::AddInstruction& value ) POSTFIX;     \
+    PREFIX void visit_prolog(                                                  \
+        libcasm_ir::AddInstruction& value, libcasm_ir::Context& cxt ) POSTFIX; \
+    PREFIX void visit_epilog(                                                  \
+        libcasm_ir::AddInstruction& value, libcasm_ir::Context& cxt ) POSTFIX; \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::SubInstruction& value ) POSTFIX;     \
-    PREFIX void visit_epilog( libcasm_ir::SubInstruction& value ) POSTFIX;     \
+    PREFIX void visit_prolog(                                                  \
+        libcasm_ir::SubInstruction& value, libcasm_ir::Context& cxt ) POSTFIX; \
+    PREFIX void visit_epilog(                                                  \
+        libcasm_ir::SubInstruction& value, libcasm_ir::Context& cxt ) POSTFIX; \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::MulInstruction& value ) POSTFIX;     \
-    PREFIX void visit_epilog( libcasm_ir::MulInstruction& value ) POSTFIX;     \
+    PREFIX void visit_prolog(                                                  \
+        libcasm_ir::MulInstruction& value, libcasm_ir::Context& cxt ) POSTFIX; \
+    PREFIX void visit_epilog(                                                  \
+        libcasm_ir::MulInstruction& value, libcasm_ir::Context& cxt ) POSTFIX; \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::ModInstruction& value ) POSTFIX;     \
-    PREFIX void visit_epilog( libcasm_ir::ModInstruction& value ) POSTFIX;     \
+    PREFIX void visit_prolog(                                                  \
+        libcasm_ir::ModInstruction& value, libcasm_ir::Context& cxt ) POSTFIX; \
+    PREFIX void visit_epilog(                                                  \
+        libcasm_ir::ModInstruction& value, libcasm_ir::Context& cxt ) POSTFIX; \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::DivInstruction& value ) POSTFIX;     \
-    PREFIX void visit_epilog( libcasm_ir::DivInstruction& value ) POSTFIX;     \
+    PREFIX void visit_prolog(                                                  \
+        libcasm_ir::DivInstruction& value, libcasm_ir::Context& cxt ) POSTFIX; \
+    PREFIX void visit_epilog(                                                  \
+        libcasm_ir::DivInstruction& value, libcasm_ir::Context& cxt ) POSTFIX; \
                                                                                \
     /* LogicalInstruction */                                                   \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::AndInstruction& value ) POSTFIX;     \
-    PREFIX void visit_epilog( libcasm_ir::AndInstruction& value ) POSTFIX;     \
+    PREFIX void visit_prolog(                                                  \
+        libcasm_ir::AndInstruction& value, libcasm_ir::Context& cxt ) POSTFIX; \
+    PREFIX void visit_epilog(                                                  \
+        libcasm_ir::AndInstruction& value, libcasm_ir::Context& cxt ) POSTFIX; \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::XorInstruction& value ) POSTFIX;     \
-    PREFIX void visit_epilog( libcasm_ir::XorInstruction& value ) POSTFIX;     \
+    PREFIX void visit_prolog(                                                  \
+        libcasm_ir::XorInstruction& value, libcasm_ir::Context& cxt ) POSTFIX; \
+    PREFIX void visit_epilog(                                                  \
+        libcasm_ir::XorInstruction& value, libcasm_ir::Context& cxt ) POSTFIX; \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::OrInstruction& value ) POSTFIX;      \
-    PREFIX void visit_epilog( libcasm_ir::OrInstruction& value ) POSTFIX;      \
+    PREFIX void visit_prolog(                                                  \
+        libcasm_ir::OrInstruction& value, libcasm_ir::Context& cxt ) POSTFIX;  \
+    PREFIX void visit_epilog(                                                  \
+        libcasm_ir::OrInstruction& value, libcasm_ir::Context& cxt ) POSTFIX;  \
                                                                                \
     /* CompareInstruction */                                                   \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::EquInstruction& value ) POSTFIX;     \
-    PREFIX void visit_epilog( libcasm_ir::EquInstruction& value ) POSTFIX;     \
+    PREFIX void visit_prolog(                                                  \
+        libcasm_ir::EquInstruction& value, libcasm_ir::Context& cxt ) POSTFIX; \
+    PREFIX void visit_epilog(                                                  \
+        libcasm_ir::EquInstruction& value, libcasm_ir::Context& cxt ) POSTFIX; \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::NeqInstruction& value ) POSTFIX;     \
-    PREFIX void visit_epilog( libcasm_ir::NeqInstruction& value ) POSTFIX;     \
+    PREFIX void visit_prolog(                                                  \
+        libcasm_ir::NeqInstruction& value, libcasm_ir::Context& cxt ) POSTFIX; \
+    PREFIX void visit_epilog(                                                  \
+        libcasm_ir::NeqInstruction& value, libcasm_ir::Context& cxt ) POSTFIX; \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::LthInstruction& value ) POSTFIX;     \
-    PREFIX void visit_epilog( libcasm_ir::LthInstruction& value ) POSTFIX;     \
+    PREFIX void visit_prolog(                                                  \
+        libcasm_ir::LthInstruction& value, libcasm_ir::Context& cxt ) POSTFIX; \
+    PREFIX void visit_epilog(                                                  \
+        libcasm_ir::LthInstruction& value, libcasm_ir::Context& cxt ) POSTFIX; \
                                                                                \
     /* Constant */                                                             \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::AgentConstant& value ) POSTFIX;      \
-    PREFIX void visit_epilog( libcasm_ir::AgentConstant& value ) POSTFIX;      \
+    PREFIX void visit_prolog(                                                  \
+        libcasm_ir::AgentConstant& value, libcasm_ir::Context& cxt ) POSTFIX;  \
+    PREFIX void visit_epilog(                                                  \
+        libcasm_ir::AgentConstant& value, libcasm_ir::Context& cxt ) POSTFIX;  \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::RuleReferenceConstant& value )       \
-        POSTFIX;                                                               \
-    PREFIX void visit_epilog( libcasm_ir::RuleReferenceConstant& value )       \
-        POSTFIX;                                                               \
+    PREFIX void visit_prolog( libcasm_ir::RuleReferenceConstant& value,        \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
+    PREFIX void visit_epilog( libcasm_ir::RuleReferenceConstant& value,        \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::BooleanConstant& value ) POSTFIX;    \
-    PREFIX void visit_epilog( libcasm_ir::BooleanConstant& value ) POSTFIX;    \
+    PREFIX void visit_prolog( libcasm_ir::BooleanConstant& value,              \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
+    PREFIX void visit_epilog( libcasm_ir::BooleanConstant& value,              \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::IntegerConstant& value ) POSTFIX;    \
-    PREFIX void visit_epilog( libcasm_ir::IntegerConstant& value ) POSTFIX;    \
+    PREFIX void visit_prolog( libcasm_ir::IntegerConstant& value,              \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
+    PREFIX void visit_epilog( libcasm_ir::IntegerConstant& value,              \
+        libcasm_ir::Context& cxt ) POSTFIX;                                    \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::BitConstant& value ) POSTFIX;        \
-    PREFIX void visit_epilog( libcasm_ir::BitConstant& value ) POSTFIX;        \
+    PREFIX void visit_prolog(                                                  \
+        libcasm_ir::BitConstant& value, libcasm_ir::Context& cxt ) POSTFIX;    \
+    PREFIX void visit_epilog(                                                  \
+        libcasm_ir::BitConstant& value, libcasm_ir::Context& cxt ) POSTFIX;    \
                                                                                \
-    PREFIX void visit_prolog( libcasm_ir::StringConstant& value ) POSTFIX;     \
-    PREFIX void visit_epilog( libcasm_ir::StringConstant& value ) POSTFIX
+    PREFIX void visit_prolog(                                                  \
+        libcasm_ir::StringConstant& value, libcasm_ir::Context& cxt ) POSTFIX; \
+    PREFIX void visit_epilog(                                                  \
+        libcasm_ir::StringConstant& value, libcasm_ir::Context& cxt ) POSTFIX
 
-#define LIB_CASMIR_VISITOR_INTERFACE                                           \
-    LIB_CASMIR_VISITOR_INTERFACE_(, override final )
+#define LIB_CASMIR_VISITOR_INTERFACE LIB_CASMIR_VISITOR_INTERFACE_(, override )
 
         LIB_CASMIR_VISITOR_INTERFACE_( virtual, = 0 );
     };

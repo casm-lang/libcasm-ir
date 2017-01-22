@@ -34,12 +34,12 @@
 
 namespace libcasm_ir
 {
-    class CasmIRToSourcePass : public libpass::Pass
+    class CasmIRToSourcePass final : public libpass::Pass
     {
       public:
         static char id;
 
-        bool run( libpass::PassResult& pr ) override final;
+        bool run( libpass::PassResult& pr ) override;
     };
 }
 

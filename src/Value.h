@@ -230,11 +230,14 @@ namespace libcasm_ir
             return true;
         }
 
-        virtual void iterate( Traversal order, Visitor* visitor = 0,
-            std::function< void( Value* ) > action = []( Value* ) {} ) final;
+        virtual void iterate( Traversal order, Visitor* visitor = nullptr,
+            Context* context = nullptr,
+            std::function< void( Value&, Context& ) > action
+            = []( Value&, Context& ) {} ) final;
 
         virtual void iterate(
-            Traversal order, std::function< void( Value* ) > action ) final;
+            Traversal order, std::function< void( Value&, Context& ) > action )
+            final;
     };
 }
 
