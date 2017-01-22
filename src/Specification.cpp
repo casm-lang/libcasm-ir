@@ -66,7 +66,9 @@ void Specification::add( Value* value )
     }
     else if( isa< Builtin >( value ) )
     {
-        content[ Builtin::classid() ].emplace( value->getName(), value );
+        Builtin& obj = static_cast< Builtin& >( *value );
+
+        content[ Builtin::classid() ].emplace( obj.getDescription(), value );
     }
     else
     {

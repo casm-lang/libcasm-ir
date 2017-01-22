@@ -252,14 +252,16 @@ Builtin* Builtin::get( Type* result )
 {
     T tmp = T( result );
 
-    auto cache = str2obj().find( tmp.getDescription() );
+    std::string key = tmp.getDescription();
+
+    auto cache = str2obj().find( key );
     if( cache != str2obj().end() )
     {
         return cache->second;
     }
 
     Builtin* ptr = new T( tmp );
-    return str2obj().emplace( tmp.getDescription(), ptr ).first->second;
+    return str2obj().emplace( key, ptr ).first->second;
 }
 
 //------------------------------------------------------------------------------
