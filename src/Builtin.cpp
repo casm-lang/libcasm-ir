@@ -294,9 +294,29 @@ AsBooleanBuiltin::AsBooleanBuiltin( Type* result )
 {
 }
 const TypeAnnotation AsBooleanBuiltin::info( TypeAnnotation::Data{
-    { Type::BOOLEAN, { Type::BOOLEAN } }, { Type::BOOLEAN, { Type::INTEGER } },
-    { Type::BOOLEAN, { Type::FLOATING } }, { Type::BOOLEAN, { Type::BIT } },
-    { Type::BOOLEAN, { Type::ENUMERATION } } } );
+
+    { Type::BOOLEAN,
+        {
+            Type::BOOLEAN,
+        } },
+    { Type::BOOLEAN,
+        {
+            Type::INTEGER,
+        } },
+    { Type::BOOLEAN, // PPA: I think this should not be allowed
+        {
+            Type::FLOATING,
+        } },
+    { Type::BOOLEAN,
+        {
+            Type::BIT,
+        } },
+    { Type::BOOLEAN,
+        {
+            Type::ENUMERATION,
+        } }
+
+} );
 bool AsBooleanBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
@@ -311,9 +331,29 @@ AsIntegerBuiltin::AsIntegerBuiltin( Type* result )
 {
 }
 const TypeAnnotation AsIntegerBuiltin::info( TypeAnnotation::Data{
-    { Type::INTEGER, { Type::INTEGER } }, { Type::INTEGER, { Type::BOOLEAN } },
-    { Type::INTEGER, { Type::FLOATING } }, { Type::INTEGER, { Type::BIT } },
-    { Type::INTEGER, { Type::ENUMERATION } } } );
+
+    { Type::INTEGER,
+        {
+            Type::INTEGER,
+        } },
+    { Type::INTEGER,
+        {
+            Type::BOOLEAN,
+        } },
+    { Type::INTEGER,
+        {
+            Type::FLOATING,
+        } },
+    { Type::INTEGER,
+        {
+            Type::BIT,
+        } },
+    { Type::INTEGER,
+        {
+            Type::ENUMERATION,
+        } }
+
+} );
 bool AsIntegerBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
@@ -327,12 +367,30 @@ AsBitBuiltin::AsBitBuiltin( Type* result )
 : CastingBuiltin( "asBit", result, info, Value::AS_BIT_BUILTIN )
 {
 }
-const TypeAnnotation AsBitBuiltin::info(
-    TypeAnnotation::Data{ { Type::BIT, { Type::BIT, Type::INTEGER } },
-        { Type::BIT, { Type::INTEGER, Type::INTEGER } },
-        { Type::BIT, { Type::BOOLEAN, Type::INTEGER } },
-        { Type::BIT, { Type::FLOATING, Type::INTEGER } },
-        { Type::BIT, { Type::ENUMERATION, Type::INTEGER } } } );
+const TypeAnnotation AsBitBuiltin::info( TypeAnnotation::Data{
+
+    { Type::BIT,
+        {
+            Type::BIT, Type::INTEGER,
+        } },
+    { Type::BIT,
+        {
+            Type::INTEGER, Type::INTEGER,
+        } },
+    { Type::BIT,
+        {
+            Type::BOOLEAN, Type::INTEGER,
+        } },
+    { Type::BIT,
+        {
+            Type::FLOATING, Type::INTEGER,
+        } },
+    { Type::BIT,
+        {
+            Type::ENUMERATION, Type::INTEGER,
+        } }
+
+} );
 bool AsBitBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
@@ -347,10 +405,33 @@ AsStringBuiltin::AsStringBuiltin( Type* result )
 {
 }
 const TypeAnnotation AsStringBuiltin::info( TypeAnnotation::Data{
-    { Type::STRING, { Type::STRING } }, { Type::STRING, { Type::INTEGER } },
-    { Type::STRING, { Type::BOOLEAN } }, { Type::STRING, { Type::FLOATING } },
-    { Type::STRING, { Type::BIT } },
-    { Type::STRING, { Type::ENUMERATION } } } );
+
+    { Type::STRING,
+        {
+            Type::STRING,
+        } },
+    { Type::STRING,
+        {
+            Type::INTEGER,
+        } },
+    { Type::STRING,
+        {
+            Type::BOOLEAN,
+        } },
+    { Type::STRING,
+        {
+            Type::FLOATING,
+        } },
+    { Type::STRING,
+        {
+            Type::BIT,
+        } },
+    { Type::STRING,
+        {
+            Type::ENUMERATION,
+        } }
+
+} );
 bool AsStringBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
@@ -365,10 +446,29 @@ AsFloatingBuiltin::AsFloatingBuiltin( Type* result )
 {
 }
 const TypeAnnotation AsFloatingBuiltin::info( TypeAnnotation::Data{
-    { Type::FLOATING, { Type::FLOATING } },
-    { Type::FLOATING, { Type::INTEGER } },
-    { Type::FLOATING, { Type::BOOLEAN } }, { Type::FLOATING, { Type::BIT } },
-    { Type::FLOATING, { Type::ENUMERATION } } } );
+
+    { Type::FLOATING,
+        {
+            Type::FLOATING,
+        } },
+    { Type::FLOATING,
+        {
+            Type::INTEGER,
+        } },
+    { Type::FLOATING,
+        {
+            Type::BOOLEAN,
+        } },
+    { Type::FLOATING,
+        {
+            Type::BIT,
+        } },
+    { Type::FLOATING,
+        {
+            Type::ENUMERATION,
+        } }
+
+} );
 bool AsFloatingBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
@@ -383,7 +483,9 @@ AsRationalBuiltin::AsRationalBuiltin( Type* result )
 {
 }
 const TypeAnnotation AsRationalBuiltin::info( TypeAnnotation::Data{
+
     { Type::RATIONAL, { Type::RATIONAL } }
+
     // TODO: PPA: add more relations for possible input types!
 } );
 bool AsRationalBuiltin::classof( Value const* obj )
@@ -401,9 +503,18 @@ AsEnumerationBuiltin::AsEnumerationBuiltin( Type* result )
       result, info, Value::AS_ENUMERATION_BUILTIN )
 {
 }
-const TypeAnnotation AsEnumerationBuiltin::info(
-    TypeAnnotation::Data{ { Type::ENUMERATION, { Type::INTEGER } },
-        { Type::ENUMERATION, { Type::BIT } } } );
+const TypeAnnotation AsEnumerationBuiltin::info( TypeAnnotation::Data{
+
+    { Type::ENUMERATION,
+        {
+            Type::INTEGER,
+        } },
+    { Type::ENUMERATION,
+        {
+            Type::BIT,
+        } }
+
+} );
 bool AsEnumerationBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
@@ -419,10 +530,33 @@ StringifyBuiltin::StringifyBuiltin(
 {
 }
 const TypeAnnotation StringifyBuiltin::info( TypeAnnotation::Data{
-    { Type::STRING, { Type::BOOLEAN } }, { Type::STRING, { Type::INTEGER } },
-    { Type::STRING, { Type::BIT } }, { Type::STRING, { Type::FLOATING } },
-    { Type::STRING, { Type::RATIONAL } },
-    { Type::STRING, { Type::ENUMERATION } } } );
+
+    { Type::STRING,
+        {
+            Type::BOOLEAN,
+        } },
+    { Type::STRING,
+        {
+            Type::INTEGER,
+        } },
+    { Type::STRING,
+        {
+            Type::BIT,
+        } },
+    { Type::STRING,
+        {
+            Type::FLOATING,
+        } },
+    { Type::STRING,
+        {
+            Type::RATIONAL,
+        } },
+    { Type::STRING,
+        {
+            Type::ENUMERATION,
+        } }
+
+} );
 bool StringifyBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid() or DecBuiltin::classof( obj )
@@ -499,8 +633,14 @@ OperatorBuiltin::OperatorBuiltin( const char* name, Type* result, Value::ID id )
 }
 const TypeAnnotation OperatorBuiltin::info( TypeAnnotation::Data{
 
-    { Type::INTEGER, { Type::INTEGER, Type::INTEGER } },
-    { Type::BIT, { Type::BIT, Type::BIT } }
+    { Type::INTEGER,
+        {
+            Type::INTEGER, Type::INTEGER,
+        } },
+    { Type::BIT,
+        {
+            Type::BIT, Type::BIT,
+        } }
 
 } );
 bool OperatorBuiltin::classof( Value const* obj )
@@ -754,7 +894,10 @@ ZextBuiltin::ZextBuiltin( Type* result )
 }
 const TypeAnnotation ZextBuiltin::info( TypeAnnotation::Data{
 
-    { Type::BIT, { Type::BIT, Type::INTEGER } }
+    { Type::BIT,
+        {
+            Type::BIT, Type::INTEGER,
+        } }
 
 } );
 bool ZextBuiltin::classof( Value const* obj )
@@ -772,7 +915,10 @@ SextBuiltin::SextBuiltin( Type* result )
 }
 const TypeAnnotation SextBuiltin::info( TypeAnnotation::Data{
 
-    { Type::BIT, { Type::BIT, Type::INTEGER } }
+    { Type::BIT,
+        {
+            Type::BIT, Type::INTEGER,
+        } }
 
 } );
 bool SextBuiltin::classof( Value const* obj )
@@ -790,7 +936,10 @@ TruncBuiltin::TruncBuiltin( Type* result )
 }
 const TypeAnnotation TruncBuiltin::info( TypeAnnotation::Data{
 
-    { Type::BIT, { Type::BIT, Type::INTEGER } }
+    { Type::BIT,
+        {
+            Type::BIT, Type::INTEGER,
+        } }
 
 } );
 bool TruncBuiltin::classof( Value const* obj )
@@ -808,8 +957,14 @@ ShlBuiltin::ShlBuiltin( Type* result )
 }
 const TypeAnnotation ShlBuiltin::info( TypeAnnotation::Data{
 
-    { Type::BIT, { Type::BIT, Type::INTEGER } },
-    { Type::BIT, { Type::BIT, Type::BIT } }
+    { Type::BIT,
+        {
+            Type::BIT, Type::INTEGER,
+        } },
+    { Type::BIT,
+        {
+            Type::BIT, Type::BIT,
+        } }
 
 } );
 bool ShlBuiltin::classof( Value const* obj )
@@ -827,8 +982,14 @@ ShrBuiltin::ShrBuiltin( Type* result )
 }
 const TypeAnnotation ShrBuiltin::info( TypeAnnotation::Data{
 
-    { Type::BIT, { Type::BIT, Type::INTEGER } },
-    { Type::BIT, { Type::BIT, Type::BIT } }
+    { Type::BIT,
+        {
+            Type::BIT, Type::INTEGER,
+        } },
+    { Type::BIT,
+        {
+            Type::BIT, Type::BIT,
+        } }
 
 } );
 bool ShrBuiltin::classof( Value const* obj )
@@ -846,8 +1007,14 @@ AshrBuiltin::AshrBuiltin( Type* result )
 }
 const TypeAnnotation AshrBuiltin::info( TypeAnnotation::Data{
 
-    { Type::BIT, { Type::BIT, Type::INTEGER } },
-    { Type::BIT, { Type::BIT, Type::BIT } }
+    { Type::BIT,
+        {
+            Type::BIT, Type::INTEGER,
+        } },
+    { Type::BIT,
+        {
+            Type::BIT, Type::BIT,
+        } }
 
 } );
 bool AshrBuiltin::classof( Value const* obj )
@@ -865,7 +1032,10 @@ ClzBuiltin::ClzBuiltin( Type* result )
 }
 const TypeAnnotation ClzBuiltin::info( TypeAnnotation::Data{
 
-    { Type::INTEGER, { Type::BIT } }
+    { Type::INTEGER,
+        {
+            Type::BIT,
+        } }
 
 } );
 bool ClzBuiltin::classof( Value const* obj )
@@ -883,7 +1053,10 @@ CloBuiltin::CloBuiltin( Type* result )
 }
 const TypeAnnotation CloBuiltin::info( TypeAnnotation::Data{
 
-    { Type::INTEGER, { Type::BIT } }
+    { Type::INTEGER,
+        {
+            Type::BIT,
+        } }
 
 } );
 bool CloBuiltin::classof( Value const* obj )
@@ -901,7 +1074,10 @@ ClsBuiltin::ClsBuiltin( Type* result )
 }
 const TypeAnnotation ClsBuiltin::info( TypeAnnotation::Data{
 
-    { Type::INTEGER, { Type::BIT } }
+    { Type::INTEGER,
+        {
+            Type::BIT,
+        } }
 
 } );
 bool ClsBuiltin::classof( Value const* obj )
