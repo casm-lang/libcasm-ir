@@ -417,9 +417,8 @@ BitConstant::BitConstant( Type* result, u64 value, u1 defined )
 : ConstantOf< Type::Bit >(
       ( defined ? libstdhl::Allocator::string( std::to_string( value ) )
                 : "undef" ),
-      result, this->value, defined, Value::BIT_CONSTANT )
+      result, value, defined, Value::BIT_CONSTANT )
 {
-    this->value[ 0 ] = value;
 }
 
 BitConstant::BitConstant( Type* result, u64 value )
@@ -434,7 +433,7 @@ BitConstant::BitConstant( Type* result )
 
 void BitConstant::dump( void ) const
 {
-    printf( "[Const] %p = bit %li\n", this, getValue()[ 0 ] );
+    printf( "[Const] %p = bit %li\n", this, getValue() );
 }
 
 bool BitConstant::classof( Value const* obj )

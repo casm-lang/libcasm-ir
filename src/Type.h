@@ -44,7 +44,7 @@ namespace libcasm_ir
         typedef Rule* RuleReference;
         typedef u1 Boolean;
         typedef i64 Integer;
-        typedef u64* Bit;
+        typedef u64 Bit;
         typedef char* String;
 
         enum ID : u8

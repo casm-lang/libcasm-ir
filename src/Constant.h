@@ -225,7 +225,6 @@ namespace libcasm_ir
     class BitConstant : public ConstantOf< Type::Bit >
     {
       private:
-        u64 value[ 1 ];
         BitConstant( Type* result, u64 value, u1 defined );
 
       public:
