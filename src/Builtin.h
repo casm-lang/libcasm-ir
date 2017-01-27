@@ -45,11 +45,9 @@ namespace libcasm_ir
 
       public:
         Builtin( const char* name, Type* result, const TypeAnnotation& info,
-            Value::ID id = Value::BUILTIN );
+            Value::ID id = classid() );
 
         ~Builtin( void );
-
-        void dump( void ) const;
 
         const char* getDescription( void );
 

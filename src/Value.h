@@ -65,10 +65,7 @@ namespace libcasm_ir
             BRANCH_STATEMENT
 
             ,
-            CONSTANT
-            // , UNDEF_CONSTANT
-            // , SELF_CONSTANT
-            ,
+            CONSTANT,
             AGENT_CONSTANT,
             RULE_REFERENCE_CONSTANT,
             BOOLEAN_CONSTANT,
@@ -120,8 +117,6 @@ namespace libcasm_ir
             XOR_INSTRUCTION,
             AND_INSTRUCTION,
             NOT_INSTRUCTION,
-
-            // MOV_INSTRUCTION
 
             BUILTIN,
             IS_SYMBOLIC_BUILTIN,
@@ -215,11 +210,6 @@ namespace libcasm_ir
       public:
         ID getValueID() const;
 
-        void debug( void ) const;
-        void dump( void ) const;
-
-        // TODO: FIXME: PPA: setRef/getRef interface will be added soon!
-
         static inline ID classid( void )
         {
             return Value::VALUE;
@@ -235,9 +225,8 @@ namespace libcasm_ir
             std::function< void( Value&, Context& ) > action
             = []( Value&, Context& ) {} ) final;
 
-        virtual void iterate(
-            Traversal order, std::function< void( Value&, Context& ) > action )
-            final;
+        virtual void iterate( Traversal order,
+            std::function< void( Value&, Context& ) > action ) final;
     };
 }
 

@@ -39,7 +39,7 @@ namespace libcasm_ir
         Value* parent;
 
       public:
-        Block( const char* name, Value::ID id = Value::BLOCK );
+        Block( const char* name, Value::ID id = classid() );
 
         void setParent( Value* parent );
         Value* getParent( void ) const;

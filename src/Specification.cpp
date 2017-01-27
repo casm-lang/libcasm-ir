@@ -32,7 +32,7 @@
 using namespace libcasm_ir;
 
 Specification::Specification( const char* name )
-: Value( name, 0, Value::SPECIFICATION )
+: Value( name, 0, classid() )
 {
 }
 
@@ -74,13 +74,6 @@ void Specification::add( Value* value )
     {
         assert( !"unsupported Specification content Value found!" );
     }
-}
-
-void Specification::dump( void ) const
-{
-    printf( "[Specification ] " );
-    debug();
-    printf( "<<not implemented due to new dump pass>>\n" );
 }
 
 bool Specification::classof( Value const* obj )

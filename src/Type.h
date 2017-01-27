@@ -40,12 +40,12 @@ namespace libcasm_ir
     class Type : public CasmIR
     {
       public:
-        typedef void* Agent;
-        typedef Rule* RuleReference;
-        typedef u1 Boolean;
-        typedef i64 Integer;
-        typedef u64* Bit;
-        typedef char* String;
+        using Agent = void*;
+        using RuleReference = Rule*;
+        using Boolean = u1;
+        using Integer = i64;
+        using Bit = u64;
+        using String = char*;
 
         enum ID : u8
         {

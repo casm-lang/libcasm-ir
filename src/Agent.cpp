@@ -27,7 +27,7 @@
 using namespace libcasm_ir;
 
 Agent::Agent()
-: User( "$", Type::getAgent(), Value::AGENT )
+: User( "$", Type::getAgent(), classid() )
 , rule_ptr_init( 0 )
 {
     static Agent* check = 0;
@@ -61,21 +61,6 @@ Rule* Agent::getInitRule( void )
     RuleReferenceConstant* rule_ref = getInitRuleReference();
     assert( rule_ref->isDefined() );
     return rule_ref->getValue();
-}
-
-void Agent::dump( void ) const
-{
-    printf( "[Agent] " );
-    debug();
-
-    if( rule_ptr_init )
-    {
-        printf( "@%p\n", rule_ptr_init );
-    }
-    else
-    {
-        printf( "('rule_ptr_init' not set)\n" );
-    }
 }
 
 bool Agent::classof( Value const* obj )

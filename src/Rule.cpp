@@ -31,7 +31,7 @@ using namespace libcasm_ir;
 Rule::Rule( const char* name, Type* result )
 : User( libstdhl::Allocator::string( "@" + std::string( name ) ),
       result,
-      Value::RULE )
+      classid() )
 {
     ident = Identifier::create( result, getName() );
 }
@@ -61,21 +61,6 @@ void Rule::addParameter( Value* value )
 const std::vector< Value* >& Rule::getParameters( void ) const
 {
     return parameter;
-}
-
-void Rule::dump( void ) const
-{
-    printf( "[Rule ] " );
-    debug();
-
-    if( context )
-    {
-        context->dump();
-    }
-    else
-    {
-        printf( "('context' not set)\n" );
-    }
 }
 
 bool Rule::classof( Value const* obj )

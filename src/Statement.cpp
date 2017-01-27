@@ -104,14 +104,6 @@ const std::vector< ExecutionSemanticsBlock* >& Statement::getBlocks(
     return blocks;
 }
 
-void Statement::dump( void ) const
-{
-    for( auto instr : instructions )
-    {
-        static_cast< Value* >( instr )->dump();
-    }
-}
-
 bool Statement::classof( Value const* obj )
 {
     return obj->getValueID() == classid() or TrivialStatement::classof( obj )
@@ -119,20 +111,8 @@ bool Statement::classof( Value const* obj )
 }
 
 TrivialStatement::TrivialStatement( ExecutionSemanticsBlock* scope )
-: Statement( "statement", scope, Value::TRIVIAL_STATEMENT )
+: Statement( "statement", scope, classid() )
 {
-}
-
-void TrivialStatement::dump( void ) const
-{
-    printf( "[TrStm] %p", this );
-    if( scope )
-    {
-        printf( " @ %lu (%p)", scope->getPseudoState(), scope );
-    }
-    printf( "\n" );
-
-    ( (Statement*)this )->dump();
 }
 
 bool TrivialStatement::classof( Value const* obj )
@@ -141,17 +121,8 @@ bool TrivialStatement::classof( Value const* obj )
 }
 
 BranchStatement::BranchStatement( ExecutionSemanticsBlock* scope )
-: Statement( "branch", scope, Value::BRANCH_STATEMENT )
+: Statement( "branch", scope, classid() )
 {
-}
-
-void BranchStatement::dump( void ) const
-{
-    printf( "[BranchStatement] %p\n", this );
-
-    ( (Statement*)this )->dump();
-
-    // TODO: here the branches etc.
 }
 
 bool BranchStatement::classof( Value const* obj )
