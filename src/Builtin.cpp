@@ -39,12 +39,6 @@ Builtin::~Builtin( void )
 {
 }
 
-void Builtin::dump( void ) const
-{
-    printf( "[Builtin] " );
-    debug();
-}
-
 const char* Builtin::getDescription( void )
 {
     if( not description )
@@ -290,7 +284,7 @@ bool CastingBuiltin::classof( Value const* obj )
 //
 
 AsBooleanBuiltin::AsBooleanBuiltin( Type* result )
-: CastingBuiltin( "asBoolean", result, info, Value::AS_BOOLEAN_BUILTIN )
+: CastingBuiltin( "asBoolean", result, info, classid() )
 {
 }
 const TypeAnnotation AsBooleanBuiltin::info( TypeAnnotation::Data{
@@ -327,7 +321,7 @@ bool AsBooleanBuiltin::classof( Value const* obj )
 //
 
 AsIntegerBuiltin::AsIntegerBuiltin( Type* result )
-: CastingBuiltin( "asInteger", result, info, Value::AS_INTEGER_BUILTIN )
+: CastingBuiltin( "asInteger", result, info, classid() )
 {
 }
 const TypeAnnotation AsIntegerBuiltin::info( TypeAnnotation::Data{
@@ -364,7 +358,7 @@ bool AsIntegerBuiltin::classof( Value const* obj )
 //
 
 AsBitBuiltin::AsBitBuiltin( Type* result )
-: CastingBuiltin( "asBit", result, info, Value::AS_BIT_BUILTIN )
+: CastingBuiltin( "asBit", result, info, classid() )
 {
 }
 const TypeAnnotation AsBitBuiltin::info( TypeAnnotation::Data{
@@ -401,7 +395,7 @@ bool AsBitBuiltin::classof( Value const* obj )
 //
 
 AsStringBuiltin::AsStringBuiltin( Type* result )
-: CastingBuiltin( "asString", result, info, Value::AS_STRING_BUILTIN )
+: CastingBuiltin( "asString", result, info, classid() )
 {
 }
 const TypeAnnotation AsStringBuiltin::info( TypeAnnotation::Data{
@@ -442,7 +436,7 @@ bool AsStringBuiltin::classof( Value const* obj )
 //
 
 AsFloatingBuiltin::AsFloatingBuiltin( Type* result )
-: CastingBuiltin( "asFloating", result, info, Value::AS_FLOATING_BUILTIN )
+: CastingBuiltin( "asFloating", result, info, classid() )
 {
 }
 const TypeAnnotation AsFloatingBuiltin::info( TypeAnnotation::Data{
@@ -479,7 +473,7 @@ bool AsFloatingBuiltin::classof( Value const* obj )
 //
 
 AsRationalBuiltin::AsRationalBuiltin( Type* result )
-: CastingBuiltin( "asRational", result, info, Value::AS_FLOATING_BUILTIN )
+: CastingBuiltin( "asRational", result, info, classid() )
 {
 }
 const TypeAnnotation AsRationalBuiltin::info( TypeAnnotation::Data{
@@ -500,7 +494,7 @@ bool AsRationalBuiltin::classof( Value const* obj )
 AsEnumerationBuiltin::AsEnumerationBuiltin( Type* result )
 : CastingBuiltin( libstdhl::Allocator::string(
                       "as" + std::string( result->getDescription() ) ),
-      result, info, Value::AS_ENUMERATION_BUILTIN )
+      result, info, classid() )
 {
 }
 const TypeAnnotation AsEnumerationBuiltin::info( TypeAnnotation::Data{
@@ -569,7 +563,7 @@ bool StringifyBuiltin::classof( Value const* obj )
 //
 
 DecBuiltin::DecBuiltin( Type* result )
-: StringifyBuiltin( "dec", result, Value::DEC_BUILTIN )
+: StringifyBuiltin( "dec", result, classid() )
 {
 }
 bool DecBuiltin::classof( Value const* obj )
@@ -582,7 +576,7 @@ bool DecBuiltin::classof( Value const* obj )
 //
 
 HexBuiltin::HexBuiltin( Type* result )
-: StringifyBuiltin( "hex", result, Value::HEX_BUILTIN )
+: StringifyBuiltin( "hex", result, classid() )
 {
 }
 bool HexBuiltin::classof( Value const* obj )
@@ -595,7 +589,7 @@ bool HexBuiltin::classof( Value const* obj )
 //
 
 OctBuiltin::OctBuiltin( Type* result )
-: StringifyBuiltin( "oct", result, Value::OCT_BUILTIN )
+: StringifyBuiltin( "oct", result, classid() )
 {
 }
 bool OctBuiltin::classof( Value const* obj )
@@ -608,7 +602,7 @@ bool OctBuiltin::classof( Value const* obj )
 //
 
 BinBuiltin::BinBuiltin( Type* result )
-: StringifyBuiltin( "bin", result, Value::BIN_BUILTIN )
+: StringifyBuiltin( "bin", result, classid() )
 {
 }
 bool BinBuiltin::classof( Value const* obj )
@@ -671,7 +665,7 @@ bool ArithmeticBuiltin::classof( Value const* obj )
 //
 
 AdduBuiltin::AdduBuiltin( Type* result )
-: ArithmeticBuiltin( "addu", result, Value::ADDU_BUILTIN )
+: ArithmeticBuiltin( "addu", result, classid() )
 {
 }
 bool AdduBuiltin::classof( Value const* obj )
@@ -684,7 +678,7 @@ bool AdduBuiltin::classof( Value const* obj )
 //
 
 AddsBuiltin::AddsBuiltin( Type* result )
-: ArithmeticBuiltin( "adds", result, Value::ADDS_BUILTIN )
+: ArithmeticBuiltin( "adds", result, classid() )
 {
 }
 bool AddsBuiltin::classof( Value const* obj )
@@ -697,7 +691,7 @@ bool AddsBuiltin::classof( Value const* obj )
 //
 
 SubuBuiltin::SubuBuiltin( Type* result )
-: ArithmeticBuiltin( "subu", result, Value::SUBU_BUILTIN )
+: ArithmeticBuiltin( "subu", result, classid() )
 {
 }
 bool SubuBuiltin::classof( Value const* obj )
@@ -710,7 +704,7 @@ bool SubuBuiltin::classof( Value const* obj )
 //
 
 SubsBuiltin::SubsBuiltin( Type* result )
-: ArithmeticBuiltin( "subs", result, Value::SUBS_BUILTIN )
+: ArithmeticBuiltin( "subs", result, classid() )
 {
 }
 bool SubsBuiltin::classof( Value const* obj )
@@ -723,7 +717,7 @@ bool SubsBuiltin::classof( Value const* obj )
 //
 
 MuluBuiltin::MuluBuiltin( Type* result )
-: ArithmeticBuiltin( "mulu", result, Value::MULU_BUILTIN )
+: ArithmeticBuiltin( "mulu", result, classid() )
 {
 }
 bool MuluBuiltin::classof( Value const* obj )
@@ -736,7 +730,7 @@ bool MuluBuiltin::classof( Value const* obj )
 //
 
 MulsBuiltin::MulsBuiltin( Type* result )
-: ArithmeticBuiltin( "muls", result, Value::MULS_BUILTIN )
+: ArithmeticBuiltin( "muls", result, classid() )
 {
 }
 bool MulsBuiltin::classof( Value const* obj )
@@ -766,7 +760,7 @@ bool CompareBuiltin::classof( Value const* obj )
 //
 
 LesuBuiltin::LesuBuiltin( Type* result )
-: CompareBuiltin( "lesu", result, Value::LESU_BUILTIN )
+: CompareBuiltin( "lesu", result, classid() )
 {
 }
 bool LesuBuiltin::classof( Value const* obj )
@@ -779,7 +773,7 @@ bool LesuBuiltin::classof( Value const* obj )
 //
 
 LessBuiltin::LessBuiltin( Type* result )
-: CompareBuiltin( "less", result, Value::LESS_BUILTIN )
+: CompareBuiltin( "less", result, classid() )
 {
 }
 bool LessBuiltin::classof( Value const* obj )
@@ -792,7 +786,7 @@ bool LessBuiltin::classof( Value const* obj )
 //
 
 LequBuiltin::LequBuiltin( Type* result )
-: CompareBuiltin( "lequ", result, Value::LEQU_BUILTIN )
+: CompareBuiltin( "lequ", result, classid() )
 {
 }
 bool LequBuiltin::classof( Value const* obj )
@@ -805,7 +799,7 @@ bool LequBuiltin::classof( Value const* obj )
 //
 
 LeqsBuiltin::LeqsBuiltin( Type* result )
-: CompareBuiltin( "leqs", result, Value::LEQS_BUILTIN )
+: CompareBuiltin( "leqs", result, classid() )
 {
 }
 bool LeqsBuiltin::classof( Value const* obj )
@@ -818,7 +812,7 @@ bool LeqsBuiltin::classof( Value const* obj )
 //
 
 GreuBuiltin::GreuBuiltin( Type* result )
-: CompareBuiltin( "greu", result, Value::GREU_BUILTIN )
+: CompareBuiltin( "greu", result, classid() )
 {
 }
 bool GreuBuiltin::classof( Value const* obj )
@@ -831,7 +825,7 @@ bool GreuBuiltin::classof( Value const* obj )
 //
 
 GresBuiltin::GresBuiltin( Type* result )
-: CompareBuiltin( "gres", result, Value::GRES_BUILTIN )
+: CompareBuiltin( "gres", result, classid() )
 {
 }
 bool GresBuiltin::classof( Value const* obj )
@@ -844,7 +838,7 @@ bool GresBuiltin::classof( Value const* obj )
 //
 
 GequBuiltin::GequBuiltin( Type* result )
-: CompareBuiltin( "gequ", result, Value::GEQU_BUILTIN )
+: CompareBuiltin( "gequ", result, classid() )
 {
 }
 bool GequBuiltin::classof( Value const* obj )
@@ -857,7 +851,7 @@ bool GequBuiltin::classof( Value const* obj )
 //
 
 GeqsBuiltin::GeqsBuiltin( Type* result )
-: CompareBuiltin( "geqs", result, Value::GEQS_BUILTIN )
+: CompareBuiltin( "geqs", result, classid() )
 {
 }
 bool GeqsBuiltin::classof( Value const* obj )
@@ -889,7 +883,7 @@ bool BitBuiltin::classof( Value const* obj )
 //
 
 ZextBuiltin::ZextBuiltin( Type* result )
-: BitBuiltin( "zext", result, info, Value::ZEXT_BUILTIN )
+: BitBuiltin( "zext", result, info, classid() )
 {
 }
 const TypeAnnotation ZextBuiltin::info( TypeAnnotation::Data{
@@ -910,7 +904,7 @@ bool ZextBuiltin::classof( Value const* obj )
 //
 
 SextBuiltin::SextBuiltin( Type* result )
-: BitBuiltin( "sext", result, info, Value::SEXT_BUILTIN )
+: BitBuiltin( "sext", result, info, classid() )
 {
 }
 const TypeAnnotation SextBuiltin::info( TypeAnnotation::Data{
@@ -931,7 +925,7 @@ bool SextBuiltin::classof( Value const* obj )
 //
 
 TruncBuiltin::TruncBuiltin( Type* result )
-: BitBuiltin( "trunc", result, info, Value::TRUNC_BUILTIN )
+: BitBuiltin( "trunc", result, info, classid() )
 {
 }
 const TypeAnnotation TruncBuiltin::info( TypeAnnotation::Data{
@@ -952,7 +946,7 @@ bool TruncBuiltin::classof( Value const* obj )
 //
 
 ShlBuiltin::ShlBuiltin( Type* result )
-: BitBuiltin( "shl", result, info, Value::SHL_BUILTIN )
+: BitBuiltin( "shl", result, info, classid() )
 {
 }
 const TypeAnnotation ShlBuiltin::info( TypeAnnotation::Data{
@@ -977,7 +971,7 @@ bool ShlBuiltin::classof( Value const* obj )
 //
 
 ShrBuiltin::ShrBuiltin( Type* result )
-: BitBuiltin( "shr", result, info, Value::SHR_BUILTIN )
+: BitBuiltin( "shr", result, info, classid() )
 {
 }
 const TypeAnnotation ShrBuiltin::info( TypeAnnotation::Data{
@@ -1002,7 +996,7 @@ bool ShrBuiltin::classof( Value const* obj )
 //
 
 AshrBuiltin::AshrBuiltin( Type* result )
-: BitBuiltin( "ashr", result, info, Value::ASHR_BUILTIN )
+: BitBuiltin( "ashr", result, info, classid() )
 {
 }
 const TypeAnnotation AshrBuiltin::info( TypeAnnotation::Data{
@@ -1027,7 +1021,7 @@ bool AshrBuiltin::classof( Value const* obj )
 //
 
 ClzBuiltin::ClzBuiltin( Type* result )
-: BitBuiltin( "clz", result, info, Value::CLZ_BUILTIN )
+: BitBuiltin( "clz", result, info, classid() )
 {
 }
 const TypeAnnotation ClzBuiltin::info( TypeAnnotation::Data{
@@ -1048,7 +1042,7 @@ bool ClzBuiltin::classof( Value const* obj )
 //
 
 CloBuiltin::CloBuiltin( Type* result )
-: BitBuiltin( "clo", result, info, Value::CLO_BUILTIN )
+: BitBuiltin( "clo", result, info, classid() )
 {
 }
 const TypeAnnotation CloBuiltin::info( TypeAnnotation::Data{
@@ -1069,7 +1063,7 @@ bool CloBuiltin::classof( Value const* obj )
 //
 
 ClsBuiltin::ClsBuiltin( Type* result )
-: BitBuiltin( "cls", result, info, Value::CLS_BUILTIN )
+: BitBuiltin( "cls", result, info, classid() )
 {
 }
 const TypeAnnotation ClsBuiltin::info( TypeAnnotation::Data{

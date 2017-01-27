@@ -39,7 +39,7 @@ namespace libcasm_ir
 
       public:
         Statement( const char* name, ExecutionSemanticsBlock* scope,
-            Value::ID id = Value::STATEMENT );
+            Value::ID id = classid() );
 
         ExecutionSemanticsBlock* getScope( void ) const;
 
@@ -49,8 +49,6 @@ namespace libcasm_ir
 
         void addBlock( ExecutionSemanticsBlock* block );
         const std::vector< ExecutionSemanticsBlock* >& getBlocks( void ) const;
-
-        void dump( void ) const;
 
         static inline Value::ID classid( void )
         {

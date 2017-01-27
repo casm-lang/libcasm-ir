@@ -30,7 +30,7 @@ using namespace libcasm_ir;
 
 Function::Function( const char* name, Type* result )
 : User( libstdhl::Allocator::string( "@" + std::string( name ) ), result,
-      Value::FUNCTION )
+      classid() )
 , ident( 0 )
 {
     ident = Identifier::create( result, getName() );
@@ -38,12 +38,6 @@ Function::Function( const char* name, Type* result )
 
 Function::~Function( void )
 {
-}
-
-void Function::dump( void ) const
-{
-    printf( "[Function] " );
-    debug();
 }
 
 bool Function::classof( Value const* obj )

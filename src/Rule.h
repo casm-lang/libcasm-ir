@@ -51,8 +51,6 @@ namespace libcasm_ir
 
         const std::vector< Value* >& getParameters( void ) const;
 
-        void dump( void ) const;
-
         static inline Value::ID classid( void )
         {
             return Value::RULE;

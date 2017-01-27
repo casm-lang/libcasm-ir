@@ -47,8 +47,6 @@ namespace libcasm_ir
 
         Rule* getInitRule( void );
 
-        void dump( void ) const;
-
         static inline Value::ID classid( void )
         {
             return Value::AGENT;

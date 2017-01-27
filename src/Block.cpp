@@ -44,12 +44,6 @@ Value* Block::getParent( void ) const
     return parent;
 }
 
-void Block::dump( void ) const
-{
-    // printf( "[Block] %p\n", this );
-    ( (Value*)this )->dump();
-}
-
 bool Block::classof( Value const* obj )
 {
     return obj->getValueID() == classid()
@@ -70,7 +64,6 @@ ExecutionSemanticsBlock::ExecutionSemanticsBlock( const char* name,
 
     Statement* tmp = new TrivialStatement( this );
     Instruction* instr = new ForkInstruction();
-    // instr->add(  )
     tmp->add( instr );
     entry = tmp;
 
@@ -153,37 +146,14 @@ void ExecutionSemanticsBlock::add( Block* block )
     blocks.push_back( block );
 }
 
-void ExecutionSemanticsBlock::dump( void ) const
-{
-    printf( "[ESBlk] %p, %p, %u @ %lu\n", this, scope, isParallel(),
-        getPseudoState() );
-
-    for( Block* block : blocks )
-    {
-        assert( block );
-
-        block->dump();
-    }
-}
-
 ParallelBlock::ParallelBlock( ExecutionSemanticsBlock* scope )
-: ExecutionSemanticsBlock( "par", true, scope, Value::PARALLEL_BLOCK )
+: ExecutionSemanticsBlock( "par", true, scope, classid() )
 {
-}
-
-void ParallelBlock::dump( void ) const
-{
-    ( (ExecutionSemanticsBlock*)this )->dump();
 }
 
 SequentialBlock::SequentialBlock( ExecutionSemanticsBlock* scope )
-: ExecutionSemanticsBlock( "seq", false, scope, Value::SEQUENTIAL_BLOCK )
+: ExecutionSemanticsBlock( "seq", false, scope, classid() )
 {
-}
-
-void SequentialBlock::dump( void ) const
-{
-    ( (ExecutionSemanticsBlock*)this )->dump();
 }
 
 bool ExecutionSemanticsBlock::classof( Value const* obj )

@@ -40,7 +40,7 @@ namespace libcasm_ir
         };
 
       public:
-        Constant( const char* name, Type* type, Value::ID id = Value::CONSTANT )
+        Constant( const char* name, Type* type, Value::ID id = classid() )
         : User( name, type, id ){};
 
         static inline Value::ID classid( void )
@@ -151,8 +151,6 @@ namespace libcasm_ir
         AgentConstant( Type::Agent value );
         AgentConstant( void );
 
-        void dump( void ) const;
-
         static inline Value::ID classid( void )
         {
             return Value::AGENT_CONSTANT;
@@ -177,8 +175,6 @@ namespace libcasm_ir
 
         static void checking( void );
 
-        void dump( void ) const;
-
         static inline Value::ID classid( void )
         {
             return Value::RULE_REFERENCE_CONSTANT;
@@ -194,8 +190,6 @@ namespace libcasm_ir
       public:
         BooleanConstant( Type::Boolean value );
         BooleanConstant( void );
-
-        void dump( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -213,8 +207,6 @@ namespace libcasm_ir
         IntegerConstant( Type::Integer value );
         IntegerConstant( void );
 
-        void dump( void ) const;
-
         static inline Value::ID classid( void )
         {
             return Value::INTEGER_CONSTANT;
@@ -230,8 +222,6 @@ namespace libcasm_ir
       public:
         BitConstant( Type* result, u64 value );
         BitConstant( Type* result );
-
-        void dump( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -249,8 +239,6 @@ namespace libcasm_ir
         StringConstant( Type::String value );
         StringConstant( const char* value );
         StringConstant( void );
-
-        void dump( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -277,8 +265,6 @@ namespace libcasm_ir
             Type* type, const char* value, Value* scope = 0 );
 
         static void forgetSymbol( const char* value );
-
-        void dump( void ) const;
 
         static inline Value::ID classid( void )
         {

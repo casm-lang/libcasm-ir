@@ -29,6 +29,8 @@
 
 using namespace libcasm_ir;
 
+static const char* undef_str = "undef";
+
 bool Constant::classof( Value const* obj )
 {
     return obj->getValueID() == classid() or AgentConstant::classof( obj )
@@ -230,8 +232,8 @@ Value* Constant::getString( const char* value )
 //
 
 AgentConstant::AgentConstant( Type::Agent value, u1 defined )
-: ConstantOf< Type::Agent >( ( defined ? "self" : "undef" ), Type::getAgent(),
-      value, defined, Value::AGENT_CONSTANT )
+: ConstantOf< Type::Agent >( ( defined ? "self" : undef_str ), Type::getAgent(),
+      value, defined, classid() )
 {
 }
 
@@ -245,11 +247,6 @@ AgentConstant::AgentConstant( void )
 {
 }
 
-void AgentConstant::dump( void ) const
-{
-    printf( "[Const] %p = agent %p\n", this, getValue() );
-}
-
 bool AgentConstant::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
@@ -259,8 +256,8 @@ RuleReferenceConstant::RuleReferenceConstant(
     Type::RuleReference value, const char* name, u1 defined )
 : ConstantOf< Type::RuleReference >(
       ( defined ? libstdhl::Allocator::string( value ? value->getName() : name )
-                : "undef" ),
-      Type::getRuleReference(), value, defined, Value::RULE_REFERENCE_CONSTANT )
+                : undef_str ),
+      Type::getRuleReference(), value, defined, classid() )
 , resolve_identifier( name )
 {
 }
@@ -348,11 +345,6 @@ void RuleReferenceConstant::checking( void )
     }
 }
 
-void RuleReferenceConstant::dump( void ) const
-{
-    printf( "[Const] %p = rule %p\n", this, getValue() );
-}
-
 bool RuleReferenceConstant::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
@@ -360,8 +352,8 @@ bool RuleReferenceConstant::classof( Value const* obj )
 
 BooleanConstant::BooleanConstant( Type::Boolean value, u1 defined )
 : ConstantOf< Type::Boolean >(
-      ( defined ? ( value ? "true" : "false" ) : "undef" ), Type::getBoolean(),
-      value, defined, Value::BOOLEAN_CONSTANT )
+      ( defined ? ( value ? "true" : "false" ) : undef_str ),
+      Type::getBoolean(), value, defined, classid() )
 {
 }
 
@@ -375,11 +367,6 @@ BooleanConstant::BooleanConstant( void )
 {
 }
 
-void BooleanConstant::dump( void ) const
-{
-    printf( "[Const] %p = bool %u\n", this, getValue() );
-}
-
 bool BooleanConstant::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
@@ -388,8 +375,8 @@ bool BooleanConstant::classof( Value const* obj )
 IntegerConstant::IntegerConstant( Type::Integer value, u1 defined )
 : ConstantOf< Type::Integer >(
       ( defined ? libstdhl::Allocator::string( std::to_string( value ) )
-                : "undef" ),
-      Type::getInteger(), value, defined, Value::INTEGER_CONSTANT )
+                : undef_str ),
+      Type::getInteger(), value, defined, classid() )
 {
 }
 
@@ -403,11 +390,6 @@ IntegerConstant::IntegerConstant( void )
 {
 }
 
-void IntegerConstant::dump( void ) const
-{
-    printf( "[Const] %p = integer %li\n", this, getValue() );
-}
-
 bool IntegerConstant::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
@@ -416,8 +398,8 @@ bool IntegerConstant::classof( Value const* obj )
 BitConstant::BitConstant( Type* result, u64 value, u1 defined )
 : ConstantOf< Type::Bit >(
       ( defined ? libstdhl::Allocator::string( std::to_string( value ) )
-                : "undef" ),
-      result, value, defined, Value::BIT_CONSTANT )
+                : undef_str ),
+      result, this->value, defined, classid() )
 {
 }
 
@@ -431,11 +413,6 @@ BitConstant::BitConstant( Type* result )
 {
 }
 
-void BitConstant::dump( void ) const
-{
-    printf( "[Const] %p = bit %li\n", this, getValue() );
-}
-
 bool BitConstant::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
@@ -443,8 +420,8 @@ bool BitConstant::classof( Value const* obj )
 
 StringConstant::StringConstant( Type::String value, u1 defined )
 : ConstantOf< Type::String >(
-      ( defined ? libstdhl::Allocator::string( value ) : "undef" ),
-      Type::getString(), value, defined, Value::STRING_CONSTANT )
+      ( defined ? libstdhl::Allocator::string( value ) : undef_str ),
+      Type::getString(), value, defined, classid() )
 {
 }
 
@@ -463,18 +440,13 @@ StringConstant::StringConstant( void )
 {
 }
 
-void StringConstant::dump( void ) const
-{
-    printf( "[Const] %p = string %s\n", this, getValue() );
-}
-
 bool StringConstant::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
 
 Identifier::Identifier( Type* type, const char* value )
-: ConstantOf< const char* >( value, type, value, true, Value::IDENTIFIER )
+: ConstantOf< const char* >( value, type, value, true, classid() )
 {
     // auto result = ident2obj().find( value );
     // if( result != ident2obj().end() )
@@ -510,12 +482,6 @@ Identifier* Identifier::create( Type* type, const char* value, Value* scope )
 void Identifier::forgetSymbol( const char* value )
 {
     ident2obj().erase( std::string( value ) );
-}
-
-void Identifier::dump( void ) const
-{
-    printf( "[Ident] " );
-    debug();
 }
 
 bool Identifier::classof( Value const* obj )

@@ -31,8 +31,7 @@ namespace libcasm_ir
     class User : public Value
     {
       public:
-        User( const char* name, Type* type /*opt use and num*/,
-            Value::ID id = Value::USER )
+        User( const char* name, Type* type, Value::ID id = classid() )
         : Value( name, type, id )
         {
         }

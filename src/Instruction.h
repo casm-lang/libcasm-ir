@@ -41,16 +41,13 @@ namespace libcasm_ir
 
       public:
         Instruction( const char* name, Type* type,
-            const std::vector< Value* >& values,
-            Value::ID id = Value::INSTRUCTION );
+            const std::vector< Value* >& values, Value::ID id = classid() );
         void setStatement( Statement* stmt );
         const Statement* getStatement( void ) const;
 
         void add( Value* value );
         Value* getValue( u8 index ) const;
         const std::vector< Value* >& getValues( void ) const;
-
-        void dump( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -245,7 +242,7 @@ namespace libcasm_ir
       public:
         OperatorInstruction( const char* name, Type* type,
             std::vector< Value* > values, const TypeAnnotation& info,
-            Value::ID id = Value::OPERATOR_INSTRUCTION );
+            Value::ID id = classid() );
 
         const Type::ID getResolved( void ) const;
 
@@ -261,7 +258,7 @@ namespace libcasm_ir
       public:
         ArithmeticInstruction( const char* name, Type* type,
             std::vector< Value* > values, const TypeAnnotation& info,
-            Value::ID id = Value::ARITHMETIC_INSTRUCTION );
+            Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {
@@ -274,8 +271,7 @@ namespace libcasm_ir
     {
       public:
         CompareInstruction( const char* name, std::vector< Value* > values,
-            const TypeAnnotation& info,
-            Value::ID id = Value::COMPARE_INSTRUCTION );
+            const TypeAnnotation& info, Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {
@@ -289,7 +285,7 @@ namespace libcasm_ir
       public:
         LogicalInstruction( const char* name, Type* type,
             std::vector< Value* > values, const TypeAnnotation& info,
-            Value::ID id = Value::LOGICAL_INSTRUCTION );
+            Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {
@@ -512,18 +508,6 @@ namespace libcasm_ir
 
         static const TypeAnnotation info;
     };
-
-    // class MovInstruction : public UnaryInstruction
-    // {
-    //   public:
-    //     MovInstruction( Value* lhs );
-
-    //     static inline Value::ID classid( void )
-    //     {
-    //         return Value::MOV_INSTRUCTION;
-    //     };
-    //     static bool classof( Value const* obj );
-    // };
 }
 
 #endif /* _LIB_CASMIR_INSTRUCTION_H_ */

@@ -30,7 +30,7 @@ using namespace libcasm_ir;
 
 Derived::Derived( const char* name, Type* result )
 : User( libstdhl::Allocator::string( "@" + std::string( name ) ), result,
-      Value::DERIVED )
+      classid() )
 {
     ident = Identifier::create( result, name );
 }
@@ -60,21 +60,6 @@ void Derived::addParameter( Value* value )
 const std::vector< Value* >& Derived::getParameters( void ) const
 {
     return parameter;
-}
-
-void Derived::dump( void ) const
-{
-    printf( "[Derived] " );
-    debug();
-
-    if( context )
-    {
-        context->dump();
-    }
-    else
-    {
-        printf( "('context' not set)\n" );
-    }
 }
 
 bool Derived::classof( Value const* obj )
