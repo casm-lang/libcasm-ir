@@ -399,9 +399,8 @@ BitConstant::BitConstant( Type* result, u64 value, u1 defined )
 : ConstantOf< Type::Bit >(
       ( defined ? libstdhl::Allocator::string( std::to_string( value ) )
                 : undef_str ),
-      result, this->value, defined, classid() )
+      result, value, defined, classid() )
 {
-    this->value[ 0 ] = value;
 }
 
 BitConstant::BitConstant( Type* result, u64 value )
