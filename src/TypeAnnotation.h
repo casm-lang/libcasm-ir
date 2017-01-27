@@ -46,9 +46,8 @@ namespace libcasm_ir
             std::vector< Type::ID > argument;
         };
 
-        typedef std::vector< Relation > Data;
-
-        typedef std::set< Type::ID > Set;
+        using Data = std::vector< Relation >;
+        using Set = std::set< Type::ID >;
 
       private:
         const Data info;
