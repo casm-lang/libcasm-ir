@@ -21,36 +21,29 @@
 //  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef _LIB_CASMIR_H_
-#define _LIB_CASMIR_H_
+#ifndef _LIB_CASMIR_CONSTANT_FOLDING_PASS_H_
+#define _LIB_CASMIR_CONSTANT_FOLDING_PASS_H_
 
-#include "src/Agent.h"
-#include "src/Block.h"
-#include "src/Builtin.h"
-#include "src/CasmIR.h"
-#include "src/Constant.h"
-#include "src/Derived.h"
-#include "src/Function.h"
-#include "src/Instruction.h"
-#include "src/Rule.h"
-#include "src/Specification.h"
-#include "src/Statement.h"
-#include "src/Type.h"
-#include "src/TypeAnnotation.h"
-#include "src/User.h"
-#include "src/Value.h"
-#include "src/Visitor.h"
+#include "libpass.h"
 
-#include "src/analyze/CasmIRDumpPass.h"
+/**
+   @brief    TODO
 
-#include "src/transform/CasmIRToSourcePass.h"
-#include "src/transform/ConstantFoldingPass.h"
+   TODO
+*/
 
 namespace libcasm_ir
 {
+    class ConstantFoldingPass final : public libpass::Pass
+    {
+      public:
+        static char id;
+
+        bool run( libpass::PassResult& pr ) override;
+    };
 }
 
-#endif /* _LIB_CASMIR_H_ */
+#endif // _LIB_CASMIR_CONSTANT_FOLDING_PASS_H_
 
 //
 //  Local variables:
