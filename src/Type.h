@@ -40,12 +40,12 @@ namespace libcasm_ir
     class Type : public CasmIR
     {
       public:
-        using Agent = void*;
-        using RuleReference = Rule*;
-        using Boolean = u1;
-        using Integer = i64;
-        using Bit = u64;
-        using String = char*;
+        using AgentTy = void*;
+        using RuleReferenceTy = Rule*;
+        using BooleanTy = u1;
+        using IntegerTy = i64;
+        using BitTy = u64;
+        using StringTy = char*;
 
         enum ID : u8
         {
@@ -92,7 +92,6 @@ namespace libcasm_ir
         Type* getResult( void ) const;
 
         u1 isLabel( void ) const;
-
         u1 isAgent( void ) const;
         u1 isRuleReference( void ) const;
         u1 isBoolean( void ) const;
@@ -105,12 +104,11 @@ namespace libcasm_ir
         u1 isRelation( void ) const;
 
         static Type* getLabel( void );
-
         static Type* getAgent( void );
         static Type* getRuleReference( void );
         static Type* getBoolean( void );
         static Type* getInteger( void );
-        static Type* getBit( u8 size );
+        static Type* getBit( u16 size );
         static Type* getString( void );
         static Type* getFloating( void );
         static Type* getRational( void );
@@ -132,64 +130,88 @@ namespace libcasm_ir
     class LabelType : public PrimitiveType
     {
       public:
+        using Ptr = std::shared_ptr< LabelType >;
+
         LabelType();
     };
 
     class AgentType : public PrimitiveType
     {
       public:
+        using Ptr = std::shared_ptr< AgentType >;
+
         AgentType();
     };
 
     class RuleReferenceType : public PrimitiveType
     {
       public:
+        using Ptr = std::shared_ptr< RuleReferenceType >;
+
         RuleReferenceType();
     };
 
     class BooleanType : public PrimitiveType
     {
       public:
+        using Ptr = std::shared_ptr< BooleanType >;
+
         BooleanType();
     };
 
     class IntegerType : public PrimitiveType
     {
       public:
+        using Ptr = std::shared_ptr< IntegerType >;
+
         IntegerType();
     };
 
     class BitType : public PrimitiveType
     {
+      public:
+        using Ptr = std::shared_ptr< BitType >;
+
+        static const u16 SizeMax = 64;
+
       private:
-        u8 size;
+        u16 size;
 
       public:
-        BitType( u8 size );
+        BitType( u16 size );
 
-        const u8 getSize( void ) const;
+        const u16 getSize( void ) const;
     };
 
     class StringType : public PrimitiveType
     {
       public:
+        using Ptr = std::shared_ptr< StringType >;
+
         StringType();
     };
 
     class FloatingType : public PrimitiveType
     {
       public:
+        using Ptr = std::shared_ptr< FloatingType >;
+
         FloatingType();
     };
 
     class RationalType : public PrimitiveType
     {
       public:
+        using Ptr = std::shared_ptr< RationalType >;
+
         RationalType();
     };
 
     class EnumerationType : public PrimitiveType
     {
+      public:
+        using Ptr = std::shared_ptr< EnumerationType >;
+
       private:
         // PPA: TODO IDENTIFIERs from the Enum!
       public:
@@ -198,6 +220,9 @@ namespace libcasm_ir
 
     class RelationType : public Type
     {
+      public:
+        using Ptr = std::shared_ptr< RelationType >;
+
       private:
         Type* result;
         std::vector< Type* > arguments;

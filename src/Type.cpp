@@ -125,7 +125,7 @@ Type* Type::getInteger( void )
     return str2obj().emplace( cache.getName(), &cache ).first->second;
 }
 
-Type* Type::getBit( u8 size )
+Type* Type::getBit( u16 size )
 {
     BitType tmp( size );
 
@@ -226,7 +226,7 @@ IntegerType::IntegerType()
 {
 }
 
-BitType::BitType( u8 size )
+BitType::BitType( u16 size )
 : PrimitiveType( libstdhl::Allocator::string( "u" + std::to_string( size ) ),
       libstdhl::Allocator::string( "Bit(" + std::to_string( size ) + ")" ),
       Type::BIT )
@@ -234,7 +234,7 @@ BitType::BitType( u8 size )
 {
 }
 
-const u8 BitType::getSize( void ) const
+const u16 BitType::getSize( void ) const
 {
     return size;
 }

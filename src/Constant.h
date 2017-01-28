@@ -62,11 +62,11 @@ namespace libcasm_ir
 
         static Value* getUndef( Type* result );
 
-        static Value* getAgent( Type::Agent value );
-        static Value* getRuleReference( Type::RuleReference value );
+        static Value* getAgent( Type::AgentTy value );
+        static Value* getRuleReference( Type::RuleReferenceTy value );
         static Value* getRuleReference( const char* value );
-        static Value* getBoolean( Type::Boolean value );
-        static Value* getInteger( Type::Integer value );
+        static Value* getBoolean( Type::BooleanTy value );
+        static Value* getInteger( Type::IntegerTy value );
         static Value* getBit( Type* result, u64 value );
         static Value* getString( const char* value );
         // static Value* get( void );
@@ -142,13 +142,16 @@ namespace libcasm_ir
         }
     };
 
-    class AgentConstant : public ConstantOf< Type::Agent >
+    class AgentConstant : public ConstantOf< Type::AgentTy >
     {
+      public:
+        using Ptr = std::shared_ptr< AgentConstant >;
+
       private:
-        AgentConstant( Type::Agent value, u1 defined );
+        AgentConstant( Type::AgentTy value, u1 defined );
 
       public:
-        AgentConstant( Type::Agent value );
+        AgentConstant( Type::AgentTy value );
         AgentConstant( void );
 
         static inline Value::ID classid( void )
@@ -159,15 +162,18 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class RuleReferenceConstant : public ConstantOf< Type::RuleReference >
+    class RuleReferenceConstant : public ConstantOf< Type::RuleReferenceTy >
     {
+      public:
+        using Ptr = std::shared_ptr< RuleReferenceConstant >;
+
       private:
         const char* resolve_identifier;
         RuleReferenceConstant(
-            Type::RuleReference value, const char* name, u1 defined );
+            Type::RuleReferenceTy value, const char* name, u1 defined );
 
       public:
-        RuleReferenceConstant( Type::RuleReference value );
+        RuleReferenceConstant( Type::RuleReferenceTy value );
         RuleReferenceConstant( const char* name );
         RuleReferenceConstant( void );
 
@@ -184,13 +190,16 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class BooleanConstant : public ConstantOf< Type::Boolean >
+    class BooleanConstant : public ConstantOf< Type::BooleanTy >
     {
+      public:
+        using Ptr = std::shared_ptr< BooleanConstant >;
+
       private:
-        BooleanConstant( Type::Boolean value, u1 defined );
+        BooleanConstant( Type::BooleanTy value, u1 defined );
 
       public:
-        BooleanConstant( Type::Boolean value );
+        BooleanConstant( Type::BooleanTy value );
         BooleanConstant( void );
 
         static inline Value::ID classid( void )
@@ -201,13 +210,16 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class IntegerConstant : public ConstantOf< Type::Integer >
+    class IntegerConstant : public ConstantOf< Type::IntegerTy >
     {
+      public:
+        using Ptr = std::shared_ptr< IntegerConstant >;
+
       private:
-        IntegerConstant( Type::Integer value, u1 defined );
+        IntegerConstant( Type::IntegerTy value, u1 defined );
 
       public:
-        IntegerConstant( Type::Integer value );
+        IntegerConstant( Type::IntegerTy value );
         IntegerConstant( void );
 
         static inline Value::ID classid( void )
@@ -218,8 +230,11 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class BitConstant : public ConstantOf< Type::Bit >
+    class BitConstant : public ConstantOf< Type::BitTy >
     {
+      public:
+        using Ptr = std::shared_ptr< BitConstant >;
+
       private:
         BitConstant( Type* result, u64 value, u1 defined );
 
@@ -235,13 +250,16 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class StringConstant : public ConstantOf< Type::String >
+    class StringConstant : public ConstantOf< Type::StringTy >
     {
+      public:
+        using Ptr = std::shared_ptr< StringConstant >;
+
       private:
-        StringConstant( Type::String value, u1 defined );
+        StringConstant( Type::StringTy value, u1 defined );
 
       public:
-        StringConstant( Type::String value );
+        StringConstant( Type::StringTy value );
         StringConstant( const char* value );
         StringConstant( void );
 
@@ -255,6 +273,9 @@ namespace libcasm_ir
 
     class Identifier : public ConstantOf< const char* >
     {
+      public:
+        using Ptr = std::shared_ptr< Identifier >;
+
       private:
         static std::unordered_map< std::string, Identifier* >& ident2obj( void )
         {
