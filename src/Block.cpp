@@ -44,7 +44,7 @@ Value* Block::getParent( void ) const
     return parent;
 }
 
-bool Block::classof( Value const* obj )
+u1 Block::classof( Value const* obj )
 {
     return obj->getValueID() == classid()
            or ExecutionSemanticsBlock::classof( obj )
@@ -146,9 +146,20 @@ void ExecutionSemanticsBlock::add( Block* block )
     blocks.push_back( block );
 }
 
+u1 ExecutionSemanticsBlock::classof( Value const* obj )
+{
+    return obj->getValueID() == classid() or ParallelBlock::classof( obj )
+           or SequentialBlock::classof( obj );
+}
+
 ParallelBlock::ParallelBlock( ExecutionSemanticsBlock* scope )
 : ExecutionSemanticsBlock( "par", true, scope, classid() )
 {
+}
+
+u1 ParallelBlock::classof( Value const* obj )
+{
+    return obj->getValueID() == classid();
 }
 
 SequentialBlock::SequentialBlock( ExecutionSemanticsBlock* scope )
@@ -156,18 +167,7 @@ SequentialBlock::SequentialBlock( ExecutionSemanticsBlock* scope )
 {
 }
 
-bool ExecutionSemanticsBlock::classof( Value const* obj )
-{
-    return obj->getValueID() == classid() or ParallelBlock::classof( obj )
-           or SequentialBlock::classof( obj );
-}
-
-bool ParallelBlock::classof( Value const* obj )
-{
-    return obj->getValueID() == classid();
-}
-
-bool SequentialBlock::classof( Value const* obj )
+u1 SequentialBlock::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }

@@ -31,6 +31,7 @@
 #define _LIB_CASMIR_CASMIR_H_
 
 #include "../stdhl/cpp/Default.h"
+#include "../stdhl/cpp/Type.h"
 
 namespace libcasm_ir
 {
@@ -45,25 +46,25 @@ namespace libcasm_ir
     //
 
     template < class TO >
-    static inline bool isa( Value* value )
+    static inline u1 isa( Value* value )
     {
         return TO::classof( value );
     }
 
     template < class TO >
-    static inline bool isa( const Value* value )
+    static inline u1 isa( const Value* value )
     {
         return isa< TO >( (Value*)value );
     }
 
     template < class TO >
-    static inline bool isa( Value& value )
+    static inline u1 isa( Value& value )
     {
         return isa< TO >( &value );
     }
 
     template < class TO >
-    static inline bool isa( const Value& value )
+    static inline u1 isa( const Value& value )
     {
         return isa< TO >( &value );
     }
@@ -98,6 +99,16 @@ namespace libcasm_ir
     {
         assert( isa< TO >( value ) );
         return static_cast< const TO& >( value );
+    }
+
+    //
+    // object creation utility
+    //
+
+    template < typename T, typename... Args >
+    typename T::Ptr make( Args&&... args )
+    {
+        return std::make_shared< T >( std::forward< Args >( args )... );
     }
 }
 

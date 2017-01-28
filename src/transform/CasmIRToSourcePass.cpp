@@ -48,7 +48,7 @@ static const char* indention( Value& value )
     }
 }
 
-bool CasmIRToSourcePass::run( libpass::PassResult& pr )
+u1 CasmIRToSourcePass::run( libpass::PassResult& pr )
 {
     Specification* value = (Specification*)pr.getResult< CasmIRDumpPass >();
     assert( value );

@@ -104,7 +104,7 @@ const std::vector< ExecutionSemanticsBlock* >& Statement::getBlocks(
     return blocks;
 }
 
-bool Statement::classof( Value const* obj )
+u1 Statement::classof( Value const* obj )
 {
     return obj->getValueID() == classid() or TrivialStatement::classof( obj )
            or BranchStatement::classof( obj );
@@ -115,7 +115,7 @@ TrivialStatement::TrivialStatement( ExecutionSemanticsBlock* scope )
 {
 }
 
-bool TrivialStatement::classof( Value const* obj )
+u1 TrivialStatement::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -125,7 +125,7 @@ BranchStatement::BranchStatement( ExecutionSemanticsBlock* scope )
 {
 }
 
-bool BranchStatement::classof( Value const* obj )
+u1 BranchStatement::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }

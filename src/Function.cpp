@@ -40,7 +40,7 @@ Function::~Function( void )
 {
 }
 
-bool Function::classof( Value const* obj )
+u1 Function::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }

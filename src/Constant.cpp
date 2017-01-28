@@ -31,7 +31,7 @@ using namespace libcasm_ir;
 
 static const char* undef_str = "undef";
 
-bool Constant::classof( Value const* obj )
+u1 Constant::classof( Value const* obj )
 {
     return obj->getValueID() == classid() or AgentConstant::classof( obj )
            or RuleReferenceConstant::classof( obj )
@@ -247,7 +247,7 @@ AgentConstant::AgentConstant( void )
 {
 }
 
-bool AgentConstant::classof( Value const* obj )
+u1 AgentConstant::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -345,7 +345,7 @@ void RuleReferenceConstant::checking( void )
     }
 }
 
-bool RuleReferenceConstant::classof( Value const* obj )
+u1 RuleReferenceConstant::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -367,7 +367,7 @@ BooleanConstant::BooleanConstant( void )
 {
 }
 
-bool BooleanConstant::classof( Value const* obj )
+u1 BooleanConstant::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -390,7 +390,7 @@ IntegerConstant::IntegerConstant( void )
 {
 }
 
-bool IntegerConstant::classof( Value const* obj )
+u1 IntegerConstant::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -413,7 +413,7 @@ BitConstant::BitConstant( Type* result )
 {
 }
 
-bool BitConstant::classof( Value const* obj )
+u1 BitConstant::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -440,7 +440,7 @@ StringConstant::StringConstant( void )
 {
 }
 
-bool StringConstant::classof( Value const* obj )
+u1 StringConstant::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -484,7 +484,7 @@ void Identifier::forgetSymbol( const char* value )
     ident2obj().erase( std::string( value ) );
 }
 
-bool Identifier::classof( Value const* obj )
+u1 Identifier::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }

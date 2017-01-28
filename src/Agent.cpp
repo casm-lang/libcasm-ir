@@ -63,7 +63,7 @@ Rule* Agent::getInitRule( void )
     return rule_ref->getValue();
 }
 
-bool Agent::classof( Value const* obj )
+u1 Agent::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }

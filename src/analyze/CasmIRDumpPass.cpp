@@ -33,7 +33,7 @@ static libpass::PassRegistration< CasmIRDumpPass > PASS( "CASM IR Dumping Pass",
     "outputs from the CASM IR an ASCII representation for debugging",
     "ir-dump-debug", 0 );
 
-bool CasmIRDumpPass::run( libpass::PassResult& pr )
+u1 CasmIRDumpPass::run( libpass::PassResult& pr )
 {
     Specification* value = (Specification*)pr.getResult< CasmIRDumpPass >();
     assert( value );

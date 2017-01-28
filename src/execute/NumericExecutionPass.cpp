@@ -31,7 +31,7 @@ static libpass::PassRegistration< NumericExecutionPass > PASS(
     "Numeric Execution Pass", "execute numerically over the CASM IR",
     "ir-exec-num", 0 );
 
-bool NumericExecutionPass::run( libpass::PassResult& pr )
+u1 NumericExecutionPass::run( libpass::PassResult& pr )
 {
     assert( !" unimplemented !!! " );
     return true;

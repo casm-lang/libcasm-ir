@@ -39,7 +39,7 @@ namespace libcasm_ir
       public:
         static char id;
 
-        bool run( libpass::PassResult& pr ) override;
+        u1 run( libpass::PassResult& pr ) override;
     };
 }
 
