@@ -129,7 +129,7 @@ Value* Constant::getUndef( Type* result )
     }
 }
 
-Value* Constant::getAgent( Type::Agent value )
+Value* Constant::getAgent( Type::AgentTy value )
 {
     AgentConstant tmp = AgentConstant( value );
 
@@ -143,7 +143,7 @@ Value* Constant::getAgent( Type::Agent value )
     return str2obj().emplace( tmp.getDescription(), ptr ).first->second;
 }
 
-Value* Constant::getRuleReference( Type::RuleReference value )
+Value* Constant::getRuleReference( Type::RuleReferenceTy value )
 {
     RuleReferenceConstant tmp = RuleReferenceConstant( value );
 
@@ -171,7 +171,7 @@ Value* Constant::getRuleReference( const char* value )
     return str2obj().emplace( tmp.getDescription(), ptr ).first->second;
 }
 
-Value* Constant::getBoolean( Type::Boolean value )
+Value* Constant::getBoolean( Type::BooleanTy value )
 {
     BooleanConstant tmp = BooleanConstant( value );
 
@@ -185,7 +185,7 @@ Value* Constant::getBoolean( Type::Boolean value )
     return str2obj().emplace( tmp.getDescription(), ptr ).first->second;
 }
 
-Value* Constant::getInteger( Type::Integer value )
+Value* Constant::getInteger( Type::IntegerTy value )
 {
     IntegerConstant tmp = IntegerConstant( value );
 
@@ -231,13 +231,13 @@ Value* Constant::getString( const char* value )
 // Constants
 //
 
-AgentConstant::AgentConstant( Type::Agent value, u1 defined )
-: ConstantOf< Type::Agent >( ( defined ? "self" : undef_str ), Type::getAgent(),
-      value, defined, classid() )
+AgentConstant::AgentConstant( Type::AgentTy value, u1 defined )
+: ConstantOf< Type::AgentTy >( ( defined ? "self" : undef_str ),
+      Type::getAgent(), value, defined, classid() )
 {
 }
 
-AgentConstant::AgentConstant( Type::Agent value )
+AgentConstant::AgentConstant( Type::AgentTy value )
 : AgentConstant( value, true )
 {
 }
@@ -253,8 +253,8 @@ u1 AgentConstant::classof( Value const* obj )
 }
 
 RuleReferenceConstant::RuleReferenceConstant(
-    Type::RuleReference value, const char* name, u1 defined )
-: ConstantOf< Type::RuleReference >(
+    Type::RuleReferenceTy value, const char* name, u1 defined )
+: ConstantOf< Type::RuleReferenceTy >(
       ( defined ? libstdhl::Allocator::string( value ? value->getName() : name )
                 : undef_str ),
       Type::getRuleReference(), value, defined, classid() )
@@ -262,7 +262,7 @@ RuleReferenceConstant::RuleReferenceConstant(
 {
 }
 
-RuleReferenceConstant::RuleReferenceConstant( Type::RuleReference value )
+RuleReferenceConstant::RuleReferenceConstant( Type::RuleReferenceTy value )
 : RuleReferenceConstant( value, 0, true )
 {
 }
@@ -350,14 +350,14 @@ u1 RuleReferenceConstant::classof( Value const* obj )
     return obj->getValueID() == classid();
 }
 
-BooleanConstant::BooleanConstant( Type::Boolean value, u1 defined )
-: ConstantOf< Type::Boolean >(
+BooleanConstant::BooleanConstant( Type::BooleanTy value, u1 defined )
+: ConstantOf< Type::BooleanTy >(
       ( defined ? ( value ? "true" : "false" ) : undef_str ),
       Type::getBoolean(), value, defined, classid() )
 {
 }
 
-BooleanConstant::BooleanConstant( Type::Boolean value )
+BooleanConstant::BooleanConstant( Type::BooleanTy value )
 : BooleanConstant( value, true )
 {
 }
@@ -372,15 +372,15 @@ u1 BooleanConstant::classof( Value const* obj )
     return obj->getValueID() == classid();
 }
 
-IntegerConstant::IntegerConstant( Type::Integer value, u1 defined )
-: ConstantOf< Type::Integer >(
+IntegerConstant::IntegerConstant( Type::IntegerTy value, u1 defined )
+: ConstantOf< Type::IntegerTy >(
       ( defined ? libstdhl::Allocator::string( std::to_string( value ) )
                 : undef_str ),
       Type::getInteger(), value, defined, classid() )
 {
 }
 
-IntegerConstant::IntegerConstant( Type::Integer value )
+IntegerConstant::IntegerConstant( Type::IntegerTy value )
 : IntegerConstant( value, true )
 {
 }
@@ -396,7 +396,7 @@ u1 IntegerConstant::classof( Value const* obj )
 }
 
 BitConstant::BitConstant( Type* result, u64 value, u1 defined )
-: ConstantOf< Type::Bit >(
+: ConstantOf< Type::BitTy >(
       ( defined ? libstdhl::Allocator::string( std::to_string( value ) )
                 : undef_str ),
       result, value, defined, classid() )
@@ -418,20 +418,20 @@ u1 BitConstant::classof( Value const* obj )
     return obj->getValueID() == classid();
 }
 
-StringConstant::StringConstant( Type::String value, u1 defined )
-: ConstantOf< Type::String >(
+StringConstant::StringConstant( Type::StringTy value, u1 defined )
+: ConstantOf< Type::StringTy >(
       ( defined ? libstdhl::Allocator::string( value ) : undef_str ),
       Type::getString(), value, defined, classid() )
 {
 }
 
-StringConstant::StringConstant( Type::String value )
+StringConstant::StringConstant( Type::StringTy value )
 : StringConstant( value, true )
 {
 }
 
 StringConstant::StringConstant( const char* value )
-: StringConstant( ( Type::String )( value ), true )
+: StringConstant( ( Type::StringTy )( value ), true )
 {
 }
 
