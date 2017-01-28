@@ -76,7 +76,7 @@ void Specification::add( Value* value )
     }
 }
 
-bool Specification::classof( Value const* obj )
+u1 Specification::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }

@@ -50,8 +50,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::AGENT;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         virtual const char* getLabel( void ) override final
         {

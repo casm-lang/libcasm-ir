@@ -95,7 +95,7 @@ const std::vector< Value* >& Instruction::getValues( void ) const
     return values;
 }
 
-bool Instruction::classof( Value const* obj )
+u1 Instruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid() or SkipInstruction::classof( obj )
            or ForkInstruction::classof( obj )
@@ -121,7 +121,7 @@ Value* UnaryInstruction::get( void ) const
     return self.getValue( 0 );
 }
 
-bool UnaryInstruction::classof( Value const* obj )
+u1 UnaryInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid() or ForkInstruction::classof( obj )
            or MergeInstruction::classof( obj )
@@ -145,7 +145,7 @@ Value* BinaryInstruction::getRHS( void ) const
     return self.getValue( 1 );
 }
 
-bool BinaryInstruction::classof( Value const* obj )
+u1 BinaryInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid() or UpdateInstruction::classof( obj )
            or LocalInstruction::classof( obj ) or AddInstruction::classof( obj )
@@ -163,7 +163,7 @@ SkipInstruction::SkipInstruction( void )
 {
 }
 
-bool SkipInstruction::classof( Value const* obj )
+u1 SkipInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -173,7 +173,7 @@ ForkInstruction::ForkInstruction( void )
 {
 }
 
-bool ForkInstruction::classof( Value const* obj )
+u1 ForkInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -183,7 +183,7 @@ MergeInstruction::MergeInstruction( void )
 {
 }
 
-bool MergeInstruction::classof( Value const* obj )
+u1 MergeInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -196,7 +196,7 @@ LookupInstruction::LookupInstruction( Value* location )
     setType( location->getType()->getResult() );
 }
 
-bool LookupInstruction::classof( Value const* obj )
+u1 LookupInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -210,7 +210,7 @@ UpdateInstruction::UpdateInstruction( Value* location, Value* expr )
     setType( expr->getType() );
 }
 
-bool UpdateInstruction::classof( Value const* obj )
+u1 UpdateInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -223,7 +223,7 @@ LocalInstruction::LocalInstruction( Value* ident, Value* expr )
     setType( expr->getType() );
 }
 
-bool LocalInstruction::classof( Value const* obj )
+u1 LocalInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -235,7 +235,7 @@ LocationInstruction::LocationInstruction( Value* function )
     setType( function->getType() );
 }
 
-bool LocationInstruction::classof( Value const* obj )
+u1 LocationInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -250,7 +250,7 @@ CallInstruction::CallInstruction( Value* symbol )
     setType( symbol->getType()->getResult() );
 }
 
-bool CallInstruction::classof( Value const* obj )
+u1 CallInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -264,7 +264,7 @@ PrintInstruction::PrintInstruction( Value* channel )
     }
 }
 
-bool PrintInstruction::classof( Value const* obj )
+u1 PrintInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -277,7 +277,7 @@ AssertInstruction::AssertInstruction( Value* condition )
     setType( condition->getType()->getResult() );
 }
 
-bool AssertInstruction::classof( Value const* obj )
+u1 AssertInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -289,7 +289,7 @@ SelectInstruction::SelectInstruction( Value* expression )
     setType( expression->getType()->getResult() );
 }
 
-bool SelectInstruction::classof( Value const* obj )
+u1 SelectInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -315,7 +315,7 @@ const Type::ID OperatorInstruction::getResolved( void ) const
     return resolved;
 }
 
-bool OperatorInstruction::classof( Value const* obj )
+u1 OperatorInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid()
            or ArithmeticInstruction::classof( obj )
@@ -342,7 +342,7 @@ ArithmeticInstruction::ArithmeticInstruction( const char* name, Type* type,
     setType( lhs_ty );
 }
 
-bool ArithmeticInstruction::classof( Value const* obj )
+u1 ArithmeticInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid() or AddInstruction::classof( obj )
            or SubInstruction::classof( obj ) or MulInstruction::classof( obj )
@@ -355,7 +355,7 @@ CompareInstruction::CompareInstruction( const char* name,
 {
 }
 
-bool CompareInstruction::classof( Value const* obj )
+u1 CompareInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid() or EquInstruction::classof( obj )
            or NeqInstruction::classof( obj ) or LthInstruction::classof( obj )
@@ -382,7 +382,7 @@ LogicalInstruction::LogicalInstruction( const char* name, Type* type,
     setType( lhs_ty );
 }
 
-bool LogicalInstruction::classof( Value const* obj )
+u1 LogicalInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid() or OrInstruction::classof( obj )
            or XorInstruction::classof( obj ) or AndInstruction::classof( obj )
@@ -410,7 +410,7 @@ const TypeAnnotation AddInstruction::info( TypeAnnotation::Data{
         } }
 
 } );
-bool AddInstruction::classof( Value const* obj )
+u1 AddInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -432,7 +432,7 @@ const TypeAnnotation SubInstruction::info( TypeAnnotation::Data{
         } }
 
 } );
-bool SubInstruction::classof( Value const* obj )
+u1 SubInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -454,7 +454,7 @@ const TypeAnnotation MulInstruction::info( TypeAnnotation::Data{
         } }
 
 } );
-bool MulInstruction::classof( Value const* obj )
+u1 MulInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -476,7 +476,7 @@ const TypeAnnotation DivInstruction::info( TypeAnnotation::Data{
         } }
 
 } );
-bool DivInstruction::classof( Value const* obj )
+u1 DivInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -494,7 +494,7 @@ const TypeAnnotation ModInstruction::info( TypeAnnotation::Data{
         } }
 
 } );
-bool ModInstruction::classof( Value const* obj )
+u1 ModInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -536,7 +536,7 @@ const TypeAnnotation EquInstruction::info( TypeAnnotation::Data{
         } }
 
 } );
-bool EquInstruction::classof( Value const* obj )
+u1 EquInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -578,7 +578,7 @@ const TypeAnnotation NeqInstruction::info( TypeAnnotation::Data{
         } }
 
 } );
-bool NeqInstruction::classof( Value const* obj )
+u1 NeqInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -596,7 +596,7 @@ const TypeAnnotation LthInstruction::info( TypeAnnotation::Data{
         } }
 
 } );
-bool LthInstruction::classof( Value const* obj )
+u1 LthInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -614,7 +614,7 @@ const TypeAnnotation LeqInstruction::info( TypeAnnotation::Data{
         } }
 
 } );
-bool LeqInstruction::classof( Value const* obj )
+u1 LeqInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -632,7 +632,7 @@ const TypeAnnotation GthInstruction::info( TypeAnnotation::Data{
         } }
 
 } );
-bool GthInstruction::classof( Value const* obj )
+u1 GthInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -647,7 +647,7 @@ const TypeAnnotation GeqInstruction::info( TypeAnnotation::Data{
     { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } }
 
 } );
-bool GeqInstruction::classof( Value const* obj )
+u1 GeqInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -669,7 +669,7 @@ const TypeAnnotation OrInstruction::info( TypeAnnotation::Data{
         } }
 
 } );
-bool OrInstruction::classof( Value const* obj )
+u1 OrInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -691,7 +691,7 @@ const TypeAnnotation XorInstruction::info( TypeAnnotation::Data{
         } }
 
 } );
-bool XorInstruction::classof( Value const* obj )
+u1 XorInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -713,7 +713,7 @@ const TypeAnnotation AndInstruction::info( TypeAnnotation::Data{
         } }
 
 } );
-bool AndInstruction::classof( Value const* obj )
+u1 AndInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -746,7 +746,7 @@ const TypeAnnotation NotInstruction::info( TypeAnnotation::Data{
         } }
 
 } );
-bool NotInstruction::classof( Value const* obj )
+u1 NotInstruction::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }

@@ -52,8 +52,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         virtual const char* getLabelName( void ) override final
         {
@@ -67,7 +68,7 @@ namespace libcasm_ir
         }
     };
 
-    class UnaryInstruction : public CasmIR
+    class UnaryInstruction
     {
       private:
         Instruction& self;
@@ -80,11 +81,12 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::UNARY_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
-    class BinaryInstruction : public CasmIR
+    class BinaryInstruction
     {
       private:
         Instruction& self;
@@ -98,8 +100,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::BINARY_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class SkipInstruction : public Instruction
@@ -110,8 +113,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::SKIP_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class ForkInstruction : public Instruction
@@ -122,8 +126,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::FORK_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class MergeInstruction : public Instruction
@@ -134,8 +139,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::MERGE_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class LookupInstruction : public Instruction, public UnaryInstruction
@@ -146,8 +152,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::LOOKUP_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class UpdateInstruction : public Instruction, public BinaryInstruction
@@ -158,8 +165,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::UPDATE_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class LocalInstruction : public Instruction, public BinaryInstruction
@@ -170,8 +178,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::LOCAL_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class LocationInstruction : public Instruction
@@ -182,8 +191,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::LOCATION_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class CallInstruction : public Instruction
@@ -194,8 +204,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::CALL_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class PrintInstruction : public Instruction
@@ -206,8 +217,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::PRINT_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class AssertInstruction : public Instruction, public UnaryInstruction
@@ -218,8 +230,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::ASSERT_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class SelectInstruction : public Instruction
@@ -230,8 +243,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::SELECT_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class OperatorInstruction : public Instruction, public TypeAnnotation
@@ -249,8 +263,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::OPERATOR_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class ArithmeticInstruction : public OperatorInstruction
@@ -263,8 +278,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::ARITHMETIC_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class CompareInstruction : public OperatorInstruction
@@ -276,8 +292,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::COMPARE_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class LogicalInstruction : public OperatorInstruction
@@ -290,8 +307,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::LOGICAL_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class AddInstruction : public ArithmeticInstruction,
@@ -303,8 +321,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::ADD_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -318,8 +337,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::SUB_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -333,8 +353,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::MUL_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -348,8 +369,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::DIV_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -363,8 +385,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::MOD_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -377,8 +400,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::EQU_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -391,8 +415,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::NEQ_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -405,8 +430,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::LTH_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -419,8 +445,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::LEQ_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -433,8 +460,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::GTH_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -447,8 +475,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::GEQ_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -461,8 +490,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::OR_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -475,8 +505,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::XOR_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -489,8 +520,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::AND_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -503,8 +535,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::NOT_INSTRUCTION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };

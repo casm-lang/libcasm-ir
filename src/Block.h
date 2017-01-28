@@ -49,8 +49,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::BLOCK;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         virtual const char* getLabelName( void ) override final
         {
@@ -104,8 +105,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::EXECUTION_SEMANTICS_BLOCK;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class ParallelBlock : public ExecutionSemanticsBlock
@@ -118,8 +120,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::PARALLEL_BLOCK;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class SequentialBlock : public ExecutionSemanticsBlock
@@ -132,8 +135,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::SEQUENTIAL_BLOCK;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 }
 

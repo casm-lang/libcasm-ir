@@ -63,7 +63,7 @@ const std::vector< Value* >& Rule::getParameters( void ) const
     return parameter;
 }
 
-bool Rule::classof( Value const* obj )
+u1 Rule::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }

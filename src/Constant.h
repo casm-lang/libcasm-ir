@@ -47,7 +47,7 @@ namespace libcasm_ir
         {
             return Value::CONSTANT;
         };
-        static bool classof( Value const* obj );
+        static u1 classof( Value const* obj );
 
         virtual const char* getLabelName( void ) override final
         {
@@ -130,7 +130,7 @@ namespace libcasm_ir
             return Value::CONSTANT;
         }
 
-        static bool classof( Value const* obj )
+        static u1 classof( Value const* obj )
         {
             return Constant::classof( obj );
         }
@@ -154,8 +154,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::AGENT_CONSTANT;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class RuleReferenceConstant : public ConstantOf< Type::RuleReference >
@@ -178,8 +179,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::RULE_REFERENCE_CONSTANT;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class BooleanConstant : public ConstantOf< Type::Boolean >
@@ -194,8 +196,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::BOOLEAN_CONSTANT;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class IntegerConstant : public ConstantOf< Type::Integer >
@@ -210,8 +213,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::INTEGER_CONSTANT;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class BitConstant : public ConstantOf< Type::Bit >
@@ -226,8 +230,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::BIT_CONSTANT;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class StringConstant : public ConstantOf< Type::String >
@@ -243,8 +248,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::STRING_CONSTANT;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class Identifier : public ConstantOf< const char* >
@@ -269,8 +275,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::IDENTIFIER;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 }
 

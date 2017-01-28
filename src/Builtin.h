@@ -54,8 +54,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         virtual const char* getLabelName( void ) override final
         {
@@ -86,8 +87,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::CASTING_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class AsBooleanBuiltin : public CastingBuiltin
@@ -98,8 +100,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::AS_BOOLEAN_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -112,8 +115,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::AS_INTEGER_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -126,8 +130,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::AS_BIT_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -140,8 +145,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::AS_STRING_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -154,8 +160,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::AS_FLOATING_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -168,8 +175,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::AS_RATIONAL_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -182,8 +190,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::AS_ENUMERATION_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -201,8 +210,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::STRINGIFY_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -215,8 +225,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::DEC_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class HexBuiltin : public StringifyBuiltin
@@ -227,8 +238,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::HEX_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class OctBuiltin : public StringifyBuiltin
@@ -239,8 +251,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::OCT_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class BinBuiltin : public StringifyBuiltin
@@ -251,8 +264,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::BIN_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     //
@@ -268,8 +282,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::OPERATOR_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -287,8 +302,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::ARITHMETIC_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class AdduBuiltin : public ArithmeticBuiltin
@@ -299,8 +315,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::ADDU_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class AddsBuiltin : public ArithmeticBuiltin
@@ -311,8 +328,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::ADDS_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class SubuBuiltin : public ArithmeticBuiltin
@@ -323,8 +341,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::SUBU_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class SubsBuiltin : public ArithmeticBuiltin
@@ -335,8 +354,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::SUBS_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class MuluBuiltin : public ArithmeticBuiltin
@@ -347,8 +367,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::MULU_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class MulsBuiltin : public ArithmeticBuiltin
@@ -359,8 +380,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::MULS_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     //
@@ -376,8 +398,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::COMPARE_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class LesuBuiltin : public CompareBuiltin
@@ -388,8 +411,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::LESU_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class LessBuiltin : public CompareBuiltin
@@ -400,8 +424,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::LESS_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class LequBuiltin : public CompareBuiltin
@@ -412,8 +437,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::LEQU_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class LeqsBuiltin : public CompareBuiltin
@@ -424,8 +450,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::LEQS_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class GreuBuiltin : public CompareBuiltin
@@ -436,8 +463,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::GREU_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class GresBuiltin : public CompareBuiltin
@@ -448,8 +476,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::GRES_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class GequBuiltin : public CompareBuiltin
@@ -460,8 +489,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::GEQU_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class GeqsBuiltin : public CompareBuiltin
@@ -472,8 +502,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::GEQS_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     //
@@ -489,8 +520,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::BIT_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class ZextBuiltin : public BitBuiltin
@@ -501,8 +533,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::ZEXT_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -515,8 +548,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::SEXT_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -529,8 +563,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::TRUNC_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -543,8 +578,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::SHL_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -557,8 +593,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::SHR_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -571,8 +608,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::ASHR_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -585,8 +623,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::CLZ_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -599,8 +638,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::CLO_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };
@@ -613,8 +653,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::CLS_BUILTIN;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
 
         static const TypeAnnotation info;
     };

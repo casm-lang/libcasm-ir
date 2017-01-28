@@ -44,7 +44,7 @@ namespace libcasm_ir
         void add( Value* value );
 
         template < class C >
-        bool has( void ) const
+        u1 has( void ) const
         {
             return content.count( C::classid() ) > 0;
         }
@@ -60,8 +60,9 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::SPECIFICATION;
-        };
-        static bool classof( Value const* obj );
+        }
+
+        static u1 classof( Value const* obj );
     };
 }
 

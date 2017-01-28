@@ -41,7 +41,7 @@ namespace libcasm_ir
             return Value::USER;
         }
 
-        static bool classof( Value const* obj );
+        static u1 classof( Value const* obj );
     };
 }
 

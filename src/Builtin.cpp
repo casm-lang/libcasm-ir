@@ -54,7 +54,7 @@ const char* Builtin::getDescription( void )
     return description;
 }
 
-bool Builtin::classof( Value const* obj )
+u1 Builtin::classof( Value const* obj )
 {
     return obj->getValueID() == classid() or CastingBuiltin::classof( obj )
            or StringifyBuiltin::classof( obj )
@@ -270,7 +270,7 @@ CastingBuiltin::CastingBuiltin(
 {
 }
 
-bool CastingBuiltin::classof( Value const* obj )
+u1 CastingBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid() or AsBooleanBuiltin::classof( obj )
            or AsIntegerBuiltin::classof( obj ) or AsBitBuiltin::classof( obj )
@@ -311,7 +311,7 @@ const TypeAnnotation AsBooleanBuiltin::info( TypeAnnotation::Data{
         } }
 
 } );
-bool AsBooleanBuiltin::classof( Value const* obj )
+u1 AsBooleanBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -348,7 +348,7 @@ const TypeAnnotation AsIntegerBuiltin::info( TypeAnnotation::Data{
         } }
 
 } );
-bool AsIntegerBuiltin::classof( Value const* obj )
+u1 AsIntegerBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -385,7 +385,7 @@ const TypeAnnotation AsBitBuiltin::info( TypeAnnotation::Data{
         } }
 
 } );
-bool AsBitBuiltin::classof( Value const* obj )
+u1 AsBitBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -426,7 +426,7 @@ const TypeAnnotation AsStringBuiltin::info( TypeAnnotation::Data{
         } }
 
 } );
-bool AsStringBuiltin::classof( Value const* obj )
+u1 AsStringBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -463,7 +463,7 @@ const TypeAnnotation AsFloatingBuiltin::info( TypeAnnotation::Data{
         } }
 
 } );
-bool AsFloatingBuiltin::classof( Value const* obj )
+u1 AsFloatingBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -482,7 +482,7 @@ const TypeAnnotation AsRationalBuiltin::info( TypeAnnotation::Data{
 
     // TODO: PPA: add more relations for possible input types!
 } );
-bool AsRationalBuiltin::classof( Value const* obj )
+u1 AsRationalBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -509,7 +509,7 @@ const TypeAnnotation AsEnumerationBuiltin::info( TypeAnnotation::Data{
         } }
 
 } );
-bool AsEnumerationBuiltin::classof( Value const* obj )
+u1 AsEnumerationBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -551,7 +551,7 @@ const TypeAnnotation StringifyBuiltin::info( TypeAnnotation::Data{
         } }
 
 } );
-bool StringifyBuiltin::classof( Value const* obj )
+u1 StringifyBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid() or DecBuiltin::classof( obj )
            or HexBuiltin::classof( obj ) or OctBuiltin::classof( obj )
@@ -566,7 +566,7 @@ DecBuiltin::DecBuiltin( Type* result )
 : StringifyBuiltin( "dec", result, classid() )
 {
 }
-bool DecBuiltin::classof( Value const* obj )
+u1 DecBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -579,7 +579,7 @@ HexBuiltin::HexBuiltin( Type* result )
 : StringifyBuiltin( "hex", result, classid() )
 {
 }
-bool HexBuiltin::classof( Value const* obj )
+u1 HexBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -592,7 +592,7 @@ OctBuiltin::OctBuiltin( Type* result )
 : StringifyBuiltin( "oct", result, classid() )
 {
 }
-bool OctBuiltin::classof( Value const* obj )
+u1 OctBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -605,7 +605,7 @@ BinBuiltin::BinBuiltin( Type* result )
 : StringifyBuiltin( "bin", result, classid() )
 {
 }
-bool BinBuiltin::classof( Value const* obj )
+u1 BinBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -637,7 +637,7 @@ const TypeAnnotation OperatorBuiltin::info( TypeAnnotation::Data{
         } }
 
 } );
-bool OperatorBuiltin::classof( Value const* obj )
+u1 OperatorBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid() or ArithmeticBuiltin::classof( obj )
            or CompareBuiltin::classof( obj );
@@ -652,7 +652,7 @@ ArithmeticBuiltin::ArithmeticBuiltin(
 : OperatorBuiltin( name, result, id )
 {
 }
-bool ArithmeticBuiltin::classof( Value const* obj )
+u1 ArithmeticBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid() or AdduBuiltin::classof( obj )
            or AddsBuiltin::classof( obj ) or SubuBuiltin::classof( obj )
@@ -668,7 +668,7 @@ AdduBuiltin::AdduBuiltin( Type* result )
 : ArithmeticBuiltin( "addu", result, classid() )
 {
 }
-bool AdduBuiltin::classof( Value const* obj )
+u1 AdduBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -681,7 +681,7 @@ AddsBuiltin::AddsBuiltin( Type* result )
 : ArithmeticBuiltin( "adds", result, classid() )
 {
 }
-bool AddsBuiltin::classof( Value const* obj )
+u1 AddsBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -694,7 +694,7 @@ SubuBuiltin::SubuBuiltin( Type* result )
 : ArithmeticBuiltin( "subu", result, classid() )
 {
 }
-bool SubuBuiltin::classof( Value const* obj )
+u1 SubuBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -707,7 +707,7 @@ SubsBuiltin::SubsBuiltin( Type* result )
 : ArithmeticBuiltin( "subs", result, classid() )
 {
 }
-bool SubsBuiltin::classof( Value const* obj )
+u1 SubsBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -720,7 +720,7 @@ MuluBuiltin::MuluBuiltin( Type* result )
 : ArithmeticBuiltin( "mulu", result, classid() )
 {
 }
-bool MuluBuiltin::classof( Value const* obj )
+u1 MuluBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -733,7 +733,7 @@ MulsBuiltin::MulsBuiltin( Type* result )
 : ArithmeticBuiltin( "muls", result, classid() )
 {
 }
-bool MulsBuiltin::classof( Value const* obj )
+u1 MulsBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -746,7 +746,7 @@ CompareBuiltin::CompareBuiltin( const char* name, Type* result, Value::ID id )
 : OperatorBuiltin( name, result, id )
 {
 }
-bool CompareBuiltin::classof( Value const* obj )
+u1 CompareBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid() or LesuBuiltin::classof( obj )
            or LessBuiltin::classof( obj ) or LequBuiltin::classof( obj )
@@ -763,7 +763,7 @@ LesuBuiltin::LesuBuiltin( Type* result )
 : CompareBuiltin( "lesu", result, classid() )
 {
 }
-bool LesuBuiltin::classof( Value const* obj )
+u1 LesuBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -776,7 +776,7 @@ LessBuiltin::LessBuiltin( Type* result )
 : CompareBuiltin( "less", result, classid() )
 {
 }
-bool LessBuiltin::classof( Value const* obj )
+u1 LessBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -789,7 +789,7 @@ LequBuiltin::LequBuiltin( Type* result )
 : CompareBuiltin( "lequ", result, classid() )
 {
 }
-bool LequBuiltin::classof( Value const* obj )
+u1 LequBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -802,7 +802,7 @@ LeqsBuiltin::LeqsBuiltin( Type* result )
 : CompareBuiltin( "leqs", result, classid() )
 {
 }
-bool LeqsBuiltin::classof( Value const* obj )
+u1 LeqsBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -815,7 +815,7 @@ GreuBuiltin::GreuBuiltin( Type* result )
 : CompareBuiltin( "greu", result, classid() )
 {
 }
-bool GreuBuiltin::classof( Value const* obj )
+u1 GreuBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -828,7 +828,7 @@ GresBuiltin::GresBuiltin( Type* result )
 : CompareBuiltin( "gres", result, classid() )
 {
 }
-bool GresBuiltin::classof( Value const* obj )
+u1 GresBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -841,7 +841,7 @@ GequBuiltin::GequBuiltin( Type* result )
 : CompareBuiltin( "gequ", result, classid() )
 {
 }
-bool GequBuiltin::classof( Value const* obj )
+u1 GequBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -854,7 +854,7 @@ GeqsBuiltin::GeqsBuiltin( Type* result )
 : CompareBuiltin( "geqs", result, classid() )
 {
 }
-bool GeqsBuiltin::classof( Value const* obj )
+u1 GeqsBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -869,7 +869,7 @@ BitBuiltin::BitBuiltin(
 {
 }
 
-bool BitBuiltin::classof( Value const* obj )
+u1 BitBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid() or ZextBuiltin::classof( obj )
            or SextBuiltin::classof( obj ) or TruncBuiltin::classof( obj )
@@ -894,7 +894,7 @@ const TypeAnnotation ZextBuiltin::info( TypeAnnotation::Data{
         } }
 
 } );
-bool ZextBuiltin::classof( Value const* obj )
+u1 ZextBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -915,7 +915,7 @@ const TypeAnnotation SextBuiltin::info( TypeAnnotation::Data{
         } }
 
 } );
-bool SextBuiltin::classof( Value const* obj )
+u1 SextBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -936,7 +936,7 @@ const TypeAnnotation TruncBuiltin::info( TypeAnnotation::Data{
         } }
 
 } );
-bool TruncBuiltin::classof( Value const* obj )
+u1 TruncBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -961,7 +961,7 @@ const TypeAnnotation ShlBuiltin::info( TypeAnnotation::Data{
         } }
 
 } );
-bool ShlBuiltin::classof( Value const* obj )
+u1 ShlBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -986,7 +986,7 @@ const TypeAnnotation ShrBuiltin::info( TypeAnnotation::Data{
         } }
 
 } );
-bool ShrBuiltin::classof( Value const* obj )
+u1 ShrBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -1011,7 +1011,7 @@ const TypeAnnotation AshrBuiltin::info( TypeAnnotation::Data{
         } }
 
 } );
-bool AshrBuiltin::classof( Value const* obj )
+u1 AshrBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -1032,7 +1032,7 @@ const TypeAnnotation ClzBuiltin::info( TypeAnnotation::Data{
         } }
 
 } );
-bool ClzBuiltin::classof( Value const* obj )
+u1 ClzBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -1053,7 +1053,7 @@ const TypeAnnotation CloBuiltin::info( TypeAnnotation::Data{
         } }
 
 } );
-bool CloBuiltin::classof( Value const* obj )
+u1 CloBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }
@@ -1074,7 +1074,7 @@ const TypeAnnotation ClsBuiltin::info( TypeAnnotation::Data{
         } }
 
 } );
-bool ClsBuiltin::classof( Value const* obj )
+u1 ClsBuiltin::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }

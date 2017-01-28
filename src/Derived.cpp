@@ -62,7 +62,7 @@ const std::vector< Value* >& Derived::getParameters( void ) const
     return parameter;
 }
 
-bool Derived::classof( Value const* obj )
+u1 Derived::classof( Value const* obj )
 {
     return obj->getValueID() == classid();
 }

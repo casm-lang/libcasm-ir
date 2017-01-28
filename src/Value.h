@@ -30,10 +30,11 @@
 #ifndef _LIB_CASMIR_VALUE_H_
 #define _LIB_CASMIR_VALUE_H_
 
-#include "../stdhl/cpp/Labeling.h"
 #include "CasmIR.h"
 #include "Type.h"
 #include "Visitor.h"
+
+#include "../stdhl/cpp/Labeling.h"
 
 namespace libcasm_ir
 {
@@ -213,9 +214,9 @@ namespace libcasm_ir
         static inline ID classid( void )
         {
             return Value::VALUE;
-        };
+        }
 
-        static inline bool classof( Value const* )
+        static inline u1 classof( Value const* )
         {
             return true;
         }
