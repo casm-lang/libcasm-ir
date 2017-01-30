@@ -31,7 +31,7 @@
 
 #include "../stdhl/cpp/Log.h"
 
-#include "../casm-rt/src/Instruction.h"
+// #include "../casm-rt/src/Instruction.h" // PPA: disabled for now at the master branch!!!
 
 using namespace libcasm_ir;
 
