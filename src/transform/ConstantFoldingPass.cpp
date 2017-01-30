@@ -31,7 +31,7 @@
 
 #include "../stdhl/cpp/Log.h"
 
-// #include "../casm-rt/src/Instruction.h" // PPA: disabled for now at the master branch!!!
+#include "../casm-rt/src/Instruction.h"
 
 using namespace libcasm_ir;
 
@@ -65,18 +65,18 @@ bool ConstantFoldingPass::run( libpass::PassResult& pr )
                     }
                 }
 
-                // if( is_constant_call ) // PPA: disabled for now at the master branch!!!
-                // {
-                //     Value* result_ptr
-                //         = libcasm_rt::Instruction::execute( instr );
-                //     assert( result_ptr );
-                //     Value& result = static_cast< Value& >( *result_ptr );
+                if( is_constant_call )
+                {
+                    Value* result_ptr
+                        = libcasm_rt::Instruction::execute( instr );
+                    assert( result_ptr );
+                    Value& result = static_cast< Value& >( *result_ptr );
 
-                //     libstdhl::Log::info( "%s, %s, %s, %s --> %s %s",
-                //         instr.label(), instr.name(), call_sym.name(),
-                //         call_sym.type().name(), result.name(),
-                //         result.type().name() );
-                // }
+                    libstdhl::Log::info( "%s, %s, %s, %s --> %s %s",
+                        instr.label(), instr.name(), call_sym.name(),
+                        call_sym.type().name(), result.name(),
+                        result.type().name() );
+                }
             }
         }
     } );
