@@ -91,6 +91,22 @@ namespace libcasm_ir
 
         Type* result( void ) const;
 
+        inline u1 operator==( const Type& rhs )
+        {
+            if( this != &rhs )
+            {
+                if( strcmp( this->name(), ( (Type&)rhs ).name() ) )
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        inline u1 operator!=( const Type& rhs )
+        {
+            return !operator==( rhs );
+        }
+
         u1 isLabel( void ) const;
         u1 isAgent( void ) const;
         u1 isRuleReference( void ) const;
