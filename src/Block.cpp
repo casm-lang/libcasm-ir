@@ -28,99 +28,98 @@
 using namespace libcasm_ir;
 
 Block::Block( const char* name, Value::ID id )
-: Value( name, Type::getLabel(), id )
-, parent( 0 )
+: Value( name, Type::Label(), id )
+, m_parent( 0 )
 {
 }
 
 void Block::setParent( Value* parent )
 {
     assert( parent );
-    this->parent = parent;
+    m_parent = parent;
 }
 
-Value* Block::getParent( void ) const
+Value* Block::parent( void ) const
 {
-    return parent;
+    return m_parent;
 }
 
 u1 Block::classof( Value const* obj )
 {
-    return obj->getValueID() == classid()
-           or ExecutionSemanticsBlock::classof( obj )
+    return obj->id() == classid() or ExecutionSemanticsBlock::classof( obj )
            or Statement::classof( obj );
 }
 
 ExecutionSemanticsBlock::ExecutionSemanticsBlock( const char* name,
     const u1 is_parallel, ExecutionSemanticsBlock* scope, Value::ID id )
 : Block( name, id )
-, is_parallel( is_parallel )
-, pseudo_state( 0 )
-, scope( scope )
-, entry( 0 )
-, exit( 0 )
+, m_is_parallel( is_parallel )
+, m_pseudo_state( 0 )
+, m_scope( scope )
+, m_entry( 0 )
+, m_exit( 0 )
 {
     setScope( scope );
 
     Statement* tmp = new TrivialStatement( this );
     Instruction* instr = new ForkInstruction();
     tmp->add( instr );
-    entry = tmp;
+    m_entry = tmp;
 
     tmp = new TrivialStatement( this );
     tmp->add( new MergeInstruction() );
-    exit = tmp;
+    m_exit = tmp;
 }
 
 ExecutionSemanticsBlock::~ExecutionSemanticsBlock( void )
 {
-    delete entry;
-    delete exit;
+    delete m_entry;
+    delete m_exit;
 }
 
-Block* ExecutionSemanticsBlock::getEntryBlock( void ) const
+Block* ExecutionSemanticsBlock::entryBlock( void ) const
 {
-    return entry;
+    return m_entry;
 }
 
-Block* ExecutionSemanticsBlock::getExitBlock( void ) const
+Block* ExecutionSemanticsBlock::exitBlock( void ) const
 {
-    return exit;
+    return m_exit;
 }
 
 const u1 ExecutionSemanticsBlock::isParallel( void ) const
 {
-    return is_parallel;
+    return m_is_parallel;
 }
 
-const u64 ExecutionSemanticsBlock::getPseudoState( void ) const
+const u64 ExecutionSemanticsBlock::pseudostate( void ) const
 {
-    return pseudo_state;
+    return m_pseudo_state;
 }
 
-ExecutionSemanticsBlock* ExecutionSemanticsBlock::getScope( void ) const
+ExecutionSemanticsBlock* ExecutionSemanticsBlock::scope( void ) const
 {
-    return scope;
+    return m_scope;
 }
 
 void ExecutionSemanticsBlock::setScope( ExecutionSemanticsBlock* scope_block )
 {
-    scope = scope_block;
+    m_scope = scope_block;
 
-    if( scope )
+    if( m_scope )
     {
-        pseudo_state = scope->getPseudoState();
+        m_pseudo_state = m_scope->pseudostate();
 
-        if( scope->isParallel() != this->isParallel() )
+        if( m_scope->isParallel() != this->isParallel() )
         {
-            pseudo_state++;
+            m_pseudo_state++;
         }
     }
 }
 
-const std::vector< Block* >& ExecutionSemanticsBlock::getBlocks( void ) const
+const std::vector< Block* >& ExecutionSemanticsBlock::blocks( void ) const
 {
-    return blocks;
+    return m_blocks;
 }
 
 void ExecutionSemanticsBlock::add( Block* block )
@@ -143,12 +142,12 @@ void ExecutionSemanticsBlock::add( Block* block )
         assert( !" invalid block to add " );
     }
 
-    blocks.push_back( block );
+    m_blocks.push_back( block );
 }
 
 u1 ExecutionSemanticsBlock::classof( Value const* obj )
 {
-    return obj->getValueID() == classid() or ParallelBlock::classof( obj )
+    return obj->id() == classid() or ParallelBlock::classof( obj )
            or SequentialBlock::classof( obj );
 }
 
@@ -159,7 +158,7 @@ ParallelBlock::ParallelBlock( ExecutionSemanticsBlock* scope )
 
 u1 ParallelBlock::classof( Value const* obj )
 {
-    return obj->getValueID() == classid();
+    return obj->id() == classid();
 }
 
 SequentialBlock::SequentialBlock( ExecutionSemanticsBlock* scope )
@@ -169,7 +168,7 @@ SequentialBlock::SequentialBlock( ExecutionSemanticsBlock* scope )
 
 u1 SequentialBlock::classof( Value const* obj )
 {
-    return obj->getValueID() == classid();
+    return obj->id() == classid();
 }
 
 //

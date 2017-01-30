@@ -50,31 +50,31 @@ namespace libcasm_ir
         using Set = std::set< Type::ID >;
 
       private:
-        const Data info;
+        const Data m_info;
 
-        std::vector< Set > type_set;
+        std::vector< Set > m_type_set;
 
-        std::unordered_map< std::string, Type::ID > relation_to_type;
+        std::unordered_map< std::string, Type::ID > m_relation_to_type;
 
       public:
         TypeAnnotation( const Data& info );
 
-        Type::ID getResultTypeForRelation(
+        Type::ID resultTypeForRelation(
             const std::vector< Type* > arguments ) const;
 
-        const Set& getResultTypes( void ) const;
-        const Set& getArgumentTypes( u8 pos ) const;
+        const Set& resultTypes( void ) const;
+        const Set& argumentTypes( u8 pos ) const;
 
         template < class T >
-        static const Set& getResultTypes( void )
+        static const Set& ResultTypes( void )
         {
-            return T::info.getResultTypes();
+            return T::info.resultTypes();
         }
 
         template < class T >
-        static const Set& getArgumentTypes( u8 pos )
+        static const Set& ArgumentTypes( u8 pos )
         {
-            return T::info.getArgumentTypes( pos );
+            return T::info.argumentTypes( pos );
         }
     };
 }

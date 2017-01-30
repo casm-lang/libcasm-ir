@@ -27,8 +27,8 @@
 using namespace libcasm_ir;
 
 Agent::Agent()
-: User( "$", Type::getAgent(), classid() )
-, rule_ptr_init( 0 )
+: User( "$", Type::Agent(), classid() )
+, m_init_rule( 0 )
 {
     static Agent* check = 0;
 
@@ -44,28 +44,28 @@ Agent::~Agent( void )
 {
 }
 
-RuleReferenceConstant* Agent::getInitRuleReference( void ) const
+RuleReferenceConstant* Agent::initRuleReference( void ) const
 {
-    assert( rule_ptr_init );
-    return rule_ptr_init;
+    assert( m_init_rule );
+    return m_init_rule;
 }
 
 void Agent::setInitRuleReference( Value* init )
 {
     assert( init and isa< RuleReferenceConstant >( init ) );
-    rule_ptr_init = static_cast< RuleReferenceConstant* >( init );
+    m_init_rule = static_cast< RuleReferenceConstant* >( init );
 }
 
-Rule* Agent::getInitRule( void )
+Rule* Agent::initRule( void )
 {
-    RuleReferenceConstant* rule_ref = getInitRuleReference();
+    RuleReferenceConstant* rule_ref = initRuleReference();
     assert( rule_ref->isDefined() );
-    return rule_ref->getValue();
+    return rule_ref->value();
 }
 
 u1 Agent::classof( Value const* obj )
 {
-    return obj->getValueID() == classid();
+    return obj->id() == classid();
 }
 
 //

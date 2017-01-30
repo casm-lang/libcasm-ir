@@ -41,7 +41,7 @@ namespace libcasm_ir
             return cache;
         };
 
-        const char* description;
+        const char* m_description;
 
       public:
         Builtin( const char* name, Type* result, const TypeAnnotation& info,
@@ -49,7 +49,7 @@ namespace libcasm_ir
 
         ~Builtin( void );
 
-        const char* getDescription( void );
+        const char* description( void );
 
         static inline Value::ID classid( void )
         {
@@ -58,12 +58,12 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        virtual const char* getLabelName( void ) override final
+        virtual const char* labelName( void ) override final
         {
             return "@b";
         }
 
-        virtual u64 getLabelID( void ) override final
+        virtual u64 labelId( void ) override final
         {
             static u64 cnt = 0;
             return cnt++;
@@ -71,7 +71,7 @@ namespace libcasm_ir
 
         static Builtin* find( const char* name, Type* result );
 
-        static Builtin* getAsBuiltin( Type* result );
+        static Builtin* asBuiltin( Type* result );
 
       private:
         template < typename T >

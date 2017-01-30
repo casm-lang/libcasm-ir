@@ -28,154 +28,154 @@
 using namespace libcasm_ir;
 
 Type::Type( const char* name, const char* description, Type::ID id )
-: name( name )
-, description( description )
-, id( id )
+: m_name( name )
+, m_description( description )
+, m_id( id )
 {
 }
 
-const Type::ID Type::getID( void ) const
+const Type::ID Type::id( void ) const
 {
-    return id;
+    return m_id;
 }
 
 u1 Type::isLabel( void ) const
 {
-    return getID() == Type::LABEL;
+    return id() == Type::LABEL;
 }
 
 u1 Type::isAgent( void ) const
 {
-    return getID() == Type::AGENT;
+    return id() == Type::AGENT;
 }
 u1 Type::isRuleReference( void ) const
 {
-    return getID() == Type::RULE_REFERENCE;
+    return id() == Type::RULE_REFERENCE;
 }
 u1 Type::isBoolean( void ) const
 {
-    return getID() == Type::BOOLEAN;
+    return id() == Type::BOOLEAN;
 }
 u1 Type::isInteger( void ) const
 {
-    return getID() == Type::INTEGER;
+    return id() == Type::INTEGER;
 }
 u1 Type::isBit( void ) const
 {
-    return getID() == Type::BIT;
+    return id() == Type::BIT;
 }
 u1 Type::isString( void ) const
 {
-    return getID() == Type::STRING;
+    return id() == Type::STRING;
 }
 u1 Type::isFloating( void ) const
 {
-    return getID() == Type::FLOATING;
+    return id() == Type::FLOATING;
 }
 u1 Type::isRational( void ) const
 {
-    return getID() == Type::RATIONAL;
+    return id() == Type::RATIONAL;
 }
 u1 Type::isEnumeration( void ) const
 {
-    return getID() == Type::ENUMERATION;
+    return id() == Type::ENUMERATION;
 }
 u1 Type::isRelation( void ) const
 {
-    return getID() == Type::RELATION;
+    return id() == Type::RELATION;
 }
 
-Type* Type::getResult( void ) const
+Type* Type::result( void ) const
 {
-    if( getID() == Type::RELATION )
+    if( id() == Type::RELATION )
     {
         const RelationType* rt = static_cast< const RelationType* >( this );
-        return (Type*)rt->getResult();
+        return (Type*)rt->result();
     }
     return (Type*)this;
 }
 
-Type* Type::getLabel( void )
+Type* Type::Label( void )
 {
     static LabelType cache = LabelType();
-    return str2obj().emplace( cache.getName(), &cache ).first->second;
+    return m_str2obj().emplace( cache.name(), &cache ).first->second;
 }
 
-Type* Type::getAgent( void )
+Type* Type::Agent( void )
 {
     static AgentType cache = AgentType();
-    return str2obj().emplace( cache.getName(), &cache ).first->second;
+    return m_str2obj().emplace( cache.name(), &cache ).first->second;
 }
 
-Type* Type::getRuleReference( void )
+Type* Type::RuleReference( void )
 {
     static RuleReferenceType cache = RuleReferenceType();
-    return str2obj().emplace( cache.getName(), &cache ).first->second;
+    return m_str2obj().emplace( cache.name(), &cache ).first->second;
 }
 
-Type* Type::getBoolean( void )
+Type* Type::Boolean( void )
 {
     static BooleanType cache = BooleanType();
-    return str2obj().emplace( cache.getName(), &cache ).first->second;
+    return m_str2obj().emplace( cache.name(), &cache ).first->second;
 }
 
-Type* Type::getInteger( void )
+Type* Type::Integer( void )
 {
     static IntegerType cache = IntegerType();
-    return str2obj().emplace( cache.getName(), &cache ).first->second;
+    return m_str2obj().emplace( cache.name(), &cache ).first->second;
 }
 
-Type* Type::getBit( u16 size )
+Type* Type::Bit( u16 size )
 {
     BitType tmp( size );
 
-    auto cache = str2obj().find( tmp.getName() );
-    if( cache != str2obj().end() )
+    auto cache = m_str2obj().find( tmp.name() );
+    if( cache != m_str2obj().end() )
     {
         return cache->second;
     }
 
     Type* ptr = new BitType( tmp );
-    str2obj()[ tmp.getName() ] = ptr;
+    m_str2obj()[ tmp.name() ] = ptr;
     return ptr;
 }
 
-Type* Type::getString( void )
+Type* Type::String( void )
 {
     static StringType cache = StringType();
-    return str2obj().emplace( cache.getName(), &cache ).first->second;
+    return m_str2obj().emplace( cache.name(), &cache ).first->second;
 }
 
-Type* Type::getFloating( void )
+Type* Type::Floating( void )
 {
     static FloatingType cache = FloatingType();
-    return str2obj().emplace( cache.getName(), &cache ).first->second;
+    return m_str2obj().emplace( cache.name(), &cache ).first->second;
 }
 
-Type* Type::getRational( void )
+Type* Type::Rational( void )
 {
     static RationalType cache = RationalType();
-    return str2obj().emplace( cache.getName(), &cache ).first->second;
+    return m_str2obj().emplace( cache.name(), &cache ).first->second;
 }
 
-Type* Type::getEnumeration( const char* name )
+Type* Type::Enumeration( const char* name )
 {
     assert( !" TODO " );
     return 0;
 }
 
-Type* Type::getRelation( Type* result, std::vector< Type* > arguments )
+Type* Type::Relation( Type* result, std::vector< Type* > arguments )
 {
     RelationType tmp( result, arguments );
 
-    auto cache = str2obj().find( tmp.getName() );
-    if( cache != str2obj().end() )
+    auto cache = m_str2obj().find( tmp.name() );
+    if( cache != m_str2obj().end() )
     {
         return cache->second;
     }
 
     Type* ptr = new RelationType( tmp );
-    str2obj()[ tmp.getName() ] = ptr;
+    m_str2obj()[ tmp.name() ] = ptr;
     return ptr;
 }
 
@@ -185,17 +185,17 @@ PrimitiveType::PrimitiveType(
 {
 }
 
-const char* PrimitiveType::getName( void )
+const char* PrimitiveType::name( void )
 {
-    return name;
+    return m_name;
 }
 
-const char* PrimitiveType::getDescription( void )
+const char* PrimitiveType::description( void )
 {
-    return description;
+    return m_description;
 }
 
-const std::vector< Type* >& PrimitiveType::getArguments( void )
+const std::vector< Type* >& PrimitiveType::arguments( void )
 {
     static std::vector< Type* > empty = {};
     return empty;
@@ -230,13 +230,13 @@ BitType::BitType( u16 size )
 : PrimitiveType( libstdhl::Allocator::string( "u" + std::to_string( size ) ),
       libstdhl::Allocator::string( "Bit(" + std::to_string( size ) + ")" ),
       Type::BIT )
-, size( size )
+, m_size( size )
 {
 }
 
-const u16 BitType::getSize( void ) const
+const u16 BitType::bitsize( void ) const
 {
-    return size;
+    return m_size;
 }
 
 StringType::StringType()
@@ -261,72 +261,72 @@ EnumerationType::EnumerationType( const char* name )
 
 RelationType::RelationType( Type* result, std::vector< Type* > arguments )
 : Type( 0, 0, Type::RELATION )
-, result( result )
-, arguments( arguments )
+, m_result( result )
+, m_arguments( arguments )
 {
     assert( result );
 }
 
-const char* RelationType::getName( void )
+const char* RelationType::name( void )
 {
-    if( not name )
+    if( not m_name )
     {
         u1 first = true;
         std::string tmp = "(";
-        for( auto argument : arguments )
+        for( auto argument : m_arguments )
         {
             if( not first )
             {
                 tmp += ", ";
             }
-            tmp += argument->getName();
+            tmp += argument->name();
             first = false;
         }
 
         tmp += " -> ";
-        tmp += result->getName();
+        tmp += m_result->name();
         tmp += ")";
 
-        name = libstdhl::Allocator::string( tmp );
+        m_name = libstdhl::Allocator::string( tmp );
     }
 
-    return name;
+    return m_name;
 }
 
-const char* RelationType::getDescription( void )
+const char* RelationType::description( void )
 {
-    if( not description )
+    if( not m_description )
     {
         u1 first = true;
         std::string tmp = "(";
-        for( auto argument : arguments )
+        for( auto argument : m_arguments )
         {
             if( not first )
             {
                 tmp += " x ";
             }
-            tmp += argument->getDescription();
+            tmp += argument->description();
             first = false;
         }
 
         tmp += " -> ";
-        tmp += result->getDescription();
+        tmp += m_result->description();
         tmp += ")";
 
-        description = libstdhl::Allocator::string( tmp );
+        m_description = libstdhl::Allocator::string( tmp );
     }
 
-    return description;
+    return m_description;
 }
 
-const std::vector< Type* >& RelationType::getArguments( void )
+const std::vector< Type* >& RelationType::arguments( void )
 {
-    return arguments;
+    return m_arguments;
 }
 
-const Type* RelationType::getResult( void ) const
+const Type* RelationType::result( void ) const
 {
-    return result;
+    return m_result;
 }
 
 //

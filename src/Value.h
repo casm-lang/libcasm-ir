@@ -181,14 +181,14 @@ namespace libcasm_ir
         };
 
       private:
-        const char* name;
-        Type* type;
-        ID id;
-        u1 type_lock;
+        const char* m_name;
+        Type* m_type;
+        ID m_id;
+        u1 m_type_lock;
 
       protected:
-        static std::unordered_map< u8, std::unordered_set< Value* > >& id2objs(
-            void )
+        static std::unordered_map< u8, std::unordered_set< Value* > >&
+        m_id2objs( void )
         {
             static std::unordered_map< u8, std::unordered_set< Value* > > cache;
             return cache;
@@ -199,9 +199,9 @@ namespace libcasm_ir
 
         virtual ~Value();
 
-        const char* getName( void ) const;
+        const char* name( void ) const;
 
-        Type* getType( void ) const;
+        Type& type( void ) const;
 
         u1 hasType( void ) const;
 
@@ -209,7 +209,7 @@ namespace libcasm_ir
         void setType( Type* type );
 
       public:
-        ID getValueID() const;
+        ID id() const;
 
         static inline ID classid( void )
         {

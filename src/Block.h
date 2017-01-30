@@ -36,15 +36,14 @@ namespace libcasm_ir
     class Block : public Value
     {
       private:
-        Value* parent;
+        Value* m_parent;
 
       public:
         Block( const char* name, Value::ID id = classid() );
 
         void setParent( Value* parent );
-        Value* getParent( void ) const;
 
-        void dump( void ) const;
+        Value* parent( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -53,12 +52,12 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        virtual const char* getLabelName( void ) override final
+        virtual const char* labelName( void ) override final
         {
             return "%blk";
         }
 
-        virtual u64 getLabelID( void ) override final
+        virtual u64 labelId( void ) override final
         {
             static u64 cnt = 0;
             return cnt++;
@@ -69,14 +68,14 @@ namespace libcasm_ir
                                     public libstdhl::Binding< Rule >
     {
       private:
-        const u1 is_parallel;
-        u64 pseudo_state;
-        ExecutionSemanticsBlock* scope;
+        const u1 m_is_parallel;
+        u64 m_pseudo_state;
+        ExecutionSemanticsBlock* m_scope;
 
-        Block* entry;
-        Block* exit;
+        Block* m_entry;
+        Block* m_exit;
 
-        std::vector< Block* > blocks;
+        std::vector< Block* > m_blocks;
 
       public:
         ExecutionSemanticsBlock( const char* name, const u1 is_parallel,
@@ -85,22 +84,20 @@ namespace libcasm_ir
 
         ~ExecutionSemanticsBlock( void );
 
-        Block* getEntryBlock( void ) const;
-        Block* getExitBlock( void ) const;
+        Block* entryBlock( void ) const;
+        Block* exitBlock( void ) const;
 
         const u1 isParallel( void ) const;
 
-        const u64 getPseudoState( void ) const;
+        const u64 pseudostate( void ) const;
 
-        ExecutionSemanticsBlock* getScope( void ) const;
+        ExecutionSemanticsBlock* scope( void ) const;
 
         void setScope( ExecutionSemanticsBlock* scope_block );
 
-        const std::vector< Block* >& getBlocks( void ) const;
+        const std::vector< Block* >& blocks( void ) const;
 
         void add( Block* block );
-
-        void dump( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -115,8 +112,6 @@ namespace libcasm_ir
       public:
         ParallelBlock( ExecutionSemanticsBlock* scope = 0 );
 
-        void dump( void ) const;
-
         static inline Value::ID classid( void )
         {
             return Value::PARALLEL_BLOCK;
@@ -129,8 +124,6 @@ namespace libcasm_ir
     {
       public:
         SequentialBlock( ExecutionSemanticsBlock* scope = 0 );
-
-        void dump( void ) const;
 
         static inline Value::ID classid( void )
         {

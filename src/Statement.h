@@ -31,24 +31,25 @@ namespace libcasm_ir
     class Statement : public Block
     {
       protected:
-        ExecutionSemanticsBlock* scope;
+        ExecutionSemanticsBlock* m_scope;
 
       private:
-        std::vector< Value* > instructions;
-        std::vector< ExecutionSemanticsBlock* > blocks;
+        std::vector< Value* > m_instructions;
+        std::vector< ExecutionSemanticsBlock* > m_blocks;
 
       public:
         Statement( const char* name, ExecutionSemanticsBlock* scope,
             Value::ID id = classid() );
 
-        ExecutionSemanticsBlock* getScope( void ) const;
+        ExecutionSemanticsBlock* scope( void ) const;
 
-        const std::vector< Value* >& getInstructions( void ) const;
+        const std::vector< Value* >& instructions( void ) const;
 
         void add( Value* instruction );
 
         void addBlock( ExecutionSemanticsBlock* block );
-        const std::vector< ExecutionSemanticsBlock* >& getBlocks( void ) const;
+
+        const std::vector< ExecutionSemanticsBlock* >& blocks( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -63,8 +64,6 @@ namespace libcasm_ir
       public:
         TrivialStatement( ExecutionSemanticsBlock* scope = 0 );
 
-        void dump( void ) const;
-
         static inline Value::ID classid( void )
         {
             return Value::TRIVIAL_STATEMENT;
@@ -77,8 +76,6 @@ namespace libcasm_ir
     {
       public:
         BranchStatement( ExecutionSemanticsBlock* scope = 0 );
-
-        void dump( void ) const;
 
         static inline Value::ID classid( void )
         {

@@ -26,22 +26,22 @@
 using namespace libcasm_ir;
 
 TypeAnnotation::TypeAnnotation( const Data& info )
-: info( info )
+: m_info( info )
 {
-    assert( info.size() > 0 );
+    assert( m_info.size() > 0 );
 
-    type_set.push_back( Set() );
+    m_type_set.push_back( Set() );
 
-    for( u32 i = 0; i < info[ 0 ].argument.size(); i++ )
+    for( u32 i = 0; i < m_info[ 0 ].argument.size(); i++ )
     {
-        type_set.push_back( Set() );
+        m_type_set.push_back( Set() );
     }
 
-    for( auto relation : info )
+    for( auto relation : m_info )
     {
         Type::ID rt = relation.result;
 
-        type_set[ 0 ].insert( rt );
+        m_type_set[ 0 ].insert( rt );
 
         std::string key;
 
@@ -50,43 +50,43 @@ TypeAnnotation::TypeAnnotation( const Data& info )
             Type::ID at = relation.argument[ i ];
             assert( at != libcasm_ir::Type::RELATION );
 
-            type_set[ ( i + 1 ) ].insert( at );
+            m_type_set[ ( i + 1 ) ].insert( at );
             key += std::to_string( at ) + ";";
         }
 
-        assert( relation_to_type.find( key ) == relation_to_type.end()
+        assert( m_relation_to_type.find( key ) == m_relation_to_type.end()
                 and " result type of relation already exists!" );
-        relation_to_type[ key ] = rt;
+        m_relation_to_type[ key ] = rt;
     }
 }
 
-const TypeAnnotation::Set& TypeAnnotation::getResultTypes( void ) const
+const TypeAnnotation::Set& TypeAnnotation::resultTypes( void ) const
 {
-    return type_set[ 0 ];
+    return m_type_set[ 0 ];
 }
 
-const TypeAnnotation::Set& TypeAnnotation::getArgumentTypes( u8 pos ) const
+const TypeAnnotation::Set& TypeAnnotation::argumentTypes( u8 pos ) const
 {
-    assert( pos < ( type_set.size() - 1 ) );
+    assert( pos < ( m_type_set.size() - 1 ) );
 
-    return type_set[ pos + 1 ];
+    return m_type_set[ pos + 1 ];
 }
 
-Type::ID TypeAnnotation::getResultTypeForRelation(
+Type::ID TypeAnnotation::resultTypeForRelation(
     const std::vector< Type* > arguments ) const
 {
     std::string key;
 
     for( auto arg : arguments )
     {
-        libcasm_ir::Type::ID at = arg->getResult()->getID();
+        libcasm_ir::Type::ID at = arg->result()->id();
         assert( at != libcasm_ir::Type::RELATION );
 
         key += std::to_string( at ) + ";";
     }
 
-    auto result = relation_to_type.find( key );
-    if( result != relation_to_type.end() )
+    auto result = m_relation_to_type.find( key );
+    if( result != m_relation_to_type.end() )
     {
         return result->second;
     }

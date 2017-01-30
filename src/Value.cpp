@@ -40,45 +40,46 @@
 using namespace libcasm_ir;
 
 Value::Value( const char* name, Type* type, Value::ID id )
-: name( name )
-, type( type )
-, id( id )
-, type_lock( false )
+: m_name( name )
+, m_type( type )
+, m_id( id )
+, m_type_lock( false )
 {
-    id2objs()[ id ].insert( this );
+    m_id2objs()[ m_id ].insert( this );
 }
 
 Value::~Value()
 {
-    id2objs()[ id ].erase( this );
+    m_id2objs()[ m_id ].erase( this );
 }
 
-const char* Value::getName( void ) const
+const char* Value::name( void ) const
 {
-    return name;
+    return m_name;
 }
 
-Type* Value::getType( void ) const
+Type& Value::type( void ) const
 {
-    return type;
+    assert( m_type );
+    return *m_type;
 }
 
 u1 Value::hasType( void ) const
 {
-    return type ? true : false;
+    return m_type ? true : false;
 }
 
 void Value::setType( Type* type )
 {
-    assert( !type_lock );
-    type_lock = true;
+    assert( !m_type_lock );
+    m_type_lock = true;
 
-    this->type = type;
+    m_type = type;
 }
 
-Value::ID Value::getValueID() const
+Value::ID Value::id() const
 {
-    return id;
+    return m_id;
 }
 
 void Value::iterate( Traversal order,
@@ -150,7 +151,7 @@ void Value::iterate( Traversal order,
             visitor->dispatch( Visitor::Stage::INTERLOG, value, *cxt );
         }
 
-        Value* context = obj.getContext();
+        Value* context = obj.context();
         assert( context );
 
         context->iterate( order, visitor, cxt, action );
@@ -164,7 +165,7 @@ void Value::iterate( Traversal order,
             visitor->dispatch( Visitor::Stage::INTERLOG, value, *cxt );
         }
 
-        Value* context = obj.getContext();
+        Value* context = obj.context();
         assert( context );
 
         context->iterate( order, visitor, cxt, action );
@@ -174,15 +175,15 @@ void Value::iterate( Traversal order,
         ExecutionSemanticsBlock& obj
             = static_cast< ExecutionSemanticsBlock& >( value );
 
-        Block* entry = obj.getEntryBlock();
-        Block* exit = obj.getExitBlock();
+        Block* entry = obj.entryBlock();
+        Block* exit = obj.exitBlock();
 
         if( entry )
         {
             entry->iterate( order, visitor, cxt, action );
         }
 
-        for( Value* block : obj.getBlocks() )
+        for( Value* block : obj.blocks() )
         {
             assert( block );
             block->iterate( order, visitor, cxt, action );
@@ -197,10 +198,10 @@ void Value::iterate( Traversal order,
     {
         Statement& obj = static_cast< Statement& >( value );
 
-        assert( obj.getInstructions().size() > 0
+        assert( obj.instructions().size() > 0
                 and " a statement must contain at least one instruction " );
 
-        for( Value* instr : obj.getInstructions() )
+        for( Value* instr : obj.instructions() )
         {
             assert( instr );
             instr->iterate( order, visitor, cxt, action );
@@ -213,7 +214,7 @@ void Value::iterate( Traversal order,
                 visitor->dispatch( Visitor::Stage::INTERLOG, value, *cxt );
             }
 
-            for( ExecutionSemanticsBlock* sco : obj.getBlocks() )
+            for( ExecutionSemanticsBlock* sco : obj.blocks() )
             {
                 assert( sco );
                 sco->iterate( order, visitor, cxt, action );

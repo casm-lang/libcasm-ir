@@ -66,14 +66,14 @@ namespace libcasm_ir
         };
 
       protected:
-        const char* name;
-        const char* description;
+        const char* m_name;
+        const char* m_description;
 
       private:
-        ID id;
+        ID m_id;
 
       protected:
-        static std::unordered_map< std::string, Type* >& str2obj( void )
+        static std::unordered_map< std::string, Type* >& m_str2obj( void )
         {
             static std::unordered_map< std::string, Type* > cache;
             return cache;
@@ -83,13 +83,13 @@ namespace libcasm_ir
         Type( const char* name, const char* description, ID id );
         ~Type() = default;
 
-        const ID getID( void ) const;
+        const ID id( void ) const;
 
-        virtual const char* getName( void ) = 0;
-        virtual const char* getDescription( void ) = 0;
-        virtual const std::vector< Type* >& getArguments( void ) = 0;
+        virtual const char* name( void ) = 0;
+        virtual const char* description( void ) = 0;
+        virtual const std::vector< Type* >& arguments( void ) = 0;
 
-        Type* getResult( void ) const;
+        Type* result( void ) const;
 
         u1 isLabel( void ) const;
         u1 isAgent( void ) const;
@@ -103,18 +103,17 @@ namespace libcasm_ir
         u1 isEnumeration( void ) const;
         u1 isRelation( void ) const;
 
-        static Type* getLabel( void );
-        static Type* getAgent( void );
-        static Type* getRuleReference( void );
-        static Type* getBoolean( void );
-        static Type* getInteger( void );
-        static Type* getBit( u16 size );
-        static Type* getString( void );
-        static Type* getFloating( void );
-        static Type* getRational( void );
-        static Type* getEnumeration( const char* name );
-        static Type* getRelation(
-            Type* result, std::vector< Type* > arguments );
+        static Type* Label( void );
+        static Type* Agent( void );
+        static Type* RuleReference( void );
+        static Type* Boolean( void );
+        static Type* Integer( void );
+        static Type* Bit( u16 size );
+        static Type* String( void );
+        static Type* Floating( void );
+        static Type* Rational( void );
+        static Type* Enumeration( const char* name );
+        static Type* Relation( Type* result, std::vector< Type* > arguments );
     };
 
     class PrimitiveType : public Type
@@ -122,9 +121,9 @@ namespace libcasm_ir
       public:
         PrimitiveType( const char* name, const char* description, Type::ID id );
 
-        const char* getName( void ) override final;
-        const char* getDescription( void ) override final;
-        const std::vector< Type* >& getArguments( void ) override final;
+        const char* name( void ) override final;
+        const char* description( void ) override final;
+        const std::vector< Type* >& arguments( void ) override final;
     };
 
     class LabelType : public PrimitiveType
@@ -175,12 +174,12 @@ namespace libcasm_ir
         static const u16 SizeMax = 64;
 
       private:
-        u16 size;
+        u16 m_size;
 
       public:
         BitType( u16 size );
 
-        const u16 getSize( void ) const;
+        const u16 bitsize( void ) const;
     };
 
     class StringType : public PrimitiveType
@@ -224,17 +223,17 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< RelationType >;
 
       private:
-        Type* result;
-        std::vector< Type* > arguments;
+        Type* m_result;
+        std::vector< Type* > m_arguments;
 
       public:
         RelationType( Type* result, std::vector< Type* > arguments );
 
-        const char* getName( void ) override final;
-        const char* getDescription( void ) override final;
-        const std::vector< Type* >& getArguments( void ) override final;
+        const char* name( void ) override final;
+        const char* description( void ) override final;
+        const std::vector< Type* >& arguments( void ) override final;
 
-        const Type* getResult( void ) const;
+        const Type* result( void ) const;
     };
 }
 

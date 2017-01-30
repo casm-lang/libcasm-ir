@@ -34,22 +34,22 @@ namespace libcasm_ir
     class Rule : public User
     {
       private:
-        Identifier* ident;
-        ParallelBlock* context;
-        std::vector< Value* > parameter;
+        Identifier* m_ident;
+        ParallelBlock* m_context;
+        std::vector< Value* > m_parameter;
 
       public:
         Rule( const char* name, Type* result );
 
         ~Rule( void );
 
-        ParallelBlock* getContext( void ) const;
+        ParallelBlock* context( void ) const;
 
         void setContext( ParallelBlock* scope );
 
         void addParameter( Value* value );
 
-        const std::vector< Value* >& getParameters( void ) const;
+        const std::vector< Value* >& parameters( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -58,9 +58,9 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        virtual const char* getLabel( void ) override final
+        virtual const char* label( void ) override final
         {
-            return getName();
+            return name();
         }
     };
 }

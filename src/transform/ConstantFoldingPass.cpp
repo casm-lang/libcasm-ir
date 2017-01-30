@@ -42,7 +42,7 @@ static libpass::PassRegistration< ConstantFoldingPass > PASS(
 
 bool ConstantFoldingPass::run( libpass::PassResult& pr )
 {
-    Specification* value = (Specification*)pr.getResult< CasmIRDumpPass >();
+    Specification* value = (Specification*)pr.result< CasmIRDumpPass >();
     assert( value );
 
     value->iterate( Traversal::PREORDER, []( Value& value, Context& ) {
@@ -50,15 +50,15 @@ bool ConstantFoldingPass::run( libpass::PassResult& pr )
         {
             CallInstruction& instr = static_cast< CallInstruction& >( value );
 
-            Value& call_sym = *instr.getValue( 0 );
+            Value& call_sym = *instr.value( 0 );
 
             if( isa< Builtin >( call_sym ) )
             {
                 u1 is_constant_call = true;
 
-                for( u32 i = 1; i < instr.getValues().size(); i++ )
+                for( u32 i = 1; i < instr.values().size(); i++ )
                 {
-                    if( not isa< Constant >( instr.getValue( i ) ) )
+                    if( not isa< Constant >( instr.value( i ) ) )
                     {
                         is_constant_call = false;
                         break;
@@ -73,9 +73,9 @@ bool ConstantFoldingPass::run( libpass::PassResult& pr )
                     Value& result = static_cast< Value& >( *result_ptr );
 
                     libstdhl::Log::info( "%s, %s, %s, %s --> %s %s",
-                        instr.getLabel(), instr.getName(), call_sym.getName(),
-                        call_sym.getType()->getName(), result.getName(),
-                        result.getType()->getName() );
+                        instr.label(), instr.name(), call_sym.name(),
+                        call_sym.type().name(), result.name(),
+                        result.type().name() );
                 }
             }
         }

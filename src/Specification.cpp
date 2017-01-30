@@ -46,29 +46,29 @@ void Specification::add( Value* value )
 
     if( isa< Rule >( value ) )
     {
-        content[ Rule::classid() ].emplace( value->getName(), value );
+        m_content[ Rule::classid() ].emplace( value->name(), value );
     }
     else if( isa< Derived >( value ) )
     {
-        content[ Derived::classid() ].emplace( value->getName(), value );
+        m_content[ Derived::classid() ].emplace( value->name(), value );
     }
     else if( isa< Function >( value ) )
     {
-        content[ Function::classid() ].emplace( value->getName(), value );
+        m_content[ Function::classid() ].emplace( value->name(), value );
     }
     else if( isa< Agent >( value ) )
     {
-        content[ Agent::classid() ].emplace( value->getName(), value );
+        m_content[ Agent::classid() ].emplace( value->name(), value );
     }
     else if( isa< Constant >( value ) )
     {
-        content[ Constant::classid() ].emplace( value->getName(), value );
+        m_content[ Constant::classid() ].emplace( value->name(), value );
     }
     else if( isa< Builtin >( value ) )
     {
         Builtin& obj = static_cast< Builtin& >( *value );
 
-        content[ Builtin::classid() ].emplace( obj.getDescription(), value );
+        m_content[ Builtin::classid() ].emplace( obj.description(), value );
     }
     else
     {
@@ -78,7 +78,7 @@ void Specification::add( Value* value )
 
 u1 Specification::classof( Value const* obj )
 {
-    return obj->getValueID() == classid();
+    return obj->id() == classid();
 }
 
 //

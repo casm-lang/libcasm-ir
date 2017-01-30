@@ -50,7 +50,7 @@ static const char* indention( Value& value )
 
 u1 CasmIRToSourcePass::run( libpass::PassResult& pr )
 {
-    Specification* value = (Specification*)pr.getResult< CasmIRDumpPass >();
+    Specification* value = (Specification*)pr.result< CasmIRDumpPass >();
     assert( value );
 
     value->iterate( Traversal::PREORDER, []( Value& value, Context& ) {
@@ -64,8 +64,8 @@ u1 CasmIRToSourcePass::run( libpass::PassResult& pr )
                 fprintf( stream, "\n" );
             }
 
-            fprintf( stream, "%s = %s %s\n", value.getLabel(),
-                value.getType()->getName(), value.getName() );
+            fprintf( stream, "%s = %s %s\n", value.label(), value.type().name(),
+                value.name() );
         }
         else if( isa< Agent >( value ) )
         {
@@ -79,9 +79,8 @@ u1 CasmIRToSourcePass::run( libpass::PassResult& pr )
 
             Agent& val = static_cast< Agent& >( value );
 
-            fprintf( stream, "%s = init %s %s\n", value.getLabel(),
-                val.getInitRule()->getType()->getName(),
-                val.getInitRule()->getName() );
+            fprintf( stream, "%s = init %s %s\n", value.label(),
+                val.initRule()->type().name(), val.initRule()->name() );
         }
         else if( isa< Function >( value ) )
         {
@@ -93,8 +92,7 @@ u1 CasmIRToSourcePass::run( libpass::PassResult& pr )
                 fprintf( stream, "\n" );
             }
 
-            fprintf( stream, "%s = %s\n", value.getName(),
-                value.getType()->getName() );
+            fprintf( stream, "%s = %s\n", value.name(), value.type().name() );
         }
         else if( isa< Builtin >( value ) )
         {
@@ -106,8 +104,8 @@ u1 CasmIRToSourcePass::run( libpass::PassResult& pr )
                 fprintf( stream, "\n" );
             }
 
-            fprintf( stream, "%s = %s %s\n", value.getLabel(),
-                value.getType()->getName(), value.getName() );
+            fprintf( stream, "%s = %s %s\n", value.label(), value.type().name(),
+                value.name() );
         }
         else if( isa< Derived >( value ) )
         {
@@ -115,7 +113,7 @@ u1 CasmIRToSourcePass::run( libpass::PassResult& pr )
                 "\n"
                 "%s %s = \n"
                 "[\n",
-                value.getName(), value.getType()->getName() );
+                value.name(), value.type().name() );
         }
         else if( isa< Rule >( value ) )
         {
@@ -123,45 +121,45 @@ u1 CasmIRToSourcePass::run( libpass::PassResult& pr )
                 "\n"
                 "%s %s = \n"
                 "{\n",
-                value.getName(), value.getType()->getName() );
+                value.name(), value.type().name() );
         }
         else if( isa< Statement >( value ) )
         {
             Statement& stmt = static_cast< Statement& >( value );
 
             const char* nline = "\n";
-            const char* label = value.getLabel();
+            const char* label = value.label();
             std::string scope = "";
 
-            if( not stmt.getScope() )
+            if( not stmt.scope() )
             {
                 nline = "";
             }
             else
             {
-                if( stmt.getScope()->getEntryBlock() == &stmt )
+                if( stmt.scope()->entryBlock() == &stmt )
                 {
-                    label = stmt.getScope()->getLabel();
+                    label = stmt.scope()->label();
                 }
 
-                if( stmt.getScope()->getParent() )
+                if( stmt.scope()->parent() )
                 {
-                    scope += stmt.getScope()->getParent()->getLabel();
+                    scope += stmt.scope()->parent()->label();
                 }
                 else
                 {
-                    if( stmt.getScope()->getEntryBlock() == &stmt )
+                    if( stmt.scope()->entryBlock() == &stmt )
                     {
                         nline = "";
                         scope = "entry";
                     }
-                    else if( stmt.getScope()->getExitBlock() == &stmt )
+                    else if( stmt.scope()->exitBlock() == &stmt )
                     {
                         scope = "exit";
                     }
                     else
                     {
-                        stmt.getScope()->getLabel();
+                        stmt.scope()->label();
                     }
                 }
             }
@@ -178,25 +176,24 @@ u1 CasmIRToSourcePass::run( libpass::PassResult& pr )
                 fprintf( stream,
                     "%s%s %s %s %s\n",
                     indention( instr ),
-                    instr.getName(),
-                    instr.getStatement()->getScope()->getName(),
-                    instr.getStatement()->getScope()->getType()->getName(),
-                    instr.getStatement()->getScope()->getLabel() );
+                    instr.name(),
+                    instr.statement()->scope()->name(),
+                    instr.statement()->scope()->type().name(),
+                    instr.statement()->scope()->label() );
             }
             else if( isa< MergeInstruction >( instr ) )
             {
                 fprintf( stream, "%s%s %s %s %s\n", indention( instr ),
-                    instr.getStatement()->getScope()->getName(),
-                    instr.getName(),
-                    instr.getStatement()->getScope()->getType()->getName(),
-                    instr.getStatement()->getScope()->getLabel() );
+                    instr.statement()->scope()->name(), instr.name(),
+                    instr.statement()->scope()->type().name(),
+                    instr.statement()->scope()->label() );
             }
             else
             {
                 std::string tmp = "";
                 u1 first = true;
 
-                for( auto v : instr.getValues() )
+                for( auto v : instr.values() )
                 {
                     if( not first )
                     {
@@ -207,18 +204,18 @@ u1 CasmIRToSourcePass::run( libpass::PassResult& pr )
                         first = false;
                     }
 
-                    tmp += v->getType()->getName();
+                    tmp += v->type().name();
                     tmp += " ";
-                    tmp += v->getLabel();
+                    tmp += v->label();
                 }
 
                 fprintf( stream, "%s%s = %s %s\n", indention( instr ),
-                    instr.getLabel(), instr.getName(), tmp.c_str() );
+                    instr.label(), instr.name(), tmp.c_str() );
             }
 
-            const Statement* stmt = instr.getStatement();
+            const Statement* stmt = instr.statement();
             assert( stmt );
-            ExecutionSemanticsBlock* scope = stmt->getScope();
+            ExecutionSemanticsBlock* scope = stmt->scope();
 
             if( not scope )
             {
@@ -227,7 +224,7 @@ u1 CasmIRToSourcePass::run( libpass::PassResult& pr )
             }
             else
             {
-                if( scope->getScope() == 0 and scope->getExitBlock() == stmt )
+                if( scope->scope() == 0 and scope->exitBlock() == stmt )
                 {
                     // reached end of rule, this blk is the top level
                     // exec.sem.blk

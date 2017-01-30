@@ -33,7 +33,7 @@ static const char* undef_str = "undef";
 
 u1 Constant::classof( Value const* obj )
 {
-    return obj->getValueID() == classid() or AgentConstant::classof( obj )
+    return obj->id() == classid() or AgentConstant::classof( obj )
            or RuleReferenceConstant::classof( obj )
            or BooleanConstant::classof( obj ) or IntegerConstant::classof( obj )
            or BitConstant::classof( obj ) or StringConstant::classof( obj )
@@ -41,68 +41,68 @@ u1 Constant::classof( Value const* obj )
            or Identifier::classof( obj );
 }
 
-Value* Constant::getUndef( Type* result )
+Value* Constant::Undef( Type* result )
 {
     assert( result );
 
     std::string tmp = "";
-    tmp += result->getName();
+    tmp += result->name();
     tmp += " undef";
 
-    auto cache = str2obj().find( tmp );
-    if( cache != str2obj().end() )
+    auto cache = m_str2obj().find( tmp );
+    if( cache != m_str2obj().end() )
     {
         return cache->second;
     }
 
-    switch( result->getID() )
+    switch( result->id() )
     {
         case Type::AGENT:
         {
             static AgentConstant cache = AgentConstant();
-            return str2obj()
-                .emplace( cache.getDescription(), &cache )
+            return m_str2obj()
+                .emplace( cache.description(), &cache )
                 .first->second;
         }
         case Type::RULE_REFERENCE:
         {
             static RuleReferenceConstant cache = RuleReferenceConstant();
-            return str2obj()
-                .emplace( cache.getDescription(), &cache )
+            return m_str2obj()
+                .emplace( cache.description(), &cache )
                 .first->second;
         }
         case Type::BOOLEAN:
         {
             static BooleanConstant cache = BooleanConstant();
-            return str2obj()
-                .emplace( cache.getDescription(), &cache )
+            return m_str2obj()
+                .emplace( cache.description(), &cache )
                 .first->second;
         }
         case Type::INTEGER:
         {
             static IntegerConstant cache = IntegerConstant();
-            return str2obj()
-                .emplace( cache.getDescription(), &cache )
+            return m_str2obj()
+                .emplace( cache.description(), &cache )
                 .first->second;
         }
         case Type::BIT:
         {
             BitConstant c = BitConstant( result );
 
-            auto cache = str2obj().find( c.getDescription() );
-            if( cache != str2obj().end() )
+            auto cache = m_str2obj().find( c.description() );
+            if( cache != m_str2obj().end() )
             {
                 return cache->second;
             }
 
             Value* ptr = new BitConstant( c );
-            return str2obj().emplace( c.getDescription(), ptr ).first->second;
+            return m_str2obj().emplace( c.description(), ptr ).first->second;
         }
         case Type::STRING:
         {
             static StringConstant cache = StringConstant();
-            return str2obj()
-                .emplace( cache.getDescription(), &cache )
+            return m_str2obj()
+                .emplace( cache.description(), &cache )
                 .first->second;
         }
         // case Type::FLOATING:
@@ -123,108 +123,108 @@ Value* Constant::getUndef( Type* result )
         default:
         {
             libstdhl::Log::error( "unable to create a constant for type '%s'",
-                result->getDescription() );
+                result->description() );
             return 0;
         }
     }
 }
 
-Value* Constant::getAgent( Type::AgentTy value )
+Value* Constant::Agent( Type::AgentTy value )
 {
     AgentConstant tmp = AgentConstant( value );
 
-    auto cache = str2obj().find( tmp.getDescription() );
-    if( cache != str2obj().end() )
+    auto cache = m_str2obj().find( tmp.description() );
+    if( cache != m_str2obj().end() )
     {
         return cache->second;
     }
 
     Value* ptr = new AgentConstant( tmp );
-    return str2obj().emplace( tmp.getDescription(), ptr ).first->second;
+    return m_str2obj().emplace( tmp.description(), ptr ).first->second;
 }
 
-Value* Constant::getRuleReference( Type::RuleReferenceTy value )
+Value* Constant::RuleReference( Type::RuleReferenceTy value )
 {
     RuleReferenceConstant tmp = RuleReferenceConstant( value );
 
-    auto cache = str2obj().find( tmp.getDescription() );
-    if( cache != str2obj().end() )
+    auto cache = m_str2obj().find( tmp.description() );
+    if( cache != m_str2obj().end() )
     {
         return cache->second;
     }
 
     Value* ptr = new RuleReferenceConstant( tmp );
-    return str2obj().emplace( tmp.getDescription(), ptr ).first->second;
+    return m_str2obj().emplace( tmp.description(), ptr ).first->second;
 }
 
-Value* Constant::getRuleReference( const char* value )
+Value* Constant::RuleReference( const char* value )
 {
     RuleReferenceConstant tmp = RuleReferenceConstant( value );
 
-    auto cache = str2obj().find( tmp.getDescription() );
-    if( cache != str2obj().end() )
+    auto cache = m_str2obj().find( tmp.description() );
+    if( cache != m_str2obj().end() )
     {
         return cache->second;
     }
 
     Value* ptr = new RuleReferenceConstant( tmp );
-    return str2obj().emplace( tmp.getDescription(), ptr ).first->second;
+    return m_str2obj().emplace( tmp.description(), ptr ).first->second;
 }
 
-Value* Constant::getBoolean( Type::BooleanTy value )
+Value* Constant::Boolean( Type::BooleanTy value )
 {
     BooleanConstant tmp = BooleanConstant( value );
 
-    auto cache = str2obj().find( tmp.getDescription() );
-    if( cache != str2obj().end() )
+    auto cache = m_str2obj().find( tmp.description() );
+    if( cache != m_str2obj().end() )
     {
         return cache->second;
     }
 
     Value* ptr = new BooleanConstant( tmp );
-    return str2obj().emplace( tmp.getDescription(), ptr ).first->second;
+    return m_str2obj().emplace( tmp.description(), ptr ).first->second;
 }
 
-Value* Constant::getInteger( Type::IntegerTy value )
+Value* Constant::Integer( Type::IntegerTy value )
 {
     IntegerConstant tmp = IntegerConstant( value );
 
-    auto cache = str2obj().find( tmp.getDescription() );
-    if( cache != str2obj().end() )
+    auto cache = m_str2obj().find( tmp.description() );
+    if( cache != m_str2obj().end() )
     {
         return cache->second;
     }
 
     Value* ptr = new IntegerConstant( tmp );
-    return str2obj().emplace( tmp.getDescription(), ptr ).first->second;
+    return m_str2obj().emplace( tmp.description(), ptr ).first->second;
 }
 
-Value* Constant::getBit( Type* result, u64 value )
+Value* Constant::Bit( Type* result, u64 value )
 {
     BitConstant tmp = BitConstant( result, value );
 
-    auto cache = str2obj().find( tmp.getDescription() );
-    if( cache != str2obj().end() )
+    auto cache = m_str2obj().find( tmp.description() );
+    if( cache != m_str2obj().end() )
     {
         return cache->second;
     }
 
     Value* ptr = new BitConstant( tmp );
-    return str2obj().emplace( tmp.getDescription(), ptr ).first->second;
+    return m_str2obj().emplace( tmp.description(), ptr ).first->second;
 }
 
-Value* Constant::getString( const char* value )
+Value* Constant::String( const char* value )
 {
     StringConstant tmp = StringConstant( value );
 
-    auto cache = str2obj().find( tmp.getDescription() );
-    if( cache != str2obj().end() )
+    auto cache = m_str2obj().find( tmp.description() );
+    if( cache != m_str2obj().end() )
     {
         return cache->second;
     }
 
     Value* ptr = new StringConstant( tmp );
-    return str2obj().emplace( tmp.getDescription(), ptr ).first->second;
+    return m_str2obj().emplace( tmp.description(), ptr ).first->second;
 }
 
 //
@@ -232,8 +232,8 @@ Value* Constant::getString( const char* value )
 //
 
 AgentConstant::AgentConstant( Type::AgentTy value, u1 defined )
-: ConstantOf< Type::AgentTy >( ( defined ? "self" : undef_str ),
-      Type::getAgent(), value, defined, classid() )
+: ConstantOf< Type::AgentTy >( ( defined ? "self" : undef_str ), Type::Agent(),
+      value, defined, classid() )
 {
 }
 
@@ -249,16 +249,16 @@ AgentConstant::AgentConstant( void )
 
 u1 AgentConstant::classof( Value const* obj )
 {
-    return obj->getValueID() == classid();
+    return obj->id() == classid();
 }
 
 RuleReferenceConstant::RuleReferenceConstant(
     Type::RuleReferenceTy value, const char* name, u1 defined )
 : ConstantOf< Type::RuleReferenceTy >(
-      ( defined ? libstdhl::Allocator::string( value ? value->getName() : name )
+      ( defined ? libstdhl::Allocator::string( value ? value->name() : name )
                 : undef_str ),
-      Type::getRuleReference(), value, defined, classid() )
-, resolve_identifier( name )
+      Type::RuleReference(), value, defined, classid() )
+, m_resolve_identifier( name )
 {
 }
 
@@ -316,19 +316,19 @@ RuleReferenceConstant::RuleReferenceConstant( void )
 
 void RuleReferenceConstant::resolve( void )
 {
-    if( not resolve_identifier )
+    if( not m_resolve_identifier )
     {
         return;
     }
 
-    for( auto value : id2objs()[ Rule::classid() ] )
+    for( auto value : m_id2objs()[ Rule::classid() ] )
     {
         assert( isa< Rule >( value ) );
 
-        if( strcmp( resolve_identifier, value->getName() ) )
+        if( strcmp( m_resolve_identifier, value->name() ) )
         {
             setValue( static_cast< Rule* >( value ) );
-            resolve_identifier = 0;
+            m_resolve_identifier = 0;
             break;
         }
     }
@@ -336,7 +336,7 @@ void RuleReferenceConstant::resolve( void )
 
 void RuleReferenceConstant::checking( void )
 {
-    for( auto value : id2objs()[ RuleReferenceConstant::classid() ] )
+    for( auto value : m_id2objs()[ RuleReferenceConstant::classid() ] )
     {
         assert( isa< RuleReferenceConstant >( value ) );
         RuleReferenceConstant* rrc
@@ -347,13 +347,13 @@ void RuleReferenceConstant::checking( void )
 
 u1 RuleReferenceConstant::classof( Value const* obj )
 {
-    return obj->getValueID() == classid();
+    return obj->id() == classid();
 }
 
 BooleanConstant::BooleanConstant( Type::BooleanTy value, u1 defined )
 : ConstantOf< Type::BooleanTy >(
-      ( defined ? ( value ? "true" : "false" ) : undef_str ),
-      Type::getBoolean(), value, defined, classid() )
+      ( defined ? ( value ? "true" : "false" ) : undef_str ), Type::Boolean(),
+      value, defined, classid() )
 {
 }
 
@@ -369,14 +369,14 @@ BooleanConstant::BooleanConstant( void )
 
 u1 BooleanConstant::classof( Value const* obj )
 {
-    return obj->getValueID() == classid();
+    return obj->id() == classid();
 }
 
 IntegerConstant::IntegerConstant( Type::IntegerTy value, u1 defined )
 : ConstantOf< Type::IntegerTy >(
       ( defined ? libstdhl::Allocator::string( std::to_string( value ) )
                 : undef_str ),
-      Type::getInteger(), value, defined, classid() )
+      Type::Integer(), value, defined, classid() )
 {
 }
 
@@ -392,7 +392,7 @@ IntegerConstant::IntegerConstant( void )
 
 u1 IntegerConstant::classof( Value const* obj )
 {
-    return obj->getValueID() == classid();
+    return obj->id() == classid();
 }
 
 BitConstant::BitConstant( Type* result, u64 value, u1 defined )
@@ -415,13 +415,13 @@ BitConstant::BitConstant( Type* result )
 
 u1 BitConstant::classof( Value const* obj )
 {
-    return obj->getValueID() == classid();
+    return obj->id() == classid();
 }
 
 StringConstant::StringConstant( Type::StringTy value, u1 defined )
 : ConstantOf< Type::StringTy >(
       ( defined ? libstdhl::Allocator::string( value ) : undef_str ),
-      Type::getString(), value, defined, classid() )
+      Type::String(), value, defined, classid() )
 {
 }
 
@@ -442,7 +442,7 @@ StringConstant::StringConstant( void )
 
 u1 StringConstant::classof( Value const* obj )
 {
-    return obj->getValueID() == classid();
+    return obj->id() == classid();
 }
 
 Identifier::Identifier( Type* type, const char* value )
@@ -470,7 +470,7 @@ Identifier* Identifier::create( Type* type, const char* value, Value* scope )
     if( cache != ident2obj().end() )
     {
         Value* v = cache->second;
-        assert( strcmp( v->getType()->getName(), type->getName() ) == 0 );
+        assert( strcmp( v->type().name(), type->name() ) == 0 );
         return cache->second;
     }
 
@@ -486,7 +486,7 @@ void Identifier::forgetSymbol( const char* value )
 
 u1 Identifier::classof( Value const* obj )
 {
-    return obj->getValueID() == classid();
+    return obj->id() == classid();
 }
 
 //

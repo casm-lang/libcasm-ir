@@ -33,7 +33,7 @@ namespace libcasm_ir
     class Constant : public User
     {
       private:
-        static std::unordered_map< std::string, Value* >& str2obj( void )
+        static std::unordered_map< std::string, Value* >& m_str2obj( void )
         {
             static std::unordered_map< std::string, Value* > cache;
             return cache;
@@ -49,26 +49,26 @@ namespace libcasm_ir
         };
         static u1 classof( Value const* obj );
 
-        virtual const char* getLabelName( void ) override final
+        virtual const char* labelName( void ) override final
         {
             return "@c";
         }
 
-        virtual u64 getLabelID( void ) override final
+        virtual u64 labelId( void ) override final
         {
             static u64 cnt = 0;
             return cnt++;
         }
 
-        static Value* getUndef( Type* result );
+        static Value* Undef( Type* result );
 
-        static Value* getAgent( Type::AgentTy value );
-        static Value* getRuleReference( Type::RuleReferenceTy value );
-        static Value* getRuleReference( const char* value );
-        static Value* getBoolean( Type::BooleanTy value );
-        static Value* getInteger( Type::IntegerTy value );
-        static Value* getBit( Type* result, u64 value );
-        static Value* getString( const char* value );
+        static Value* Agent( Type::AgentTy value );
+        static Value* RuleReference( Type::RuleReferenceTy value );
+        static Value* RuleReference( const char* value );
+        static Value* Boolean( Type::BooleanTy value );
+        static Value* Integer( Type::IntegerTy value );
+        static Value* Bit( Type* result, u64 value );
+        static Value* String( const char* value );
         // static Value* get( void );
     };
 
@@ -76,17 +76,17 @@ namespace libcasm_ir
     class ConstantOf : public Constant
     {
       private:
-        V value;
-        u1 defined;
-        const char* description;
+        V m_value;
+        u1 m_defined;
+        const char* m_description;
 
       protected:
         ConstantOf( const char* name, Type* type, V value, u1 defined,
             Value::ID id = Value::CONSTANT )
         : Constant( name, type, id )
-        , value( value )
-        , defined( defined )
-        , description( 0 )
+        , m_value( value )
+        , m_defined( defined )
+        , m_description( 0 )
         {
         }
 
@@ -95,34 +95,34 @@ namespace libcasm_ir
         {
         }
 
-        const V getValue( void ) const
+        const V value( void ) const
         {
-            return value;
+            return m_value;
         }
 
         const u1 isDefined( void ) const
         {
-            return defined;
+            return m_defined;
         }
 
         const u1 isUndef( void ) const
         {
-            return not defined;
+            return not m_defined;
         }
 
-        const char* getDescription( void )
+        const char* description( void )
         {
-            if( not description )
+            if( not m_description )
             {
                 std::string tmp = "";
-                tmp += getType()->getName();
+                tmp += type().name();
                 tmp += " ";
-                tmp += getName();
+                tmp += name();
 
-                description = libstdhl::Allocator::string( tmp );
+                m_description = libstdhl::Allocator::string( tmp );
             }
 
-            return description;
+            return m_description;
         }
 
         static inline Value::ID classid( void )
@@ -138,7 +138,7 @@ namespace libcasm_ir
       protected:
         void setValue( V val )
         {
-            value = val;
+            m_value = val;
         }
     };
 
@@ -168,7 +168,7 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< RuleReferenceConstant >;
 
       private:
-        const char* resolve_identifier;
+        const char* m_resolve_identifier;
         RuleReferenceConstant(
             Type::RuleReferenceTy value, const char* name, u1 defined );
 

@@ -32,40 +32,42 @@ Rule::Rule( const char* name, Type* result )
 : User( libstdhl::Allocator::string( "@" + std::string( name ) ),
       result,
       classid() )
+, m_ident( 0 )
+, m_context( 0 )
 {
-    ident = Identifier::create( result, getName() );
+    m_ident = Identifier::create( result, this->name() );
 }
 
 Rule::~Rule( void )
 {
 }
 
-ParallelBlock* Rule::getContext( void ) const
+ParallelBlock* Rule::context( void ) const
 {
-    return context;
+    return m_context;
 }
 
 void Rule::setContext( ParallelBlock* scope )
 {
     assert( scope );
-    context = scope;
+    m_context = scope;
 }
 
 void Rule::addParameter( Value* value )
 {
     assert( isa< Identifier >( value ) and "parameter must be an identifier" );
 
-    parameter.push_back( value );
+    m_parameter.push_back( value );
 }
 
-const std::vector< Value* >& Rule::getParameters( void ) const
+const std::vector< Value* >& Rule::parameters( void ) const
 {
-    return parameter;
+    return m_parameter;
 }
 
 u1 Rule::classof( Value const* obj )
 {
-    return obj->getValueID() == classid();
+    return obj->id() == classid();
 }
 
 //

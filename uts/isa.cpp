@@ -33,8 +33,8 @@ using namespace libcasm_ir;
         ASSERT_EQ( isa< T >( v ), true );                                      \
     }
 
-ISA( AddInstruction, Constant::getInteger( 5 ), Constant::getInteger( 2 ) )
-ISA( SubInstruction, Constant::getInteger( 5 ), Constant::getInteger( 2 ) )
-ISA( MulInstruction, Constant::getInteger( 5 ), Constant::getInteger( 2 ) )
-ISA( ModInstruction, Constant::getInteger( 5 ), Constant::getInteger( 2 ) )
-ISA( DivInstruction, Constant::getInteger( 5 ), Constant::getInteger( 2 ) )
+ISA( AddInstruction, Constant::Integer( 5 ), Constant::Integer( 2 ) )
+ISA( SubInstruction, Constant::Integer( 5 ), Constant::Integer( 2 ) )
+ISA( MulInstruction, Constant::Integer( 5 ), Constant::Integer( 2 ) )
+ISA( ModInstruction, Constant::Integer( 5 ), Constant::Integer( 2 ) )
+ISA( DivInstruction, Constant::Integer( 5 ), Constant::Integer( 2 ) )

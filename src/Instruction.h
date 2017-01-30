@@ -36,18 +36,22 @@ namespace libcasm_ir
     class Instruction : public User
     {
       private:
-        Statement* statement;
-        std::vector< Value* > values;
+        Statement* m_statement;
+        std::vector< Value* > m_values;
 
       public:
         Instruction( const char* name, Type* type,
             const std::vector< Value* >& values, Value::ID id = classid() );
+
         void setStatement( Statement* stmt );
-        const Statement* getStatement( void ) const;
+
+        const Statement* statement( void ) const;
 
         void add( Value* value );
-        Value* getValue( u8 index ) const;
-        const std::vector< Value* >& getValues( void ) const;
+
+        Value* value( u8 index ) const;
+
+        const std::vector< Value* >& values( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -56,12 +60,12 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        virtual const char* getLabelName( void ) override final
+        virtual const char* labelName( void ) override final
         {
             return "%r";
         }
 
-        virtual u64 getLabelID( void ) override final
+        virtual u64 labelId( void ) override final
         {
             static u64 cnt = 0;
             return cnt++;
@@ -71,7 +75,7 @@ namespace libcasm_ir
     class UnaryInstruction
     {
       private:
-        Instruction& self;
+        Instruction& m_self;
 
       public:
         UnaryInstruction( Instruction* self );
@@ -89,13 +93,13 @@ namespace libcasm_ir
     class BinaryInstruction
     {
       private:
-        Instruction& self;
+        Instruction& m_self;
 
       public:
         BinaryInstruction( Instruction* self );
 
-        Value* getLHS( void ) const;
-        Value* getRHS( void ) const;
+        Value* lhs( void ) const;
+        Value* rhs( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -251,14 +255,14 @@ namespace libcasm_ir
     class OperatorInstruction : public Instruction, public TypeAnnotation
     {
       private:
-        Type::ID resolved;
+        Type::ID m_resolved;
 
       public:
         OperatorInstruction( const char* name, Type* type,
             std::vector< Value* > values, const TypeAnnotation& info,
             Value::ID id = classid() );
 
-        const Type::ID getResolved( void ) const;
+        const Type::ID resolved( void ) const;
 
         static inline Value::ID classid( void )
         {

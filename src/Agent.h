@@ -34,18 +34,18 @@ namespace libcasm_ir
     class Agent : public User
     {
       private:
-        RuleReferenceConstant* rule_ptr_init;
+        RuleReferenceConstant* m_init_rule;
 
       public:
         Agent( void );
 
         ~Agent( void );
 
-        RuleReferenceConstant* getInitRuleReference( void ) const;
-
         void setInitRuleReference( Value* init );
 
-        Rule* getInitRule( void );
+        RuleReferenceConstant* initRuleReference( void ) const;
+
+        Rule* initRule( void );
 
         static inline Value::ID classid( void )
         {
@@ -54,9 +54,9 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        virtual const char* getLabel( void ) override final
+        virtual const char* label( void ) override final
         {
-            return getName();
+            return name();
         }
     };
 }

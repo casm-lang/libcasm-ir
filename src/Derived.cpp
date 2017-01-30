@@ -32,39 +32,39 @@ Derived::Derived( const char* name, Type* result )
 : User( libstdhl::Allocator::string( "@" + std::string( name ) ), result,
       classid() )
 {
-    ident = Identifier::create( result, name );
+    m_ident = Identifier::create( result, name );
 }
 
 Derived::~Derived( void )
 {
 }
 
-TrivialStatement* Derived::getContext( void ) const
+TrivialStatement* Derived::context( void ) const
 {
-    return context;
+    return m_context;
 }
 
 void Derived::setContext( TrivialStatement* scope )
 {
     assert( scope );
-    context = scope;
+    m_context = scope;
 }
 
 void Derived::addParameter( Value* value )
 {
     assert( isa< Identifier >( value ) and "parameter must be an identifier" );
 
-    parameter.push_back( value );
+    m_parameter.push_back( value );
 }
 
-const std::vector< Value* >& Derived::getParameters( void ) const
+const std::vector< Value* >& Derived::parameters( void ) const
 {
-    return parameter;
+    return m_parameter;
 }
 
 u1 Derived::classof( Value const* obj )
 {
-    return obj->getValueID() == classid();
+    return obj->id() == classid();
 }
 
 //

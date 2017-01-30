@@ -28,13 +28,11 @@
 
 namespace libcasm_ir
 {
-    class ParallelBlock;
-
     class Specification : public Value
     {
       private:
         std::unordered_map< u8, std::unordered_map< std::string, Value* > >
-            content;
+            m_content;
 
       public:
         Specification( const char* name );
@@ -46,14 +44,14 @@ namespace libcasm_ir
         template < class C >
         u1 has( void ) const
         {
-            return content.count( C::classid() ) > 0;
+            return m_content.count( C::classid() ) > 0;
         }
 
         template < class C >
         const std::unordered_map< std::string, Value* >& get( void ) const
         {
-            auto result = content.find( C::classid() );
-            assert( result != content.end() );
+            auto result = m_content.find( C::classid() );
+            assert( result != m_content.end() );
             return result->second;
         }
 

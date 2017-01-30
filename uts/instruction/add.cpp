@@ -34,8 +34,8 @@ TEST( libcasm_ir__instruction_add, create_invalid )
 
 TEST( libcasm_ir__instruction_add, create_valid )
 {
-    Value* a = Constant::getInteger( 5 );
+    Value* a = Constant::Integer( 5 );
     AddInstruction i( a, a );
 
-    ASSERT_STREQ( i.getType()->getName(), a->getType()->getName() );
+    ASSERT_STREQ( i.type().name(), a->type().name() );
 }

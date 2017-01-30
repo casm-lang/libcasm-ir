@@ -32,23 +32,22 @@ TEST( libcasm_ir, example )
 
 TEST( libcasm_ir, example2 )
 {
-    libcasm_ir::Value* a = libcasm_ir::Constant::getInteger( 5 );
+    libcasm_ir::Value* a = libcasm_ir::Constant::Integer( 5 );
     libcasm_ir::AddInstruction i( a, a );
 
-    ASSERT_EQ( i.getType()->getID(), a->getType()->getID() );
+    ASSERT_EQ( i.type().id(), a->type().id() );
 }
 
 TEST( libcasm_ir, example3 )
 {
-    libcasm_ir::TypeAnnotation::getResultTypes< libcasm_ir::AddInstruction >();
-    libcasm_ir::TypeAnnotation::getResultTypes< libcasm_ir::SubInstruction >();
-    libcasm_ir::TypeAnnotation::getResultTypes< libcasm_ir::DivInstruction >();
+    libcasm_ir::TypeAnnotation::ResultTypes< libcasm_ir::AddInstruction >();
+    libcasm_ir::TypeAnnotation::ResultTypes< libcasm_ir::SubInstruction >();
+    libcasm_ir::TypeAnnotation::ResultTypes< libcasm_ir::DivInstruction >();
 }
 
 TEST( libcasm_ir, example4 )
 {
+    libcasm_ir::TypeAnnotation::ResultTypes< libcasm_ir::AsIntegerBuiltin >();
     libcasm_ir::TypeAnnotation::
-        getResultTypes< libcasm_ir::AsIntegerBuiltin >();
-    libcasm_ir::TypeAnnotation::
-        getResultTypes< libcasm_ir::AsEnumerationBuiltin >();
+        ResultTypes< libcasm_ir::AsEnumerationBuiltin >();
 }

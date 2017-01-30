@@ -36,29 +36,16 @@ TEST( libcasm_ir__Type_Bit, make_valid )
         auto v = make< BitType >( c );
         EXPECT_TRUE( v != nullptr );
 
-        auto r = cache.find( v->getName() );
+        auto r = cache.find( v->name() );
         EXPECT_TRUE( r == cache.end() );
-        cache[ v->getName() ] = v;
+        cache[ v->name() ] = v;
 
-        EXPECT_EQ( v->getSize(), c );
+        EXPECT_EQ( v->bitsize(), c );
 
-        EXPECT_EQ( v->getID(), Type::BIT );
+        EXPECT_EQ( v->id(), Type::BIT );
     }
 }
 
-TEST( libcasm_ir__Type_Bit, get_valid )
-{
-    // std::unordered_map< std::string, BitType::Ptr > cache;
-
-    // for( u16 c = 1; c <= BitType::SizeMax; c++ )
-    // {
-    //     auto v = make< BitType >( c );
-    //     EXPECT_TRUE( v != nullptr );
-
-    //     auto r = cache.find( v->getName() );
-    //     EXPECT_TRUE( r == cache.end() );
-    //     cache[ v->getName() ] = v;
-
-    //     EXPECT_EQ( v->getSize(), c );
-    // }
-}
+// TEST( libcasm_ir__Type_Bit, get_valid )
+// {
+// }

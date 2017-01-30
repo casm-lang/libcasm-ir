@@ -33,7 +33,7 @@ namespace libcasm_ir
     class Function : public User
     {
       private:
-        Identifier* ident;
+        Identifier* m_ident;
 
       public:
         Function( const char* name, Type* result );
@@ -47,9 +47,9 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        virtual const char* getLabel( void ) override final
+        virtual const char* label( void ) override final
         {
-            return getName();
+            return name();
         }
     };
 }

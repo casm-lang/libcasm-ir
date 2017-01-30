@@ -31,7 +31,7 @@ using namespace libcasm_ir;
 Statement::Statement(
     const char* name, ExecutionSemanticsBlock* scope, Value::ID id )
 : Block( name, id )
-, scope( scope )
+, m_scope( scope )
 {
     if( scope )
     {
@@ -39,14 +39,14 @@ Statement::Statement(
     }
 }
 
-ExecutionSemanticsBlock* Statement::getScope( void ) const
+ExecutionSemanticsBlock* Statement::scope( void ) const
 {
-    return scope;
+    return m_scope;
 }
 
-const std::vector< Value* >& Statement::getInstructions( void ) const
+const std::vector< Value* >& Statement::instructions( void ) const
 {
-    return instructions;
+    return m_instructions;
 }
 
 void Statement::add( Value* instruction )
@@ -64,7 +64,7 @@ void Statement::add( Value* instruction )
 
     Instruction* instr = static_cast< Instruction* >( instruction );
     instr->setStatement( this );
-    instructions.push_back( instr );
+    m_instructions.push_back( instr );
 
     // printf( "[Stmt] add: %p\n", instruction );
 }
@@ -83,30 +83,29 @@ void Statement::addBlock( ExecutionSemanticsBlock* block )
     //     assert( blocks.size() < 1 );
     // }
 
-    blocks.push_back( block );
+    m_blocks.push_back( block );
 
-    if( block->getParent() == 0 )
+    if( block->parent() == 0 )
     {
         block->setParent( this );
     }
 
-    assert( block->getParent() == this && " inconsistent block nesting! " );
+    assert( block->parent() == this && " inconsistent block nesting! " );
 }
 
-const std::vector< ExecutionSemanticsBlock* >& Statement::getBlocks(
-    void ) const
+const std::vector< ExecutionSemanticsBlock* >& Statement::blocks( void ) const
 {
     if( isa< TrivialStatement >( this ) )
     {
         assert( !" trivial statements do not contain inside blocks! " );
     }
 
-    return blocks;
+    return m_blocks;
 }
 
 u1 Statement::classof( Value const* obj )
 {
-    return obj->getValueID() == classid() or TrivialStatement::classof( obj )
+    return obj->id() == classid() or TrivialStatement::classof( obj )
            or BranchStatement::classof( obj );
 }
 
@@ -117,7 +116,7 @@ TrivialStatement::TrivialStatement( ExecutionSemanticsBlock* scope )
 
 u1 TrivialStatement::classof( Value const* obj )
 {
-    return obj->getValueID() == classid();
+    return obj->id() == classid();
 }
 
 BranchStatement::BranchStatement( ExecutionSemanticsBlock* scope )
@@ -127,7 +126,7 @@ BranchStatement::BranchStatement( ExecutionSemanticsBlock* scope )
 
 u1 BranchStatement::classof( Value const* obj )
 {
-    return obj->getValueID() == classid();
+    return obj->id() == classid();
 }
 
 //

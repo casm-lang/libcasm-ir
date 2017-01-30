@@ -59,7 +59,7 @@ using namespace libcasm_ir;
 
 void Visitor::dispatch( Stage stage, Value& value, Context& cxt )
 {
-    switch( value.getValueID() )
+    switch( value.id() )
     {
         CASE_VALUE( SPECIFICATION, Specification );
         CASE_VALUE( AGENT, Agent );
@@ -135,7 +135,7 @@ void Visitor::dispatch( Stage stage, Value& value, Context& cxt )
             fprintf( stderr,
                 "%s:%i: error: unimplemented value name '%s' with id '%i' to "
                 "dispatch\n",
-                __FILE__, __LINE__, value.getName(), value.getValueID() );
+                __FILE__, __LINE__, value.name(), value.id() );
             assert( 0 );
             break;
         }

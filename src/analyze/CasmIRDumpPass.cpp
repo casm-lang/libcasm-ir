@@ -35,7 +35,7 @@ static libpass::PassRegistration< CasmIRDumpPass > PASS( "CASM IR Dumping Pass",
 
 u1 CasmIRDumpPass::run( libpass::PassResult& pr )
 {
-    Specification* value = (Specification*)pr.getResult< CasmIRDumpPass >();
+    Specification* value = (Specification*)pr.result< CasmIRDumpPass >();
     assert( value );
 
     value->iterate( Traversal::PREORDER, this );
@@ -52,15 +52,15 @@ static const char* indention( Value& value )
     {
         if( isa< ExecutionSemanticsBlock >( p ) )
         {
-            p = (Value*)( (ExecutionSemanticsBlock*)p )->getScope();
+            p = (Value*)( (ExecutionSemanticsBlock*)p )->scope();
         }
         else if( isa< Instruction >( p ) )
         {
-            p = (Value*)( (Instruction*)p )->getStatement();
+            p = (Value*)( (Instruction*)p )->statement();
         }
         else if( isa< Statement >( p ) )
         {
-            p = (Value*)( (Statement*)p )->getScope();
+            p = (Value*)( (Statement*)p )->scope();
         }
         else
         {
@@ -76,15 +76,14 @@ static const char* indention( Value& value )
 }
 
 #define DUMP_PREFIX                                                            \
-    fprintf( stderr, "%p: %s, %s%s ", &value, value.getLabel(),                \
-        indention( value ), value.getName() )
+    fprintf( stderr, "%p: %s, %s%s ", &value, value.label(),                   \
+        indention( value ), value.name() )
 #define DUMP_POSTFIX fprintf( stderr, "\n" );
 
 #define DUMP_INSTR                                                             \
-    for( auto v : value.getValues() )                                          \
+    for( auto v : value.values() )                                             \
     {                                                                          \
-        fprintf( stderr, ", %s [%s]", v->getLabel(),                           \
-            v->getType()->getDescription() );                                  \
+        fprintf( stderr, ", %s [%s]", v->label(), v->type().description() );   \
     }
 
 void CasmIRDumpPass::visit_prolog( Specification& value, Context& )
@@ -150,7 +149,7 @@ void CasmIRDumpPass::visit_epilog( Rule& value, Context& )
 void CasmIRDumpPass::visit_prolog( ParallelBlock& value, Context& )
 {
     DUMP_PREFIX;
-    fprintf( stderr, " (%p, %p) ", value.getScope(), value.getParent() );
+    fprintf( stderr, " (%p, %p) ", value.scope(), value.parent() );
     DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( ParallelBlock& value, Context& )
@@ -160,7 +159,7 @@ void CasmIRDumpPass::visit_epilog( ParallelBlock& value, Context& )
 void CasmIRDumpPass::visit_prolog( SequentialBlock& value, Context& )
 {
     DUMP_PREFIX;
-    fprintf( stderr, " (%p, %p) ", value.getScope(), value.getParent() );
+    fprintf( stderr, " (%p, %p) ", value.scope(), value.parent() );
     DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( SequentialBlock& value, Context& )
@@ -170,7 +169,7 @@ void CasmIRDumpPass::visit_epilog( SequentialBlock& value, Context& )
 void CasmIRDumpPass::visit_prolog( TrivialStatement& value, Context& )
 {
     DUMP_PREFIX;
-    fprintf( stderr, " (%p, %p) ", value.getScope(), value.getParent() );
+    fprintf( stderr, " (%p, %p) ", value.scope(), value.parent() );
     DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( TrivialStatement& value, Context& )
@@ -180,7 +179,7 @@ void CasmIRDumpPass::visit_epilog( TrivialStatement& value, Context& )
 void CasmIRDumpPass::visit_prolog( BranchStatement& value, Context& )
 {
     DUMP_PREFIX;
-    fprintf( stderr, " (%p, %p) ", value.getScope(), value.getParent() );
+    fprintf( stderr, " (%p, %p) ", value.scope(), value.parent() );
     DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_interlog( BranchStatement& value, Context& )
@@ -215,26 +214,26 @@ void CasmIRDumpPass::visit_prolog( SelectInstruction& value, Context& )
     DUMP_PREFIX;
 
     i32 cnt = -1;
-    for( auto v : value.getValues() )
+    for( auto v : value.values() )
     {
         cnt++;
         if( cnt == 0 or ( cnt % 2 ) == 1 )
         {
             if( isa< Instruction >( v ) or isa< Constant >( v ) )
             {
-                fprintf( stderr, ", %s [%s]", v->getLabel(),
-                    v->getType()->getDescription() );
+                fprintf(
+                    stderr, ", %s [%s]", v->label(), v->type().description() );
             }
             else
             {
-                fprintf( stderr, " : %s", v->getLabel() );
+                fprintf( stderr, " : %s", v->label() );
             }
         }
         else
         {
             assert( isa< ExecutionSemanticsBlock >( v ) );
 
-            fprintf( stderr, " : %s", v->getLabel() );
+            fprintf( stderr, " : %s", v->label() );
         }
     }
 
