@@ -209,7 +209,26 @@ namespace libcasm_ir
         void setType( Type* type );
 
       public:
-        ID id() const;
+        ID id( void ) const;
+
+        void dump( void ) const;
+
+        inline u1 operator==( const Value& rhs )
+        {
+            if( this != &rhs )
+            {
+                if( this->type() != rhs.type()
+                    or strcmp( this->name(), ( (Value&)rhs ).name() ) )
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        inline u1 operator!=( const Value& rhs )
+        {
+            return !operator==( rhs );
+        }
 
         static inline ID classid( void )
         {
@@ -226,8 +245,9 @@ namespace libcasm_ir
             std::function< void( Value&, Context& ) > action
             = []( Value&, Context& ) {} ) final;
 
-        virtual void iterate( Traversal order,
-            std::function< void( Value&, Context& ) > action ) final;
+        virtual void iterate(
+            Traversal order, std::function< void( Value&, Context& ) > action )
+            final;
     };
 }
 

@@ -28,6 +28,7 @@
 */
 
 #include "Value.h"
+
 #include "Agent.h"
 #include "Constant.h"
 #include "Derived.h"
@@ -36,6 +37,9 @@
 #include "Rule.h"
 #include "Specification.h"
 #include "Statement.h"
+
+#include "../stdhl/cpp/Default.h"
+#include "../stdhl/cpp/Log.h"
 
 using namespace libcasm_ir;
 
@@ -77,9 +81,19 @@ void Value::setType( Type* type )
     m_type = type;
 }
 
-Value::ID Value::id() const
+Value::ID Value::id( void ) const
 {
     return m_id;
+}
+
+void Value::dump( void ) const
+{
+    libstdhl::Log::info( "%p: '%s' [%u] %s [%u]",
+        this,
+        this->name(),
+        this->id(),
+        this->type().name(),
+        this->type().id() );
 }
 
 void Value::iterate( Traversal order,
