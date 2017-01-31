@@ -183,6 +183,7 @@ PrimitiveType::PrimitiveType(
     const char* name, const char* description, Type::ID id )
 : Type( name, description, id )
 {
+    this->name();
 }
 
 const char* PrimitiveType::name( void )
@@ -264,6 +265,7 @@ RelationType::RelationType( Type* result, std::vector< Type* > arguments )
 , m_result( result )
 , m_arguments( arguments )
 {
+    this->name();
     assert( result );
 }
 

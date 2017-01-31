@@ -91,18 +91,18 @@ namespace libcasm_ir
 
         Type* result( void ) const;
 
-        inline u1 operator==( const Type& rhs )
+        inline u1 operator==( const Type& rhs ) const
         {
             if( this != &rhs )
             {
-                if( strcmp( this->name(), ( (Type&)rhs ).name() ) )
+                if( strcmp( this->m_name, rhs.m_name ) )
                 {
                     return false;
                 }
             }
             return true;
         }
-        inline u1 operator!=( const Type& rhs )
+        inline u1 operator!=( const Type& rhs ) const
         {
             return !operator==( rhs );
         }
