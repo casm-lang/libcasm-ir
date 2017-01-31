@@ -213,19 +213,19 @@ namespace libcasm_ir
 
         void dump( void ) const;
 
-        inline u1 operator==( const Value& rhs )
+        inline u1 operator==( const Value& rhs ) const
         {
             if( this != &rhs )
             {
                 if( this->type() != rhs.type()
-                    or strcmp( this->name(), ( (Value&)rhs ).name() ) )
+                    or strcmp( this->name(), rhs.name() ) )
                 {
                     return false;
                 }
             }
             return true;
         }
-        inline u1 operator!=( const Value& rhs )
+        inline u1 operator!=( const Value& rhs ) const
         {
             return !operator==( rhs );
         }
@@ -245,9 +245,8 @@ namespace libcasm_ir
             std::function< void( Value&, Context& ) > action
             = []( Value&, Context& ) {} ) final;
 
-        virtual void iterate(
-            Traversal order, std::function< void( Value&, Context& ) > action )
-            final;
+        virtual void iterate( Traversal order,
+            std::function< void( Value&, Context& ) > action ) final;
     };
 }
 
