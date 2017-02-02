@@ -26,11 +26,13 @@
 
 #include "User.h"
 
+#include "../stdhl/cpp/Allocator.h"
+
 namespace libcasm_ir
 {
     class Statement;
 
-    class Constant : public User
+    class Constant : public Value
     {
       private:
         static std::unordered_map< std::string, Value* >& m_str2obj( void )
@@ -40,8 +42,7 @@ namespace libcasm_ir
         };
 
       public:
-        Constant( const char* name, Type* type, Value::ID id = classid() )
-        : User( name, type, id ){};
+        Constant( const char* name, Type* type, Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {

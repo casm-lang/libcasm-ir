@@ -51,6 +51,8 @@ namespace libcasm_ir
 
         Value* value( u8 index ) const;
 
+        void replace( Value& from, Value& to );
+
         const std::vector< Value* >& values( void ) const;
 
         static inline Value::ID classid( void )
@@ -98,8 +100,8 @@ namespace libcasm_ir
       public:
         BinaryInstruction( Instruction* self );
 
-        Value* lhs( void ) const;
-        Value* rhs( void ) const;
+        Value& lhs( void ) const;
+        Value& rhs( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -204,6 +206,8 @@ namespace libcasm_ir
     {
       public:
         CallInstruction( Value* symbol );
+
+        Value& callee( void ) const;
 
         static inline Value::ID classid( void )
         {

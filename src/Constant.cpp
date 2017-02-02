@@ -31,6 +31,11 @@ using namespace libcasm_ir;
 
 static const char* undef_str = "undef";
 
+Constant::Constant( const char* name, Type* type, Value::ID id )
+: Value( name, type, id )
+{
+}
+
 u1 Constant::classof( Value const* obj )
 {
     return obj->id() == classid() or AgentConstant::classof( obj )

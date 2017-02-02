@@ -22,9 +22,13 @@
 //
 
 #include "Instruction.h"
+
 #include "Derived.h"
 #include "Function.h"
 #include "Rule.h"
+
+#include "../stdhl/cpp/Default.h"
+#include "../stdhl/cpp/Log.h"
 
 using namespace libcasm_ir;
 
@@ -32,12 +36,14 @@ Instruction::Instruction( const char* name, Type* type,
     const std::vector< Value* >& values, Value::ID id )
 : User( name, type, id )
 , m_statement( 0 )
-, m_values( values )
+, m_values()
 {
-    for( auto v : m_values )
+    for( auto v : values )
     {
-        assert( v );
+        add( v );
     }
+
+    label();
 }
 
 void Instruction::setStatement( Statement* stmt )
@@ -74,19 +80,49 @@ void Instruction::add( Value* value )
 {
     assert( value );
 
-    if( isa< UnaryInstruction >( this ) or isa< BinaryInstruction >( this ) )
+    if( ( isa< UnaryInstruction >( this ) and values().size() >= 1 )
+        or ( isa< BinaryInstruction >( this ) and values().size() >= 2 ) )
     {
         assert(
             !" impossible to add more arguments to this instruction type " );
     }
 
     m_values.push_back( value );
+
+    if( isa< User >( value ) )
+    {
+        User* user = static_cast< User* >( value );
+
+        user->setUse( *this );
+    }
 }
 
 Value* Instruction::value( u8 index ) const
 {
     assert( index < m_values.size() );
     return m_values[ index ];
+}
+
+void Instruction::replace( Value& from, Value& to )
+{
+    libstdhl::Log::info( "replace: %s -> %s", from.label(), to.label() );
+
+    std::replace( m_values.begin(), m_values.end(), &from, &to );
+
+    if( isa< User >( from ) )
+    {
+        libstdhl::Log::info( "replace-from: remove use of %s -> %s",
+            this->label(), from.label() );
+        User& user = static_cast< User& >( from );
+        user.removeUse( *this );
+    }
+
+    if( isa< User >( to ) )
+    {
+        libstdhl::Log::info( "replace-to: set use of %s", to.label() );
+        User& user = static_cast< User& >( to );
+        user.setUse( *this );
+    }
 }
 
 const std::vector< Value* >& Instruction::values( void ) const
@@ -134,14 +170,14 @@ BinaryInstruction::BinaryInstruction( Instruction* self )
 {
 }
 
-Value* BinaryInstruction::lhs( void ) const
+Value& BinaryInstruction::lhs( void ) const
 {
-    return m_self.value( 0 );
+    return *m_self.value( 0 );
 }
 
-Value* BinaryInstruction::rhs( void ) const
+Value& BinaryInstruction::rhs( void ) const
 {
-    return m_self.value( 1 );
+    return *m_self.value( 1 );
 }
 
 u1 BinaryInstruction::classof( Value const* obj )
@@ -245,6 +281,11 @@ CallInstruction::CallInstruction( Value* symbol )
             or isa< Builtin >( symbol ) );
 
     setType( symbol->type().result() );
+}
+
+Value& CallInstruction::callee( void ) const
+{
+    return *value( 0 );
 }
 
 u1 CallInstruction::classof( Value const* obj )

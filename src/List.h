@@ -21,70 +21,69 @@
 //  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef _LIB_CASMIR_USER_H_
-#define _LIB_CASMIR_USER_H_
+#ifndef _LIB_CASMIR_LIST_H_
+#define _LIB_CASMIR_LIST_H_
 
-#include "List.h"
-#include "Value.h"
+#include "CasmIR.h"
 
 namespace libcasm_ir
 {
-    class User;
-
-    class Use
+    template < typename T >
+    class List : public CasmIR
     {
       public:
-        using Ptr = std::shared_ptr< Use >;
+        using Ptr = std::shared_ptr< List >;
 
-        Use( Value& def, User& use )
-        : m_def( &def )
-        , m_use( &use )
+        using iterator = typename std::vector< typename T::Ptr >::iterator;
+
+        using const_iterator =
+            typename std::vector< typename T::Ptr >::const_iterator;
+
+        List()
         {
         }
 
-        Value& def() const
+        std::size_t size() const
         {
-            return *m_def;
+            return m_elements.size();
         }
 
-        User& use() const
+        void add( const typename T::Ptr& node )
         {
-            return *m_use;
+            m_elements.push_back( node );
+        }
+
+        void remove( const iterator& it )
+        {
+            m_elements.erase( it );
+        }
+
+        iterator begin()
+        {
+            return m_elements.begin();
+        }
+
+        iterator end()
+        {
+            return m_elements.end();
+        }
+
+        const_iterator cbegin() const
+        {
+            return m_elements.cbegin();
+        }
+
+        const_iterator cend() const
+        {
+            return m_elements.cend();
         }
 
       private:
-        Value* m_def;
-        User* m_use;
-    };
-
-    using Uses = List< Use >;
-
-    class User : public Value
-    {
-      private:
-        Uses m_uses;
-
-      public:
-        User( const char* name, Type* type, Value::ID id = classid() );
-
-        Uses uses() const;
-
-        void setUse( User& user );
-
-        void removeUse( User& user );
-
-        void replaceAllUsesWith( Value& value );
-
-        static inline Value::ID classid( void )
-        {
-            return Value::USER;
-        }
-
-        static u1 classof( Value const* obj );
+        std::vector< typename T::Ptr > m_elements;
     };
 }
 
-#endif // _LIB_CASMIR_USER_H_
+#endif // _LIB_CASMIR_LIST_H_
 
 //
 //  Local variables:

@@ -42,66 +42,6 @@ namespace libcasm_ir
     class Value;
 
     //
-    // is-a relation
-    //
-
-    template < class TO >
-    static inline u1 isa( Value* value )
-    {
-        return TO::classof( value );
-    }
-
-    template < class TO >
-    static inline u1 isa( const Value* value )
-    {
-        return isa< TO >( (Value*)value );
-    }
-
-    template < class TO >
-    static inline u1 isa( Value& value )
-    {
-        return isa< TO >( &value );
-    }
-
-    template < class TO >
-    static inline u1 isa( const Value& value )
-    {
-        return isa< TO >( &value );
-    }
-
-    //
-    // casting utility
-    //
-
-    template < class TO >
-    static inline TO* cast( Value* value )
-    {
-        assert( isa< TO >( value ) );
-        return static_cast< TO* >( value );
-    }
-
-    template < class TO >
-    static inline const TO* cast( const Value* value )
-    {
-        assert( isa< TO >( value ) );
-        return static_cast< const TO* >( value );
-    }
-
-    template < class TO >
-    static inline TO& cast( Value& value )
-    {
-        assert( isa< TO >( value ) );
-        return static_cast< TO& >( value );
-    }
-
-    template < class TO >
-    static inline const TO& cast( const Value& value )
-    {
-        assert( isa< TO >( value ) );
-        return static_cast< const TO& >( value );
-    }
-
-    //
     // object creation utility
     //
 
@@ -110,9 +50,80 @@ namespace libcasm_ir
     {
         return std::make_shared< T >( std::forward< Args >( args )... );
     }
+
+    //
+    // is-a relation
+    //
+
+    template < typename T >
+    static inline u1 isa( Value* value )
+    {
+        assert( value );
+        return T::classof( value );
+    }
+
+    template < typename T >
+    static inline u1 isa( const Value* value )
+    {
+        return isa< T >( (Value*)value );
+    }
+
+    template < typename T >
+    static inline u1 isa( Value& value )
+    {
+        return isa< T >( &value );
+    }
+
+    template < typename T >
+    static inline u1 isa( const Value& value )
+    {
+        return isa< T >( &value );
+    }
+
+    //
+    // casting utility
+    //
+
+    template < typename T >
+    static inline T* cast( Value* value )
+    {
+        if( isa< T >( value ) )
+        {
+            return static_cast< T* >( value );
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    template < typename T >
+    static inline const T* cast( const Value* value )
+    {
+        if( isa< T >( value ) )
+        {
+            return static_cast< const T* >( value );
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    template < typename T >
+    static inline T* cast( Value& value )
+    {
+        return cast< T >( &value );
+    }
+
+    template < typename T >
+    static inline const T* cast( const Value& value )
+    {
+        return cast< T >( &value );
+    }
 }
 
-#endif /* _LIB_CASMIR_CASMIR_H_ */
+#endif // _LIB_CASMIR_CASMIR_H_
 
 //
 //  Local variables:
