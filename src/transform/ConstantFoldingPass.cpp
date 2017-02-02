@@ -46,38 +46,55 @@ bool ConstantFoldingPass::run( libpass::PassResult& pr )
     assert( value );
 
     value->iterate( Traversal::PREORDER, []( Value& value, Context& ) {
-        if( isa< CallInstruction >( value ) )
+        if( auto instr = cast< Instruction >( value ) )
         {
-            CallInstruction& instr = static_cast< CallInstruction& >( value );
+            libstdhl::Log::info(
+                "cf: %s = %s ...", instr->label(), instr->name() );
 
-            Value& call_sym = *instr.value( 0 );
+            u32 operand_pos = 0;
 
-            if( isa< Builtin >( call_sym ) )
+            if( auto call = cast< CallInstruction >( instr ) )
             {
-                u1 is_constant_call = true;
+                operand_pos = 1;
 
-                for( u32 i = 1; i < instr.values().size(); i++ )
+                if( not isa< Builtin >( call->callee() ) )
                 {
-                    if( not isa< Constant >( instr.value( i ) ) )
-                    {
-                        is_constant_call = false;
-                        break;
-                    }
+                    // call instr does not call a builtin, abort constant
+                    // folding
+                    return;
                 }
 
-                if( is_constant_call )
-                {
-                    Value* result_ptr
-                        = libcasm_rt::Instruction::execute( instr );
-                    assert( result_ptr );
-                    Value& result = static_cast< Value& >( *result_ptr );
+                libstdhl::Log::info( "  +--> call instr: %s, %s",
+                    call->callee().name(), call->callee().type().name() );
+            }
+            else if( isa< OperatorInstruction >( instr ) )
+            {
+                libstdhl::Log::info( "  +--> operator instr" );
+            }
+            else
+            {
+                // instr is not a operator instr nor a call instr, abort
+                // constant folding
+                return;
+            }
 
-                    libstdhl::Log::info( "%s, %s, %s, %s --> %s %s",
-                        instr.label(), instr.name(), call_sym.name(),
-                        call_sym.type().name(), result.name(),
-                        result.type().name() );
+            for( ; operand_pos < instr->values().size(); operand_pos++ )
+            {
+                if( not isa< Constant >( instr->value( operand_pos ) ) )
+                {
+                    // non-constant instr operand found, abort constant folding
+                    return;
                 }
             }
+
+            Value* result_ptr = libcasm_rt::Instruction::execute( *instr );
+            assert( result_ptr );
+            Value& result = static_cast< Value& >( *result_ptr );
+
+            libstdhl::Log::info( "  +==> %s = %s %s", result.label(),
+                result.type().name(), result.name() );
+
+            instr->replaceAllUsesWith( result );
         }
     } );
 
