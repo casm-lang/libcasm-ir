@@ -167,33 +167,31 @@ u1 CasmIRToSourcePass::run( libpass::PassResult& pr )
             fprintf( stream, "%s%s%s: %s\n", nline, indention( value ),
                 &label[ 1 ], scope.c_str() );
         }
-        else if( isa< Instruction >( value ) )
+        else if( auto instr = cast< Instruction >( value ) )
         {
-            Instruction& instr = static_cast< Instruction& >( value );
-
             if( isa< ForkInstruction >( instr ) )
             {
                 fprintf( stream,
                     "%s%s %s %s %s\n",
-                    indention( instr ),
-                    instr.name(),
-                    instr.statement()->scope()->name(),
-                    instr.statement()->scope()->type().name(),
-                    instr.statement()->scope()->label() );
+                    indention( *instr ),
+                    instr->name(),
+                    instr->statement()->scope()->name(),
+                    instr->statement()->scope()->type().name(),
+                    instr->statement()->scope()->label() );
             }
             else if( isa< MergeInstruction >( instr ) )
             {
-                fprintf( stream, "%s%s %s %s %s\n", indention( instr ),
-                    instr.statement()->scope()->name(), instr.name(),
-                    instr.statement()->scope()->type().name(),
-                    instr.statement()->scope()->label() );
+                fprintf( stream, "%s%s %s %s %s\n", indention( *instr ),
+                    instr->statement()->scope()->name(), instr->name(),
+                    instr->statement()->scope()->type().name(),
+                    instr->statement()->scope()->label() );
             }
             else
             {
                 std::string tmp = "";
                 u1 first = true;
 
-                for( auto v : instr.values() )
+                for( auto v : instr->values() )
                 {
                     if( not first )
                     {
@@ -209,11 +207,21 @@ u1 CasmIRToSourcePass::run( libpass::PassResult& pr )
                     tmp += v->label();
                 }
 
-                fprintf( stream, "%s%s = %s %s\n", indention( instr ),
-                    instr.label(), instr.name(), tmp.c_str() );
+                std::string uses = "{";
+                for( auto u : instr->uses() )
+                {
+                    uses += u->use().label();
+                    uses += " : ";
+                    uses += u->use().name();
+                    uses += ", ";
+                }
+                uses += "}";
+                
+                fprintf( stream, "%s%s = %s %s                 ;; uses = %s\n", indention( *instr ),
+                         instr->label(), instr->name(), tmp.c_str(), uses.c_str() );
             }
 
-            const Statement* stmt = instr.statement();
+            const Statement* stmt = instr->statement();
             assert( stmt );
             ExecutionSemanticsBlock* scope = stmt->scope();
 
