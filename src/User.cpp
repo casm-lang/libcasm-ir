@@ -48,7 +48,7 @@ Uses User::uses() const
 
 void User::setUse( User& user )
 {
-    m_uses.add( make< Use >( *this, user ) );
+    m_uses.add( libstdhl::make< Use >( *this, user ) );
 }
 
 void User::removeUse( User& user )

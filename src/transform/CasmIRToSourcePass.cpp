@@ -216,9 +216,10 @@ u1 CasmIRToSourcePass::run( libpass::PassResult& pr )
                     uses += ", ";
                 }
                 uses += "}";
-                
-                fprintf( stream, "%s%s = %s %s                 ;; uses = %s\n", indention( *instr ),
-                         instr->label(), instr->name(), tmp.c_str(), uses.c_str() );
+
+                fprintf( stream, "%s%s = %s %s                 ;; uses = %s\n",
+                    indention( *instr ), instr->label(), instr->name(),
+                    tmp.c_str(), uses.c_str() );
             }
 
             const Statement* stmt = instr->statement();

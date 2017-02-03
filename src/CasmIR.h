@@ -42,16 +42,6 @@ namespace libcasm_ir
     class Value;
 
     //
-    // object creation utility
-    //
-
-    template < typename T, typename... Args >
-    typename T::Ptr make( Args&&... args )
-    {
-        return std::make_shared< T >( std::forward< Args >( args )... );
-    }
-
-    //
     // is-a relation
     //
 
