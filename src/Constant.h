@@ -26,6 +26,8 @@
 
 #include "User.h"
 
+#include "../stdhl/cpp/Allocator.h"
+
 namespace libcasm_ir
 {
     class Statement;
