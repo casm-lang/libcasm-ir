@@ -403,6 +403,8 @@ namespace libcasm_ir
     class EquInstruction : public CompareInstruction, public BinaryInstruction
     {
       public:
+        using Ptr = std::shared_ptr< EquInstruction >;
+        
         EquInstruction( Value* lhs, Value* rhs );
 
         static inline Value::ID classid( void )

@@ -33,7 +33,7 @@ TEST( libcasm_ir__Type_Bit, make_valid )
 
     for( u16 c = 1; c <= BitType::SizeMax; c++ )
     {
-        auto v = make< BitType >( c );
+        auto v = libstdhl::make< BitType >( c );
         EXPECT_TRUE( v != nullptr );
 
         auto r = cache.find( v->name() );

@@ -29,6 +29,6 @@ using namespace libcasm_ir;
 
 TEST( libcasm_ir__Type_Integer, make_valid )
 {
-    auto v = make< IntegerType >();
+    auto v = libstdhl::make< IntegerType >();
     ASSERT_TRUE( v != nullptr );
 }
