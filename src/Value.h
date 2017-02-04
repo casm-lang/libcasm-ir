@@ -181,6 +181,7 @@ namespace libcasm_ir
         };
 
       private:
+        const char* m_hash;
         const char* m_name;
         Type* m_type;
         ID m_id;
@@ -211,7 +212,11 @@ namespace libcasm_ir
       public:
         ID id( void ) const;
 
+        const char* c_str( void );
+
         void dump( void ) const;
+
+        const char* make_hash( void );
 
         inline u1 operator==( const Value& rhs ) const
         {

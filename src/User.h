@@ -27,6 +27,8 @@
 #include "List.h"
 #include "Value.h"
 
+#include "../stdhl/cpp/Allocator.h"
+
 namespace libcasm_ir
 {
     class User;

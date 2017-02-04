@@ -66,6 +66,7 @@ namespace libcasm_ir
         };
 
       protected:
+        const char* m_hash;
         const char* m_name;
         const char* m_description;
 
@@ -90,6 +91,8 @@ namespace libcasm_ir
         virtual const std::vector< Type* >& arguments( void ) = 0;
 
         Type* result( void ) const;
+
+        const char* make_hash( void );
 
         inline u1 operator==( const Type& rhs ) const
         {

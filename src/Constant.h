@@ -101,7 +101,7 @@ namespace libcasm_ir
             return m_value;
         }
 
-        const u1 isDefined( void ) const
+        const u1 defined( void ) const
         {
             return m_defined;
         }

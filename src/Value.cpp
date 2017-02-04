@@ -44,7 +44,8 @@
 using namespace libcasm_ir;
 
 Value::Value( const char* name, Type* type, Value::ID id )
-: m_name( name )
+: m_hash( 0 )
+, m_name( name )
 , m_type( type )
 , m_id( id )
 , m_type_lock( false )
@@ -86,6 +87,45 @@ Value::ID Value::id( void ) const
     return m_id;
 }
 
+const char* Value::c_str( void )
+{
+    std::string tmp = "";
+    tmp += label();
+    tmp += " = ";
+
+    if( isa< Constant >( this ) )
+    {
+        tmp += type().name();
+        tmp += " ";
+    }
+    tmp += name();
+
+    if( auto instr = cast< Instruction >( this ) )
+    {
+        u1 first = true;
+        for( auto operand : instr->values() )
+        {
+            if( first )
+            {
+                first = false;
+                tmp += " ";
+            }
+            else
+            {
+                tmp += ", ";
+            }
+            tmp += operand->type().name();
+            tmp += " ";
+            tmp += operand->label();
+        }
+    }
+
+    tmp += "    ;; ";
+    tmp += type().name();
+
+    return libstdhl::Allocator::string( tmp );
+}
+
 void Value::dump( void ) const
 {
     libstdhl::Log::info( "%p: '%s' [%u] %s [%u]",
@@ -94,6 +134,24 @@ void Value::dump( void ) const
         this->id(),
         this->type().name(),
         this->type().id() );
+}
+
+const char* Value::make_hash( void )
+{
+    if( not m_hash )
+    {
+        std::string tmp;
+        tmp += "v:";
+        tmp += std::to_string( id() );
+        tmp += ":";
+        tmp += type().name();
+        tmp += ":";
+        tmp += name();
+
+        m_hash = libstdhl::Allocator::string( tmp );
+    }
+
+    return m_hash;
 }
 
 void Value::iterate( Traversal order,

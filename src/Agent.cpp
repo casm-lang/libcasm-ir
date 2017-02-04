@@ -59,7 +59,7 @@ void Agent::setInitRuleReference( Value* init )
 Rule* Agent::initRule( void )
 {
     RuleReferenceConstant* rule_ref = initRuleReference();
-    assert( rule_ref->isDefined() );
+    assert( rule_ref->defined() );
     return rule_ref->value();
 }
 

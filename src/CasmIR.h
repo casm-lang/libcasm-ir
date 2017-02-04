@@ -37,6 +37,14 @@ namespace libcasm_ir
 {
     class CasmIR
     {
+      public:
+        using Ptr = std::shared_ptr< CasmIR >;
+
+        std::unordered_map< std::string, Ptr >& make_cache( void )
+        {
+            static std::unordered_map< std::string, Ptr > cache;
+            return cache;
+        };
     };
 
     class Value;

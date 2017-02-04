@@ -28,7 +28,8 @@
 using namespace libcasm_ir;
 
 Type::Type( const char* name, const char* description, Type::ID id )
-: m_name( name )
+: m_hash( 0 )
+, m_name( name )
 , m_description( description )
 , m_id( id )
 {
@@ -177,6 +178,22 @@ Type* Type::Relation( Type* result, std::vector< Type* > arguments )
     Type* ptr = new RelationType( tmp );
     m_str2obj()[ tmp.name() ] = ptr;
     return ptr;
+}
+
+const char* Type::make_hash( void )
+{
+    if( not m_hash )
+    {
+        std::string tmp;
+        tmp += "t:";
+        tmp += std::to_string( id() );
+        tmp += ":";
+        tmp += name();
+
+        m_hash = libstdhl::Allocator::string( tmp );
+    }
+
+    return m_hash;
 }
 
 PrimitiveType::PrimitiveType(

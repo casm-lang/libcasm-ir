@@ -201,6 +201,7 @@ Value* Constant::Integer( Type::IntegerTy value )
     }
 
     Value* ptr = new IntegerConstant( tmp );
+
     return m_str2obj().emplace( tmp.description(), ptr ).first->second;
 }
 
