@@ -44,7 +44,7 @@ namespace libcasm_ir
         {
             static std::unordered_map< std::string, Ptr > cache;
             return cache;
-        };
+        }
     };
 
     class Value;
