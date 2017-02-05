@@ -31,7 +31,7 @@
 
 #include "../stdhl/cpp/Log.h"
 
-#include "../casm-rt/src/Instruction.h"
+#include "../casm-rt/src/Value.h"
 
 using namespace libcasm_ir;
 
@@ -87,7 +87,7 @@ bool ConstantFoldingPass::run( libpass::PassResult& pr )
                 }
             }
 
-            Value* result_ptr = libcasm_rt::Instruction::execute( *instr );
+            Value* result_ptr = libcasm_rt::Value::execute( *instr );
             assert( result_ptr );
             Value& result = static_cast< Value& >( *result_ptr );
 
