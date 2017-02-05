@@ -274,13 +274,19 @@ u1 LocationInstruction::classof( Value const* obj )
     return obj->id() == classid();
 }
 
-CallInstruction::CallInstruction( Value* symbol )
+CallInstruction::CallInstruction(
+    Value* symbol, const std::vector< Value* >& operands )
 : Instruction( "call", 0, { symbol }, classid() )
 {
     assert( isa< Rule >( symbol ) or isa< Derived >( symbol )
             or isa< Builtin >( symbol ) );
 
     setType( symbol->type().result() );
+
+    for( auto operand : operands )
+    {
+        add( operand );
+    }
 }
 
 Value& CallInstruction::callee( void ) const

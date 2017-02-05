@@ -205,7 +205,8 @@ namespace libcasm_ir
     class CallInstruction : public Instruction
     {
       public:
-        CallInstruction( Value* symbol );
+        CallInstruction(
+            Value* symbol, const std::vector< Value* >& operands = {} );
 
         Value& callee( void ) const;
 
