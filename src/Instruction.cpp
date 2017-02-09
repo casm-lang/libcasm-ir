@@ -418,8 +418,15 @@ LogicalInstruction::LogicalInstruction( const char* name, Type* type,
         assert( lhs_ty.id() == rhs_ty.id() );
     }
 
-    assert( lhs_ty.id() == resolved() );
-    setType( (Type*)&lhs_ty );
+    if( lhs_ty.isBit() )
+    {
+        assert( lhs_ty.id() == resolved() );
+        setType( (Type*)&lhs_ty );
+    }
+    else
+    {
+        setType( Type::Boolean() );
+    }
 }
 
 u1 LogicalInstruction::classof( Value const* obj )
@@ -762,22 +769,16 @@ NotInstruction::NotInstruction( Value* lhs )
 : LogicalInstruction( "not", 0, { lhs }, info, classid() )
 , UnaryInstruction( this )
 {
-    const Type& ty = get()->type();
-
-    if( ty.id() == Type::ID::BOOLEAN or ty.id() == Type::ID::BIT )
-    {
-        setType( (Type*)&ty );
-    }
-    else
-    {
-        assert( !" invalid type case for NOT instruction " );
-    }
 }
 const TypeAnnotation NotInstruction::info( TypeAnnotation::Data{
 
     { Type::BOOLEAN,
         {
             Type::BOOLEAN,
+        } },
+    { Type::BOOLEAN,
+        {
+            Type::INTEGER,
         } },
     { Type::BIT,
         {
