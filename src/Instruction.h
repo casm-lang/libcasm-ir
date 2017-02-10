@@ -35,6 +35,9 @@ namespace libcasm_ir
 
     class Instruction : public User
     {
+      public:
+        using Ptr = std::shared_ptr< Instruction >;
+
       private:
         Statement* m_statement;
         std::vector< Value* > m_values;

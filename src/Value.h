@@ -43,6 +43,8 @@ namespace libcasm_ir
     class Value : public CasmIR, public libstdhl::Labeling
     {
       public:
+        using Ptr = std::shared_ptr< Value >;
+
         enum ID : u8
         {
             VALUE = 0,
@@ -67,6 +69,7 @@ namespace libcasm_ir
 
             ,
             CONSTANT,
+            VOID_CONSTANT,
             AGENT_CONSTANT,
             RULE_REFERENCE_CONSTANT,
             BOOLEAN_CONSTANT,
@@ -226,8 +229,9 @@ namespace libcasm_ir
             std::function< void( Value&, Context& ) > action
             = []( Value&, Context& ) {} ) final;
 
-        virtual void iterate( Traversal order,
-            std::function< void( Value&, Context& ) > action ) final;
+        virtual void iterate(
+            Traversal order, std::function< void( Value&, Context& ) > action )
+            final;
     };
 }
 
