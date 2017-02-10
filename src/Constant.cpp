@@ -33,7 +33,8 @@ static const char* undef_str = "undef";
 
 u1 Constant::classof( Value const* obj )
 {
-    return obj->id() == classid() or AgentConstant::classof( obj )
+    return obj->id() == classid() or VoidConstant::classof( obj )
+           or AgentConstant::classof( obj )
            or RuleReferenceConstant::classof( obj )
            or BooleanConstant::classof( obj ) or IntegerConstant::classof( obj )
            or BitConstant::classof( obj ) or StringConstant::classof( obj )
@@ -229,6 +230,20 @@ Value* Constant::String( const char* value )
 
 //
 // Constants
+//
+
+VoidConstant::VoidConstant( void )
+: ConstantOf< void* >( "void", Type::Void(), 0, true, classid() )
+{
+}
+
+u1 VoidConstant::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
+
+//
+// AgentConstant
 //
 
 AgentConstant::AgentConstant( Type::AgentTy value, u1 defined )
