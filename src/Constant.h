@@ -34,6 +34,9 @@ namespace libcasm_ir
 
     class Constant : public Value
     {
+      public:
+        using Ptr = std::shared_ptr< Constant >;
+
       private:
         static std::unordered_map< std::string, Value* >& m_str2obj( void )
         {
@@ -141,6 +144,21 @@ namespace libcasm_ir
         {
             m_value = val;
         }
+    };
+
+    class VoidConstant : public ConstantOf< void* >
+    {
+      public:
+        using Ptr = std::shared_ptr< VoidConstant >;
+
+        VoidConstant( void );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::VOID_CONSTANT;
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class AgentConstant : public ConstantOf< Type::AgentTy >

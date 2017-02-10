@@ -40,6 +40,8 @@ namespace libcasm_ir
     class Type : public CasmIR
     {
       public:
+        using Ptr = std::shared_ptr< Type >;
+
         using AgentTy = void*;
         using RuleReferenceTy = Rule*;
         using BooleanTy = u1;
