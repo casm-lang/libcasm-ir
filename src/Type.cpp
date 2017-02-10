@@ -39,11 +39,14 @@ const Type::ID Type::id( void ) const
     return m_id;
 }
 
+u1 Type::isVoid( void ) const
+{
+    return id() == Type::VOID;
+}
 u1 Type::isLabel( void ) const
 {
     return id() == Type::LABEL;
 }
-
 u1 Type::isAgent( void ) const
 {
     return id() == Type::AGENT;
@@ -93,6 +96,12 @@ Type* Type::result( void ) const
         return (Type*)rt->result();
     }
     return (Type*)this;
+}
+
+Type* Type::Void( void )
+{
+    static VoidType cache = VoidType();
+    return m_str2obj().emplace( cache.name(), &cache ).first->second;
 }
 
 Type* Type::Label( void )
@@ -199,6 +208,11 @@ const std::vector< Type* >& PrimitiveType::arguments( void )
 {
     static std::vector< Type* > empty = {};
     return empty;
+}
+
+VoidType::VoidType()
+: PrimitiveType( "v", "Void", Type::LABEL )
+{
 }
 
 LabelType::LabelType()

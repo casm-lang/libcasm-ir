@@ -31,7 +31,8 @@
 
 #include "../stdhl/cpp/Log.h"
 
-// #include "../casm-rt/src/Instruction.h" // PPA: disabled for now at the master branch!!!
+// #include "../casm-rt/src/Instruction.h" // PPA: disabled for now at the
+// master branch!!!
 
 using namespace libcasm_ir;
 
@@ -65,7 +66,8 @@ bool ConstantFoldingPass::run( libpass::PassResult& pr )
                     }
                 }
 
-                // if( is_constant_call ) // PPA: disabled for now at the master branch!!!
+                // if( is_constant_call ) // PPA: disabled for now at the master
+                // branch!!!
                 // {
                 //     Value* result_ptr
                 //         = libcasm_rt::Instruction::execute( instr );

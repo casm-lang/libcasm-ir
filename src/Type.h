@@ -50,6 +50,7 @@ namespace libcasm_ir
         enum ID : u8
         {
             _BOTTOM_ = 0,
+            VOID,
             LABEL,
 
             AGENT,
@@ -91,6 +92,7 @@ namespace libcasm_ir
 
         Type* result( void ) const;
 
+        u1 isVoid( void ) const;
         u1 isLabel( void ) const;
         u1 isAgent( void ) const;
         u1 isRuleReference( void ) const;
@@ -103,6 +105,7 @@ namespace libcasm_ir
         u1 isEnumeration( void ) const;
         u1 isRelation( void ) const;
 
+        static Type* Void( void );
         static Type* Label( void );
         static Type* Agent( void );
         static Type* RuleReference( void );
@@ -124,6 +127,14 @@ namespace libcasm_ir
         const char* name( void ) override final;
         const char* description( void ) override final;
         const std::vector< Type* >& arguments( void ) override final;
+    };
+
+    class VoidType : public PrimitiveType
+    {
+      public:
+        using Ptr = std::shared_ptr< VoidType >;
+
+        VoidType();
     };
 
     class LabelType : public PrimitiveType
