@@ -26,10 +26,10 @@
 void dummy( void )
 {
     libstdhl::Log::DefaultSource = libstdhl::Log::Source(
-        []( void* arg ) -> const char* { return "libcasm_rt"; } );
+        []( void* arg ) -> const char* { return "libcasm_ir"; } );
 }
 
-TEST( libcasm_rt_main, empty )
+TEST( libcasm_ir_main, empty )
 {
 }
 
