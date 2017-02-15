@@ -434,6 +434,16 @@ BitConstant::BitConstant( Type* result )
 {
 }
 
+BitConstant::BitConstant( u16 bitsize, u64 value )
+: BitConstant( Type::Bit( bitsize ), value, true )
+{
+}
+
+BitConstant::BitConstant( u16 bitsize )
+: BitConstant( Type::Bit( bitsize ), 0, false )
+{
+}
+
 u1 BitConstant::classof( Value const* obj )
 {
     return obj->id() == classid();
