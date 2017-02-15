@@ -23,7 +23,7 @@
 
 #include "uts/main.h"
 
-void dummy( void )
+void libcasm_ir_main_dummy( void )
 {
     libstdhl::Log::DefaultSource = libstdhl::Log::Source(
         []( void* arg ) -> const char* { return "libcasm_ir"; } );
