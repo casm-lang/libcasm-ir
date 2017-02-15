@@ -29,7 +29,7 @@ using namespace libcasm_ir;
 
 TEST( libcasm_ir__type, VoidType_make_valid )
 {
-    auto v = make< VoidType >();
+    auto v = libstdhl::make< VoidType >();
     ASSERT_TRUE( v != nullptr );
 }
 

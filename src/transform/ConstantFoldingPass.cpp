@@ -87,14 +87,13 @@ bool ConstantFoldingPass::run( libpass::PassResult& pr )
                 }
             }
 
-            Value* result_ptr = libcasm_rt::Value::execute( *instr );
-            assert( result_ptr );
-            Value& result = static_cast< Value& >( *result_ptr );
+            auto result = libcasm_rt::Value::execute( *instr );
+            assert( result );
 
-            libstdhl::Log::info( "  +==> %s = %s %s", result.label(),
-                result.type().name(), result.name() );
+            libstdhl::Log::info( "  +==> %s = %s %s", result->label(),
+                result->type().name(), result->name() );
 
-            instr->replaceAllUsesWith( result );
+            instr->replaceAllUsesWith( *result.get() );
         }
     } );
 
