@@ -261,6 +261,8 @@ namespace libcasm_ir
       public:
         BitConstant( Type* result, u64 value );
         BitConstant( Type* result );
+        BitConstant( u16 bitsize, u64 value );
+        BitConstant( u16 bitsize );
 
         static inline Value::ID classid( void )
         {

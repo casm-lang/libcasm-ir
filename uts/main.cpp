@@ -21,27 +21,24 @@
 //  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "gtest/gtest.h"
+#include "uts/main.h"
 
-#include "libcasm-ir.h"
-
-using namespace libcasm_ir;
-
-TEST( libcasm_ir__Type_Bit, make_valid )
+void dummy( void )
 {
-    std::unordered_map< std::string, BitType::Ptr > cache;
-
-    for( u16 c = 1; c <= BitType::SizeMax; c++ )
-    {
-        auto v = libstdhl::make< BitType >( c );
-        EXPECT_TRUE( v != nullptr );
-
-        auto r = cache.find( v->name() );
-        EXPECT_TRUE( r == cache.end() );
-        cache[ v->name() ] = v;
-
-        EXPECT_EQ( v->bitsize(), c );
-
-        EXPECT_EQ( v->id(), Type::BIT );
-    }
+    libstdhl::Log::DefaultSource = libstdhl::Log::Source(
+        []( void* arg ) -> const char* { return "libcasm_rt"; } );
 }
+
+TEST( libcasm_rt_main, empty )
+{
+}
+
+//
+//  Local variables:
+//  mode: c++
+//  indent-tabs-mode: nil
+//  c-basic-offset: 4
+//  tab-width: 4
+//  End:
+//  vim:noexpandtab:sw=4:ts=4:
+//
