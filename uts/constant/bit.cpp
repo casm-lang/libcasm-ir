@@ -25,7 +25,7 @@
 
 using namespace libcasm_ir;
 
-TEST( libcasm_rt__constant_bit, BitConstant )
+TEST( libcasm_ir__constant_bit, BitConstant )
 {
     for( u16 c = 1; c <= BitType::SizeMax; c++ )
     {
