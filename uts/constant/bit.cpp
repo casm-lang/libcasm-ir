@@ -33,7 +33,7 @@ TEST( libcasm_ir__constant_bit, BitConstant )
         EXPECT_TRUE( v != nullptr );
 
         EXPECT_EQ( v->value(), c );
-        EXPECT_EQ( v->isDefined(), true );
+        EXPECT_EQ( v->defined(), true );
     }
 }
 
