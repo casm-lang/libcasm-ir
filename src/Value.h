@@ -183,35 +183,15 @@ namespace libcasm_ir
             // PEEK_BUILTIN,
         };
 
-      private:
-        const char* m_name;
-        Type* m_type;
-        ID m_id;
-        u1 m_type_lock;
-
-      protected:
-        static std::unordered_map< u8, std::unordered_set< Value* > >&
-        m_id2objs( void )
-        {
-            static std::unordered_map< u8, std::unordered_set< Value* > > cache;
-            return cache;
-        }
-
       public:
-        Value( const char* name, Type* type, ID id );
+        Value( const std::string& name, const Type::Ptr& type, ID id );
 
         virtual ~Value();
 
-        const char* name( void ) const;
+        std::string name( void ) const;
 
-        Type& type( void ) const;
-
-        u1 hasType( void ) const;
-
-      protected:
-        void setType( Type* type );
-
-      public:
+        Type::Ptr type( void ) const;
+        
         ID id() const;
 
         static inline ID classid( void )
@@ -231,6 +211,21 @@ namespace libcasm_ir
 
         virtual void iterate( Traversal order,
             std::function< void( Value&, Context& ) > action ) final;
+        
+      protected:
+        static std::unordered_map< u8, std::unordered_set< Value* > >&
+        m_id2objs( void )
+        {
+            static std::unordered_map< u8, std::unordered_set< Value* > > cache;
+            return cache;
+        }
+
+      private:
+        std::string m_name;
+
+        Type::Ptr m_type;
+        
+        ID m_id;
     };
 }
 

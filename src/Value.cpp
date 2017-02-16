@@ -21,12 +21,6 @@
 //  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //
 
-/**
-   @file     Value.cpp
-   @author   Philipp Paulweber
-   @date     2015-02-20
-*/
-
 #include "Value.h"
 #include "Agent.h"
 #include "Constant.h"
@@ -39,7 +33,7 @@
 
 using namespace libcasm_ir;
 
-Value::Value( const char* name, Type* type, Value::ID id )
+Value::Value( const std::string& name, const Type::Ptr& type, Value::ID id )
 : m_name( name )
 , m_type( type )
 , m_id( id )
@@ -53,28 +47,14 @@ Value::~Value()
     m_id2objs()[ m_id ].erase( this );
 }
 
-const char* Value::name( void ) const
+std::string Value::name( void ) const
 {
     return m_name;
 }
 
-Type& Value::type( void ) const
+Type::Ptr Value::type( void ) const
 {
-    assert( m_type );
-    return *m_type;
-}
-
-u1 Value::hasType( void ) const
-{
-    return m_type ? true : false;
-}
-
-void Value::setType( Type* type )
-{
-    assert( !m_type_lock );
-    m_type_lock = true;
-
-    m_type = type;
+    return m_type;
 }
 
 Value::ID Value::id() const
