@@ -22,7 +22,9 @@
 //
 
 #include "Value.h"
+
 #include "Agent.h"
+#include "Builtin.h"
 #include "Constant.h"
 #include "Derived.h"
 #include "Function.h"
@@ -31,13 +33,15 @@
 #include "Specification.h"
 #include "Statement.h"
 
+#include "../stdhl/cpp/Default.h"
+#include "../stdhl/cpp/Log.h"
+
 using namespace libcasm_ir;
 
 Value::Value( const std::string& name, const Type::Ptr& type, Value::ID id )
 : m_name( name )
 , m_type( type )
 , m_id( id )
-, m_type_lock( false )
 {
     m_id2objs()[ m_id ].insert( this );
 }
@@ -47,19 +51,85 @@ Value::~Value()
     m_id2objs()[ m_id ].erase( this );
 }
 
-std::string Value::name( void ) const
+const char* Value::name( void ) const
+{
+    return m_name.c_str();
+}
+
+std::string Value::str_name( void ) const
 {
     return m_name;
 }
 
-Type::Ptr Value::type( void ) const
+const Type& Value::type( void ) const
+{
+    return *m_type.get();
+}
+
+Type::Ptr Value::ptr_type( void ) const
 {
     return m_type;
 }
 
-Value::ID Value::id() const
+Value::ID Value::id( void ) const
 {
     return m_id;
+}
+
+const char* Value::description( void ) const
+{
+    return str_description().c_str();
+}
+
+std::string Value::str_description( void ) const
+{
+    return type().str_name() + " " + str_name();
+}
+
+void Value::dump( void ) const
+{
+    std::string tmp = "";
+
+    tmp += "[";
+    tmp += type().name();
+    tmp += "]";
+
+    tmp += label();
+    tmp += " = ";
+
+    if( isa< Constant >( this ) )
+    {
+        tmp += type().name();
+        tmp += " ";
+    }
+    tmp += name();
+
+    if( auto instr = cast< Instruction >( this ) )
+    {
+        u1 first = true;
+        for( auto operand : instr->operands() )
+        {
+            if( first )
+            {
+                first = false;
+                tmp += " ";
+            }
+            else
+            {
+                tmp += ", ";
+            }
+            tmp += operand->type().name();
+            tmp += " ";
+            tmp += operand->label();
+        }
+    }
+
+    libstdhl::Log::info( "%p: %s", tmp.c_str() );
+}
+
+std::string Value::make_hash( void ) const
+{
+    return "v:" + std::to_string( id() ) + ":" + description();
 }
 
 void Value::iterate( Traversal order,
@@ -155,23 +225,10 @@ void Value::iterate( Traversal order,
         ExecutionSemanticsBlock& obj
             = static_cast< ExecutionSemanticsBlock& >( value );
 
-        Block* entry = obj.entryBlock();
-        Block* exit = obj.exitBlock();
-
-        if( entry )
-        {
-            entry->iterate( order, visitor, cxt, action );
-        }
-
-        for( Value* block : obj.blocks() )
+        for( auto block : obj.blocks() )
         {
             assert( block );
             block->iterate( order, visitor, cxt, action );
-        }
-
-        if( exit )
-        {
-            exit->iterate( order, visitor, cxt, action );
         }
     }
     else if( isa< Statement >( value ) )
@@ -181,7 +238,7 @@ void Value::iterate( Traversal order,
         assert( obj.instructions().size() > 0
                 and " a statement must contain at least one instruction " );
 
-        for( Value* instr : obj.instructions() )
+        for( auto instr : obj.instructions() )
         {
             assert( instr );
             instr->iterate( order, visitor, cxt, action );
@@ -194,7 +251,7 @@ void Value::iterate( Traversal order,
                 visitor->dispatch( Visitor::Stage::INTERLOG, value, *cxt );
             }
 
-            for( ExecutionSemanticsBlock* sco : obj.blocks() )
+            for( auto sco : obj.blocks() )
             {
                 assert( sco );
                 sco->iterate( order, visitor, cxt, action );

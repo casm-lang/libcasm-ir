@@ -32,10 +32,10 @@ TEST( libcasm_ir, example )
 
 TEST( libcasm_ir, example2 )
 {
-    libcasm_ir::Value* a = libcasm_ir::Constant::Integer( 5 );
-    libcasm_ir::AddInstruction i( a, a );
+    auto a = libcasm_ir::IntegerConstant( 5 );
+    auto i = libcasm_ir::AddInstruction( &a, &a );
 
-    ASSERT_EQ( i.type().id(), a->type().id() );
+    ASSERT_EQ( i.type().id(), a.type().id() );
 }
 
 TEST( libcasm_ir, example3 )

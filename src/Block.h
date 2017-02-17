@@ -24,8 +24,9 @@
 #ifndef _LIB_CASMIR_BLOCK_H_
 #define _LIB_CASMIR_BLOCK_H_
 
-#include "../stdhl/cpp/Binding.h"
 #include "Value.h"
+
+#include "../stdhl/cpp/List.h"
 
 namespace libcasm_ir
 {
@@ -33,17 +34,23 @@ namespace libcasm_ir
     class ForkInstruction;
     class MergeInstruction;
 
+    class ExecutionSemanticsBlock;
+
     class Block : public Value
     {
-      private:
-        Value* m_parent;
-
       public:
-        Block( const char* name, Value::ID id = classid() );
+        using Ptr = std::shared_ptr< Block >;
 
-        void setParent( Value* parent );
+        Block( const std::string& name, Value::ID id = classid() );
 
-        Value* parent( void ) const;
+        void setParent( const Ptr& parent );
+
+        Ptr parent( void ) const;
+
+        void setScope(
+            const std::shared_ptr< ExecutionSemanticsBlock >& scope );
+
+        std::shared_ptr< ExecutionSemanticsBlock > scope( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -52,52 +59,31 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        virtual const char* labelName( void ) override final
-        {
-            return "%blk";
-        }
-
-        virtual u64 labelId( void ) override final
-        {
-            static u64 cnt = 0;
-            return cnt++;
-        }
+      private:
+        std::weak_ptr< Block > m_parent;
+        std::weak_ptr< ExecutionSemanticsBlock > m_scope;
     };
 
-    class ExecutionSemanticsBlock : public Block,
-                                    public libstdhl::Binding< Rule >
+    using Blocks = libstdhl::List< Block >;
+
+    class ExecutionSemanticsBlock : public Block
     {
-      private:
-        const u1 m_is_parallel;
-        u64 m_pseudo_state;
-        ExecutionSemanticsBlock* m_scope;
-
-        Block* m_entry;
-        Block* m_exit;
-
-        std::vector< Block* > m_blocks;
-
       public:
-        ExecutionSemanticsBlock( const char* name, const u1 is_parallel,
-            ExecutionSemanticsBlock* scope = 0,
-            Value::ID id = Value::EXECUTION_SEMANTICS_BLOCK );
+        using Ptr = std::shared_ptr< ExecutionSemanticsBlock >;
+
+        ExecutionSemanticsBlock( const std::string& name, u1 parallel,
+            const ExecutionSemanticsBlock::Ptr& scope,
+            Value::ID id = classid() );
 
         ~ExecutionSemanticsBlock( void );
 
-        Block* entryBlock( void ) const;
-        Block* exitBlock( void ) const;
+        u1 parallel( void ) const;
 
-        const u1 isParallel( void ) const;
+        u64 pseudostate( void ) const;
 
-        const u64 pseudostate( void ) const;
+        Blocks blocks( void ) const;
 
-        ExecutionSemanticsBlock* scope( void ) const;
-
-        void setScope( ExecutionSemanticsBlock* scope_block );
-
-        const std::vector< Block* >& blocks( void ) const;
-
-        void add( Block* block );
+        void add( const Block::Ptr& block );
 
         static inline Value::ID classid( void )
         {
@@ -105,12 +91,23 @@ namespace libcasm_ir
         }
 
         static u1 classof( Value const* obj );
+
+      private:
+        const u1 m_parallel;
+        u64 m_pseudostate;
+
+        std::unique_ptr< Block > m_entry;
+        std::unique_ptr< Block > m_exit;
+
+        Blocks m_blocks;
     };
+
+    using ExecutionSemanticsBlocks = libstdhl::List< ExecutionSemanticsBlock >;
 
     class ParallelBlock : public ExecutionSemanticsBlock
     {
       public:
-        ParallelBlock( ExecutionSemanticsBlock* scope = 0 );
+        ParallelBlock( const ExecutionSemanticsBlock::Ptr& scope );
 
         static inline Value::ID classid( void )
         {
@@ -123,7 +120,7 @@ namespace libcasm_ir
     class SequentialBlock : public ExecutionSemanticsBlock
     {
       public:
-        SequentialBlock( ExecutionSemanticsBlock* scope = 0 );
+        SequentialBlock( const ExecutionSemanticsBlock::Ptr& scope );
 
         static inline Value::ID classid( void )
         {
@@ -134,7 +131,7 @@ namespace libcasm_ir
     };
 }
 
-#endif /* _LIB_CASMIR_BASICBLOCK_H_ */
+#endif // _LIB_CASMIR_BLOCK_H_
 
 //
 //  Local variables:

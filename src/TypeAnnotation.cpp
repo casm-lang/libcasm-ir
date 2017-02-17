@@ -73,13 +73,13 @@ const TypeAnnotation::Set& TypeAnnotation::argumentTypes( u8 pos ) const
 }
 
 Type::ID TypeAnnotation::resultTypeForRelation(
-    const std::vector< Type* > arguments ) const
+    const std::vector< const Type* > arguments ) const
 {
     std::string key;
 
     for( auto arg : arguments )
     {
-        libcasm_ir::Type::ID at = arg->result()->id();
+        libcasm_ir::Type::ID at = arg->result().id();
         assert( at != libcasm_ir::Type::RELATION );
 
         key += std::to_string( at ) + ";";

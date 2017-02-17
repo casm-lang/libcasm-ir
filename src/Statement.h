@@ -26,30 +26,24 @@
 
 #include "Block.h"
 
+#include "Instruction.h"
+
 namespace libcasm_ir
 {
     class Statement : public Block
     {
-      protected:
-        ExecutionSemanticsBlock* m_scope;
-
-      private:
-        std::vector< Value* > m_instructions;
-        std::vector< ExecutionSemanticsBlock* > m_blocks;
-
       public:
-        Statement( const char* name, ExecutionSemanticsBlock* scope,
-            Value::ID id = classid() );
+        using Ptr = std::shared_ptr< Statement >;
 
-        ExecutionSemanticsBlock* scope( void ) const;
+        Statement( const std::string& name, Value::ID id = classid() );
 
-        const std::vector< Value* >& instructions( void ) const;
+        void add( const Instruction::Ptr& instruction );
 
-        void add( Value* instruction );
+        Instructions instructions( void ) const;
 
-        void addBlock( ExecutionSemanticsBlock* block );
+        void add( const ExecutionSemanticsBlock::Ptr& block );
 
-        const std::vector< ExecutionSemanticsBlock* >& blocks( void ) const;
+        ExecutionSemanticsBlocks blocks( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -57,12 +51,18 @@ namespace libcasm_ir
         }
 
         static u1 classof( Value const* obj );
+
+      private:
+        Instructions m_instructions;
+        ExecutionSemanticsBlocks m_blocks;
     };
 
     class TrivialStatement : public Statement
     {
       public:
-        TrivialStatement( ExecutionSemanticsBlock* scope = 0 );
+        using Ptr = std::shared_ptr< TrivialStatement >;
+
+        TrivialStatement( void );
 
         static inline Value::ID classid( void )
         {
@@ -75,7 +75,9 @@ namespace libcasm_ir
     class BranchStatement : public Statement
     {
       public:
-        BranchStatement( ExecutionSemanticsBlock* scope = 0 );
+        using Ptr = std::shared_ptr< BranchStatement >;
+
+        BranchStatement( void );
 
         static inline Value::ID classid( void )
         {
@@ -88,7 +90,7 @@ namespace libcasm_ir
     // TODO: FIXME: PPA: add ForallStatement and IterateStatement etc.
 }
 
-#endif /* _LIB_CASMIR_STATEMENT_H_ */
+#endif // _LIB_CASMIR_STATEMENT_H_
 
 //
 //  Local variables:

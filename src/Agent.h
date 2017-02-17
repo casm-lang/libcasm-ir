@@ -24,28 +24,22 @@
 #ifndef _LIB_CASMIR_AGENT_H_
 #define _LIB_CASMIR_AGENT_H_
 
-#include "User.h"
+#include "Value.h"
 
 namespace libcasm_ir
 {
-    class Rule;
     class RuleReferenceConstant;
 
-    class Agent : public User
+    class Agent : public Value
     {
-      private:
-        RuleReferenceConstant* m_init_rule;
-
       public:
-        Agent( void );
+        using Ptr = std::shared_ptr< Agent >;
+
+        Agent( const std::shared_ptr< RuleReferenceConstant >& rulereference );
 
         ~Agent( void );
 
-        void setInitRuleReference( Value* init );
-
-        RuleReferenceConstant* initRuleReference( void ) const;
-
-        Rule* initRule( void );
+        std::shared_ptr< RuleReferenceConstant > rulereference( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -54,10 +48,8 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        virtual const char* label( void ) override final
-        {
-            return name();
-        }
+      private:
+        std::shared_ptr< RuleReferenceConstant > m_rulereference;
     };
 }
 

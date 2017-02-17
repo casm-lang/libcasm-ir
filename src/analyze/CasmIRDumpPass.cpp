@@ -52,15 +52,15 @@ static const char* indention( Value& value )
     {
         if( isa< ExecutionSemanticsBlock >( p ) )
         {
-            p = (Value*)( (ExecutionSemanticsBlock*)p )->scope();
+            p = (Value*)( (ExecutionSemanticsBlock*)p )->scope().get();
         }
         else if( isa< Instruction >( p ) )
         {
-            p = (Value*)( (Instruction*)p )->statement();
+            p = (Value*)( (Instruction*)p )->statement().get();
         }
         else if( isa< Statement >( p ) )
         {
-            p = (Value*)( (Statement*)p )->scope();
+            p = (Value*)( (Statement*)p )->scope().get();
         }
         else
         {
@@ -81,7 +81,7 @@ static const char* indention( Value& value )
 #define DUMP_POSTFIX fprintf( stderr, "\n" );
 
 #define DUMP_INSTR                                                             \
-    for( auto v : value.values() )                                             \
+    for( auto v : value.operands() )                                           \
     {                                                                          \
         fprintf( stderr, ", %s [%s]", v->label(), v->type().description() );   \
     }
@@ -149,7 +149,7 @@ void CasmIRDumpPass::visit_epilog( Rule& value, Context& )
 void CasmIRDumpPass::visit_prolog( ParallelBlock& value, Context& )
 {
     DUMP_PREFIX;
-    fprintf( stderr, " (%p, %p) ", value.scope(), value.parent() );
+    fprintf( stderr, " (%p, %p) ", value.scope().get(), value.parent().get() );
     DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( ParallelBlock& value, Context& )
@@ -159,7 +159,7 @@ void CasmIRDumpPass::visit_epilog( ParallelBlock& value, Context& )
 void CasmIRDumpPass::visit_prolog( SequentialBlock& value, Context& )
 {
     DUMP_PREFIX;
-    fprintf( stderr, " (%p, %p) ", value.scope(), value.parent() );
+    fprintf( stderr, " (%p, %p) ", value.scope().get(), value.parent().get() );
     DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( SequentialBlock& value, Context& )
@@ -169,7 +169,7 @@ void CasmIRDumpPass::visit_epilog( SequentialBlock& value, Context& )
 void CasmIRDumpPass::visit_prolog( TrivialStatement& value, Context& )
 {
     DUMP_PREFIX;
-    fprintf( stderr, " (%p, %p) ", value.scope(), value.parent() );
+    fprintf( stderr, " (%p, %p) ", value.scope().get(), value.parent().get() );
     DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( TrivialStatement& value, Context& )
@@ -179,7 +179,7 @@ void CasmIRDumpPass::visit_epilog( TrivialStatement& value, Context& )
 void CasmIRDumpPass::visit_prolog( BranchStatement& value, Context& )
 {
     DUMP_PREFIX;
-    fprintf( stderr, " (%p, %p) ", value.scope(), value.parent() );
+    fprintf( stderr, " (%p, %p) ", value.scope().get(), value.parent().get() );
     DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_interlog( BranchStatement& value, Context& )
@@ -214,7 +214,7 @@ void CasmIRDumpPass::visit_prolog( SelectInstruction& value, Context& )
     DUMP_PREFIX;
 
     i32 cnt = -1;
-    for( auto v : value.values() )
+    for( auto v : value.operands() )
     {
         cnt++;
         if( cnt == 0 or ( cnt % 2 ) == 1 )

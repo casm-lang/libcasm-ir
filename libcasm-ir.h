@@ -44,7 +44,6 @@
 #include "src/analyze/CasmIRDumpPass.h"
 
 #include "src/transform/CasmIRToSourcePass.h"
-#include "src/transform/ConstantFoldingPass.h"
 
 namespace libcasm_ir
 {

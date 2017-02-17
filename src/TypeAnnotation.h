@@ -60,7 +60,7 @@ namespace libcasm_ir
         TypeAnnotation( const Data& info );
 
         Type::ID resultTypeForRelation(
-            const std::vector< Type* > arguments ) const;
+            const std::vector< const Type* > arguments ) const;
 
         const Set& resultTypes( void ) const;
         const Set& argumentTypes( u8 pos ) const;
@@ -79,7 +79,7 @@ namespace libcasm_ir
     };
 }
 
-#endif /* _LIB_CASMIR_TYPEANNOTATION_H_ */
+#endif // _LIB_CASMIR_TYPEANNOTATION_H_
 
 //
 //  Local variables:

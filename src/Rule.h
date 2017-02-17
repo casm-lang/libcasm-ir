@@ -28,18 +28,12 @@
 
 namespace libcasm_ir
 {
-    class Identifier;
     class ParallelBlock;
 
     class Rule : public User
     {
-      private:
-        Identifier* m_ident;
-        ParallelBlock* m_context;
-        std::vector< Value* > m_parameter;
-
       public:
-        Rule( const char* name, Type* result );
+        Rule( const std::string& name, const Type::Ptr& type );
 
         ~Rule( void );
 
@@ -58,14 +52,13 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        virtual const char* label( void ) override final
-        {
-            return name();
-        }
+      private:
+        ParallelBlock* m_context;
+        std::vector< Value* > m_parameter;
     };
 }
 
-#endif /* _LIB_CASMIR_RULE_H_ */
+#endif // _LIB_CASMIR_RULE_H_
 
 //
 //  Local variables:

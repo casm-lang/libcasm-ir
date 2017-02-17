@@ -21,36 +21,21 @@
 //  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef _LIB_CASMIR_CONSTANT_FOLDING_PASS_H_
-#define _LIB_CASMIR_CONSTANT_FOLDING_PASS_H_
+#include "libcasm-ir.h"
+#include "gtest/gtest.h"
 
-#include "libpass.h"
+using namespace libcasm_ir;
 
-/**
-   @brief    TODO
-
-   TODO
-*/
-
-namespace libcasm_ir
+TEST( libcasm_ir__instruction_add, create_invalid )
 {
-    class ConstantFoldingPass final : public libpass::Pass
-    {
-      public:
-        static char id;
-
-        bool run( libpass::PassResult& pr ) override;
-    };
+    EXPECT_EXIT(
+        AddInstruction i( 0, 0 ), ::testing::KilledBySignal( SIGABRT ), "" );
 }
 
-#endif // _LIB_CASMIR_CONSTANT_FOLDING_PASS_H_
+TEST( libcasm_ir__instruction_add, create_valid )
+{
+    auto a = IntegerConstant( 5 );
+    auto i = AddInstruction( &a, &a );
 
-//
-//  Local variables:
-//  mode: c++
-//  indent-tabs-mode: nil
-//  c-basic-offset: 4
-//  tab-width: 4
-//  End:
-//  vim:noexpandtab:sw=4:ts=4:
-//
+    ASSERT_STREQ( i.type().name(), a.type().name() );
+}

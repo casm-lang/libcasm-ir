@@ -21,44 +21,69 @@
 //  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef _LIB_CASMIR_DERIVED_H_
-#define _LIB_CASMIR_DERIVED_H_
+#ifndef _LIB_CASMIR_LIST_H_
+#define _LIB_CASMIR_LIST_H_
 
-#include "User.h"
+#include "CasmIR.h"
 
 namespace libcasm_ir
 {
-    class TrivialStatement;
-
-    class Derived : public User
+    template < typename T >
+    class List : public CasmIR
     {
       public:
-        Derived( const std::string& name, const Type::Ptr& result );
+        using Ptr = std::shared_ptr< List >;
 
-        ~Derived( void ) = default;
+        using iterator = typename std::vector< typename T::Ptr >::iterator;
 
-        TrivialStatement* context( void ) const;
+        using const_iterator =
+            typename std::vector< typename T::Ptr >::const_iterator;
 
-        void setContext( TrivialStatement* scope );
-
-        void addParameter( Value* value );
-
-        const std::vector< Value* >& parameters( void ) const;
-
-        static inline Value::ID classid( void )
+        List()
         {
-            return Value::DERIVED;
         }
 
-        static u1 classof( Value const* obj );
+        std::size_t size() const
+        {
+            return m_elements.size();
+        }
+
+        void add( const typename T::Ptr& node )
+        {
+            m_elements.push_back( node );
+        }
+
+        void remove( const iterator& it )
+        {
+            m_elements.erase( it );
+        }
+
+        iterator begin()
+        {
+            return m_elements.begin();
+        }
+
+        iterator end()
+        {
+            return m_elements.end();
+        }
+
+        const_iterator cbegin() const
+        {
+            return m_elements.cbegin();
+        }
+
+        const_iterator cend() const
+        {
+            return m_elements.cend();
+        }
 
       private:
-        TrivialStatement* m_context;
-        std::vector< Value* > m_parameter;
+        std::vector< typename T::Ptr > m_elements;
     };
 }
 
-#endif // _LIB_CASMIR_DERIVED_H_
+#endif // _LIB_CASMIR_LIST_H_
 
 //
 //  Local variables:

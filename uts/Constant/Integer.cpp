@@ -25,20 +25,44 @@
 
 #include "libcasm-ir.h"
 
+#include "libstdhl.h"
+
 using namespace libcasm_ir;
 
-TEST( libcasm_ir__type, VoidType_make_valid )
+static void test_constant_integer( Type::IntegerTy i )
 {
-    auto v = libstdhl::make< VoidType >();
-    ASSERT_TRUE( v != nullptr );
+    auto v = libstdhl::make< IntegerConstant >( i );
+
+    EXPECT_STREQ( v->name(), std::to_string( i ).c_str() );
+    EXPECT_STREQ( v->name(), std::to_string( v->value() ).c_str() );
+    EXPECT_EQ( v->defined(), true );
+
+    auto w = libstdhl::make< IntegerConstant >( i );
+
+    ASSERT_TRUE( v != w );
+    ASSERT_TRUE( *w == *w );
+
+    auto a = libstdhl::get< IntegerConstant >( i );
+    auto b = libstdhl::get< IntegerConstant >( i );
+
+    ASSERT_TRUE( a == b );
+    ASSERT_TRUE( *a == *b );
 }
 
-//
-//  Local variables:
-//  mode: c++
-//  indent-tabs-mode: nil
-//  c-basic-offset: 4
-//  tab-width: 4
-//  End:
-//  vim:noexpandtab:sw=4:ts=4:
-//
+TEST( libcasm_ir__Constant_Integer, create_range )
+{
+    for( Type::IntegerTy i = -128; i < 128; i++ )
+    {
+        test_constant_integer( i );
+    }
+}
+
+TEST( libcasm_ir__Constant_Integer, create_random )
+{
+    for( u32 c = 0; c < 256; c++ )
+    {
+        Type::IntegerTy i = libstdhl::Random::uniform< Type::IntegerTy >();
+
+        test_constant_integer( i );
+    }
+}

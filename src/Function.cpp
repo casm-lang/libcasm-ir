@@ -23,20 +23,10 @@
 
 #include "Function.h"
 
-#include "Constant.h"
-// #include "Type.h"
-
 using namespace libcasm_ir;
 
-Function::Function( const char* name, Type* result )
-: User( libstdhl::Allocator::string( "@" + std::string( name ) ), result,
-      classid() )
-, m_ident( 0 )
-{
-    m_ident = Identifier::create( result, this->name() );
-}
-
-Function::~Function( void )
+Function::Function( const std::string& name, const Type::Ptr& type )
+: User( "@" + name, type, classid() )
 {
 }
 

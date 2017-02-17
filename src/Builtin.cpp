@@ -23,36 +23,19 @@
 
 #include "Builtin.h"
 
-#include "../stdhl/cpp/Allocator.h"
 #include "../stdhl/cpp/Log.h"
 
 using namespace libcasm_ir;
 
-Builtin::Builtin(
-    const char* name, Type* result, const TypeAnnotation& info, Value::ID id )
-: User( name, result, id )
+Builtin::Builtin( const std::string& name, const Type::Ptr& type,
+    const TypeAnnotation& info, Value::ID id )
+: User( name, type, id )
 , TypeAnnotation( info )
-, m_description( 0 )
 {
 }
 
 Builtin::~Builtin( void )
 {
-}
-
-const char* Builtin::description( void )
-{
-    if( not m_description )
-    {
-        std::string tmp = "";
-        tmp += type().name();
-        tmp += " ";
-        tmp += name();
-
-        m_description = libstdhl::Allocator::string( tmp );
-    }
-
-    return m_description;
 }
 
 u1 Builtin::classof( Value const* obj )
@@ -63,200 +46,172 @@ u1 Builtin::classof( Value const* obj )
            or OperatorBuiltin::classof( obj ) or BitBuiltin::classof( obj );
 }
 
-Builtin* Builtin::find( const char* name, Type* result )
+Builtin::Ptr Builtin::find( const std::string& name, const Type::Ptr& type )
 {
-    std::string tmp = name;
-    if( tmp.rfind( "as", 0 ) == 0 )
+    if( name.rfind( "as", 0 ) == 0 )
     {
-        return asBuiltin( result );
+        return asBuiltin( type );
     }
-    else if( tmp.compare( "dec" ) == 0 )
+    else if( name.compare( "dec" ) == 0 )
     {
-        return get< DecBuiltin >( result );
+        return libstdhl::get< DecBuiltin >( type );
     }
-    else if( tmp.compare( "hex" ) == 0 )
+    else if( name.compare( "hex" ) == 0 )
     {
-        return get< HexBuiltin >( result );
+        return libstdhl::get< HexBuiltin >( type );
     }
-    else if( tmp.compare( "oct" ) == 0 )
+    else if( name.compare( "oct" ) == 0 )
     {
-        return get< OctBuiltin >( result );
+        return libstdhl::get< OctBuiltin >( type );
     }
-    else if( tmp.compare( "bin" ) == 0 )
+    else if( name.compare( "bin" ) == 0 )
     {
-        return get< BinBuiltin >( result );
-    }
-
-    else if( tmp.compare( "addu" ) == 0 )
-    {
-        return get< AdduBuiltin >( result );
-    }
-    else if( tmp.compare( "adds" ) == 0 )
-    {
-        return get< AddsBuiltin >( result );
-    }
-    else if( tmp.compare( "subu" ) == 0 )
-    {
-        return get< SubuBuiltin >( result );
-    }
-    else if( tmp.compare( "subs" ) == 0 )
-    {
-        return get< SubsBuiltin >( result );
-    }
-    else if( tmp.compare( "mulu" ) == 0 )
-    {
-        return get< MuluBuiltin >( result );
-    }
-    else if( tmp.compare( "muls" ) == 0 )
-    {
-        return get< MulsBuiltin >( result );
+        return libstdhl::get< BinBuiltin >( type );
     }
 
-    else if( tmp.compare( "lesu" ) == 0 )
+    else if( name.compare( "addu" ) == 0 )
     {
-        return get< LesuBuiltin >( result );
+        return libstdhl::get< AdduBuiltin >( type );
     }
-    else if( tmp.compare( "less" ) == 0 )
+    else if( name.compare( "adds" ) == 0 )
     {
-        return get< LessBuiltin >( result );
+        return libstdhl::get< AddsBuiltin >( type );
     }
-    else if( tmp.compare( "lequ" ) == 0 )
+    else if( name.compare( "subu" ) == 0 )
     {
-        return get< LequBuiltin >( result );
+        return libstdhl::get< SubuBuiltin >( type );
     }
-    else if( tmp.compare( "leqs" ) == 0 )
+    else if( name.compare( "subs" ) == 0 )
     {
-        return get< LeqsBuiltin >( result );
+        return libstdhl::get< SubsBuiltin >( type );
     }
-    else if( tmp.compare( "greu" ) == 0 )
+    else if( name.compare( "mulu" ) == 0 )
     {
-        return get< GreuBuiltin >( result );
+        return libstdhl::get< MuluBuiltin >( type );
     }
-    else if( tmp.compare( "gres" ) == 0 )
+    else if( name.compare( "muls" ) == 0 )
     {
-        return get< GresBuiltin >( result );
-    }
-    else if( tmp.compare( "gequ" ) == 0 )
-    {
-        return get< GequBuiltin >( result );
-    }
-    else if( tmp.compare( "geqs" ) == 0 )
-    {
-        return get< GeqsBuiltin >( result );
+        return libstdhl::get< MulsBuiltin >( type );
     }
 
-    else if( tmp.compare( "zext" ) == 0 )
+    else if( name.compare( "lesu" ) == 0 )
     {
-        return get< ZextBuiltin >( result );
+        return libstdhl::get< LesuBuiltin >( type );
     }
-    else if( tmp.compare( "sext" ) == 0 )
+    else if( name.compare( "less" ) == 0 )
     {
-        return get< SextBuiltin >( result );
+        return libstdhl::get< LessBuiltin >( type );
     }
-    else if( tmp.compare( "trunc" ) == 0 )
+    else if( name.compare( "lequ" ) == 0 )
     {
-        return get< TruncBuiltin >( result );
+        return libstdhl::get< LequBuiltin >( type );
     }
-    else if( tmp.compare( "shl" ) == 0 )
+    else if( name.compare( "leqs" ) == 0 )
     {
-        return get< ShlBuiltin >( result );
+        return libstdhl::get< LeqsBuiltin >( type );
     }
-    else if( tmp.compare( "shr" ) == 0 )
+    else if( name.compare( "greu" ) == 0 )
     {
-        return get< ShrBuiltin >( result );
+        return libstdhl::get< GreuBuiltin >( type );
     }
-    else if( tmp.compare( "ashr" ) == 0 )
+    else if( name.compare( "gres" ) == 0 )
     {
-        return get< AshrBuiltin >( result );
+        return libstdhl::get< GresBuiltin >( type );
     }
-    else if( tmp.compare( "clz" ) == 0 )
+    else if( name.compare( "gequ" ) == 0 )
     {
-        return get< ClzBuiltin >( result );
+        return libstdhl::get< GequBuiltin >( type );
     }
-    else if( tmp.compare( "clo" ) == 0 )
+    else if( name.compare( "geqs" ) == 0 )
     {
-        return get< CloBuiltin >( result );
+        return libstdhl::get< GeqsBuiltin >( type );
     }
-    else if( tmp.compare( "cls" ) == 0 )
+
+    else if( name.compare( "zext" ) == 0 )
     {
-        return get< ClsBuiltin >( result );
+        return libstdhl::get< ZextBuiltin >( type );
+    }
+    else if( name.compare( "sext" ) == 0 )
+    {
+        return libstdhl::get< SextBuiltin >( type );
+    }
+    else if( name.compare( "trunc" ) == 0 )
+    {
+        return libstdhl::get< TruncBuiltin >( type );
+    }
+    else if( name.compare( "shl" ) == 0 )
+    {
+        return libstdhl::get< ShlBuiltin >( type );
+    }
+    else if( name.compare( "shr" ) == 0 )
+    {
+        return libstdhl::get< ShrBuiltin >( type );
+    }
+    else if( name.compare( "ashr" ) == 0 )
+    {
+        return libstdhl::get< AshrBuiltin >( type );
+    }
+    else if( name.compare( "clz" ) == 0 )
+    {
+        return libstdhl::get< ClzBuiltin >( type );
+    }
+    else if( name.compare( "clo" ) == 0 )
+    {
+        return libstdhl::get< CloBuiltin >( type );
+    }
+    else if( name.compare( "cls" ) == 0 )
+    {
+        return libstdhl::get< ClsBuiltin >( type );
     }
 
     else
     {
         libstdhl::Log::error(
-            "could not find a builtin for '%s'", tmp.c_str() );
-        return 0;
+            "could not find a builtin for '%s'", name.c_str() );
+        return nullptr;
     }
 }
 
-Builtin* Builtin::asBuiltin( Type* result )
+Builtin::Ptr Builtin::asBuiltin( const Type::Ptr& type )
 {
-    assert( result );
-
-    std::string tmp = "as";
-    tmp += result->description();
-
-    auto cache = str2obj().find( tmp );
-    if( cache != str2obj().end() )
-    {
-        return cache->second;
-    }
-
-    switch( result->result()->id() )
+    switch( type->result().id() )
     {
         case Type::BOOLEAN:
         {
-            return get< AsBooleanBuiltin >( result );
+            return libstdhl::get< AsBooleanBuiltin >( type );
         }
         case Type::INTEGER:
         {
-            return get< AsIntegerBuiltin >( result );
+            return libstdhl::get< AsIntegerBuiltin >( type );
         }
         case Type::BIT:
         {
-            return get< AsBitBuiltin >( result );
+            return libstdhl::get< AsBitBuiltin >( type );
         }
         case Type::STRING:
         {
-            return get< AsStringBuiltin >( result );
+            return libstdhl::get< AsStringBuiltin >( type );
         }
         case Type::FLOATING:
         {
-            return get< AsFloatingBuiltin >( result );
+            return libstdhl::get< AsFloatingBuiltin >( type );
         }
         case Type::RATIONAL:
         {
-            return get< AsRationalBuiltin >( result );
+            return libstdhl::get< AsRationalBuiltin >( type );
         }
         case Type::ENUMERATION:
         {
-            return get< AsEnumerationBuiltin >( result );
+            return libstdhl::get< AsEnumerationBuiltin >( type );
         }
         default:
         {
             libstdhl::Log::error(
-                "could not find a builtin for '%s'", tmp.c_str() );
-            return 0;
+                "could not find a builtin for '%s'", type->name() );
+
+            return nullptr;
         }
     }
-}
-
-template < typename T >
-Builtin* Builtin::get( Type* result )
-{
-    T tmp = T( result );
-
-    std::string key = tmp.description();
-
-    auto cache = str2obj().find( key );
-    if( cache != str2obj().end() )
-    {
-        return cache->second;
-    }
-
-    Builtin* ptr = new T( tmp );
-    return str2obj().emplace( key, ptr ).first->second;
 }
 
 //------------------------------------------------------------------------------
@@ -265,9 +220,9 @@ Builtin* Builtin::get( Type* result )
 // CastingBuiltin
 //
 
-CastingBuiltin::CastingBuiltin(
-    const char* name, Type* result, const TypeAnnotation& info, Value::ID id )
-: Builtin( name, result, info, id )
+CastingBuiltin::CastingBuiltin( const std::string& name, const Type::Ptr& type,
+    const TypeAnnotation& info, Value::ID id )
+: Builtin( name, type, info, id )
 {
 }
 
@@ -284,8 +239,8 @@ u1 CastingBuiltin::classof( Value const* obj )
 // AsBooleanBuiltin
 //
 
-AsBooleanBuiltin::AsBooleanBuiltin( Type* result )
-: CastingBuiltin( "asBoolean", result, info, classid() )
+AsBooleanBuiltin::AsBooleanBuiltin( const Type::Ptr& type )
+: CastingBuiltin( "asBoolean", type, info, classid() )
 {
 }
 const TypeAnnotation AsBooleanBuiltin::info( TypeAnnotation::Data{
@@ -321,8 +276,8 @@ u1 AsBooleanBuiltin::classof( Value const* obj )
 // AsIntegerBuiltin
 //
 
-AsIntegerBuiltin::AsIntegerBuiltin( Type* result )
-: CastingBuiltin( "asInteger", result, info, classid() )
+AsIntegerBuiltin::AsIntegerBuiltin( const Type::Ptr& type )
+: CastingBuiltin( "asInteger", type, info, classid() )
 {
 }
 const TypeAnnotation AsIntegerBuiltin::info( TypeAnnotation::Data{
@@ -358,8 +313,8 @@ u1 AsIntegerBuiltin::classof( Value const* obj )
 // AsBitBuiltin
 //
 
-AsBitBuiltin::AsBitBuiltin( Type* result )
-: CastingBuiltin( "asBit", result, info, classid() )
+AsBitBuiltin::AsBitBuiltin( const Type::Ptr& type )
+: CastingBuiltin( "asBit", type, info, classid() )
 {
 }
 const TypeAnnotation AsBitBuiltin::info( TypeAnnotation::Data{
@@ -395,8 +350,8 @@ u1 AsBitBuiltin::classof( Value const* obj )
 // AsStringBuiltin
 //
 
-AsStringBuiltin::AsStringBuiltin( Type* result )
-: CastingBuiltin( "asString", result, info, classid() )
+AsStringBuiltin::AsStringBuiltin( const Type::Ptr& type )
+: CastingBuiltin( "asString", type, info, classid() )
 {
 }
 const TypeAnnotation AsStringBuiltin::info( TypeAnnotation::Data{
@@ -436,8 +391,8 @@ u1 AsStringBuiltin::classof( Value const* obj )
 // AsFloatingBuiltin
 //
 
-AsFloatingBuiltin::AsFloatingBuiltin( Type* result )
-: CastingBuiltin( "asFloating", result, info, classid() )
+AsFloatingBuiltin::AsFloatingBuiltin( const Type::Ptr& type )
+: CastingBuiltin( "asFloating", type, info, classid() )
 {
 }
 const TypeAnnotation AsFloatingBuiltin::info( TypeAnnotation::Data{
@@ -473,8 +428,8 @@ u1 AsFloatingBuiltin::classof( Value const* obj )
 // AsRationalBuiltin
 //
 
-AsRationalBuiltin::AsRationalBuiltin( Type* result )
-: CastingBuiltin( "asRational", result, info, classid() )
+AsRationalBuiltin::AsRationalBuiltin( const Type::Ptr& type )
+: CastingBuiltin( "asRational", type, info, classid() )
 {
 }
 const TypeAnnotation AsRationalBuiltin::info( TypeAnnotation::Data{
@@ -492,10 +447,8 @@ u1 AsRationalBuiltin::classof( Value const* obj )
 // AsEnumerationBuiltin
 //
 
-AsEnumerationBuiltin::AsEnumerationBuiltin( Type* result )
-: CastingBuiltin( libstdhl::Allocator::string(
-                      "as" + std::string( result->description() ) ),
-      result, info, classid() )
+AsEnumerationBuiltin::AsEnumerationBuiltin( const Type::Ptr& type )
+: CastingBuiltin( "as" + type->str_name(), type, info, classid() )
 {
 }
 const TypeAnnotation AsEnumerationBuiltin::info( TypeAnnotation::Data{
@@ -520,8 +473,8 @@ u1 AsEnumerationBuiltin::classof( Value const* obj )
 //
 
 StringifyBuiltin::StringifyBuiltin(
-    const char* name, Type* result, Value::ID id )
-: Builtin( name, result, info, id )
+    const std::string& name, const Type::Ptr& type, Value::ID id )
+: Builtin( name, type, info, id )
 {
 }
 const TypeAnnotation StringifyBuiltin::info( TypeAnnotation::Data{
@@ -563,8 +516,8 @@ u1 StringifyBuiltin::classof( Value const* obj )
 // DecBuiltin
 //
 
-DecBuiltin::DecBuiltin( Type* result )
-: StringifyBuiltin( "dec", result, classid() )
+DecBuiltin::DecBuiltin( const Type::Ptr& type )
+: StringifyBuiltin( "dec", type, classid() )
 {
 }
 u1 DecBuiltin::classof( Value const* obj )
@@ -576,8 +529,8 @@ u1 DecBuiltin::classof( Value const* obj )
 // HexBuiltin
 //
 
-HexBuiltin::HexBuiltin( Type* result )
-: StringifyBuiltin( "hex", result, classid() )
+HexBuiltin::HexBuiltin( const Type::Ptr& type )
+: StringifyBuiltin( "hex", type, classid() )
 {
 }
 u1 HexBuiltin::classof( Value const* obj )
@@ -589,8 +542,8 @@ u1 HexBuiltin::classof( Value const* obj )
 // OctBuiltin
 //
 
-OctBuiltin::OctBuiltin( Type* result )
-: StringifyBuiltin( "oct", result, classid() )
+OctBuiltin::OctBuiltin( const Type::Ptr& type )
+: StringifyBuiltin( "oct", type, classid() )
 {
 }
 u1 OctBuiltin::classof( Value const* obj )
@@ -602,8 +555,8 @@ u1 OctBuiltin::classof( Value const* obj )
 // BinBuiltin
 //
 
-BinBuiltin::BinBuiltin( Type* result )
-: StringifyBuiltin( "bin", result, classid() )
+BinBuiltin::BinBuiltin( const Type::Ptr& type )
+: StringifyBuiltin( "bin", type, classid() )
 {
 }
 u1 BinBuiltin::classof( Value const* obj )
@@ -622,8 +575,9 @@ u1 BinBuiltin::classof( Value const* obj )
 // OperatorBuiltin
 //
 
-OperatorBuiltin::OperatorBuiltin( const char* name, Type* result, Value::ID id )
-: Builtin( name, result, info, id )
+OperatorBuiltin::OperatorBuiltin(
+    const std::string& name, const Type::Ptr& type, Value::ID id )
+: Builtin( name, type, info, id )
 {
 }
 const TypeAnnotation OperatorBuiltin::info( TypeAnnotation::Data{
@@ -649,8 +603,8 @@ u1 OperatorBuiltin::classof( Value const* obj )
 //
 
 ArithmeticBuiltin::ArithmeticBuiltin(
-    const char* name, Type* result, Value::ID id )
-: OperatorBuiltin( name, result, id )
+    const std::string& name, const Type::Ptr& type, Value::ID id )
+: OperatorBuiltin( name, type, id )
 {
 }
 u1 ArithmeticBuiltin::classof( Value const* obj )
@@ -665,8 +619,8 @@ u1 ArithmeticBuiltin::classof( Value const* obj )
 // AdduBuiltin
 //
 
-AdduBuiltin::AdduBuiltin( Type* result )
-: ArithmeticBuiltin( "addu", result, classid() )
+AdduBuiltin::AdduBuiltin( const Type::Ptr& type )
+: ArithmeticBuiltin( "addu", type, classid() )
 {
 }
 u1 AdduBuiltin::classof( Value const* obj )
@@ -678,8 +632,8 @@ u1 AdduBuiltin::classof( Value const* obj )
 // AddsBuiltin
 //
 
-AddsBuiltin::AddsBuiltin( Type* result )
-: ArithmeticBuiltin( "adds", result, classid() )
+AddsBuiltin::AddsBuiltin( const Type::Ptr& type )
+: ArithmeticBuiltin( "adds", type, classid() )
 {
 }
 u1 AddsBuiltin::classof( Value const* obj )
@@ -691,8 +645,8 @@ u1 AddsBuiltin::classof( Value const* obj )
 // SubuBuiltin
 //
 
-SubuBuiltin::SubuBuiltin( Type* result )
-: ArithmeticBuiltin( "subu", result, classid() )
+SubuBuiltin::SubuBuiltin( const Type::Ptr& type )
+: ArithmeticBuiltin( "subu", type, classid() )
 {
 }
 u1 SubuBuiltin::classof( Value const* obj )
@@ -704,8 +658,8 @@ u1 SubuBuiltin::classof( Value const* obj )
 // SubsBuiltin
 //
 
-SubsBuiltin::SubsBuiltin( Type* result )
-: ArithmeticBuiltin( "subs", result, classid() )
+SubsBuiltin::SubsBuiltin( const Type::Ptr& type )
+: ArithmeticBuiltin( "subs", type, classid() )
 {
 }
 u1 SubsBuiltin::classof( Value const* obj )
@@ -717,8 +671,8 @@ u1 SubsBuiltin::classof( Value const* obj )
 // MuluBuiltin
 //
 
-MuluBuiltin::MuluBuiltin( Type* result )
-: ArithmeticBuiltin( "mulu", result, classid() )
+MuluBuiltin::MuluBuiltin( const Type::Ptr& type )
+: ArithmeticBuiltin( "mulu", type, classid() )
 {
 }
 u1 MuluBuiltin::classof( Value const* obj )
@@ -730,8 +684,8 @@ u1 MuluBuiltin::classof( Value const* obj )
 // MulsBuiltin
 //
 
-MulsBuiltin::MulsBuiltin( Type* result )
-: ArithmeticBuiltin( "muls", result, classid() )
+MulsBuiltin::MulsBuiltin( const Type::Ptr& type )
+: ArithmeticBuiltin( "muls", type, classid() )
 {
 }
 u1 MulsBuiltin::classof( Value const* obj )
@@ -743,8 +697,9 @@ u1 MulsBuiltin::classof( Value const* obj )
 // CompareBuiltin
 //
 
-CompareBuiltin::CompareBuiltin( const char* name, Type* result, Value::ID id )
-: OperatorBuiltin( name, result, id )
+CompareBuiltin::CompareBuiltin(
+    const std::string& name, const Type::Ptr& type, Value::ID id )
+: OperatorBuiltin( name, type, id )
 {
 }
 u1 CompareBuiltin::classof( Value const* obj )
@@ -760,8 +715,8 @@ u1 CompareBuiltin::classof( Value const* obj )
 // LesuBuiltin
 //
 
-LesuBuiltin::LesuBuiltin( Type* result )
-: CompareBuiltin( "lesu", result, classid() )
+LesuBuiltin::LesuBuiltin( const Type::Ptr& type )
+: CompareBuiltin( "lesu", type, classid() )
 {
 }
 u1 LesuBuiltin::classof( Value const* obj )
@@ -773,8 +728,8 @@ u1 LesuBuiltin::classof( Value const* obj )
 // LessBuiltin
 //
 
-LessBuiltin::LessBuiltin( Type* result )
-: CompareBuiltin( "less", result, classid() )
+LessBuiltin::LessBuiltin( const Type::Ptr& type )
+: CompareBuiltin( "less", type, classid() )
 {
 }
 u1 LessBuiltin::classof( Value const* obj )
@@ -786,8 +741,8 @@ u1 LessBuiltin::classof( Value const* obj )
 // LequBuiltin
 //
 
-LequBuiltin::LequBuiltin( Type* result )
-: CompareBuiltin( "lequ", result, classid() )
+LequBuiltin::LequBuiltin( const Type::Ptr& type )
+: CompareBuiltin( "lequ", type, classid() )
 {
 }
 u1 LequBuiltin::classof( Value const* obj )
@@ -799,8 +754,8 @@ u1 LequBuiltin::classof( Value const* obj )
 // LeqsBuiltin
 //
 
-LeqsBuiltin::LeqsBuiltin( Type* result )
-: CompareBuiltin( "leqs", result, classid() )
+LeqsBuiltin::LeqsBuiltin( const Type::Ptr& type )
+: CompareBuiltin( "leqs", type, classid() )
 {
 }
 u1 LeqsBuiltin::classof( Value const* obj )
@@ -812,8 +767,8 @@ u1 LeqsBuiltin::classof( Value const* obj )
 // GreuBuiltin
 //
 
-GreuBuiltin::GreuBuiltin( Type* result )
-: CompareBuiltin( "greu", result, classid() )
+GreuBuiltin::GreuBuiltin( const Type::Ptr& type )
+: CompareBuiltin( "greu", type, classid() )
 {
 }
 u1 GreuBuiltin::classof( Value const* obj )
@@ -825,8 +780,8 @@ u1 GreuBuiltin::classof( Value const* obj )
 // GresBuiltin
 //
 
-GresBuiltin::GresBuiltin( Type* result )
-: CompareBuiltin( "gres", result, classid() )
+GresBuiltin::GresBuiltin( const Type::Ptr& type )
+: CompareBuiltin( "gres", type, classid() )
 {
 }
 u1 GresBuiltin::classof( Value const* obj )
@@ -838,8 +793,8 @@ u1 GresBuiltin::classof( Value const* obj )
 // GequBuiltin
 //
 
-GequBuiltin::GequBuiltin( Type* result )
-: CompareBuiltin( "gequ", result, classid() )
+GequBuiltin::GequBuiltin( const Type::Ptr& type )
+: CompareBuiltin( "gequ", type, classid() )
 {
 }
 u1 GequBuiltin::classof( Value const* obj )
@@ -851,8 +806,8 @@ u1 GequBuiltin::classof( Value const* obj )
 // GeqsBuiltin
 //
 
-GeqsBuiltin::GeqsBuiltin( Type* result )
-: CompareBuiltin( "geqs", result, classid() )
+GeqsBuiltin::GeqsBuiltin( const Type::Ptr& type )
+: CompareBuiltin( "geqs", type, classid() )
 {
 }
 u1 GeqsBuiltin::classof( Value const* obj )
@@ -864,9 +819,9 @@ u1 GeqsBuiltin::classof( Value const* obj )
 // BitBuiltin
 //
 
-BitBuiltin::BitBuiltin(
-    const char* name, Type* result, const TypeAnnotation& info, Value::ID id )
-: Builtin( name, result, info, id )
+BitBuiltin::BitBuiltin( const std::string& name, const Type::Ptr& type,
+    const TypeAnnotation& info, Value::ID id )
+: Builtin( name, type, info, id )
 {
 }
 
@@ -883,8 +838,8 @@ u1 BitBuiltin::classof( Value const* obj )
 // ZextBuiltin
 //
 
-ZextBuiltin::ZextBuiltin( Type* result )
-: BitBuiltin( "zext", result, info, classid() )
+ZextBuiltin::ZextBuiltin( const Type::Ptr& type )
+: BitBuiltin( "zext", type, info, classid() )
 {
 }
 const TypeAnnotation ZextBuiltin::info( TypeAnnotation::Data{
@@ -904,8 +859,8 @@ u1 ZextBuiltin::classof( Value const* obj )
 // SextBuiltin
 //
 
-SextBuiltin::SextBuiltin( Type* result )
-: BitBuiltin( "sext", result, info, classid() )
+SextBuiltin::SextBuiltin( const Type::Ptr& type )
+: BitBuiltin( "sext", type, info, classid() )
 {
 }
 const TypeAnnotation SextBuiltin::info( TypeAnnotation::Data{
@@ -925,8 +880,8 @@ u1 SextBuiltin::classof( Value const* obj )
 // TruncBuiltin
 //
 
-TruncBuiltin::TruncBuiltin( Type* result )
-: BitBuiltin( "trunc", result, info, classid() )
+TruncBuiltin::TruncBuiltin( const Type::Ptr& type )
+: BitBuiltin( "trunc", type, info, classid() )
 {
 }
 const TypeAnnotation TruncBuiltin::info( TypeAnnotation::Data{
@@ -946,8 +901,8 @@ u1 TruncBuiltin::classof( Value const* obj )
 // ShlBuiltin
 //
 
-ShlBuiltin::ShlBuiltin( Type* result )
-: BitBuiltin( "shl", result, info, classid() )
+ShlBuiltin::ShlBuiltin( const Type::Ptr& type )
+: BitBuiltin( "shl", type, info, classid() )
 {
 }
 const TypeAnnotation ShlBuiltin::info( TypeAnnotation::Data{
@@ -971,8 +926,8 @@ u1 ShlBuiltin::classof( Value const* obj )
 // ShrBuiltin
 //
 
-ShrBuiltin::ShrBuiltin( Type* result )
-: BitBuiltin( "shr", result, info, classid() )
+ShrBuiltin::ShrBuiltin( const Type::Ptr& type )
+: BitBuiltin( "shr", type, info, classid() )
 {
 }
 const TypeAnnotation ShrBuiltin::info( TypeAnnotation::Data{
@@ -996,8 +951,8 @@ u1 ShrBuiltin::classof( Value const* obj )
 // AshrBuiltin
 //
 
-AshrBuiltin::AshrBuiltin( Type* result )
-: BitBuiltin( "ashr", result, info, classid() )
+AshrBuiltin::AshrBuiltin( const Type::Ptr& type )
+: BitBuiltin( "ashr", type, info, classid() )
 {
 }
 const TypeAnnotation AshrBuiltin::info( TypeAnnotation::Data{
@@ -1021,8 +976,8 @@ u1 AshrBuiltin::classof( Value const* obj )
 // ClzBuiltin
 //
 
-ClzBuiltin::ClzBuiltin( Type* result )
-: BitBuiltin( "clz", result, info, classid() )
+ClzBuiltin::ClzBuiltin( const Type::Ptr& type )
+: BitBuiltin( "clz", type, info, classid() )
 {
 }
 const TypeAnnotation ClzBuiltin::info( TypeAnnotation::Data{
@@ -1042,8 +997,8 @@ u1 ClzBuiltin::classof( Value const* obj )
 // CloBuiltin
 //
 
-CloBuiltin::CloBuiltin( Type* result )
-: BitBuiltin( "clo", result, info, classid() )
+CloBuiltin::CloBuiltin( const Type::Ptr& type )
+: BitBuiltin( "clo", type, info, classid() )
 {
 }
 const TypeAnnotation CloBuiltin::info( TypeAnnotation::Data{
@@ -1063,8 +1018,8 @@ u1 CloBuiltin::classof( Value const* obj )
 // ClsBuiltin
 //
 
-ClsBuiltin::ClsBuiltin( Type* result )
-: BitBuiltin( "cls", result, info, classid() )
+ClsBuiltin::ClsBuiltin( const Type::Ptr& type )
+: BitBuiltin( "cls", type, info, classid() )
 {
 }
 const TypeAnnotation ClsBuiltin::info( TypeAnnotation::Data{

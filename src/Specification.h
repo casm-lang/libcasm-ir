@@ -41,13 +41,13 @@ namespace libcasm_ir
 
         void add( Value* value );
 
-        template < class C >
+        template < typename C >
         u1 has( void ) const
         {
             return m_content.count( C::classid() ) > 0;
         }
 
-        template < class C >
+        template < typename C >
         const std::unordered_map< std::string, Value* >& get( void ) const
         {
             auto result = m_content.find( C::classid() );

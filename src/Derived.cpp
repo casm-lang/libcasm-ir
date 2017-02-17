@@ -28,14 +28,8 @@
 
 using namespace libcasm_ir;
 
-Derived::Derived( const char* name, Type* result )
-: User( libstdhl::Allocator::string( "@" + std::string( name ) ), result,
-      classid() )
-{
-    m_ident = Identifier::create( result, name );
-}
-
-Derived::~Derived( void )
+Derived::Derived( const std::string& name, const Type::Ptr& result )
+: User( "@" + name, result, classid() )
 {
 }
 
@@ -52,8 +46,6 @@ void Derived::setContext( TrivialStatement* scope )
 
 void Derived::addParameter( Value* value )
 {
-    assert( isa< Identifier >( value ) and "parameter must be an identifier" );
-
     m_parameter.push_back( value );
 }
 

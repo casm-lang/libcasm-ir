@@ -28,14 +28,10 @@
 
 using namespace libcasm_ir;
 
-Rule::Rule( const char* name, Type* result )
-: User( libstdhl::Allocator::string( "@" + std::string( name ) ),
-      result,
-      classid() )
-, m_ident( 0 )
+Rule::Rule( const std::string& name, const Type::Ptr& type )
+: User( "@" + name, type, classid() )
 , m_context( 0 )
 {
-    m_ident = Identifier::create( result, this->name() );
 }
 
 Rule::~Rule( void )
@@ -55,8 +51,6 @@ void Rule::setContext( ParallelBlock* scope )
 
 void Rule::addParameter( Value* value )
 {
-    assert( isa< Identifier >( value ) and "parameter must be an identifier" );
-
     m_parameter.push_back( value );
 }
 
