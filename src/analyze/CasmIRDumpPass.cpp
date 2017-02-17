@@ -81,9 +81,10 @@ static const char* indention( Value& value )
 #define DUMP_POSTFIX fprintf( stderr, "\n" );
 
 #define DUMP_INSTR                                                             \
-    for( auto v : value.operands() )                                           \
+    for( auto operand : value.operands() )                                     \
     {                                                                          \
-        fprintf( stderr, ", %s [%s]", v->label(), v->type().description() );   \
+        fprintf( stderr, ", %s [%s]", operand->label(),                        \
+            operand->type().description() );                                   \
     }
 
 void CasmIRDumpPass::visit_prolog( Specification& value, Context& )
@@ -214,26 +215,26 @@ void CasmIRDumpPass::visit_prolog( SelectInstruction& value, Context& )
     DUMP_PREFIX;
 
     i32 cnt = -1;
-    for( auto v : value.operands() )
+    for( auto operand : value.operands() )
     {
         cnt++;
         if( cnt == 0 or ( cnt % 2 ) == 1 )
         {
-            if( isa< Instruction >( v ) or isa< Constant >( v ) )
+            if( isa< Instruction >( operand ) or isa< Constant >( operand ) )
             {
-                fprintf(
-                    stderr, ", %s [%s]", v->label(), v->type().description() );
+                fprintf( stderr, ", %s [%s]", operand->label(),
+                    operand->type().description() );
             }
             else
             {
-                fprintf( stderr, " : %s", v->label() );
+                fprintf( stderr, " : %s", operand->label() );
             }
         }
         else
         {
-            assert( isa< ExecutionSemanticsBlock >( v ) );
+            assert( isa< ExecutionSemanticsBlock >( operand ) );
 
-            fprintf( stderr, " : %s", v->label() );
+            fprintf( stderr, " : %s", operand->label() );
         }
     }
 

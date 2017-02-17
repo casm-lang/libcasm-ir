@@ -34,8 +34,8 @@ TEST( libcasm_ir__instruction_add, create_invalid )
 
 TEST( libcasm_ir__instruction_add, create_valid )
 {
-    auto a = IntegerConstant( 5 );
-    auto i = AddInstruction( &a, &a );
+    auto a = libstdhl::make< IntegerConstant >( 5 );
+    auto i = AddInstruction( a, a );
 
-    ASSERT_STREQ( i.type().name(), a.type().name() );
+    ASSERT_STREQ( i.type().name(), a->type().name() );
 }

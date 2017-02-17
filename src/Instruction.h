@@ -46,9 +46,9 @@ namespace libcasm_ir
 
         Value::Ptr operand( u8 position ) const;
 
-        void replace( const Value::Ptr& from, const Value::Ptr& to );
-
         Values operands( void ) const;
+
+        void replace( const Value::Ptr& from, const Value::Ptr& to );
 
         void setStatement( const std::shared_ptr< Statement >& statement );
 

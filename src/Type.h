@@ -123,13 +123,6 @@ namespace libcasm_ir
       private:
         ID m_id;
 
-      protected:
-        static std::unordered_map< std::string, Type* >& m_str2obj( void )
-        {
-            static std::unordered_map< std::string, Type* > cache;
-            return cache;
-        }
-
       public:
         std::unordered_map< std::string, std::weak_ptr< Type > >& make_cache(
             void )

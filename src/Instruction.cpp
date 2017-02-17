@@ -70,8 +70,19 @@ void Instruction::add( const Value::Ptr& operand )
 
 Value::Ptr Instruction::operand( u8 position ) const
 {
-    assert( position < m_operands.size() );
+    if( position < m_operands.size() )
+    {
+        throw std::domain_error( "instruction operand position '"
+                                 + std::to_string( position )
+                                 + "' does not exist!" );
+    }
+
     return m_operands.at( position );
+}
+
+Values Instruction::operands( void ) const
+{
+    return m_operands;
 }
 
 void Instruction::replace( const Value::Ptr& from, const Value::Ptr& to )
@@ -96,11 +107,6 @@ void Instruction::replace( const Value::Ptr& from, const Value::Ptr& to )
     //     User& user = static_cast< User& >( to );
     //     user.setUse( *this );
     // }
-}
-
-Values Instruction::operands( void ) const
-{
-    return m_operands;
 }
 
 void Instruction::setStatement( const Statement::Ptr& statement )

@@ -65,6 +65,15 @@ namespace libcasm_ir
         } m_value;
 
         Value::Ptr m_value_ptr;
+
+      public:
+        std::unordered_map< std::string, std::weak_ptr< Constant > >&
+        make_cache( void )
+        {
+            static std::unordered_map< std::string, std::weak_ptr< Constant > >
+                cache;
+            return cache;
+        }
     };
 
     class VoidConstant : public Constant
