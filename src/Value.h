@@ -246,8 +246,9 @@ namespace libcasm_ir
             std::function< void( Value&, Context& ) > action
             = []( Value&, Context& ) {} ) final;
 
-        virtual void iterate( Traversal order,
-            std::function< void( Value&, Context& ) > action ) final;
+        virtual void iterate(
+            Traversal order, std::function< void( Value&, Context& ) > action )
+            final;
 
       protected:
         static std::unordered_map< u8, std::unordered_set< Value* > >&

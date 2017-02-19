@@ -52,11 +52,9 @@ namespace libcasm_ir
 
         static Builtin::Ptr asBuiltin( const Type::Ptr& type );
 
-        std::unordered_map< std::string, std::weak_ptr< Builtin > >& make_cache(
-            void )
+        std::unordered_map< std::string, Builtin::Ptr >& make_cache( void )
         {
-            static std::unordered_map< std::string, std::weak_ptr< Builtin > >
-                cache;
+            static std::unordered_map< std::string, Builtin::Ptr > cache;
             return cache;
         }
     };

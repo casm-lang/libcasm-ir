@@ -31,7 +31,8 @@ using namespace libcasm_ir;
     {                                                                          \
         auto a = LHS;                                                          \
         auto b = RHS;                                                          \
-        auto i = INSTR( &a, &b );                                              \
+        auto i = INSTR(                                                        \
+            libstdhl::wrap< Value >( a ), libstdhl::wrap< Value >( b ) );      \
         ASSERT_EQ( isa< INSTR >( i ), true );                                  \
     }
 

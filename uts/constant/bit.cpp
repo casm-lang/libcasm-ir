@@ -32,6 +32,10 @@ static void libcasm_ir__constant_bit_test( u16 bitsize, u64 c )
 
     EXPECT_STREQ( v->name(), std::to_string( c ).c_str() );
     EXPECT_STREQ( v->name(), std::to_string( v->value() ).c_str() );
+    if( strcmp( v->name(), std::to_string( v->value() ).c_str() ) )
+    {
+        printf( "%u, %lu\n", bitsize, c );
+    }
 
     EXPECT_EQ( v->defined(), true );
     EXPECT_EQ( v->symbolic(), false );
@@ -40,10 +44,11 @@ static void libcasm_ir__constant_bit_test( u16 bitsize, u64 c )
     ASSERT_TRUE( w != nullptr );
 
     EXPECT_TRUE( v != w );
-    EXPECT_TRUE( *w == *w );
+    EXPECT_TRUE( *v == *w );
 
     auto a = libstdhl::get< BitConstant >( bitsize, c );
     auto b = libstdhl::get< BitConstant >( bitsize, c );
+
     ASSERT_TRUE( a != nullptr );
     ASSERT_TRUE( b != nullptr );
 
@@ -63,11 +68,12 @@ TEST( libcasm_ir__constant_bit, create_random )
 {
     for( u64 c = 1; c <= BitType::SizeMax; c++ )
     {
-        u16 bitsize = libstdhl::Random::uniform< u16 >( 1, c );
-        u64 value = libstdhl::Random::uniform< u64 >(
-            0, (u64)std::pow( bitsize, 2 ) );
+        for( u64 i = 0; i < 100; i++ )
+        {
+            u64 value = libstdhl::Random::uniform< u64 >() % ( (u64)1 << c );
 
-        libcasm_ir__constant_bit_test( bitsize, value );
+            libcasm_ir__constant_bit_test( c, value );
+        }
     }
 }
 

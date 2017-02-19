@@ -28,13 +28,23 @@ using namespace libcasm_ir;
 
 TEST( libcasm_ir__instruction_add, create_invalid )
 {
-    EXPECT_EXIT(
-        AddInstruction i( 0, 0 ), ::testing::KilledBySignal( SIGABRT ), "" );
+    EXPECT_THROW( { AddInstruction i( 0, 0 ); }, std::domain_error );
 }
 
-TEST( libcasm_ir__instruction_add, create_valid )
+TEST( libcasm_ir__instruction_add, create_valid_heap )
 {
     auto a = libstdhl::make< IntegerConstant >( 5 );
+    auto i = AddInstruction( a, a );
+
+    ASSERT_STREQ( i.type().name(), a->type().name() );
+}
+
+TEST( libcasm_ir__instruction_add, create_valid_stack )
+{
+    auto a_stack = IntegerConstant( 5 );
+
+    auto a = libstdhl::wrap< Value >( a_stack );
+
     auto i = AddInstruction( a, a );
 
     ASSERT_STREQ( i.type().name(), a->type().name() );

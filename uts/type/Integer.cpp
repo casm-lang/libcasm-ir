@@ -21,14 +21,38 @@
 //  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "gtest/gtest.h"
-
-#include "libcasm-ir.h"
+#include "uts/main.h"
 
 using namespace libcasm_ir;
 
-TEST( libcasm_ir__Type_Integer, make_valid )
+TEST( libcasm_ir__type_integer, make_and_get )
 {
     auto v = libstdhl::make< IntegerType >();
     ASSERT_TRUE( v != nullptr );
+
+    EXPECT_STREQ( v->name(), "i" );
+
+    auto w = libstdhl::make< IntegerType >();
+    ASSERT_TRUE( w != nullptr );
+
+    EXPECT_TRUE( v != w );
+    EXPECT_TRUE( *w == *w );
+
+    auto a = libstdhl::get< IntegerType >();
+    auto b = libstdhl::get< IntegerType >();
+    ASSERT_TRUE( a != nullptr );
+    ASSERT_TRUE( b != nullptr );
+
+    EXPECT_TRUE( a == b );
+    EXPECT_TRUE( *a == *b );
 }
+
+//
+//  Local variables:
+//  mode: c++
+//  indent-tabs-mode: nil
+//  c-basic-offset: 4
+//  tab-width: 4
+//  End:
+//  vim:noexpandtab:sw=4:ts=4:
+//

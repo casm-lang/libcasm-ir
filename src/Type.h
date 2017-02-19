@@ -124,11 +124,9 @@ namespace libcasm_ir
         ID m_id;
 
       public:
-        std::unordered_map< std::string, std::weak_ptr< Type > >& make_cache(
-            void )
+        std::unordered_map< std::string, Type::Ptr >& make_cache( void )
         {
-            static std::unordered_map< std::string, std::weak_ptr< Type > >
-                cache;
+            static std::unordered_map< std::string, Type::Ptr > cache;
             return cache;
         }
     };

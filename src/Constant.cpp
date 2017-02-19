@@ -23,6 +23,7 @@
 
 #include "Constant.h"
 
+#include "../stdhl/cpp/Default.h"
 #include "../stdhl/cpp/Log.h"
 
 using namespace libcasm_ir;
@@ -207,7 +208,21 @@ BitConstant::BitConstant(
 : Constant( ( defined ? std::to_string( value ) : undef_str ), type, defined,
       symbolic, classid() )
 {
-    m_value.m_u64 = value & ( ( 1 << type->bitsize() ) - 1 );
+    if( type->bitsize() < 64 )
+    {
+        m_value.m_u64
+            = value & ( ( (u64)1 << ( u64 )( type->bitsize() ) ) - (u64)1 );
+    }
+    else if( type->bitsize() == 64 )
+    {
+        m_value.m_u64 = value;
+    }
+    else
+    {
+        throw std::domain_error( "invalid bit size '"
+                                 + std::to_string( type->bitsize() )
+                                 + "' to create bit constant" );
+    }
 }
 
 BitConstant::BitConstant( const BitType::Ptr& type, u64 value )

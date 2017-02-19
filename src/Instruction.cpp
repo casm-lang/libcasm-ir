@@ -43,19 +43,28 @@ Instruction::Instruction( const std::string& name, const Type::Ptr& type,
 : User( name, type, id )
 , m_operands()
 {
-    for( auto op : operands )
+    for( auto operand : operands )
     {
-        add( op );
+        add( operand );
     }
 }
 
 void Instruction::add( const Value::Ptr& operand )
 {
-    if( ( isa< UnaryInstruction >( this ) and m_operands.size() >= 1 )
-        or ( isa< BinaryInstruction >( this ) and m_operands.size() >= 2 ) )
+    if( isa< UnaryInstruction >( this ) and m_operands.size() >= 1 )
     {
-        assert(
-            !" impossible to add more arguments to this instruction type " );
+        throw std::domain_error(
+            "impossible to add more arguments to unary instruction" );
+    }
+    else if( isa< BinaryInstruction >( this ) and m_operands.size() >= 2 )
+    {
+        throw std::domain_error(
+            "impossible to add more arguments to binary instruction" );
+    }
+
+    if( not operand )
+    {
+        throw std::domain_error( "instruction operand is a null pointer" );
     }
 
     m_operands.add( operand );
@@ -70,14 +79,21 @@ void Instruction::add( const Value::Ptr& operand )
 
 Value::Ptr Instruction::operand( u8 position ) const
 {
-    if( position < m_operands.size() )
+    if( position >= m_operands.size() )
     {
         throw std::domain_error( "instruction operand position '"
                                  + std::to_string( position )
                                  + "' does not exist!" );
     }
 
-    return m_operands.at( position );
+    if( auto element = m_operands.at( position ) )
+    {
+        return element;
+    }
+    else
+    {
+        throw std::domain_error( "operand points to null pointer" );
+    }
 }
 
 Values Instruction::operands( void ) const
@@ -383,9 +399,9 @@ OperatorInstruction::OperatorInstruction( const std::string& name,
 {
     std::vector< const Type* > arguments;
 
-    for( auto operand : operands )
+    for( u32 c = 0; c < operands.size(); c++ )
     {
-        arguments.push_back( &operand.get()->type() );
+        arguments.push_back( &operand( c ).get()->type() );
     }
 
     m_resolved = resultTypeForRelation( arguments );
@@ -410,7 +426,9 @@ u1 OperatorInstruction::classof( Value const* obj )
 ArithmeticInstruction::ArithmeticInstruction( const std::string& name,
     const std::vector< Value::Ptr >& operands, const TypeAnnotation& info,
     Value::ID id )
-: OperatorInstruction( name, operand( 0 )->ptr_type(), operands, info, id )
+: OperatorInstruction( name,
+      operands[ 0 ] ? operands[ 0 ]->ptr_type() : libstdhl::get< VoidType >(),
+      operands, info, id )
 {
     assert( operands.size() == 2 );
 
@@ -458,8 +476,10 @@ LogicalInstruction::LogicalInstruction( const std::string& name,
     const std::vector< Value::Ptr >& operands, const TypeAnnotation& info,
     Value::ID id )
 : OperatorInstruction( name,
-      operands[ 0 ]->type().isBit() ? operands[ 0 ]->ptr_type()
-                                    : libstdhl::get< BooleanType >(),
+      operands[ 0 ]
+          ? ( operands[ 0 ]->type().isBit() ? operands[ 0 ]->ptr_type()
+                                            : libstdhl::get< BooleanType >() )
+          : libstdhl::get< VoidType >(),
       operands, info, id )
 {
     assert( operands.size() <= 2 );

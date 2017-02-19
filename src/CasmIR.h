@@ -48,8 +48,14 @@ namespace libcasm_ir
     template < typename T >
     static inline u1 isa( Value* value )
     {
-        assert( value );
-        return T::classof( value );
+        if( value )
+        {
+            return T::classof( value );
+        }
+        else
+        {
+            return false;
+        }
     }
 
     template < typename T >

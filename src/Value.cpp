@@ -129,7 +129,7 @@ void Value::dump( void ) const
 
 std::string Value::make_hash( void ) const
 {
-    return "v:" + std::to_string( id() ) + ":" + description();
+    return "v:" + std::to_string( id() ) + ":" + str_description();
 }
 
 void Value::iterate( Traversal order,
