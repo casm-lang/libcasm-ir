@@ -129,7 +129,7 @@ RuleReferenceConstant::RuleReferenceConstant( void )
 
 Rule::Ptr RuleReferenceConstant::value( void ) const
 {
-    return std::static_pointer_cast< Agent >( m_value_ptr );
+    return std::static_pointer_cast< Rule >( m_value_ptr );
 }
 
 u1 RuleReferenceConstant::classof( Value const* obj )
@@ -390,6 +390,20 @@ u64 EnumerationConstant::value( void ) const
 }
 
 u1 EnumerationConstant::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
+
+//
+// Identifier
+//
+
+Identifier::Identifier( const std::string& value, const Type::Ptr& type )
+: Constant( value, type, true, false, classid() )
+{
+}
+
+u1 Identifier::classof( Value const* obj )
 {
     return obj->id() == classid();
 }

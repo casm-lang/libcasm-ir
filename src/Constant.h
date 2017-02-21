@@ -300,37 +300,20 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    // class Identifier : public Constant
-    // {
-    //   public:
-    //     using Ptr = std::shared_ptr< Identifier >;
+    class Identifier : public Constant
+    {
+      public:
+        using Ptr = std::shared_ptr< Identifier >;
 
-    //   private:
-    //     Identifier( const Type::Ptr& type, const std::string& value );
+        Identifier( const std::string& value, const Type::Ptr& type );
 
-    //   public:
-    //     ~Identifier( void );
+        static inline Value::ID classid( void )
+        {
+            return Value::STRING_CONSTANT;
+        }
 
-    //     static Identifier* create( const Type::Ptr& type,
-    //         const std::string& value, const Value::Ptr& scope = nullptr );
-
-    //     static void forgetSymbol( const std::string& value );
-
-    //     static inline Value::ID classid( void )
-    //     {
-    //         return Value::IDENTIFIER;
-    //     }
-
-    //     static u1 classof( Value const* obj );
-
-    //     static std::unordered_map< std::string, Identifier* >& ident2obj(
-    //     void )
-    //     {
-    //         static std::unordered_map< std::string, Identifier* > cache;
-    //         return cache;
-    //     }
-
-    // };
+        static u1 classof( Value const* obj );
+    };
 }
 
 #endif // _LIB_CASMIR_CONSTANT_H_

@@ -33,25 +33,14 @@ Derived::Derived( const std::string& name, const Type::Ptr& result )
 {
 }
 
-TrivialStatement* Derived::context( void ) const
+void Derived::setContext( const Statement::Ptr& context )
+{
+    m_context = context;
+}
+
+Statement::Ptr Derived::context( void ) const
 {
     return m_context;
-}
-
-void Derived::setContext( TrivialStatement* scope )
-{
-    assert( scope );
-    m_context = scope;
-}
-
-void Derived::addParameter( Value* value )
-{
-    m_parameter.push_back( value );
-}
-
-const std::vector< Value* >& Derived::parameters( void ) const
-{
-    return m_parameter;
 }
 
 u1 Derived::classof( Value const* obj )

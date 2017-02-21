@@ -34,30 +34,37 @@ Rule::Rule( const std::string& name, const Type::Ptr& type )
 {
 }
 
-Rule::~Rule( void )
+void Rule::setContext(
+    const std::shared_ptr< ExecutionSemanticsBlock >& context )
 {
+    m_context = context;
 }
 
-ParallelBlock* Rule::context( void ) const
+ExecutionSemanticsBlock::Ptr Rule::context( void ) const
 {
     return m_context;
 }
 
-void Rule::setContext( ParallelBlock* scope )
-{
-    assert( scope );
-    m_context = scope;
-}
+// ParallelBlock* Rule::context( void ) const
+// {
+//     return m_context;
+// }
 
-void Rule::addParameter( Value* value )
-{
-    m_parameter.push_back( value );
-}
+// void Rule::setContext( ParallelBlock* scope )
+// {
+//     assert( scope );
+//     m_context = scope;
+// }
 
-const std::vector< Value* >& Rule::parameters( void ) const
-{
-    return m_parameter;
-}
+// void Rule::addParameter( Value* value )
+// {
+//     m_parameter.push_back( value );
+// }
+
+// const std::vector< Value* >& Rule::parameters( void ) const
+// {
+//     return m_parameter;
+// }
 
 u1 Rule::classof( Value const* obj )
 {

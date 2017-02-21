@@ -128,8 +128,8 @@ u1 ExecutionSemanticsBlock::classof( Value const* obj )
 // ParallelBlock
 //
 
-ParallelBlock::ParallelBlock( const ExecutionSemanticsBlock::Ptr& scope )
-: ExecutionSemanticsBlock( "par", true, scope, classid() )
+ParallelBlock::ParallelBlock( void )
+: ExecutionSemanticsBlock( "par", true, 0, classid() )
 {
 }
 
@@ -143,8 +143,8 @@ u1 ParallelBlock::classof( Value const* obj )
 // SequentialBlock
 //
 
-SequentialBlock::SequentialBlock( const ExecutionSemanticsBlock::Ptr& scope )
-: ExecutionSemanticsBlock( "seq", false, scope, classid() )
+SequentialBlock::SequentialBlock( void )
+: ExecutionSemanticsBlock( "seq", false, 0, classid() )
 {
 }
 

@@ -28,22 +28,26 @@
 
 namespace libcasm_ir
 {
-    class TrivialStatement;
+    class Statement;
 
     class Derived : public User
     {
       public:
+        using Ptr = std::shared_ptr< Derived >;
+
         Derived( const std::string& name, const Type::Ptr& result );
 
         ~Derived( void ) = default;
 
-        TrivialStatement* context( void ) const;
+        void setContext( const std::shared_ptr< Statement >& statement );
 
-        void setContext( TrivialStatement* scope );
+        std::shared_ptr< Statement > context( void ) const;
 
-        void addParameter( Value* value );
+        // void setContext( TrivialStatement* scope );
 
-        const std::vector< Value* >& parameters( void ) const;
+        // void addParameter( Value* value );
+
+        // const std::vector< Value* >& parameters( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -53,8 +57,10 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
 
       private:
-        TrivialStatement* m_context;
-        std::vector< Value* > m_parameter;
+        std::shared_ptr< Statement > m_context;
+
+        // TrivialStatement* m_context;
+        // std::vector< Value* > m_parameter;
     };
 }
 

@@ -31,16 +31,12 @@
 
 using namespace libcasm_ir;
 
-Specification::Specification( const char* name )
+Specification::Specification( const std::string& name )
 : Value( name, 0, classid() )
 {
 }
 
-Specification::~Specification( void )
-{
-}
-
-void Specification::add( Value* value )
+void Specification::add( const Value::Ptr& value )
 {
     assert( value );
 

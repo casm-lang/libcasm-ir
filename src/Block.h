@@ -107,7 +107,7 @@ namespace libcasm_ir
     class ParallelBlock : public ExecutionSemanticsBlock
     {
       public:
-        ParallelBlock( const ExecutionSemanticsBlock::Ptr& scope );
+        ParallelBlock( void );
 
         static inline Value::ID classid( void )
         {
@@ -120,7 +120,7 @@ namespace libcasm_ir
     class SequentialBlock : public ExecutionSemanticsBlock
     {
       public:
-        SequentialBlock( const ExecutionSemanticsBlock::Ptr& scope );
+        SequentialBlock( void );
 
         static inline Value::ID classid( void )
         {
