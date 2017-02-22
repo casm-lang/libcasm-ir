@@ -26,6 +26,7 @@
 
 #include "libpass.h"
 
+#include "../Specification.h"
 #include "../Visitor.h"
 
 /**
@@ -44,6 +45,26 @@ namespace libcasm_ir
         u1 run( libpass::PassResult& pr ) override;
 
         LIB_CASMIR_VISITOR_INTERFACE;
+
+        class Data : public libpass::PassData
+        {
+          public:
+            using Ptr = std::shared_ptr< Data >;
+
+            Data( const Specification::Ptr& specification )
+            : m_specification( specification )
+            {
+            }
+
+            std::shared_ptr< libcasm_ir::Specification > specification(
+                void ) const
+            {
+                return m_specification;
+            }
+
+          private:
+            std::shared_ptr< libcasm_ir::Specification > m_specification;
+        };
     };
 }
 

@@ -35,10 +35,10 @@ static libpass::PassRegistration< CasmIRDumpPass > PASS( "CASM IR Dumping Pass",
 
 u1 CasmIRDumpPass::run( libpass::PassResult& pr )
 {
-    Specification* value = (Specification*)pr.result< CasmIRDumpPass >();
-    assert( value );
+    auto data = pr.result< CasmIRDumpPass >();
+    assert( data );
 
-    value->iterate( Traversal::PREORDER, this );
+    data->specification()->iterate( Traversal::PREORDER, this );
 
     return true;
 }

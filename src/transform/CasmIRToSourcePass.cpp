@@ -50,10 +50,11 @@ static const char* indention( Value& value )
 
 u1 CasmIRToSourcePass::run( libpass::PassResult& pr )
 {
-    Specification* value = (Specification*)pr.result< CasmIRDumpPass >();
-    assert( value );
+    auto data = pr.result< CasmIRDumpPass >();
+    assert( data );
 
-    value->iterate( Traversal::PREORDER, []( Value& value, Context& ) {
+    data->specification()->iterate( Traversal::PREORDER, []( Value& value,
+                                                             Context& ) {
         if( isa< Constant >( value ) )
         {
             static u1 first = true;
