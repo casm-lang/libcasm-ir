@@ -158,39 +158,38 @@ void Value::iterate( Traversal order,
     {
         Specification& obj = static_cast< Specification& >( value );
 
-        const std::unordered_map< std::string, std::weak_ptr< Value > > empty
-            = {};
+        const std::unordered_map< std::string, Value::Ptr > empty = {};
 
         for( auto p :
             ( obj.has< Constant >() ? obj.get< Constant >() : empty ) )
         {
-            p.second.lock()->iterate( order, visitor, cxt, action );
+            p.second->iterate( order, visitor, cxt, action );
         }
 
         for( auto p : ( obj.has< Builtin >() ? obj.get< Builtin >() : empty ) )
         {
-            p.second.lock()->iterate( order, visitor, cxt, action );
+            p.second->iterate( order, visitor, cxt, action );
         }
 
         for( auto p :
             ( obj.has< Function >() ? obj.get< Function >() : empty ) )
         {
-            p.second.lock()->iterate( order, visitor, cxt, action );
+            p.second->iterate( order, visitor, cxt, action );
         }
 
         for( auto p : ( obj.has< Derived >() ? obj.get< Derived >() : empty ) )
         {
-            p.second.lock()->iterate( order, visitor, cxt, action );
+            p.second->iterate( order, visitor, cxt, action );
         }
 
         for( auto p : ( obj.has< Rule >() ? obj.get< Rule >() : empty ) )
         {
-            p.second.lock()->iterate( order, visitor, cxt, action );
+            p.second->iterate( order, visitor, cxt, action );
         }
 
         for( auto p : ( obj.has< Agent >() ? obj.get< Agent >() : empty ) )
         {
-            p.second.lock()->iterate( order, visitor, cxt, action );
+            p.second->iterate( order, visitor, cxt, action );
         }
     }
     else if( isa< Rule >( value ) )
