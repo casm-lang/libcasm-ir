@@ -28,27 +28,25 @@
 
 namespace libcasm_ir
 {
-    class Specification : public Value
+    class Specification final : public Value
     {
-      private:
-        std::unordered_map< u8, std::unordered_map< std::string, Value* > >
-            m_content;
-
       public:
-        Specification( const char* name );
+        using Ptr = std::shared_ptr< Specification >;
 
-        ~Specification( void );
+        Specification( const std::string& name );
 
-        void add( Value* value );
+        ~Specification( void ) = default;
 
-        template < class C >
+        void add( const Value::Ptr& value );
+
+        template < typename C >
         u1 has( void ) const
         {
             return m_content.count( C::classid() ) > 0;
         }
 
-        template < class C >
-        const std::unordered_map< std::string, Value* >& get( void ) const
+        template < typename C >
+        const std::unordered_map< std::string, Value::Ptr >& get( void ) const
         {
             auto result = m_content.find( C::classid() );
             assert( result != m_content.end() );
@@ -61,10 +59,14 @@ namespace libcasm_ir
         }
 
         static u1 classof( Value const* obj );
+
+      private:
+        std::unordered_map< u8, std::unordered_map< std::string, Value::Ptr > >
+            m_content;
     };
 }
 
-#endif /* _LIB_CASMIR_SPECIFICATION_H_ */
+#endif // _LIB_CASMIR_SPECIFICATION_H_
 
 //
 //  Local variables:

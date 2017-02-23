@@ -28,28 +28,20 @@
 
 namespace libcasm_ir
 {
-    class Identifier;
-    class TrivialStatement;
+    class Statement;
 
     class Derived : public User
     {
-      private:
-        Identifier* m_ident;
-        TrivialStatement* m_context;
-        std::vector< Value* > m_parameter;
-
       public:
-        Derived( const char* name, Type* result );
+        using Ptr = std::shared_ptr< Derived >;
 
-        ~Derived( void );
+        Derived( const std::string& name, const Type::Ptr& result );
 
-        TrivialStatement* context( void ) const;
+        ~Derived( void ) = default;
 
-        void setContext( TrivialStatement* scope );
+        void setContext( const std::shared_ptr< Statement >& statement );
 
-        void addParameter( Value* value );
-
-        const std::vector< Value* >& parameters( void ) const;
+        std::shared_ptr< Statement > context( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -58,14 +50,12 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        virtual const char* label( void ) override final
-        {
-            return name();
-        }
+      private:
+        std::shared_ptr< Statement > m_context;
     };
 }
 
-#endif /* _LIB_CASMIR_DERIVED_H_ */
+#endif // _LIB_CASMIR_DERIVED_H_
 
 //
 //  Local variables:

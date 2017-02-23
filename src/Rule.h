@@ -28,28 +28,21 @@
 
 namespace libcasm_ir
 {
-    class Identifier;
-    class ParallelBlock;
+    class ExecutionSemanticsBlock;
 
     class Rule : public User
     {
-      private:
-        Identifier* m_ident;
-        ParallelBlock* m_context;
-        std::vector< Value* > m_parameter;
-
       public:
-        Rule( const char* name, Type* result );
+        using Ptr = std::shared_ptr< Rule >;
 
-        ~Rule( void );
+        Rule( const std::string& name, const Type::Ptr& type );
 
-        ParallelBlock* context( void ) const;
+        ~Rule( void ) = default;
 
-        void setContext( ParallelBlock* scope );
+        void setContext(
+            const std::shared_ptr< ExecutionSemanticsBlock >& context );
 
-        void addParameter( Value* value );
-
-        const std::vector< Value* >& parameters( void ) const;
+        std::shared_ptr< ExecutionSemanticsBlock > context( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -58,14 +51,12 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        virtual const char* label( void ) override final
-        {
-            return name();
-        }
+      private:
+        std::shared_ptr< ExecutionSemanticsBlock > m_context;
     };
 }
 
-#endif /* _LIB_CASMIR_RULE_H_ */
+#endif // _LIB_CASMIR_RULE_H_
 
 //
 //  Local variables:

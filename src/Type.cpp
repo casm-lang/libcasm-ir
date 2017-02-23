@@ -22,325 +22,314 @@
 //
 
 #include "Type.h"
-
-#include "../stdhl/cpp/Allocator.h"
+#include "Enumeration.h"
 
 using namespace libcasm_ir;
 
-Type::Type( const char* name, const char* description, Type::ID id )
+Type::Type(
+    const std::string& name, const std::string& description, Type::ID id )
 : m_name( name )
 , m_description( description )
 , m_id( id )
 {
 }
 
-const Type::ID Type::id( void ) const
+const char* Type::name( void ) const
+{
+    return m_name.c_str();
+}
+
+std::string Type::str_name( void ) const
+{
+    return m_name;
+}
+
+const char* Type::description() const
+{
+    return m_description.c_str();
+}
+
+std::string Type::str_description() const
+{
+    return m_description;
+}
+
+Type::ID Type::id( void ) const
 {
     return m_id;
+}
+
+const Type& Type::result( void ) const
+{
+    if( isRelation() )
+    {
+        const RelationType* rt = static_cast< const RelationType* >( this );
+
+        return *rt->result().get();
+    }
+
+    return *this;
+}
+
+Type::Ptr Type::ptr_result( void ) const
+{
+    if( isRelation() )
+    {
+        const RelationType* rt = static_cast< const RelationType* >( this );
+
+        return rt->result();
+    }
+
+    return nullptr;
+}
+
+std::string Type::make_hash( void ) const
+{
+    return "t:" + std::to_string( id() ) + ":" + description();
 }
 
 u1 Type::isVoid( void ) const
 {
     return id() == Type::VOID;
 }
+
 u1 Type::isLabel( void ) const
 {
     return id() == Type::LABEL;
 }
+
+u1 Type::isLocation( void ) const
+{
+    return id() == Type::LOCATION;
+}
+
 u1 Type::isAgent( void ) const
 {
     return id() == Type::AGENT;
 }
+
 u1 Type::isRuleReference( void ) const
 {
     return id() == Type::RULE_REFERENCE;
 }
+
 u1 Type::isBoolean( void ) const
 {
     return id() == Type::BOOLEAN;
 }
+
 u1 Type::isInteger( void ) const
 {
     return id() == Type::INTEGER;
 }
+
 u1 Type::isBit( void ) const
 {
     return id() == Type::BIT;
 }
+
 u1 Type::isString( void ) const
 {
     return id() == Type::STRING;
 }
+
 u1 Type::isFloating( void ) const
 {
     return id() == Type::FLOATING;
 }
+
 u1 Type::isRational( void ) const
 {
     return id() == Type::RATIONAL;
 }
+
 u1 Type::isEnumeration( void ) const
 {
     return id() == Type::ENUMERATION;
 }
+
 u1 Type::isRelation( void ) const
 {
     return id() == Type::RELATION;
 }
 
-Type* Type::result( void ) const
-{
-    if( id() == Type::RELATION )
-    {
-        const RelationType* rt = static_cast< const RelationType* >( this );
-        return (Type*)rt->result();
-    }
-    return (Type*)this;
-}
-
-Type* Type::Void( void )
-{
-    static VoidType cache = VoidType();
-    return m_str2obj().emplace( cache.name(), &cache ).first->second;
-}
-
-Type* Type::Label( void )
-{
-    static LabelType cache = LabelType();
-    return m_str2obj().emplace( cache.name(), &cache ).first->second;
-}
-
-Type* Type::Agent( void )
-{
-    static AgentType cache = AgentType();
-    return m_str2obj().emplace( cache.name(), &cache ).first->second;
-}
-
-Type* Type::RuleReference( void )
-{
-    static RuleReferenceType cache = RuleReferenceType();
-    return m_str2obj().emplace( cache.name(), &cache ).first->second;
-}
-
-Type* Type::Boolean( void )
-{
-    static BooleanType cache = BooleanType();
-    return m_str2obj().emplace( cache.name(), &cache ).first->second;
-}
-
-Type* Type::Integer( void )
-{
-    static IntegerType cache = IntegerType();
-    return m_str2obj().emplace( cache.name(), &cache ).first->second;
-}
-
-Type* Type::Bit( u16 size )
-{
-    BitType tmp( size );
-
-    auto cache = m_str2obj().find( tmp.name() );
-    if( cache != m_str2obj().end() )
-    {
-        return cache->second;
-    }
-
-    Type* ptr = new BitType( tmp );
-    m_str2obj()[ tmp.name() ] = ptr;
-    return ptr;
-}
-
-Type* Type::String( void )
-{
-    static StringType cache = StringType();
-    return m_str2obj().emplace( cache.name(), &cache ).first->second;
-}
-
-Type* Type::Floating( void )
-{
-    static FloatingType cache = FloatingType();
-    return m_str2obj().emplace( cache.name(), &cache ).first->second;
-}
-
-Type* Type::Rational( void )
-{
-    static RationalType cache = RationalType();
-    return m_str2obj().emplace( cache.name(), &cache ).first->second;
-}
-
-Type* Type::Enumeration( const char* name )
-{
-    assert( !" TODO " );
-    return 0;
-}
-
-Type* Type::Relation( Type* result, std::vector< Type* > arguments )
-{
-    RelationType tmp( result, arguments );
-
-    auto cache = m_str2obj().find( tmp.name() );
-    if( cache != m_str2obj().end() )
-    {
-        return cache->second;
-    }
-
-    Type* ptr = new RelationType( tmp );
-    m_str2obj()[ tmp.name() ] = ptr;
-    return ptr;
-}
+//
+//
+// Primitive Type
+//
 
 PrimitiveType::PrimitiveType(
-    const char* name, const char* description, Type::ID id )
+    const std::string& name, const std::string& description, Type::ID id )
 : Type( name, description, id )
 {
 }
 
-const char* PrimitiveType::name( void )
-{
-    return m_name;
-}
-
-const char* PrimitiveType::description( void )
-{
-    return m_description;
-}
-
-const std::vector< Type* >& PrimitiveType::arguments( void )
-{
-    static std::vector< Type* > empty = {};
-    return empty;
-}
+//
+// Void Type
+//
 
 VoidType::VoidType()
-: PrimitiveType( "v", "Void", Type::LABEL )
+: PrimitiveType( "v", "Void", Type::VOID )
 {
 }
+
+//
+// Label Type
+//
 
 LabelType::LabelType()
 : PrimitiveType( "label", "Label", Type::LABEL )
 {
 }
 
+//
+// Location Type
+//
+
+LocationType::LocationType()
+: PrimitiveType( "l", "Location", Type::LOCATION )
+{
+}
+
+//
+// Agent Type
+//
+
 AgentType::AgentType()
 : PrimitiveType( "a", "Agent", Type::AGENT )
 {
 }
+
+//
+// Rule Reference Type
+//
 
 RuleReferenceType::RuleReferenceType()
 : PrimitiveType( "r", "RuleRef", Type::RULE_REFERENCE )
 {
 }
 
+//
+// Boolean Type
+//
+
 BooleanType::BooleanType()
 : PrimitiveType( "b", "Boolean", Type::BOOLEAN )
 {
 }
+
+//
+// Integer Type
+//
 
 IntegerType::IntegerType()
 : PrimitiveType( "i", "Integer", Type::INTEGER )
 {
 }
 
-BitType::BitType( u16 size )
-: PrimitiveType( libstdhl::Allocator::string( "u" + std::to_string( size ) ),
-      libstdhl::Allocator::string( "Bit(" + std::to_string( size ) + ")" ),
-      Type::BIT )
-, m_size( size )
+//
+// Bit Type
+//
+
+BitType::BitType( u16 bitsize )
+: PrimitiveType( "u" + std::to_string( bitsize ),
+      "Bit(" + std::to_string( bitsize ) + ")", Type::BIT )
+, m_bitsize( bitsize )
 {
 }
 
-const u16 BitType::bitsize( void ) const
+u16 BitType::bitsize( void ) const
 {
-    return m_size;
+    return m_bitsize;
 }
+
+//
+// String Type
+//
 
 StringType::StringType()
 : PrimitiveType( "s", "String", Type::STRING )
 {
 }
 
+//
+// Flaoting Type
+//
+
 FloatingType::FloatingType()
 : PrimitiveType( "f", "Floating", Type::FLOATING )
 {
 }
+
+//
+// Rational Type
+//
 
 RationalType::RationalType()
 : PrimitiveType( "q", "Rational", Type::RATIONAL )
 {
 }
 
-EnumerationType::EnumerationType( const char* name )
-: PrimitiveType( name, name, Type::ENUMERATION )
+//
+// Enumeration Type
+//
+
+EnumerationType::EnumerationType( const Enumeration::Ptr& kind )
+: PrimitiveType( kind->name(), kind->name(), Type::ENUMERATION )
+, m_kind( kind )
 {
 }
 
-RelationType::RelationType( Type* result, std::vector< Type* > arguments )
-: Type( 0, 0, Type::RELATION )
+Enumeration::Ptr EnumerationType::kindPtr( void ) const
+{
+    return m_kind;
+}
+
+Enumeration& EnumerationType::kind( void ) const
+{
+    return *m_kind.get();
+}
+
+//
+//
+// Relation Type
+//
+
+RelationType::RelationType( const Type::Ptr& result, const Types& arguments )
+: Type( "", "", Type::RELATION )
 , m_result( result )
 , m_arguments( arguments )
 {
-    assert( result );
-}
+    std::string m_name = "(";
+    std::string m_description = "(";
 
-const char* RelationType::name( void )
-{
-    if( not m_name )
+    u1 first = true;
+    for( auto argument : m_arguments )
     {
-        u1 first = true;
-        std::string tmp = "(";
-        for( auto argument : m_arguments )
+        if( not first )
         {
-            if( not first )
-            {
-                tmp += ", ";
-            }
-            tmp += argument->name();
-            first = false;
+            m_name += ", ";
+            m_description += " x ";
         }
 
-        tmp += " -> ";
-        tmp += m_result->name();
-        tmp += ")";
+        m_name += argument->str_name();
+        m_description += argument->str_description();
 
-        m_name = libstdhl::Allocator::string( tmp );
+        first = false;
     }
 
-    return m_name;
+    m_name += " -> " + m_result->str_name() + ")";
+    m_description += " -> " + m_result->str_description() + ")";
 }
 
-const char* RelationType::description( void )
-{
-    if( not m_description )
-    {
-        u1 first = true;
-        std::string tmp = "(";
-        for( auto argument : m_arguments )
-        {
-            if( not first )
-            {
-                tmp += " x ";
-            }
-            tmp += argument->description();
-            first = false;
-        }
-
-        tmp += " -> ";
-        tmp += m_result->description();
-        tmp += ")";
-
-        m_description = libstdhl::Allocator::string( tmp );
-    }
-
-    return m_description;
-}
-
-const std::vector< Type* >& RelationType::arguments( void )
-{
-    return m_arguments;
-}
-
-const Type* RelationType::result( void ) const
+Type::Ptr RelationType::result( void ) const
 {
     return m_result;
+}
+
+Types RelationType::arguments( void ) const
+{
+    return m_arguments;
 }
 
 //

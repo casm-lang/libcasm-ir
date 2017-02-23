@@ -21,33 +21,33 @@
 //  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "libcasm-ir.h"
-#include "gtest/gtest.h"
+#include "uts/main.h"
+
+using namespace libcasm_ir;
 
 TEST( libcasm_ir, example )
 {
-    EXPECT_EXIT( libcasm_ir::AddInstruction i( 0, 0 ),
-        ::testing::KilledBySignal( SIGABRT ), "" );
+    EXPECT_THROW( { AddInstruction i( 0, 0 ); }, std::domain_error );
 }
 
 TEST( libcasm_ir, example2 )
 {
-    libcasm_ir::Value* a = libcasm_ir::Constant::Integer( 5 );
-    libcasm_ir::AddInstruction i( a, a );
+    auto a = IntegerConstant( 5 );
+    auto i = AddInstruction(
+        libstdhl::wrap< Value >( a ), libstdhl::wrap< Value >( a ) );
 
-    ASSERT_EQ( i.type().id(), a->type().id() );
+    ASSERT_EQ( i.type().id(), a.type().id() );
 }
 
 TEST( libcasm_ir, example3 )
 {
-    libcasm_ir::TypeAnnotation::ResultTypes< libcasm_ir::AddInstruction >();
-    libcasm_ir::TypeAnnotation::ResultTypes< libcasm_ir::SubInstruction >();
-    libcasm_ir::TypeAnnotation::ResultTypes< libcasm_ir::DivInstruction >();
+    TypeAnnotation::ResultTypes< AddInstruction >();
+    TypeAnnotation::ResultTypes< SubInstruction >();
+    TypeAnnotation::ResultTypes< DivInstruction >();
 }
 
 TEST( libcasm_ir, example4 )
 {
-    libcasm_ir::TypeAnnotation::ResultTypes< libcasm_ir::AsIntegerBuiltin >();
-    libcasm_ir::TypeAnnotation::
-        ResultTypes< libcasm_ir::AsEnumerationBuiltin >();
+    TypeAnnotation::ResultTypes< AsIntegerBuiltin >();
+    TypeAnnotation::ResultTypes< AsEnumerationBuiltin >();
 }

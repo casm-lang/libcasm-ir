@@ -26,15 +26,18 @@
 
 using namespace libcasm_ir;
 
-#define ISA( T, ... )                                                          \
-    TEST( libcasm_ir, isa_##T )                                                \
+#define ISA( INSTR, LHS, RHS )                                                 \
+    TEST( libcasm_ir, isa_##INSTR )                                            \
     {                                                                          \
-        static T v( __VA_ARGS__ );                                             \
-        ASSERT_EQ( isa< T >( v ), true );                                      \
+        auto a = LHS;                                                          \
+        auto b = RHS;                                                          \
+        auto i = INSTR(                                                        \
+            libstdhl::wrap< Value >( a ), libstdhl::wrap< Value >( b ) );      \
+        ASSERT_EQ( isa< INSTR >( i ), true );                                  \
     }
 
-ISA( AddInstruction, Constant::Integer( 5 ), Constant::Integer( 2 ) )
-ISA( SubInstruction, Constant::Integer( 5 ), Constant::Integer( 2 ) )
-ISA( MulInstruction, Constant::Integer( 5 ), Constant::Integer( 2 ) )
-ISA( ModInstruction, Constant::Integer( 5 ), Constant::Integer( 2 ) )
-ISA( DivInstruction, Constant::Integer( 5 ), Constant::Integer( 2 ) )
+ISA( AddInstruction, IntegerConstant( 5 ), IntegerConstant( 2 ) )
+ISA( SubInstruction, IntegerConstant( 5 ), IntegerConstant( 2 ) )
+ISA( MulInstruction, IntegerConstant( 5 ), IntegerConstant( 2 ) )
+ISA( ModInstruction, IntegerConstant( 5 ), IntegerConstant( 2 ) )
+ISA( DivInstruction, IntegerConstant( 5 ), IntegerConstant( 2 ) )

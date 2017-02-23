@@ -30,14 +30,56 @@
 #include "Instruction.h"
 #include "Rule.h"
 
+#include "../stdhl/cpp/Default.h"
+#include "../stdhl/cpp/Log.h"
+
 using namespace libcasm_ir;
+
+User::User( const std::string& name, const Type::Ptr& type, Value::ID id )
+: Value( name, type, id )
+, m_uses()
+{
+}
+
+Uses User::uses() const
+{
+    return m_uses;
+}
+
+void User::setUse( User& user )
+{
+    m_uses.add( libstdhl::make< Use >( *this, user ) );
+}
+
+void User::removeUse( const User& user )
+{
+    libstdhl::Log::info( "removeUse: %s in %s", user.name(), this->name() );
+
+    m_uses.remove( std::remove_if(
+        m_uses.begin(), m_uses.end(), [user]( const Use::Ptr& element ) {
+            return element->use() == user;
+        } ) );
+}
+
+void User::replaceAllUsesWith( const Value::Ptr& value )
+{
+    for( auto u : uses() )
+    {
+        libstdhl::Log::info( "%s -> %s", u->def().name(), u->use().name() );
+
+        if( auto instr = cast< Instruction >( u->use() ) )
+        {
+            instr->replace( libstdhl::make< Value >( u->def() ), value );
+        }
+    }
+}
 
 u1 User::classof( Value const* obj )
 {
     return obj->id() == classid() or Agent::classof( obj )
            or Rule::classof( obj ) or Derived::classof( obj )
            or Function::classof( obj ) or Builtin::classof( obj )
-           or Constant::classof( obj ) or Instruction::classof( obj );
+           or Instruction::classof( obj );
 }
 
 //

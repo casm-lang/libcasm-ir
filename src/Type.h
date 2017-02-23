@@ -30,30 +30,26 @@
 #ifndef _LIB_CASMIR_TYPE_H_
 #define _LIB_CASMIR_TYPE_H_
 
-#include "../stdhl/cpp/Type.h"
 #include "CasmIR.h"
+
+#include "../stdhl/cpp/List.h"
+#include "../stdhl/cpp/Type.h"
 
 namespace libcasm_ir
 {
-    class Rule;
+    class Enumeration;
 
     class Type : public CasmIR
     {
       public:
         using Ptr = std::shared_ptr< Type >;
 
-        using AgentTy = void*;
-        using RuleReferenceTy = Rule*;
-        using BooleanTy = u1;
-        using IntegerTy = i64;
-        using BitTy = u64;
-        using StringTy = char*;
-
         enum ID : u8
         {
             _BOTTOM_ = 0,
             VOID,
             LABEL,
+            LOCATION,
 
             AGENT,
             RULE_REFERENCE,
@@ -68,34 +64,47 @@ namespace libcasm_ir
             _TOP_
         };
 
-      protected:
-        const char* m_name;
-        const char* m_description;
+        Type( const std::string& name, const std::string& description, ID id );
 
-      private:
-        ID m_id;
+        ~Type( void ) = default;
 
-      protected:
-        static std::unordered_map< std::string, Type* >& m_str2obj( void )
+        const char* name( void ) const;
+
+        std::string str_name( void ) const;
+
+        const char* description( void ) const;
+
+        std::string str_description( void ) const;
+
+        ID id( void ) const;
+
+        const Type& result( void ) const;
+
+        Type::Ptr ptr_result( void ) const;
+
+        std::string make_hash( void ) const;
+
+        inline u1 operator==( const Type& rhs ) const
         {
-            static std::unordered_map< std::string, Type* > cache;
-            return cache;
+            if( this != &rhs )
+            {
+                if( this->id() != rhs.id()
+                    or strcmp( this->name(), rhs.name() ) )
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
-      public:
-        Type( const char* name, const char* description, ID id );
-        ~Type() = default;
-
-        const ID id( void ) const;
-
-        virtual const char* name( void ) = 0;
-        virtual const char* description( void ) = 0;
-        virtual const std::vector< Type* >& arguments( void ) = 0;
-
-        Type* result( void ) const;
+        inline u1 operator!=( const Type& rhs ) const
+        {
+            return !operator==( rhs );
+        }
 
         u1 isVoid( void ) const;
         u1 isLabel( void ) const;
+        u1 isLocation( void ) const;
         u1 isAgent( void ) const;
         u1 isRuleReference( void ) const;
         u1 isBoolean( void ) const;
@@ -107,28 +116,28 @@ namespace libcasm_ir
         u1 isEnumeration( void ) const;
         u1 isRelation( void ) const;
 
-        static Type* Void( void );
-        static Type* Label( void );
-        static Type* Agent( void );
-        static Type* RuleReference( void );
-        static Type* Boolean( void );
-        static Type* Integer( void );
-        static Type* Bit( u16 size );
-        static Type* String( void );
-        static Type* Floating( void );
-        static Type* Rational( void );
-        static Type* Enumeration( const char* name );
-        static Type* Relation( Type* result, std::vector< Type* > arguments );
+      protected:
+        std::string m_name;
+        std::string m_description;
+
+      private:
+        ID m_id;
+
+      public:
+        std::unordered_map< std::string, Type::Ptr >& make_cache( void )
+        {
+            static std::unordered_map< std::string, Type::Ptr > cache;
+            return cache;
+        }
     };
+
+    using Types = libstdhl::List< Type >;
 
     class PrimitiveType : public Type
     {
       public:
-        PrimitiveType( const char* name, const char* description, Type::ID id );
-
-        const char* name( void ) override final;
-        const char* description( void ) override final;
-        const std::vector< Type* >& arguments( void ) override final;
+        PrimitiveType( const std::string& name, const std::string& description,
+            Type::ID id );
     };
 
     class VoidType : public PrimitiveType
@@ -136,7 +145,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< VoidType >;
 
-        VoidType();
+        VoidType( void );
     };
 
     class LabelType : public PrimitiveType
@@ -144,7 +153,15 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< LabelType >;
 
-        LabelType();
+        LabelType( void );
+    };
+
+    class LocationType : public PrimitiveType
+    {
+      public:
+        using Ptr = std::shared_ptr< LocationType >;
+
+        LocationType( void );
     };
 
     class AgentType : public PrimitiveType
@@ -152,7 +169,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< AgentType >;
 
-        AgentType();
+        AgentType( void );
     };
 
     class RuleReferenceType : public PrimitiveType
@@ -160,7 +177,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< RuleReferenceType >;
 
-        RuleReferenceType();
+        RuleReferenceType( void );
     };
 
     class BooleanType : public PrimitiveType
@@ -168,7 +185,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< BooleanType >;
 
-        BooleanType();
+        BooleanType( void );
     };
 
     class IntegerType : public PrimitiveType
@@ -176,7 +193,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< IntegerType >;
 
-        IntegerType();
+        IntegerType( void );
     };
 
     class BitType : public PrimitiveType
@@ -186,13 +203,12 @@ namespace libcasm_ir
 
         static const u16 SizeMax = 64;
 
+        BitType( u16 bitsize );
+
+        u16 bitsize( void ) const;
+
       private:
-        u16 m_size;
-
-      public:
-        BitType( u16 size );
-
-        const u16 bitsize( void ) const;
+        u16 m_bitsize;
     };
 
     class StringType : public PrimitiveType
@@ -200,7 +216,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< StringType >;
 
-        StringType();
+        StringType( void );
     };
 
     class FloatingType : public PrimitiveType
@@ -208,7 +224,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< FloatingType >;
 
-        FloatingType();
+        FloatingType( void );
     };
 
     class RationalType : public PrimitiveType
@@ -216,7 +232,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< RationalType >;
 
-        RationalType();
+        RationalType( void );
     };
 
     class EnumerationType : public PrimitiveType
@@ -224,10 +240,14 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< EnumerationType >;
 
+        EnumerationType( const std::shared_ptr< Enumeration >& kind );
+
+        Enumeration& kind( void ) const;
+
+        std::shared_ptr< Enumeration > kindPtr( void ) const;
+
       private:
-        // PPA: TODO IDENTIFIERs from the Enum!
-      public:
-        EnumerationType( const char* name );
+        std::shared_ptr< Enumeration > m_kind;
     };
 
     class RelationType : public Type
@@ -235,22 +255,20 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< RelationType >;
 
-      private:
-        Type* m_result;
-        std::vector< Type* > m_arguments;
-
       public:
-        RelationType( Type* result, std::vector< Type* > arguments );
+        RelationType( const Type::Ptr& result, const Types& arguments );
 
-        const char* name( void ) override final;
-        const char* description( void ) override final;
-        const std::vector< Type* >& arguments( void ) override final;
+        Type::Ptr result( void ) const;
 
-        const Type* result( void ) const;
+        Types arguments( void ) const;
+
+      private:
+        Type::Ptr m_result;
+        Types m_arguments;
     };
 }
 
-#endif /* _LIB_CASMIR_TYPE_H_ */
+#endif // _LIB_CASMIR_TYPE_H_
 
 //
 //  Local variables:

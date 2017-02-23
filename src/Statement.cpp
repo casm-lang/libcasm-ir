@@ -24,52 +24,25 @@
 #include "Statement.h"
 
 #include "Constant.h"
-#include "Instruction.h"
 
 using namespace libcasm_ir;
 
-Statement::Statement(
-    const char* name, ExecutionSemanticsBlock* scope, Value::ID id )
+Statement::Statement( const std::string& name, Value::ID id )
 : Block( name, id )
-, m_scope( scope )
 {
-    if( scope )
-    {
-        setParent( scope );
-    }
 }
 
-ExecutionSemanticsBlock* Statement::scope( void ) const
+void Statement::add( const Instruction::Ptr& instruction )
 {
-    return m_scope;
+    m_instructions.add( instruction );
 }
 
-const std::vector< Value* >& Statement::instructions( void ) const
+Instructions Statement::instructions( void ) const
 {
     return m_instructions;
 }
 
-void Statement::add( Value* instruction )
-{
-    // printf( "%s: %p\n", __FUNCTION__, instruction );
-
-    if( isa< Constant >( instruction ) )
-    {
-        // printf( "%s: %p --> Constant, omitted\n", __FUNCTION__, instruction
-        // );
-        return;
-    }
-
-    assert( instruction and isa< Instruction >( instruction ) );
-
-    Instruction* instr = static_cast< Instruction* >( instruction );
-    instr->setStatement( this );
-    m_instructions.push_back( instr );
-
-    // printf( "[Stmt] add: %p\n", instruction );
-}
-
-void Statement::addBlock( ExecutionSemanticsBlock* block )
+void Statement::add( const ExecutionSemanticsBlock::Ptr& block )
 {
     assert( block );
 
@@ -78,22 +51,11 @@ void Statement::addBlock( ExecutionSemanticsBlock* block )
         assert(
             !" trivial statements are not allowed to have inside blocks! " );
     }
-    // else if( isa< ForallStatement >( this ) )
-    // {
-    //     assert( blocks.size() < 1 );
-    // }
 
-    m_blocks.push_back( block );
-
-    if( block->parent() == 0 )
-    {
-        block->setParent( this );
-    }
-
-    assert( block->parent() == this && " inconsistent block nesting! " );
+    m_blocks.add( block );
 }
 
-const std::vector< ExecutionSemanticsBlock* >& Statement::blocks( void ) const
+ExecutionSemanticsBlocks Statement::blocks( void ) const
 {
     if( isa< TrivialStatement >( this ) )
     {
@@ -109,8 +71,8 @@ u1 Statement::classof( Value const* obj )
            or BranchStatement::classof( obj );
 }
 
-TrivialStatement::TrivialStatement( ExecutionSemanticsBlock* scope )
-: Statement( "statement", scope, classid() )
+TrivialStatement::TrivialStatement( void )
+: Statement( "statement", classid() )
 {
 }
 
@@ -119,8 +81,8 @@ u1 TrivialStatement::classof( Value const* obj )
     return obj->id() == classid();
 }
 
-BranchStatement::BranchStatement( ExecutionSemanticsBlock* scope )
-: Statement( "branch", scope, classid() )
+BranchStatement::BranchStatement( void )
+: Statement( "branch", classid() )
 {
 }
 

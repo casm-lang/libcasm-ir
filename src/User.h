@@ -26,15 +26,53 @@
 
 #include "Value.h"
 
+#include "../stdhl/cpp/List.h"
+
 namespace libcasm_ir
 {
+    class User;
+
+    class Use
+    {
+      public:
+        using Ptr = std::shared_ptr< Use >;
+
+        Use( Value& def, User& use )
+        : m_def( def )
+        , m_use( use )
+        {
+        }
+
+        Value& def() const
+        {
+            return m_def;
+        }
+
+        User& use() const
+        {
+            return m_use;
+        }
+
+      private:
+        Value& m_def;
+        User& m_use;
+    };
+
+    using Uses = libstdhl::List< Use >;
+
     class User : public Value
     {
       public:
-        User( const char* name, Type* type, Value::ID id = classid() )
-        : Value( name, type, id )
-        {
-        }
+        User( const std::string& name, const Type::Ptr& type,
+            Value::ID id = classid() );
+
+        Uses uses() const;
+
+        void setUse( User& user );
+
+        void removeUse( const User& user );
+
+        void replaceAllUsesWith( const Value::Ptr& value );
 
         static inline Value::ID classid( void )
         {
@@ -42,10 +80,13 @@ namespace libcasm_ir
         }
 
         static u1 classof( Value const* obj );
+
+      private:
+        Uses m_uses;
     };
 }
 
-#endif /* _LIB_CASMIR_USER_H_ */
+#endif // _LIB_CASMIR_USER_H_
 
 //
 //  Local variables:

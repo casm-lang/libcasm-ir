@@ -21,29 +21,41 @@
 //  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef _LIB_CASMIR_CONSTANT_FOLDING_PASS_H_
-#define _LIB_CASMIR_CONSTANT_FOLDING_PASS_H_
+#ifndef _LIB_CASMIR_ENUMERATION_H_
+#define _LIB_CASMIR_ENUMERATION_H_
 
-#include "libpass.h"
-
-/**
-   @brief    TODO
-
-   TODO
-*/
+#include "Value.h"
 
 namespace libcasm_ir
 {
-    class ConstantFoldingPass final : public libpass::Pass
+    class Enumeration : public Value
     {
       public:
-        static char id;
+        using Ptr = std::shared_ptr< Enumeration >;
 
-        bool run( libpass::PassResult& pr ) override;
+        Enumeration( const std::string& name, const Type::Ptr& type,
+            const std::vector< std::string >& values );
+
+        ~Enumeration( void ) = default;
+
+        u64 encode( const std::string& value ) const;
+
+        std::string decode( const u64 value ) const;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::ENUMERATION;
+        }
+
+        static u1 classof( Value const* obj );
+
+      private:
+        std::vector< std::string > m_values;
+        std::unordered_map< std::string, u64 > m_value2uid;
     };
 }
 
-#endif // _LIB_CASMIR_CONSTANT_FOLDING_PASS_H_
+#endif // _LIB_CASMIR_ENUMERATION_H_
 
 //
 //  Local variables:

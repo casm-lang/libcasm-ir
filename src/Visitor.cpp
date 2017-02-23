@@ -24,6 +24,7 @@
 #include "Visitor.h"
 
 #include "Agent.h"
+#include "Block.h"
 #include "Builtin.h"
 #include "Constant.h"
 #include "Derived.h"
@@ -31,6 +32,7 @@
 #include "Instruction.h"
 #include "Rule.h"
 #include "Specification.h"
+#include "Statement.h"
 #include "Value.h"
 
 using namespace libcasm_ir;

@@ -50,10 +50,11 @@ static const char* indention( Value& value )
 
 u1 CasmIRToSourcePass::run( libpass::PassResult& pr )
 {
-    Specification* value = (Specification*)pr.result< CasmIRDumpPass >();
-    assert( value );
+    auto data = pr.result< CasmIRDumpPass >();
+    assert( data );
 
-    value->iterate( Traversal::PREORDER, []( Value& value, Context& ) {
+    data->specification()->iterate( Traversal::PREORDER, []( Value& value,
+                                                             Context& ) {
         if( isa< Constant >( value ) )
         {
             static u1 first = true;
@@ -80,7 +81,8 @@ u1 CasmIRToSourcePass::run( libpass::PassResult& pr )
             Agent& val = static_cast< Agent& >( value );
 
             fprintf( stream, "%s = init %s %s\n", value.label(),
-                val.initRule()->type().name(), val.initRule()->name() );
+                val.rulereference()->value()->type().name(),
+                val.rulereference()->value()->name() );
         }
         else if( isa< Function >( value ) )
         {
@@ -125,75 +127,40 @@ u1 CasmIRToSourcePass::run( libpass::PassResult& pr )
         }
         else if( isa< Statement >( value ) )
         {
-            Statement& stmt = static_cast< Statement& >( value );
+            // Statement& stmt = static_cast< Statement& >( value );
 
             const char* nline = "\n";
             const char* label = value.label();
             std::string scope = "";
 
-            if( not stmt.scope() )
-            {
-                nline = "";
-            }
-            else
-            {
-                if( stmt.scope()->entryBlock() == &stmt )
-                {
-                    label = stmt.scope()->label();
-                }
-
-                if( stmt.scope()->parent() )
-                {
-                    scope += stmt.scope()->parent()->label();
-                }
-                else
-                {
-                    if( stmt.scope()->entryBlock() == &stmt )
-                    {
-                        nline = "";
-                        scope = "entry";
-                    }
-                    else if( stmt.scope()->exitBlock() == &stmt )
-                    {
-                        scope = "exit";
-                    }
-                    else
-                    {
-                        stmt.scope()->label();
-                    }
-                }
-            }
-
             fprintf( stream, "%s%s%s: %s\n", nline, indention( value ),
                 &label[ 1 ], scope.c_str() );
         }
-        else if( isa< Instruction >( value ) )
+        else if( auto instr = cast< Instruction >( value ) )
         {
-            Instruction& instr = static_cast< Instruction& >( value );
-
             if( isa< ForkInstruction >( instr ) )
             {
                 fprintf( stream,
                     "%s%s %s %s %s\n",
-                    indention( instr ),
-                    instr.name(),
-                    instr.statement()->scope()->name(),
-                    instr.statement()->scope()->type().name(),
-                    instr.statement()->scope()->label() );
+                    indention( *instr ),
+                    instr->name(),
+                    instr->statement()->scope()->name(),
+                    instr->statement()->scope()->type().name(),
+                    instr->statement()->scope()->label() );
             }
             else if( isa< MergeInstruction >( instr ) )
             {
-                fprintf( stream, "%s%s %s %s %s\n", indention( instr ),
-                    instr.statement()->scope()->name(), instr.name(),
-                    instr.statement()->scope()->type().name(),
-                    instr.statement()->scope()->label() );
+                fprintf( stream, "%s%s %s %s %s\n", indention( *instr ),
+                    instr->statement()->scope()->name(), instr->name(),
+                    instr->statement()->scope()->type().name(),
+                    instr->statement()->scope()->label() );
             }
             else
             {
                 std::string tmp = "";
                 u1 first = true;
 
-                for( auto v : instr.values() )
+                for( auto operand : instr->operands() )
                 {
                     if( not first )
                     {
@@ -204,18 +171,27 @@ u1 CasmIRToSourcePass::run( libpass::PassResult& pr )
                         first = false;
                     }
 
-                    tmp += v->type().name();
+                    tmp += operand->type().name();
                     tmp += " ";
-                    tmp += v->label();
+                    tmp += operand->label();
                 }
 
-                fprintf( stream, "%s%s = %s %s\n", indention( instr ),
-                    instr.label(), instr.name(), tmp.c_str() );
+                std::string uses = "{";
+                for( auto u : instr->uses() )
+                {
+                    uses += u->use().label();
+                    uses += " : ";
+                    uses += u->use().name();
+                    uses += ", ";
+                }
+                uses += "}";
+
+                fprintf( stream, "%s%s = %s %s                 ;; uses = %s\n",
+                    indention( *instr ), instr->label(), instr->name(),
+                    tmp.c_str(), uses.c_str() );
             }
 
-            const Statement* stmt = instr.statement();
-            assert( stmt );
-            ExecutionSemanticsBlock* scope = stmt->scope();
+            auto scope = instr->statement()->scope();
 
             if( not scope )
             {
@@ -224,7 +200,7 @@ u1 CasmIRToSourcePass::run( libpass::PassResult& pr )
             }
             else
             {
-                if( scope->scope() == 0 and scope->exitBlock() == stmt )
+                if( scope->scope() == 0 ) // and scope->exitBlock() == stmt )
                 {
                     // reached end of rule, this blk is the top level
                     // exec.sem.blk

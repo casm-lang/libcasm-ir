@@ -35,15 +35,15 @@ static libpass::PassRegistration< CasmIRDumpPass > PASS( "CASM IR Dumping Pass",
 
 u1 CasmIRDumpPass::run( libpass::PassResult& pr )
 {
-    Specification* value = (Specification*)pr.result< CasmIRDumpPass >();
-    assert( value );
+    auto data = pr.result< CasmIRDumpPass >();
+    assert( data );
 
-    value->iterate( Traversal::PREORDER, this );
+    data->specification()->iterate( Traversal::PREORDER, this );
 
     return true;
 }
 
-static const char* indention( Value& value )
+static std::string indention( Value& value )
 {
     std::string ind = "";
     u8 cnt = 0;
@@ -52,15 +52,15 @@ static const char* indention( Value& value )
     {
         if( isa< ExecutionSemanticsBlock >( p ) )
         {
-            p = (Value*)( (ExecutionSemanticsBlock*)p )->scope();
+            p = (Value*)( (ExecutionSemanticsBlock*)p )->scope().get();
         }
         else if( isa< Instruction >( p ) )
         {
-            p = (Value*)( (Instruction*)p )->statement();
+            p = (Value*)( (Instruction*)p )->statement().get();
         }
         else if( isa< Statement >( p ) )
         {
-            p = (Value*)( (Statement*)p )->scope();
+            p = (Value*)( (Statement*)p )->scope().get();
         }
         else
         {
@@ -72,18 +72,19 @@ static const char* indention( Value& value )
         ind += "  ";
     }
 
-    return libstdhl::Allocator::string( ind );
+    return ind;
 }
 
 #define DUMP_PREFIX                                                            \
     fprintf( stderr, "%p: %s, %s%s ", &value, value.label(),                   \
-        indention( value ), value.name() )
+        indention( value ).c_str(), value.name() )
 #define DUMP_POSTFIX fprintf( stderr, "\n" );
 
 #define DUMP_INSTR                                                             \
-    for( auto v : value.values() )                                             \
+    for( auto operand : value.operands() )                                     \
     {                                                                          \
-        fprintf( stderr, ", %s [%s]", v->label(), v->type().description() );   \
+        fprintf( stderr, ", %s [%s]", operand->label(),                        \
+            operand->type().description() );                                   \
     }
 
 void CasmIRDumpPass::visit_prolog( Specification& value, Context& )
@@ -149,7 +150,7 @@ void CasmIRDumpPass::visit_epilog( Rule& value, Context& )
 void CasmIRDumpPass::visit_prolog( ParallelBlock& value, Context& )
 {
     DUMP_PREFIX;
-    fprintf( stderr, " (%p, %p) ", value.scope(), value.parent() );
+    fprintf( stderr, " (%p, %p) ", value.scope().get(), value.parent().get() );
     DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( ParallelBlock& value, Context& )
@@ -159,7 +160,7 @@ void CasmIRDumpPass::visit_epilog( ParallelBlock& value, Context& )
 void CasmIRDumpPass::visit_prolog( SequentialBlock& value, Context& )
 {
     DUMP_PREFIX;
-    fprintf( stderr, " (%p, %p) ", value.scope(), value.parent() );
+    fprintf( stderr, " (%p, %p) ", value.scope().get(), value.parent().get() );
     DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( SequentialBlock& value, Context& )
@@ -169,7 +170,7 @@ void CasmIRDumpPass::visit_epilog( SequentialBlock& value, Context& )
 void CasmIRDumpPass::visit_prolog( TrivialStatement& value, Context& )
 {
     DUMP_PREFIX;
-    fprintf( stderr, " (%p, %p) ", value.scope(), value.parent() );
+    fprintf( stderr, " (%p, %p) ", value.scope().get(), value.parent().get() );
     DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( TrivialStatement& value, Context& )
@@ -179,7 +180,7 @@ void CasmIRDumpPass::visit_epilog( TrivialStatement& value, Context& )
 void CasmIRDumpPass::visit_prolog( BranchStatement& value, Context& )
 {
     DUMP_PREFIX;
-    fprintf( stderr, " (%p, %p) ", value.scope(), value.parent() );
+    fprintf( stderr, " (%p, %p) ", value.scope().get(), value.parent().get() );
     DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_interlog( BranchStatement& value, Context& )
@@ -214,26 +215,26 @@ void CasmIRDumpPass::visit_prolog( SelectInstruction& value, Context& )
     DUMP_PREFIX;
 
     i32 cnt = -1;
-    for( auto v : value.values() )
+    for( auto operand : value.operands() )
     {
         cnt++;
         if( cnt == 0 or ( cnt % 2 ) == 1 )
         {
-            if( isa< Instruction >( v ) or isa< Constant >( v ) )
+            if( isa< Instruction >( operand ) or isa< Constant >( operand ) )
             {
-                fprintf(
-                    stderr, ", %s [%s]", v->label(), v->type().description() );
+                fprintf( stderr, ", %s [%s]", operand->label(),
+                    operand->type().description() );
             }
             else
             {
-                fprintf( stderr, " : %s", v->label() );
+                fprintf( stderr, " : %s", operand->label() );
             }
         }
         else
         {
-            assert( isa< ExecutionSemanticsBlock >( v ) );
+            assert( isa< ExecutionSemanticsBlock >( operand ) );
 
-            fprintf( stderr, " : %s", v->label() );
+            fprintf( stderr, " : %s", operand->label() );
         }
     }
 

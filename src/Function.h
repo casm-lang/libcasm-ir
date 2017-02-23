@@ -28,17 +28,12 @@
 
 namespace libcasm_ir
 {
-    class Identifier;
-
     class Function : public User
     {
-      private:
-        Identifier* m_ident;
-
       public:
-        Function( const char* name, Type* result );
+        Function( const std::string& name, const Type::Ptr& type );
 
-        ~Function( void );
+        ~Function( void ) = default;
 
         static inline Value::ID classid( void )
         {
@@ -46,11 +41,6 @@ namespace libcasm_ir
         }
 
         static u1 classof( Value const* obj );
-
-        virtual const char* label( void ) override final
-        {
-            return name();
-        }
     };
 }
 

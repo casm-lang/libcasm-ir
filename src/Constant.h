@@ -24,130 +24,57 @@
 #ifndef _LIB_CASMIR_CONSTANT_H_
 #define _LIB_CASMIR_CONSTANT_H_
 
-#include "User.h"
-
-#include "../stdhl/cpp/Allocator.h"
+#include "Agent.h"
+#include "Enumeration.h"
+#include "Rule.h"
+#include "Value.h"
 
 namespace libcasm_ir
 {
-    class Statement;
-
-    class Constant : public User
+    class Constant : public Value
     {
       public:
         using Ptr = std::shared_ptr< Constant >;
 
-      private:
-        static std::unordered_map< std::string, Value* >& m_str2obj( void )
-        {
-            static std::unordered_map< std::string, Value* > cache;
-            return cache;
-        };
+      protected:
+        Constant( const std::string& name, const Type::Ptr& type, u1 defined,
+            u1 symbolic, Value::ID id = classid() );
 
       public:
-        Constant( const char* name, Type* type, Value::ID id = classid() )
-        : User( name, type, id ){};
+        u1 defined( void ) const;
+        u1 symbolic( void ) const;
 
         static inline Value::ID classid( void )
         {
             return Value::CONSTANT;
-        };
+        }
+
         static u1 classof( Value const* obj );
 
-        virtual const char* labelName( void ) override final
-        {
-            return "@c";
-        }
-
-        virtual u64 labelId( void ) override final
-        {
-            static u64 cnt = 0;
-            return cnt++;
-        }
-
-        static Value* Undef( Type* result );
-
-        static Value* Agent( Type::AgentTy value );
-        static Value* RuleReference( Type::RuleReferenceTy value );
-        static Value* RuleReference( const char* value );
-        static Value* Boolean( Type::BooleanTy value );
-        static Value* Integer( Type::IntegerTy value );
-        static Value* Bit( Type* result, u64 value );
-        static Value* String( const char* value );
-        // static Value* get( void );
-    };
-
-    template < typename V >
-    class ConstantOf : public Constant
-    {
       private:
-        V m_value;
         u1 m_defined;
-        const char* m_description;
+        u1 m_symbolic;
 
       protected:
-        ConstantOf( const char* name, Type* type, V value, u1 defined,
-            Value::ID id = Value::CONSTANT )
-        : Constant( name, type, id )
-        , m_value( value )
-        , m_defined( defined )
-        , m_description( 0 )
-        {
-        }
+        // PPA: this will be replaced later with a std::variant mechanism!
+        union {
+            u1 m_u1;
+            u64 m_u64;
+            u64* m_ptr;
+            double m_dfp;
+        } m_value;
+
+        Value::Ptr m_value_ptr;
 
       public:
-        ~ConstantOf( void )
+        std::unordered_map< std::string, Constant::Ptr >& make_cache( void )
         {
-        }
-
-        const V value( void ) const
-        {
-            return m_value;
-        }
-
-        const u1 isDefined( void ) const
-        {
-            return m_defined;
-        }
-
-        const u1 isUndef( void ) const
-        {
-            return not m_defined;
-        }
-
-        const char* description( void )
-        {
-            if( not m_description )
-            {
-                std::string tmp = "";
-                tmp += type().name();
-                tmp += " ";
-                tmp += name();
-
-                m_description = libstdhl::Allocator::string( tmp );
-            }
-
-            return m_description;
-        }
-
-        static inline Value::ID classid( void )
-        {
-            return Value::CONSTANT;
-        }
-
-        static u1 classof( Value const* obj )
-        {
-            return Constant::classof( obj );
-        }
-
-      protected:
-        void setValue( V val )
-        {
-            m_value = val;
+            static std::unordered_map< std::string, Constant::Ptr > cache;
+            return cache;
         }
     };
 
-    class VoidConstant : public ConstantOf< void* >
+    class VoidConstant : public Constant
     {
       public:
         using Ptr = std::shared_ptr< VoidConstant >;
@@ -162,17 +89,19 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class AgentConstant : public ConstantOf< Type::AgentTy >
+    class AgentConstant : public Constant
     {
       public:
         using Ptr = std::shared_ptr< AgentConstant >;
 
       private:
-        AgentConstant( Type::AgentTy value, u1 defined );
+        AgentConstant( const Agent::Ptr& value, u1 defined, u1 symbolic );
 
       public:
-        AgentConstant( Type::AgentTy value );
+        AgentConstant( const Agent::Ptr& value );
         AgentConstant( void );
+
+        Agent::Ptr value( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -182,25 +111,20 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class RuleReferenceConstant : public ConstantOf< Type::RuleReferenceTy >
+    class RuleReferenceConstant : public Constant
     {
       public:
         using Ptr = std::shared_ptr< RuleReferenceConstant >;
 
       private:
-        const char* m_resolve_identifier;
         RuleReferenceConstant(
-            Type::RuleReferenceTy value, const char* name, u1 defined );
+            const Rule::Ptr& value, u1 defined, u1 symbolic );
 
       public:
-        RuleReferenceConstant( Type::RuleReferenceTy value );
-        RuleReferenceConstant( const char* name );
+        RuleReferenceConstant( const Rule::Ptr& value );
         RuleReferenceConstant( void );
 
-        void setResolveIdentifier( const char* name );
-        void resolve( void );
-
-        static void checking( void );
+        Rule::Ptr value( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -210,17 +134,19 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class BooleanConstant : public ConstantOf< Type::BooleanTy >
+    class BooleanConstant : public Constant
     {
       public:
         using Ptr = std::shared_ptr< BooleanConstant >;
 
       private:
-        BooleanConstant( Type::BooleanTy value, u1 defined );
+        BooleanConstant( u1 value, u1 defined, u1 symbolic );
 
       public:
-        BooleanConstant( Type::BooleanTy value );
+        BooleanConstant( u1 value );
         BooleanConstant( void );
+
+        u1 value( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -230,17 +156,19 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class IntegerConstant : public ConstantOf< Type::IntegerTy >
+    class IntegerConstant : public Constant
     {
       public:
         using Ptr = std::shared_ptr< IntegerConstant >;
 
       private:
-        IntegerConstant( Type::IntegerTy value, u1 defined );
+        IntegerConstant( i64 value, u1 defined, u1 symbolic );
 
       public:
-        IntegerConstant( Type::IntegerTy value );
+        IntegerConstant( i64 value );
         IntegerConstant( void );
+
+        i64 value( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -250,19 +178,23 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class BitConstant : public ConstantOf< Type::BitTy >
+    class BitConstant : public Constant
     {
       public:
         using Ptr = std::shared_ptr< BitConstant >;
 
       private:
-        BitConstant( Type* result, u64 value, u1 defined );
+        BitConstant(
+            const BitType::Ptr& type, u64 value, u1 defined, u1 symbolic );
 
       public:
-        BitConstant( Type* result, u64 value );
-        BitConstant( Type* result );
+        BitConstant( const BitType::Ptr& type, u64 value );
+        BitConstant( const BitType::Ptr& type );
+
         BitConstant( u16 bitsize, u64 value );
         BitConstant( u16 bitsize );
+
+        u64 value( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -272,18 +204,19 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class StringConstant : public ConstantOf< Type::StringTy >
+    class StringConstant : public Constant
     {
       public:
         using Ptr = std::shared_ptr< StringConstant >;
 
       private:
-        StringConstant( Type::StringTy value, u1 defined );
+        StringConstant( const std::string& value, u1 defined, u1 symbolic );
 
       public:
-        StringConstant( Type::StringTy value );
-        StringConstant( const char* value );
+        StringConstant( const std::string& value );
         StringConstant( void );
+
+        std::string value( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -293,38 +226,97 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class Identifier : public ConstantOf< const char* >
+    class FloatingConstant : public Constant
+    {
+      public:
+        using Ptr = std::shared_ptr< FloatingConstant >;
+
+      private:
+        FloatingConstant( const double value, u1 defined, u1 symbolic );
+
+      public:
+        FloatingConstant( const double value );
+        FloatingConstant( void );
+
+        double value( void ) const;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::RATIONAL_CONSTANT;
+        }
+
+        static u1 classof( Value const* obj );
+    };
+
+    class RationalConstant : public Constant
+    {
+      public:
+        using Ptr = std::shared_ptr< RationalConstant >;
+
+      private:
+        RationalConstant( const std::string& value, u1 defined, u1 symbolic );
+
+      public:
+        RationalConstant( const std::string& value );
+        RationalConstant( void );
+
+        std::string value( void ) const;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::RATIONAL_CONSTANT;
+        }
+
+        static u1 classof( Value const* obj );
+    };
+
+    class EnumerationConstant : public Constant
+    {
+      public:
+        using Ptr = std::shared_ptr< EnumerationConstant >;
+
+      private:
+        EnumerationConstant( const EnumerationType::Ptr& type,
+            const std::string& value, u1 defined, u1 symbolic );
+
+      public:
+        EnumerationConstant(
+            const EnumerationType::Ptr& type, const std::string& value );
+
+        EnumerationConstant( const EnumerationType::Ptr& type );
+
+        EnumerationConstant(
+            const Enumeration::Ptr& kind, const std::string& value );
+
+        EnumerationConstant( const Enumeration::Ptr& kind );
+
+        u64 value( void ) const;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::ENUMERATION_CONSTANT;
+        }
+
+        static u1 classof( Value const* obj );
+    };
+
+    class Identifier : public Constant
     {
       public:
         using Ptr = std::shared_ptr< Identifier >;
 
-      private:
-        static std::unordered_map< std::string, Identifier* >& ident2obj( void )
-        {
-            static std::unordered_map< std::string, Identifier* > cache;
-            return cache;
-        }
-
-        Identifier( Type* type, const char* value );
-
-      public:
-        ~Identifier( void );
-
-        static Identifier* create(
-            Type* type, const char* value, Value* scope = 0 );
-
-        static void forgetSymbol( const char* value );
+        Identifier( const std::string& value, const Type::Ptr& type );
 
         static inline Value::ID classid( void )
         {
-            return Value::IDENTIFIER;
+            return Value::STRING_CONSTANT;
         }
 
         static u1 classof( Value const* obj );
     };
 }
 
-#endif /* _LIB_CASMIR_CONSTANT_H_ */
+#endif // _LIB_CASMIR_CONSTANT_H_
 
 //
 //  Local variables:

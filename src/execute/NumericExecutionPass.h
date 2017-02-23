@@ -24,7 +24,6 @@
 #ifndef _LIB_CASMIR_NUMERIC_EXECUTION_PASS_H_
 #define _LIB_CASMIR_NUMERIC_EXECUTION_PASS_H_
 
-//#include "libcasm-ir.all.h"
 #include "libpass.h"
 
 /**

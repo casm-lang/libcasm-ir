@@ -27,21 +27,31 @@
 
 using namespace libcasm_ir;
 
-Block::Block( const char* name, Value::ID id )
-: Value( name, Type::Label(), id )
-, m_parent( 0 )
+Block::Block( const std::string& name, Value::ID id )
+: Value( name, libstdhl::get< LabelType >(), id )
+, m_parent()
+, m_scope()
 {
 }
 
-void Block::setParent( Value* parent )
+void Block::setParent( const Block::Ptr& parent )
 {
-    assert( parent );
     m_parent = parent;
 }
 
-Value* Block::parent( void ) const
+Block::Ptr Block::parent( void ) const
 {
-    return m_parent;
+    return m_parent.lock();
+}
+
+void Block::setScope( const ExecutionSemanticsBlock::Ptr& scope )
+{
+    m_scope = scope;
+}
+
+ExecutionSemanticsBlock::Ptr Block::scope( void ) const
+{
+    return m_scope.lock();
 }
 
 u1 Block::classof( Value const* obj )
@@ -50,99 +60,53 @@ u1 Block::classof( Value const* obj )
            or Statement::classof( obj );
 }
 
-ExecutionSemanticsBlock::ExecutionSemanticsBlock( const char* name,
-    const u1 is_parallel, ExecutionSemanticsBlock* scope, Value::ID id )
+ExecutionSemanticsBlock::ExecutionSemanticsBlock( const std::string& name,
+    u1 parallel, const ExecutionSemanticsBlock::Ptr& scope, Value::ID id )
 : Block( name, id )
-, m_is_parallel( is_parallel )
-, m_pseudo_state( 0 )
-, m_scope( scope )
-, m_entry( 0 )
-, m_exit( 0 )
+, m_parallel( parallel )
+, m_pseudostate( 0 )
 {
     setScope( scope );
 
-    Statement* tmp = new TrivialStatement( this );
-    Instruction* instr = new ForkInstruction();
-    tmp->add( instr );
-    m_entry = tmp;
+    m_entry = libstdhl::make< TrivialStatement >();
+    m_entry->add( libstdhl::make< ForkInstruction >() );
 
-    tmp = new TrivialStatement( this );
-    tmp->add( new MergeInstruction() );
-    m_exit = tmp;
+    m_exit = libstdhl::make< TrivialStatement >();
+    m_exit->add( libstdhl::make< MergeInstruction >() );
 }
 
 ExecutionSemanticsBlock::~ExecutionSemanticsBlock( void )
 {
-    delete m_entry;
-    delete m_exit;
 }
 
-Block* ExecutionSemanticsBlock::entryBlock( void ) const
+u1 ExecutionSemanticsBlock::parallel( void ) const
+{
+    return m_parallel;
+}
+
+u64 ExecutionSemanticsBlock::pseudostate( void ) const
+{
+    return m_pseudostate;
+}
+
+std::shared_ptr< Statement > ExecutionSemanticsBlock::entry( void ) const
 {
     return m_entry;
 }
 
-Block* ExecutionSemanticsBlock::exitBlock( void ) const
+std::shared_ptr< Statement > ExecutionSemanticsBlock::exit( void ) const
 {
     return m_exit;
 }
 
-const u1 ExecutionSemanticsBlock::isParallel( void ) const
-{
-    return m_is_parallel;
-}
-
-const u64 ExecutionSemanticsBlock::pseudostate( void ) const
-{
-    return m_pseudo_state;
-}
-
-ExecutionSemanticsBlock* ExecutionSemanticsBlock::scope( void ) const
-{
-    return m_scope;
-}
-
-void ExecutionSemanticsBlock::setScope( ExecutionSemanticsBlock* scope_block )
-{
-    m_scope = scope_block;
-
-    if( m_scope )
-    {
-        m_pseudo_state = m_scope->pseudostate();
-
-        if( m_scope->isParallel() != this->isParallel() )
-        {
-            m_pseudo_state++;
-        }
-    }
-}
-
-const std::vector< Block* >& ExecutionSemanticsBlock::blocks( void ) const
+Blocks ExecutionSemanticsBlock::blocks( void ) const
 {
     return m_blocks;
 }
 
-void ExecutionSemanticsBlock::add( Block* block )
+void ExecutionSemanticsBlock::add( const Block::Ptr& block )
 {
-    assert( block );
-
-    if( isa< ExecutionSemanticsBlock >( block ) )
-    {
-        ExecutionSemanticsBlock* inner
-            = static_cast< ExecutionSemanticsBlock* >( block );
-        inner->setScope( this );
-        inner->setParent( this );
-    }
-    else if( isa< Statement >( block ) )
-    {
-        block->setParent( this );
-    }
-    else
-    {
-        assert( !" invalid block to add " );
-    }
-
-    m_blocks.push_back( block );
+    m_blocks.add( block );
 }
 
 u1 ExecutionSemanticsBlock::classof( Value const* obj )
@@ -151,8 +115,13 @@ u1 ExecutionSemanticsBlock::classof( Value const* obj )
            or SequentialBlock::classof( obj );
 }
 
-ParallelBlock::ParallelBlock( ExecutionSemanticsBlock* scope )
-: ExecutionSemanticsBlock( "par", true, scope, classid() )
+//
+//
+// ParallelBlock
+//
+
+ParallelBlock::ParallelBlock( void )
+: ExecutionSemanticsBlock( "par", true, 0, classid() )
 {
 }
 
@@ -161,8 +130,13 @@ u1 ParallelBlock::classof( Value const* obj )
     return obj->id() == classid();
 }
 
-SequentialBlock::SequentialBlock( ExecutionSemanticsBlock* scope )
-: ExecutionSemanticsBlock( "seq", false, scope, classid() )
+//
+//
+// SequentialBlock
+//
+
+SequentialBlock::SequentialBlock( void )
+: ExecutionSemanticsBlock( "seq", false, 0, classid() )
 {
 }
 
