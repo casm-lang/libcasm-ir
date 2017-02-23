@@ -225,10 +225,20 @@ void Value::iterate( Traversal order,
         ExecutionSemanticsBlock& obj
             = static_cast< ExecutionSemanticsBlock& >( value );
 
+        if( auto entry = obj.entry() )
+        {
+            entry->iterate( order, visitor, cxt, action );
+        }
+
         for( auto block : obj.blocks() )
         {
             assert( block );
             block->iterate( order, visitor, cxt, action );
+        }
+
+        if( auto exit = obj.exit() )
+        {
+            exit->iterate( order, visitor, cxt, action );
         }
     }
     else if( isa< Statement >( value ) )

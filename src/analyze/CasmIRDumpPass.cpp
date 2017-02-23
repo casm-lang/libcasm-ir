@@ -43,7 +43,7 @@ u1 CasmIRDumpPass::run( libpass::PassResult& pr )
     return true;
 }
 
-static const char* indention( Value& value )
+static std::string indention( Value& value )
 {
     std::string ind = "";
     u8 cnt = 0;
@@ -72,12 +72,12 @@ static const char* indention( Value& value )
         ind += "  ";
     }
 
-    return libstdhl::Allocator::string( ind );
+    return ind;
 }
 
 #define DUMP_PREFIX                                                            \
     fprintf( stderr, "%p: %s, %s%s ", &value, value.label(),                   \
-        indention( value ), value.name() )
+        indention( value ).c_str(), value.name() )
 #define DUMP_POSTFIX fprintf( stderr, "\n" );
 
 #define DUMP_INSTR                                                             \

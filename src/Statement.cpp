@@ -51,19 +51,8 @@ void Statement::add( const ExecutionSemanticsBlock::Ptr& block )
         assert(
             !" trivial statements are not allowed to have inside blocks! " );
     }
-    // else if( isa< ForallStatement >( this ) )
-    // {
-    //     assert( blocks.size() < 1 );
-    // }
 
     m_blocks.add( block );
-
-    if( block->parent() == 0 )
-    {
-        // block->setParent( this );
-    }
-
-    // assert( block->parent() == this && " inconsistent block nesting! " );
 }
 
 ExecutionSemanticsBlocks Statement::blocks( void ) const

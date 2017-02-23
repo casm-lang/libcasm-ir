@@ -45,27 +45,6 @@ ExecutionSemanticsBlock::Ptr Rule::context( void ) const
     return m_context;
 }
 
-// ParallelBlock* Rule::context( void ) const
-// {
-//     return m_context;
-// }
-
-// void Rule::setContext( ParallelBlock* scope )
-// {
-//     assert( scope );
-//     m_context = scope;
-// }
-
-// void Rule::addParameter( Value* value )
-// {
-//     m_parameter.push_back( value );
-// }
-
-// const std::vector< Value* >& Rule::parameters( void ) const
-// {
-//     return m_parameter;
-// }
-
 u1 Rule::classof( Value const* obj )
 {
     return obj->id() == classid();

@@ -24,10 +24,9 @@
 #ifndef _LIB_CASMIR_USER_H_
 #define _LIB_CASMIR_USER_H_
 
-#include "List.h"
 #include "Value.h"
 
-#include "../stdhl/cpp/Allocator.h"
+#include "../stdhl/cpp/List.h"
 
 namespace libcasm_ir
 {
@@ -59,7 +58,7 @@ namespace libcasm_ir
         User& m_use;
     };
 
-    using Uses = List< Use >;
+    using Uses = libstdhl::List< Use >;
 
     class User : public Value
     {

@@ -43,12 +43,6 @@ namespace libcasm_ir
 
         std::shared_ptr< Statement > context( void ) const;
 
-        // void setContext( TrivialStatement* scope );
-
-        // void addParameter( Value* value );
-
-        // const std::vector< Value* >& parameters( void ) const;
-
         static inline Value::ID classid( void )
         {
             return Value::DERIVED;
@@ -58,9 +52,6 @@ namespace libcasm_ir
 
       private:
         std::shared_ptr< Statement > m_context;
-
-        // TrivialStatement* m_context;
-        // std::vector< Value* > m_parameter;
     };
 }
 

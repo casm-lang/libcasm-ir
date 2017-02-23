@@ -81,6 +81,10 @@ namespace libcasm_ir
 
         u64 pseudostate( void ) const;
 
+        std::shared_ptr< Statement > entry( void ) const;
+
+        std::shared_ptr< Statement > exit( void ) const;
+
         Blocks blocks( void ) const;
 
         void add( const Block::Ptr& block );
@@ -96,8 +100,8 @@ namespace libcasm_ir
         const u1 m_parallel;
         u64 m_pseudostate;
 
-        std::unique_ptr< Block > m_entry;
-        std::unique_ptr< Block > m_exit;
+        std::shared_ptr< Statement > m_entry;
+        std::shared_ptr< Statement > m_exit;
 
         Blocks m_blocks;
     };

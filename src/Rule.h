@@ -44,14 +44,6 @@ namespace libcasm_ir
 
         std::shared_ptr< ExecutionSemanticsBlock > context( void ) const;
 
-        // ParallelBlock* context( void ) const;
-
-        // void setContext( ParallelBlock* scope );
-
-        // void addParameter( Value* value );
-
-        // const std::vector< Value* >& parameters( void ) const;
-
         static inline Value::ID classid( void )
         {
             return Value::RULE;
@@ -61,9 +53,6 @@ namespace libcasm_ir
 
       private:
         std::shared_ptr< ExecutionSemanticsBlock > m_context;
-
-        // ParallelBlock* m_context;
-        // std::vector< Value* > m_parameter;
     };
 }
 

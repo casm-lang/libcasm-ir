@@ -24,8 +24,6 @@
 #include "Type.h"
 #include "Enumeration.h"
 
-#include "../stdhl/cpp/Allocator.h"
-
 using namespace libcasm_ir;
 
 Type::Type(

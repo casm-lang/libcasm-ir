@@ -68,13 +68,11 @@ ExecutionSemanticsBlock::ExecutionSemanticsBlock( const std::string& name,
 {
     setScope( scope );
 
-    // auto s = libstdhl::make< TrivialStatement >( this );
-    // add( s );
-    // s->add( libstdhl::make< ForkInstruction >() );
+    m_entry = libstdhl::make< TrivialStatement >();
+    m_entry->add( libstdhl::make< ForkInstruction >() );
 
-    // s = libstdhl::make< TrivialStatement >( this );
-    // add( s );
-    // s->add( libstdhl::make< MergeInstruction >() );
+    m_exit = libstdhl::make< TrivialStatement >();
+    m_exit->add( libstdhl::make< MergeInstruction >() );
 }
 
 ExecutionSemanticsBlock::~ExecutionSemanticsBlock( void )
@@ -91,6 +89,16 @@ u64 ExecutionSemanticsBlock::pseudostate( void ) const
     return m_pseudostate;
 }
 
+std::shared_ptr< Statement > ExecutionSemanticsBlock::entry( void ) const
+{
+    return m_entry;
+}
+
+std::shared_ptr< Statement > ExecutionSemanticsBlock::exit( void ) const
+{
+    return m_exit;
+}
+
 Blocks ExecutionSemanticsBlock::blocks( void ) const
 {
     return m_blocks;
@@ -99,22 +107,6 @@ Blocks ExecutionSemanticsBlock::blocks( void ) const
 void ExecutionSemanticsBlock::add( const Block::Ptr& block )
 {
     m_blocks.add( block );
-
-    // if( isa< ExecutionSemanticsBlock >( block ) )
-    // {
-    //     ExecutionSemanticsBlock* inner
-    //         = static_cast< ExecutionSemanticsBlock* >( block );
-    //     inner->setScope( this );
-    //     inner->setParent( this );
-    // }
-    // else if( isa< Statement >( block ) )
-    // {
-    //     block->setParent( this );
-    // }
-    // else
-    // {
-    //     assert( !" invalid block to add " );
-    // }
 }
 
 u1 ExecutionSemanticsBlock::classof( Value const* obj )
