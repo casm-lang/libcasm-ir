@@ -85,7 +85,7 @@ Type::Ptr Type::ptr_result( void ) const
 
 std::string Type::make_hash( void ) const
 {
-    return "t:" + std::to_string( id() ) + ":" + description();
+    return "t:" + std::to_string( id() ) + ":" + str_description();
 }
 
 u1 Type::isVoid( void ) const
