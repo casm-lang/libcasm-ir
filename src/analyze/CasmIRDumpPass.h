@@ -56,14 +56,13 @@ namespace libcasm_ir
             {
             }
 
-            std::shared_ptr< libcasm_ir::Specification > specification(
-                void ) const
+            Specification::Ptr specification( void ) const
             {
                 return m_specification;
             }
 
           private:
-            std::shared_ptr< libcasm_ir::Specification > m_specification;
+            Specification::Ptr m_specification;
         };
     };
 }
