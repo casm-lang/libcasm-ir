@@ -44,6 +44,8 @@ namespace libcasm_ir
 
         u1 run( libpass::PassResult& pr ) override;
 
+        std::string indention( Value& value ) const;
+
         LIB_CASMIR_VISITOR_INTERFACE;
 
         class Data : public libpass::PassData

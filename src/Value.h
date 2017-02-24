@@ -203,14 +203,13 @@ namespace libcasm_ir
 
         std::string str_description( void ) const;
 
-        void dump( void ) const;
+        std::string dump( void ) const;
 
         std::string make_hash( void ) const;
 
-        const char* label( void ) const
-        {
-            return name();
-        }
+        const char* label( void ) const;
+
+        std::string str_label( void ) const;
 
         inline u1 operator==( const Value& rhs ) const
         {

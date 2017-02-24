@@ -25,6 +25,8 @@
 
 #include "libcasm-ir.h"
 
+#include "../stdhl/cpp/Log.h"
+
 using namespace libcasm_ir;
 
 char CasmIRDumpPass::id = 0;
@@ -38,12 +40,24 @@ u1 CasmIRDumpPass::run( libpass::PassResult& pr )
     auto data = pr.result< CasmIRDumpPass >();
     assert( data );
 
-    data->specification()->iterate( Traversal::PREORDER, this );
+    try
+    {
+        data->specification()->iterate(
+            Traversal::PREORDER, [this]( Value& value, Context& ) {
+                libstdhl::Log::info( "%p: %s%s", &value,
+                    this->indention( value ).c_str(), value.dump().c_str() );
+            } );
+    }
+    catch( ... )
+    {
+        libstdhl::Log::error( "unsuccessful dump of specification" );
+        return false;
+    }
 
     return true;
 }
 
-static std::string indention( Value& value )
+std::string CasmIRDumpPass::indention( Value& value ) const
 {
     std::string ind = "";
     u8 cnt = 0;
@@ -75,22 +89,8 @@ static std::string indention( Value& value )
     return ind;
 }
 
-#define DUMP_PREFIX                                                            \
-    fprintf( stderr, "%p: %s, %s%s ", &value, value.label(),                   \
-        indention( value ).c_str(), value.name() )
-#define DUMP_POSTFIX fprintf( stderr, "\n" );
-
-#define DUMP_INSTR                                                             \
-    for( auto operand : value.operands() )                                     \
-    {                                                                          \
-        fprintf( stderr, ", %s [%s]", operand->label(),                        \
-            operand->type().description() );                                   \
-    }
-
 void CasmIRDumpPass::visit_prolog( Specification& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( Specification& value, Context& )
 {
@@ -98,8 +98,6 @@ void CasmIRDumpPass::visit_epilog( Specification& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( Agent& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( Agent& value, Context& )
 {
@@ -107,8 +105,6 @@ void CasmIRDumpPass::visit_epilog( Agent& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( Builtin& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( Builtin& value, Context& )
 {
@@ -116,8 +112,6 @@ void CasmIRDumpPass::visit_epilog( Builtin& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( Function& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( Function& value, Context& )
 {
@@ -125,8 +119,6 @@ void CasmIRDumpPass::visit_epilog( Function& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( Derived& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_interlog( Derived& value, Context& )
 {
@@ -137,8 +129,6 @@ void CasmIRDumpPass::visit_epilog( Derived& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( Rule& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_interlog( Rule& value, Context& )
 {
@@ -149,9 +139,6 @@ void CasmIRDumpPass::visit_epilog( Rule& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( ParallelBlock& value, Context& )
 {
-    DUMP_PREFIX;
-    fprintf( stderr, " (%p, %p) ", value.scope().get(), value.parent().get() );
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( ParallelBlock& value, Context& )
 {
@@ -159,9 +146,6 @@ void CasmIRDumpPass::visit_epilog( ParallelBlock& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( SequentialBlock& value, Context& )
 {
-    DUMP_PREFIX;
-    fprintf( stderr, " (%p, %p) ", value.scope().get(), value.parent().get() );
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( SequentialBlock& value, Context& )
 {
@@ -169,9 +153,6 @@ void CasmIRDumpPass::visit_epilog( SequentialBlock& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( TrivialStatement& value, Context& )
 {
-    DUMP_PREFIX;
-    fprintf( stderr, " (%p, %p) ", value.scope().get(), value.parent().get() );
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( TrivialStatement& value, Context& )
 {
@@ -179,9 +160,6 @@ void CasmIRDumpPass::visit_epilog( TrivialStatement& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( BranchStatement& value, Context& )
 {
-    DUMP_PREFIX;
-    fprintf( stderr, " (%p, %p) ", value.scope().get(), value.parent().get() );
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_interlog( BranchStatement& value, Context& )
 {
@@ -192,9 +170,6 @@ void CasmIRDumpPass::visit_epilog( BranchStatement& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( LocalInstruction& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_INSTR;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( LocalInstruction& value, Context& )
 {
@@ -202,9 +177,6 @@ void CasmIRDumpPass::visit_epilog( LocalInstruction& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( AssertInstruction& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_INSTR;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( AssertInstruction& value, Context& )
 {
@@ -212,33 +184,29 @@ void CasmIRDumpPass::visit_epilog( AssertInstruction& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( SelectInstruction& value, Context& )
 {
-    DUMP_PREFIX;
+    // i32 cnt = -1;
+    // for( auto operand : value.operands() )
+    // {
+    //     cnt++;
+    //     if( cnt == 0 or ( cnt % 2 ) == 1 )
+    //     {
+    //         if( isa< Instruction >( operand ) or isa< Constant >( operand ) )
+    //         {
+    //             fprintf( stderr, ", %s [%s]", operand->label(),
+    //                 operand->type().description() );
+    //         }
+    //         else
+    //         {
+    //             fprintf( stderr, " : %s", operand->label() );
+    //         }
+    //     }
+    //     else
+    //     {
+    //         assert( isa< ExecutionSemanticsBlock >( operand ) );
 
-    i32 cnt = -1;
-    for( auto operand : value.operands() )
-    {
-        cnt++;
-        if( cnt == 0 or ( cnt % 2 ) == 1 )
-        {
-            if( isa< Instruction >( operand ) or isa< Constant >( operand ) )
-            {
-                fprintf( stderr, ", %s [%s]", operand->label(),
-                    operand->type().description() );
-            }
-            else
-            {
-                fprintf( stderr, " : %s", operand->label() );
-            }
-        }
-        else
-        {
-            assert( isa< ExecutionSemanticsBlock >( operand ) );
-
-            fprintf( stderr, " : %s", operand->label() );
-        }
-    }
-
-    DUMP_POSTFIX;
+    //         fprintf( stderr, " : %s", operand->label() );
+    //     }
+    // }
 }
 void CasmIRDumpPass::visit_epilog( SelectInstruction& value, Context& )
 {
@@ -246,9 +214,6 @@ void CasmIRDumpPass::visit_epilog( SelectInstruction& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( SkipInstruction& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_INSTR;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( SkipInstruction& value, Context& )
 {
@@ -256,9 +221,6 @@ void CasmIRDumpPass::visit_epilog( SkipInstruction& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( ForkInstruction& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_INSTR;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( ForkInstruction& value, Context& )
 {
@@ -266,9 +228,6 @@ void CasmIRDumpPass::visit_epilog( ForkInstruction& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( MergeInstruction& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_INSTR;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( MergeInstruction& value, Context& )
 {
@@ -276,9 +235,6 @@ void CasmIRDumpPass::visit_epilog( MergeInstruction& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( LocationInstruction& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_INSTR;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( LocationInstruction& value, Context& )
 {
@@ -286,9 +242,6 @@ void CasmIRDumpPass::visit_epilog( LocationInstruction& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( LookupInstruction& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_INSTR;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( LookupInstruction& value, Context& )
 {
@@ -296,9 +249,6 @@ void CasmIRDumpPass::visit_epilog( LookupInstruction& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( UpdateInstruction& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_INSTR;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( UpdateInstruction& value, Context& )
 {
@@ -306,9 +256,6 @@ void CasmIRDumpPass::visit_epilog( UpdateInstruction& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( CallInstruction& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_INSTR;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( CallInstruction& value, Context& )
 {
@@ -316,9 +263,6 @@ void CasmIRDumpPass::visit_epilog( CallInstruction& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( PrintInstruction& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_INSTR;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( PrintInstruction& value, Context& )
 {
@@ -326,36 +270,27 @@ void CasmIRDumpPass::visit_epilog( PrintInstruction& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( AddInstruction& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_INSTR;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( AddInstruction& value, Context& )
 {
 }
+
 void CasmIRDumpPass::visit_prolog( SubInstruction& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_INSTR;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( SubInstruction& value, Context& )
 {
 }
+
 void CasmIRDumpPass::visit_prolog( MulInstruction& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_INSTR;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( MulInstruction& value, Context& )
 {
 }
+
 void CasmIRDumpPass::visit_prolog( ModInstruction& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_INSTR;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( ModInstruction& value, Context& )
 {
@@ -363,9 +298,6 @@ void CasmIRDumpPass::visit_epilog( ModInstruction& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( DivInstruction& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_INSTR;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( DivInstruction& value, Context& )
 {
@@ -373,9 +305,6 @@ void CasmIRDumpPass::visit_epilog( DivInstruction& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( AndInstruction& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_INSTR;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( AndInstruction& value, Context& )
 {
@@ -383,9 +312,6 @@ void CasmIRDumpPass::visit_epilog( AndInstruction& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( XorInstruction& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_INSTR;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( XorInstruction& value, Context& )
 {
@@ -393,9 +319,6 @@ void CasmIRDumpPass::visit_epilog( XorInstruction& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( OrInstruction& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_INSTR;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( OrInstruction& value, Context& )
 {
@@ -403,9 +326,6 @@ void CasmIRDumpPass::visit_epilog( OrInstruction& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( EquInstruction& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_INSTR;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( EquInstruction& value, Context& )
 {
@@ -413,9 +333,6 @@ void CasmIRDumpPass::visit_epilog( EquInstruction& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( NeqInstruction& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_INSTR;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( NeqInstruction& value, Context& )
 {
@@ -423,9 +340,6 @@ void CasmIRDumpPass::visit_epilog( NeqInstruction& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( LthInstruction& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_INSTR;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( LthInstruction& value, Context& )
 {
@@ -437,8 +351,6 @@ void CasmIRDumpPass::visit_epilog( LthInstruction& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( AgentConstant& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( AgentConstant& value, Context& )
 {
@@ -446,8 +358,6 @@ void CasmIRDumpPass::visit_epilog( AgentConstant& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( RuleReferenceConstant& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( RuleReferenceConstant& value, Context& )
 {
@@ -455,8 +365,6 @@ void CasmIRDumpPass::visit_epilog( RuleReferenceConstant& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( BooleanConstant& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( BooleanConstant& value, Context& )
 {
@@ -464,8 +372,6 @@ void CasmIRDumpPass::visit_epilog( BooleanConstant& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( IntegerConstant& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( IntegerConstant& value, Context& )
 {
@@ -473,8 +379,6 @@ void CasmIRDumpPass::visit_epilog( IntegerConstant& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( BitConstant& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( BitConstant& value, Context& )
 {
@@ -482,8 +386,6 @@ void CasmIRDumpPass::visit_epilog( BitConstant& value, Context& )
 
 void CasmIRDumpPass::visit_prolog( StringConstant& value, Context& )
 {
-    DUMP_PREFIX;
-    DUMP_POSTFIX;
 }
 void CasmIRDumpPass::visit_epilog( StringConstant& value, Context& )
 {

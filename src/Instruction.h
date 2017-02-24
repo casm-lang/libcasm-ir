@@ -71,9 +71,6 @@ namespace libcasm_ir
 
     class UnaryInstruction
     {
-      private:
-        Instruction& m_self;
-
       public:
         UnaryInstruction( Instruction* self );
 
@@ -85,13 +82,13 @@ namespace libcasm_ir
         }
 
         static u1 classof( Value const* obj );
+
+      private:
+        Instruction& m_self;
     };
 
     class BinaryInstruction
     {
-      private:
-        Instruction& m_self;
-
       public:
         BinaryInstruction( Instruction* self );
 
@@ -104,6 +101,9 @@ namespace libcasm_ir
         }
 
         static u1 classof( Value const* obj );
+
+      private:
+        Instruction& m_self;
     };
 
     class SkipInstruction : public Instruction

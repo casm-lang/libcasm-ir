@@ -86,7 +86,7 @@ Value::Ptr Instruction::operand( u8 position ) const
                                  + "' does not exist!" );
     }
 
-    if( auto element = m_operands.at( position ) )
+    if( auto element = m_operands[ position ] )
     {
         return element;
     }
@@ -211,7 +211,7 @@ u1 BinaryInstruction::classof( Value const* obj )
 //
 
 SkipInstruction::SkipInstruction( void )
-: Instruction( "skip", 0, {}, classid() )
+: Instruction( "skip", libstdhl::get< VoidType >(), {}, classid() )
 {
 }
 
@@ -225,7 +225,7 @@ u1 SkipInstruction::classof( Value const* obj )
 //
 
 ForkInstruction::ForkInstruction( void )
-: Instruction( "fork", 0, {}, classid() )
+: Instruction( "fork", libstdhl::get< VoidType >(), {}, classid() )
 {
 }
 
@@ -239,7 +239,7 @@ u1 ForkInstruction::classof( Value const* obj )
 //
 
 MergeInstruction::MergeInstruction( void )
-: Instruction( "merge", 0, {}, classid() )
+: Instruction( "merge", libstdhl::get< VoidType >(), {}, classid() )
 {
 }
 

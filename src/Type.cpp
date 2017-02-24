@@ -80,7 +80,7 @@ Type::Ptr Type::ptr_result( void ) const
         return rt->result();
     }
 
-    return nullptr;
+    return libstdhl::get< Type >( *this );
 }
 
 std::string Type::make_hash( void ) const
