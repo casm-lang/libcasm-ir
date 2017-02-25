@@ -25,8 +25,6 @@
 
 #include "libcasm-ir.h"
 
-#include "../stdhl/cpp/Log.h"
-
 using namespace libcasm_ir;
 
 char CasmIRDumpPass::id = 0;

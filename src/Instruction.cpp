@@ -29,9 +29,6 @@
 #include "Rule.h"
 #include "Statement.h"
 
-#include "../stdhl/cpp/Default.h"
-#include "../stdhl/cpp/Log.h"
-
 using namespace libcasm_ir;
 
 //

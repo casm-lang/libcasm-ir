@@ -26,8 +26,6 @@
 
 #include "Value.h"
 
-#include "../stdhl/cpp/List.h"
-
 namespace libcasm_ir
 {
     class Statement;

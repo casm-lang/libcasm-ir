@@ -33,12 +33,13 @@
 #include "CasmIR.h"
 
 #include "Type.h"
-#include "Visitor.h"
-
-#include "../stdhl/cpp/List.h"
 
 namespace libcasm_ir
 {
+    class Context;
+    class Visitor;
+    enum Traversal : u8;
+
     class Value : public CasmIR
     {
       public:
@@ -244,9 +245,8 @@ namespace libcasm_ir
             std::function< void( Value&, Context& ) > action
             = []( Value&, Context& ) {} ) final;
 
-        virtual void iterate(
-            Traversal order, std::function< void( Value&, Context& ) > action )
-            final;
+        virtual void iterate( Traversal order,
+            std::function< void( Value&, Context& ) > action ) final;
 
       protected:
         static std::unordered_map< u8, std::unordered_set< Value* > >&

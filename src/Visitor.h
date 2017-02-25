@@ -25,17 +25,14 @@
 #define _LIB_CASMIR_VISITOR_H_
 
 #include "CasmIR.h"
-//#include "Type.h"
 
 namespace libcasm_ir
 {
-    class Value;
     class Specification;
     class Agent;
-
     class Function;
-    class Rule;
     class Derived;
+    class Rule;
     class Builtin;
 
     class ParallelBlock;
@@ -45,19 +42,14 @@ namespace libcasm_ir
     class BranchStatement;
 
     class LocalInstruction;
-
+    class LocationInstruction;
     class AssertInstruction;
     class SelectInstruction;
-
     class SkipInstruction;
-
     class ForkInstruction;
     class MergeInstruction;
-
-    class LocationInstruction;
     class LookupInstruction;
     class UpdateInstruction;
-
     class CallInstruction;
     class PrintInstruction;
 
@@ -68,8 +60,8 @@ namespace libcasm_ir
     class DivInstruction;
 
     class AndInstruction;
-    class XorInstruction;
     class OrInstruction;
+    class XorInstruction;
 
     class EquInstruction;
     class NeqInstruction;
@@ -82,9 +74,9 @@ namespace libcasm_ir
     class BitConstant;
     class StringConstant;
 
-    enum class Traversal
+    enum Traversal : u8
     {
-        PREORDER,
+        PREORDER = 0,
         POSTORDER
     };
 

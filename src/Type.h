@@ -33,7 +33,7 @@
 #include "CasmIR.h"
 
 #include "../stdhl/cpp/List.h"
-#include "../stdhl/cpp/Type.h"
+#include "../stdhl/cpp/Log.h"
 
 namespace libcasm_ir
 {

@@ -24,6 +24,7 @@
 #include "Value.h"
 
 #include "Agent.h"
+#include "Block.h"
 #include "Builtin.h"
 #include "Constant.h"
 #include "Derived.h"
@@ -32,9 +33,8 @@
 #include "Rule.h"
 #include "Specification.h"
 #include "Statement.h"
-
-#include "../stdhl/cpp/Default.h"
-#include "../stdhl/cpp/Log.h"
+#include "Value.h"
+#include "Visitor.h"
 
 using namespace libcasm_ir;
 

@@ -22,6 +22,7 @@
 //
 
 #include "User.h"
+
 #include "Agent.h"
 #include "Builtin.h"
 #include "Constant.h"
@@ -29,9 +30,6 @@
 #include "Function.h"
 #include "Instruction.h"
 #include "Rule.h"
-
-#include "../stdhl/cpp/Default.h"
-#include "../stdhl/cpp/Log.h"
 
 using namespace libcasm_ir;
 

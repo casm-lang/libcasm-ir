@@ -24,9 +24,9 @@
 #ifndef _LIB_CASMIR_BUILTIN_H_
 #define _LIB_CASMIR_BUILTIN_H_
 
-#include "Type.h"
-#include "TypeAnnotation.h"
 #include "User.h"
+
+#include "TypeAnnotation.h"
 
 namespace libcasm_ir
 {

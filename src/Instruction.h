@@ -24,10 +24,9 @@
 #ifndef _LIB_CASMIR_INSTRUCTION_H_
 #define _LIB_CASMIR_INSTRUCTION_H_
 
-#include "TypeAnnotation.h"
 #include "User.h"
 
-#include "../stdhl/cpp/List.h"
+#include "TypeAnnotation.h"
 
 namespace libcasm_ir
 {
