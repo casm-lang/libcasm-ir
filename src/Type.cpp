@@ -280,14 +280,14 @@ EnumerationType::EnumerationType( const Enumeration::Ptr& kind )
 {
 }
 
-Enumeration::Ptr EnumerationType::kindPtr( void ) const
-{
-    return m_kind;
-}
-
 Enumeration& EnumerationType::kind( void ) const
 {
     return *m_kind.get();
+}
+
+Enumeration::Ptr EnumerationType::ptr_kind( void ) const
+{
+    return m_kind;
 }
 
 //

@@ -244,7 +244,7 @@ namespace libcasm_ir
 
         Enumeration& kind( void ) const;
 
-        std::shared_ptr< Enumeration > kindPtr( void ) const;
+        std::shared_ptr< Enumeration > ptr_kind( void ) const;
 
       private:
         std::shared_ptr< Enumeration > m_kind;
