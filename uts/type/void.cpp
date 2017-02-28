@@ -21,36 +21,15 @@
 //  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef _LIB_CASMIR_H_
-#define _LIB_CASMIR_H_
+#include "uts/main.h"
 
-#include "src/Agent.h"
-#include "src/Block.h"
-#include "src/Builtin.h"
-#include "src/CasmIR.h"
-#include "src/Constant.h"
-#include "src/Derived.h"
-#include "src/Enumeration.h"
-#include "src/Function.h"
-#include "src/Instruction.h"
-#include "src/Rule.h"
-#include "src/Specification.h"
-#include "src/Statement.h"
-#include "src/Type.h"
-#include "src/TypeAnnotation.h"
-#include "src/User.h"
-#include "src/Value.h"
-#include "src/Visitor.h"
+using namespace libcasm_ir;
 
-#include "src/analyze/CasmIRDumpPass.h"
-
-#include "src/transform/CasmIRToSourcePass.h"
-
-namespace libcasm_ir
+TEST( libcasm_ir__type_void, make_valid )
 {
+    auto v = libstdhl::make< VoidType >();
+    ASSERT_TRUE( v != nullptr );
 }
-
-#endif // _LIB_CASMIR_H_
 
 //
 //  Local variables:
