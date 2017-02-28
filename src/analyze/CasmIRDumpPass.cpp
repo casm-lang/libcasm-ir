@@ -31,7 +31,7 @@ char CasmIRDumpPass::id = 0;
 
 static libpass::PassRegistration< CasmIRDumpPass > PASS( "CASM IR Dumping Pass",
     "outputs from the CASM IR an ASCII representation for debugging",
-    "ir-dump-debug", 0 );
+    "ir-debug", 0 );
 
 u1 CasmIRDumpPass::run( libpass::PassResult& pr )
 {
