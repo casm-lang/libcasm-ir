@@ -68,22 +68,22 @@ u1 CasmIRToSourcePass::run( libpass::PassResult& pr )
             fprintf( stream, "%s = %s %s\n", value.label(), value.type().name(),
                 value.name() );
         }
-        else if( isa< Agent >( value ) )
-        {
-            static u1 first = true;
+        // else if( isa< Agent >( value ) )
+        // {
+        //     static u1 first = true;
 
-            if( first )
-            {
-                first = false;
-                fprintf( stream, "\n" );
-            }
+        //     if( first )
+        //     {
+        //         first = false;
+        //         fprintf( stream, "\n" );
+        //     }
 
-            Agent& val = static_cast< Agent& >( value );
+        //     Agent& val = static_cast< Agent& >( value );
 
-            fprintf( stream, "%s = init %s %s\n", value.label(),
-                val.rulereference()->value()->type().name(),
-                val.rulereference()->value()->name() );
-        }
+        //     fprintf( stream, "%s = %s %s\n", value.label(),
+        //         val.rulereference()->value()->type().name(),
+        //         val.rulereference()->value()->name() );
+        // }
         else if( isa< Function >( value ) )
         {
             static u1 first = true;

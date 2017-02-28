@@ -72,37 +72,6 @@ u1 VoidConstant::classof( Value const* obj )
 }
 
 //
-// AgentConstant
-//
-
-AgentConstant::AgentConstant( const Agent::Ptr& value, u1 defined, u1 symbolic )
-: Constant( ( defined ? "self" : undef_str ), libstdhl::get< AgentType >(),
-      defined, symbolic, classid() )
-{
-    m_value_ptr = value;
-}
-
-AgentConstant::AgentConstant( const Agent::Ptr& value )
-: AgentConstant( value, true, false )
-{
-}
-
-AgentConstant::AgentConstant( void )
-: AgentConstant( nullptr, false, false )
-{
-}
-
-Agent::Ptr AgentConstant::value( void ) const
-{
-    return std::static_pointer_cast< Agent >( m_value_ptr );
-}
-
-u1 AgentConstant::classof( Value const* obj )
-{
-    return obj->id() == classid();
-}
-
-//
 // Rule Reference Constant
 //
 
@@ -352,17 +321,16 @@ u1 RationalConstant::classof( Value const* obj )
 //
 
 EnumerationConstant::EnumerationConstant( const EnumerationType::Ptr& type,
-    const std::string& value, u1 defined, u1 symbolic )
-: Constant(
-      ( defined ? value : undef_str ), type, defined, symbolic, classid() )
+    const std::string& value, u1 defined, u1 symbolic, Value::ID id )
+: Constant( ( defined ? value : undef_str ), type, defined, symbolic, id )
 {
+    m_value.m_u64 = type->kind().encode( value );
 }
 
 EnumerationConstant::EnumerationConstant(
     const EnumerationType::Ptr& type, const std::string& value )
 : EnumerationConstant( type, value, true, false )
 {
-    m_value.m_u64 = type->kind().encode( value );
 }
 
 EnumerationConstant::EnumerationConstant( const EnumerationType::Ptr& type )
@@ -387,6 +355,32 @@ u64 EnumerationConstant::value( void ) const
 }
 
 u1 EnumerationConstant::classof( Value const* obj )
+{
+    return obj->id() == classid() or AgentConstant::classof( obj );
+}
+
+//
+// AgentConstant
+//
+
+AgentConstant::AgentConstant( const AgentType::Ptr& type,
+    const std::string& value, u1 defined, u1 symbolic )
+: EnumerationConstant( type, value, defined, symbolic, classid() )
+{
+}
+
+AgentConstant::AgentConstant(
+    const AgentType::Ptr& type, const std::string& value )
+: AgentConstant( type, value, true, false )
+{
+}
+
+AgentConstant::AgentConstant( const AgentType::Ptr& type )
+: AgentConstant( type, nullptr, false, false )
+{
+}
+
+u1 AgentConstant::classof( Value const* obj )
 {
     return obj->id() == classid();
 }

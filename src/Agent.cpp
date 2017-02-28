@@ -26,27 +26,12 @@
 
 using namespace libcasm_ir;
 
-Agent::Agent( const RuleReferenceConstant::Ptr& rulereference )
-: Value( "$", libstdhl::get< AgentType >(), classid() )
-, m_rulereference( rulereference )
+Agent::Agent( const std::vector< std::string >& agents )
+: Enumeration( "agent", agents, classid() )
 {
     static Agent* check = 0;
-
-    assert(
-        not check
-        and " currently only a single execution agent behavior is "
-            "supported! " );
-
+    assert( not check );
     check = this;
-}
-
-Agent::~Agent( void )
-{
-}
-
-RuleReferenceConstant::Ptr Agent::rulereference( void ) const
-{
-    return m_rulereference;
 }
 
 u1 Agent::classof( Value const* obj )

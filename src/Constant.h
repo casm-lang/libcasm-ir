@@ -89,28 +89,6 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class AgentConstant : public Constant
-    {
-      public:
-        using Ptr = std::shared_ptr< AgentConstant >;
-
-      private:
-        AgentConstant( const Agent::Ptr& value, u1 defined, u1 symbolic );
-
-      public:
-        AgentConstant( const Agent::Ptr& value );
-        AgentConstant( void );
-
-        Agent::Ptr value( void ) const;
-
-        static inline Value::ID classid( void )
-        {
-            return Value::AGENT_CONSTANT;
-        }
-
-        static u1 classof( Value const* obj );
-    };
-
     class RuleReferenceConstant : public Constant
     {
       public:
@@ -275,9 +253,10 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< EnumerationConstant >;
 
-      private:
+      protected:
         EnumerationConstant( const EnumerationType::Ptr& type,
-            const std::string& value, u1 defined, u1 symbolic );
+            const std::string& value, u1 defined, u1 symbolic,
+            Value::ID id = classid() );
 
       public:
         EnumerationConstant(
@@ -295,6 +274,29 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::ENUMERATION_CONSTANT;
+        }
+
+        static u1 classof( Value const* obj );
+    };
+
+    class AgentConstant : public EnumerationConstant
+    {
+      public:
+        using Ptr = std::shared_ptr< AgentConstant >;
+
+      private:
+        AgentConstant( const AgentType::Ptr& type, const std::string& value,
+            u1 defined, u1 symbolic );
+
+      public:
+        AgentConstant( const AgentType::Ptr& type, const std::string& value );
+        AgentConstant( const AgentType::Ptr& type );
+
+        Agent::Ptr value( void ) const;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::AGENT_CONSTANT;
         }
 
         static u1 classof( Value const* obj );

@@ -28,13 +28,16 @@
 
 namespace libcasm_ir
 {
+    class EnumerationType;
+
     class Enumeration : public Value
     {
       public:
         using Ptr = std::shared_ptr< Enumeration >;
 
-        Enumeration( const std::string& name, const Type::Ptr& type,
-            const std::vector< std::string >& values );
+        Enumeration( const std::string& name,
+            const std::vector< std::string >& values,
+            Value::ID id = classid() );
 
         ~Enumeration( void ) = default;
 

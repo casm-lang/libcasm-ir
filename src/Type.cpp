@@ -22,6 +22,8 @@
 //
 
 #include "Type.h"
+
+#include "Agent.h"
 #include "Enumeration.h"
 
 using namespace libcasm_ir;
@@ -192,15 +194,6 @@ LocationType::LocationType()
 }
 
 //
-// Agent Type
-//
-
-AgentType::AgentType()
-: PrimitiveType( "a", "Agent", Type::AGENT )
-{
-}
-
-//
 // Rule Reference Type
 //
 
@@ -274,9 +267,14 @@ RationalType::RationalType()
 // Enumeration Type
 //
 
-EnumerationType::EnumerationType( const Enumeration::Ptr& kind )
-: PrimitiveType( kind->name(), kind->name(), Type::ENUMERATION )
+EnumerationType::EnumerationType( const Enumeration::Ptr& kind, Type::ID id )
+: PrimitiveType( kind->name(), kind->name(), id )
 , m_kind( kind )
+{
+}
+
+EnumerationType::EnumerationType( const Enumeration::Ptr& kind )
+: EnumerationType( kind, Type::ENUMERATION )
 {
 }
 
@@ -288,6 +286,15 @@ Enumeration& EnumerationType::kind( void ) const
 Enumeration::Ptr EnumerationType::ptr_kind( void ) const
 {
     return m_kind;
+}
+
+//
+// Agent Type
+//
+
+AgentType::AgentType( const Agent::Ptr& agent )
+: EnumerationType( agent, Type::AGENT )
+{
 }
 
 //

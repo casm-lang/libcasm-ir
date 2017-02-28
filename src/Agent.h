@@ -24,22 +24,18 @@
 #ifndef _LIB_CASMIR_AGENT_H_
 #define _LIB_CASMIR_AGENT_H_
 
-#include "Value.h"
+#include "Enumeration.h"
 
 namespace libcasm_ir
 {
-    class RuleReferenceConstant;
-
-    class Agent : public Value
+    class Agent : public Enumeration
     {
       public:
         using Ptr = std::shared_ptr< Agent >;
 
-        Agent( const std::shared_ptr< RuleReferenceConstant >& rulereference );
+        Agent( const std::vector< std::string >& agents );
 
-        ~Agent( void );
-
-        std::shared_ptr< RuleReferenceConstant > rulereference( void ) const;
+        ~Agent( void ) = default;
 
         static inline Value::ID classid( void )
         {
@@ -47,9 +43,6 @@ namespace libcasm_ir
         }
 
         static u1 classof( Value const* obj );
-
-      private:
-        std::shared_ptr< RuleReferenceConstant > m_rulereference;
     };
 }
 

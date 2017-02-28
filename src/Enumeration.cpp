@@ -25,19 +25,31 @@
 
 using namespace libcasm_ir;
 
-Enumeration::Enumeration( const std::string& name, const Type::Ptr& type,
-    const std::vector< std::string >& values )
-: Value( "@" + name, type, classid() )
+Enumeration::Enumeration( const std::string& name,
+    const std::vector< std::string >& values,
+    Value::ID id )
+: Value( "@" + name, libstdhl::get< VoidType >(), id )
 , m_values( values )
 {
     if( m_values.size() == 0 )
     {
-        throw std::domain_error( "enumeration '" + name + "' has no values!" );
+        throw std::invalid_argument(
+            "enumeration '" + name + "' has no values!" );
     }
 
     for( u64 c = 0; c < m_values.size(); c++ )
     {
-        m_value2uid[ m_values[ c ] ] = c;
+        auto element = m_values[ c ];
+
+        auto result = m_value2uid.find( element );
+        if( result != m_value2uid.end() )
+        {
+            throw std::domain_error(
+                "enumeration '" + name + "' already has an element '" + element
+                + "'" );
+        }
+
+        m_value2uid[ element ] = c;
     }
 }
 
