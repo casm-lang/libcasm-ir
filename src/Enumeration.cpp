@@ -39,17 +39,14 @@ Enumeration::Enumeration( const std::string& name,
 
     for( u64 c = 0; c < m_values.size(); c++ )
     {
-        auto element = m_values[ c ];
+        auto value = m_values[ c ];
 
-        auto result = m_value2uid.find( element );
-        if( result != m_value2uid.end() )
+        if( not m_value2uid.emplace( value, c ).second )
         {
             throw std::domain_error(
-                "enumeration '" + name + "' already has an element '" + element
+                "enumeration '" + name + "' already has an value '" + value
                 + "'" );
         }
-
-        m_value2uid[ element ] = c;
     }
 }
 
@@ -68,12 +65,12 @@ u64 Enumeration::encode( const std::string& value ) const
 
 std::string Enumeration::decode( const u64 value ) const
 {
-    if( value < m_values.size() )
+    if( value >= m_values.size() )
     {
         throw std::domain_error( "invalid value '" + std::to_string( value )
                                  + "' to decode for enumeration '"
                                  + name()
-                                 + "'!" );
+                                 + "'" );
     }
 
     return m_values[ value ];

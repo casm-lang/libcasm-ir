@@ -21,45 +21,40 @@
 //  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef _LIB_CASMIR_ENUMERATION_H_
-#define _LIB_CASMIR_ENUMERATION_H_
+#include "uts/main.h"
 
-#include "Value.h"
+using namespace libcasm_ir;
 
-namespace libcasm_ir
+TEST( libcasm_ir__enumeration, example )
 {
-    class EnumerationType;
+    const std::vector< std::string > elements = { "foo", "bar", "baz" };
+    const auto e = libstdhl::make< Enumeration >( "example", elements );
 
-    class Enumeration : public Value
+    ASSERT_TRUE( e != nullptr );
+
+    for( std::size_t c = 0; c < elements.size(); c++ )
     {
-      public:
-        using Ptr = std::shared_ptr< Enumeration >;
+        EXPECT_EQ( e->encode( elements[ c ] ), c );
 
-        Enumeration( const std::string& name,
-            const std::vector< std::string >& values,
-            Value::ID id = classid() );
+        EXPECT_STREQ( e->decode( c ).c_str(), elements[ c ].c_str() );
+    }
 
-        ~Enumeration( void ) = default;
+    EXPECT_THROW( { e->encode( "enum" ); }, std::domain_error );
 
-        u64 encode( const std::string& value ) const;
-
-        std::string decode( const u64 value ) const;
-
-        static inline Value::ID classid( void )
-        {
-            return Value::ENUMERATION;
-        }
-
-        static u1 classof( Value const* obj );
-
-      private:
-        std::vector< std::string > m_values;
-
-        std::unordered_map< std::string, u64 > m_value2uid;
-    };
+    EXPECT_THROW( { e->decode( 123 ); }, std::domain_error );
 }
 
-#endif // _LIB_CASMIR_ENUMERATION_H_
+TEST( libcasm_ir__enumeration, invalid_same_values_are_not_allowed )
+{
+    const std::vector< std::string > elements
+        = { "foo", "bar", "baz", "bar", "foo" };
+
+    EXPECT_THROW(
+        {
+            const auto e = libstdhl::make< Enumeration >( "example", elements );
+        },
+        std::domain_error );
+}
 
 //
 //  Local variables:
