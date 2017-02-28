@@ -44,7 +44,7 @@ namespace libcasm_ir
     };
 }
 
-#endif /* _LIB_CASMIR_FUNCTION_H_ */
+#endif // _LIB_CASMIR_FUNCTION_H_
 
 //
 //  Local variables:

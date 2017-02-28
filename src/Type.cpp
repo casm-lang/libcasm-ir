@@ -80,12 +80,12 @@ Type::Ptr Type::ptr_result( void ) const
         return rt->result();
     }
 
-    return nullptr;
+    return libstdhl::get< Type >( *this );
 }
 
 std::string Type::make_hash( void ) const
 {
-    return "t:" + std::to_string( id() ) + ":" + description();
+    return "t:" + std::to_string( id() ) + ":" + str_description();
 }
 
 u1 Type::isVoid( void ) const
@@ -280,14 +280,14 @@ EnumerationType::EnumerationType( const Enumeration::Ptr& kind )
 {
 }
 
-Enumeration::Ptr EnumerationType::kindPtr( void ) const
-{
-    return m_kind;
-}
-
 Enumeration& EnumerationType::kind( void ) const
 {
     return *m_kind.get();
+}
+
+Enumeration::Ptr EnumerationType::ptr_kind( void ) const
+{
+    return m_kind;
 }
 
 //

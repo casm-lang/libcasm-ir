@@ -49,7 +49,7 @@ namespace libcasm_ir
 {
 }
 
-#endif /* _LIB_CASMIR_H_ */
+#endif // _LIB_CASMIR_H_
 
 //
 //  Local variables:

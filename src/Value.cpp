@@ -24,6 +24,7 @@
 #include "Value.h"
 
 #include "Agent.h"
+#include "Block.h"
 #include "Builtin.h"
 #include "Constant.h"
 #include "Derived.h"
@@ -32,9 +33,8 @@
 #include "Rule.h"
 #include "Specification.h"
 #include "Statement.h"
-
-#include "../stdhl/cpp/Default.h"
-#include "../stdhl/cpp/Log.h"
+#include "Value.h"
+#include "Visitor.h"
 
 using namespace libcasm_ir;
 
@@ -86,23 +86,16 @@ std::string Value::str_description( void ) const
     return type().str_name() + " " + str_name();
 }
 
-void Value::dump( void ) const
+std::string Value::dump( void ) const
 {
-    std::string tmp = "";
-
-    tmp += "[";
-    tmp += type().name();
-    tmp += "]";
-
-    tmp += label();
-    tmp += " = ";
+    std::string tmp = "[" + type().str_name() + "] " + str_label() + " = ";
 
     if( isa< Constant >( this ) )
     {
-        tmp += type().name();
-        tmp += " ";
+        tmp += type().str_name() + " ";
     }
-    tmp += name();
+
+    tmp += str_name();
 
     if( auto instr = cast< Instruction >( this ) )
     {
@@ -118,18 +111,27 @@ void Value::dump( void ) const
             {
                 tmp += ", ";
             }
-            tmp += operand->type().name();
-            tmp += " ";
-            tmp += operand->label();
+
+            tmp += operand->type().str_name() + " " + operand->str_label();
         }
     }
 
-    libstdhl::Log::info( "%p: %s", tmp.c_str() );
+    return tmp;
 }
 
 std::string Value::make_hash( void ) const
 {
     return "v:" + std::to_string( id() ) + ":" + str_description();
+}
+
+const char* Value::label( void ) const
+{
+    return str_label().c_str();
+}
+
+std::string Value::str_label( void ) const
+{
+    return str_name();
 }
 
 void Value::iterate( Traversal order,

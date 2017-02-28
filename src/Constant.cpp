@@ -23,9 +23,6 @@
 
 #include "Constant.h"
 
-#include "../stdhl/cpp/Default.h"
-#include "../stdhl/cpp/Log.h"
-
 using namespace libcasm_ir;
 
 static constexpr const char* undef_str = "undef";

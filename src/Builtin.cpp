@@ -23,8 +23,6 @@
 
 #include "Builtin.h"
 
-#include "../stdhl/cpp/Log.h"
-
 using namespace libcasm_ir;
 
 Builtin::Builtin( const std::string& name, const Type::Ptr& type,

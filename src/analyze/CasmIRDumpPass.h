@@ -44,6 +44,8 @@ namespace libcasm_ir
 
         u1 run( libpass::PassResult& pr ) override;
 
+        std::string indention( Value& value ) const;
+
         LIB_CASMIR_VISITOR_INTERFACE;
 
         class Data : public libpass::PassData
@@ -56,14 +58,13 @@ namespace libcasm_ir
             {
             }
 
-            std::shared_ptr< libcasm_ir::Specification > specification(
-                void ) const
+            Specification::Ptr specification( void ) const
             {
                 return m_specification;
             }
 
           private:
-            std::shared_ptr< libcasm_ir::Specification > m_specification;
+            Specification::Ptr m_specification;
         };
     };
 }

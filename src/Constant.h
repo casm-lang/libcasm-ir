@@ -309,7 +309,7 @@ namespace libcasm_ir
 
         static inline Value::ID classid( void )
         {
-            return Value::STRING_CONSTANT;
+            return Value::IDENTIFIER;
         }
 
         static u1 classof( Value const* obj );
