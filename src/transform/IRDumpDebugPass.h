@@ -21,37 +21,36 @@
 //  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef _LIB_CASMIR_H_
-#define _LIB_CASMIR_H_
+#ifndef _LIB_CASMIR_IR_DUMP_DEBUG_PASS_H_
+#define _LIB_CASMIR_IR_DUMP_DEBUG_PASS_H_
 
-#include "src/Agent.h"
-#include "src/Block.h"
-#include "src/Builtin.h"
-#include "src/CasmIR.h"
-#include "src/Constant.h"
-#include "src/Derived.h"
-#include "src/Enumeration.h"
-#include "src/Function.h"
-#include "src/Instruction.h"
-#include "src/Rule.h"
-#include "src/Specification.h"
-#include "src/Statement.h"
-#include "src/Type.h"
-#include "src/TypeAnnotation.h"
-#include "src/User.h"
-#include "src/Value.h"
-#include "src/Visitor.h"
+#include "libpass.h"
 
-#include "src/analyze/ConsistencyCheckPass.h"
+#include "../Specification.h"
+#include "../analyze/ConsistencyCheckPass.h"
 
-#include "src/transform/IRDumpDebugPass.h"
-#include "src/transform/IRDumpSourcePass.h"
+/**
+   @brief    TODO
+
+   TODO
+*/
 
 namespace libcasm_ir
 {
+    class IRDumpDebugPass final : public libpass::Pass
+    {
+      public:
+        static char id;
+
+        u1 run( libpass::PassResult& pr ) override;
+
+        std::string indention( Value& value ) const;
+
+        using Data = ConsistencyCheckPass::Data;
+    };
 }
 
-#endif // _LIB_CASMIR_H_
+#endif // _LIB_CASMIR_IR_DUMP_DEBUG_PASS_H_
 
 //
 //  Local variables:

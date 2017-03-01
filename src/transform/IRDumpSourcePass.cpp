@@ -21,15 +21,15 @@
 //  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "CasmIRToSourcePass.h"
+#include "IRDumpSourcePass.h"
 
 #include "libcasm-ir.h"
 
 using namespace libcasm_ir;
 
-char CasmIRToSourcePass::id = 0;
+char IRDumpSourcePass::id = 0;
 
-static libpass::PassRegistration< CasmIRToSourcePass > PASS(
+static libpass::PassRegistration< IRDumpSourcePass > PASS(
     "CASM IR to Source Code Pass",
     "translates the CASM IR to the ASCII source code representation", "ir-dump",
     0 );
@@ -48,9 +48,9 @@ static const char* indention( Value& value )
     }
 }
 
-u1 CasmIRToSourcePass::run( libpass::PassResult& pr )
+u1 IRDumpSourcePass::run( libpass::PassResult& pr )
 {
-    auto data = pr.result< CasmIRDumpPass >();
+    auto data = pr.result< ConsistencyCheckPass >();
     assert( data );
 
     data->specification()->iterate( Traversal::PREORDER, []( Value& value,
