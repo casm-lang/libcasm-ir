@@ -47,24 +47,89 @@ u1 ConsistencyCheckPass::run( libpass::PassResult& pr )
     try
     {
 #ifndef NDEBUG
+        // check 'is-a' relation only in 'debug' builds
         data->specification()->iterate( Traversal::PREORDER, this );
 #endif
 
-        data->specification()->iterate(
-            Traversal::PREORDER, [this]( Value& value, Context& ) {
-                if( const auto v = isa< Statement >( value ) )
+        data->specification()->iterate( Traversal::PREORDER, [this](
+                                                                 Value& value,
+                                                                 Context& ) {
+            if( const auto v = cast< Rule >( value ) )
+            {
+                if( not v->context() )
                 {
+                    libstdhl::Log::error(
+                        "rule '%p' %s: has no context", v, v->dump().c_str() );
                 }
-                else if( const auto v = cast< Instruction >( value ) )
+                if( const auto p = cast< ParallelBlock >( v->context() ) )
                 {
+                    if( *p->rule() != value )
+                    {
+                        libstdhl::Log::error(
+                            "rule '%p' %s: context does not point to this rule",
+                            v, v->dump().c_str() );
+                    }
                 }
-            } );
+                else
+                {
+                    libstdhl::Log::error(
+                        "rule '%p' %s: does not start with a parallel block", v,
+                        v->dump().c_str() );
+                }
+            }
+            else if( const auto v = cast< ExecutionSemanticsBlock >( value ) )
+            {
+                u1 block_is_context_of_rule = false;
+
+                if( const auto p = cast< ParallelBlock >( value ) )
+                {
+                    if( p->rule() )
+                    {
+                        block_is_context_of_rule = true;
+                    }
+                }
+
+                if( not v->parent() and not block_is_context_of_rule )
+                {
+                    libstdhl::Log::error(
+                        "stmt '%p' %s: has no parent", v, v->dump().c_str() );
+                }
+                if( not v->scope() and not block_is_context_of_rule )
+                {
+                    libstdhl::Log::error(
+                        "stmt '%p' %s: has no scope", v, v->dump().c_str() );
+                }
+            }
+            else if( const auto v = cast< Statement >( value ) )
+            {
+                if( not v->parent() )
+                {
+                    libstdhl::Log::error(
+                        "stmt '%p' %s: has no parent", v, v->dump().c_str() );
+                }
+                if( not v->scope() )
+                {
+                    libstdhl::Log::error(
+                        "stmt '%p' %s: has no scope", v, v->dump().c_str() );
+                }
+            }
+            else if( const auto v = cast< Instruction >( value ) )
+            {
+                if( not v->statement() )
+                {
+                    libstdhl::Log::error( "inst '%p' %s: has no statement", v,
+                        v->dump().c_str() );
+                }
+            }
+        } );
     }
     catch( ... )
     {
         libstdhl::Log::error( "unsuccessful dump of specification" );
         return false;
     }
+
+    pr.setResult< ConsistencyCheckPass >( data );
 
     return true;
 }
