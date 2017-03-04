@@ -51,7 +51,8 @@ void User::setUse( User& user )
 
 void User::removeUse( const User& user )
 {
-    libstdhl::Log::info( "removeUse: %s in %s", user.name(), this->name() );
+    libstdhl::Log::info(
+        "removeUse: %s in %s", user.name().c_str(), name().c_str() );
 
     m_uses.remove( std::remove_if(
         m_uses.begin(), m_uses.end(), [user]( const Use::Ptr& element ) {
@@ -63,7 +64,8 @@ void User::replaceAllUsesWith( const Value::Ptr& value )
 {
     for( auto u : uses() )
     {
-        libstdhl::Log::info( "%s -> %s", u->def().name(), u->use().name() );
+        libstdhl::Log::info(
+            "%s -> %s", u->def().name().c_str(), u->use().name().c_str() );
 
         if( auto instr = cast< Instruction >( u->use() ) )
         {

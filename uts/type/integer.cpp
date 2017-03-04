@@ -30,7 +30,8 @@ TEST( libcasm_ir__type_integer, make_and_get )
     auto v = libstdhl::make< IntegerType >();
     ASSERT_TRUE( v != nullptr );
 
-    EXPECT_STREQ( v->name(), "i" );
+    EXPECT_STREQ( v->name().c_str(), "i" );
+    EXPECT_STREQ( v->description().c_str(), "Integer" );
 
     auto w = libstdhl::make< IntegerType >();
     ASSERT_TRUE( w != nullptr );

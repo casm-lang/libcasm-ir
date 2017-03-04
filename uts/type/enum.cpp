@@ -33,7 +33,8 @@ TEST( libcasm_ir__type_enum, make_and_get )
     auto v = libstdhl::make< EnumerationType >( example );
     ASSERT_TRUE( v != nullptr );
 
-    EXPECT_STREQ( v->name(), "@example" );
+    EXPECT_STREQ( v->name().c_str(), "@example" );
+    EXPECT_STREQ( v->description().c_str(), "@example" );
 
     auto w = libstdhl::make< EnumerationType >( example );
     ASSERT_TRUE( w != nullptr );

@@ -36,22 +36,12 @@ Type::Type(
 {
 }
 
-const char* Type::name( void ) const
-{
-    return m_name.c_str();
-}
-
-std::string Type::str_name( void ) const
+std::string Type::name( void ) const
 {
     return m_name;
 }
 
-const char* Type::description() const
-{
-    return m_description.c_str();
-}
-
-std::string Type::str_description() const
+std::string Type::description() const
 {
     return m_description;
 }
@@ -65,9 +55,7 @@ const Type& Type::result( void ) const
 {
     if( isRelation() )
     {
-        const RelationType* rt = static_cast< const RelationType* >( this );
-
-        return *rt->result().get();
+        return *static_cast< const RelationType* >( this )->result().get();
     }
 
     return *this;
@@ -77,17 +65,25 @@ Type::Ptr Type::ptr_result( void ) const
 {
     if( isRelation() )
     {
-        const RelationType* rt = static_cast< const RelationType* >( this );
-
-        return rt->result();
+        return static_cast< const RelationType* >( this )->result();
     }
 
     return libstdhl::get< Type >( *this );
 }
 
+Types Type::arguments( void ) const
+{
+    if( isRelation() )
+    {
+        return static_cast< const RelationType* >( this )->arguments();
+    }
+
+    return {};
+}
+
 std::string Type::make_hash( void ) const
 {
-    return "t:" + std::to_string( id() ) + ":" + str_description();
+    return "t:" + std::to_string( id() ) + ":" + description();
 }
 
 u1 Type::isVoid( void ) const
@@ -319,14 +315,14 @@ RelationType::RelationType( const Type::Ptr& result, const Types& arguments )
             m_description += " x ";
         }
 
-        m_name += argument->str_name();
-        m_description += argument->str_description();
+        m_name += argument->name();
+        m_description += argument->description();
 
         first = false;
     }
 
-    m_name += " -> " + m_result->str_name() + ")";
-    m_description += " -> " + m_result->str_description() + ")";
+    m_name += " -> " + m_result->name() + ")";
+    m_description += " -> " + m_result->description() + ")";
 }
 
 Type::Ptr RelationType::result( void ) const

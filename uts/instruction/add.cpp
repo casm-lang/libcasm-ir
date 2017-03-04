@@ -36,7 +36,17 @@ TEST( libcasm_ir__instruction_add, create_valid_heap )
     auto a = libstdhl::make< IntegerConstant >( 5 );
     auto i = AddInstruction( a, a );
 
-    ASSERT_STREQ( i.type().name(), a->type().name() );
+    EXPECT_STREQ( i.type().name().c_str(), a->type().name().c_str() );
+    EXPECT_TRUE( i.type() == a->type() );
+}
+
+TEST( libcasm_ir__instruction_add, create_valid_cache )
+{
+    auto a = libstdhl::get< IntegerConstant >( 5 );
+    auto i = AddInstruction( a, a );
+
+    EXPECT_STREQ( i.type().name().c_str(), a->type().name().c_str() );
+    EXPECT_TRUE( i.type() == a->type() );
 }
 
 TEST( libcasm_ir__instruction_add, create_valid_stack )
@@ -47,5 +57,6 @@ TEST( libcasm_ir__instruction_add, create_valid_stack )
 
     auto i = AddInstruction( a, a );
 
-    ASSERT_STREQ( i.type().name(), a->type().name() );
+    EXPECT_STREQ( i.type().name().c_str(), a->type().name().c_str() );
+    EXPECT_TRUE( i.type() == a->type() );
 }

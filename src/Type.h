@@ -40,6 +40,9 @@ namespace libcasm_ir
     class Agent;
     class Enumeration;
 
+    class Type;
+    using Types = libstdhl::List< Type >;
+
     class Type : public CasmIR
     {
       public:
@@ -69,19 +72,17 @@ namespace libcasm_ir
 
         ~Type( void ) = default;
 
-        const char* name( void ) const;
+        std::string name( void ) const;
 
-        std::string str_name( void ) const;
-
-        const char* description( void ) const;
-
-        std::string str_description( void ) const;
+        std::string description( void ) const;
 
         ID id( void ) const;
 
         const Type& result( void ) const;
 
         Type::Ptr ptr_result( void ) const;
+
+        Types arguments( void ) const;
 
         std::string make_hash( void ) const;
 
@@ -90,7 +91,7 @@ namespace libcasm_ir
             if( this != &rhs )
             {
                 if( this->id() != rhs.id()
-                    or strcmp( this->name(), rhs.name() ) )
+                    or this->name().compare( rhs.name() ) )
                 {
                     return false;
                 }
@@ -131,8 +132,6 @@ namespace libcasm_ir
             return cache;
         }
     };
-
-    using Types = libstdhl::List< Type >;
 
     class PrimitiveType : public Type
     {

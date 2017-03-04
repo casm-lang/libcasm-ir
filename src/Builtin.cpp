@@ -205,7 +205,7 @@ Builtin::Ptr Builtin::asBuiltin( const Type::Ptr& type )
         default:
         {
             libstdhl::Log::error(
-                "could not find a builtin for '%s'", type->name() );
+                "could not find a builtin for '%s'", type->name().c_str() );
 
             return nullptr;
         }
@@ -446,7 +446,7 @@ u1 AsRationalBuiltin::classof( Value const* obj )
 //
 
 AsEnumerationBuiltin::AsEnumerationBuiltin( const Type::Ptr& type )
-: CastingBuiltin( "as" + type->str_name(), type, info, classid() )
+: CastingBuiltin( "as" + type->name(), type, info, classid() )
 {
 }
 const TypeAnnotation AsEnumerationBuiltin::info( TypeAnnotation::Data{

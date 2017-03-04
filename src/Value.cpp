@@ -51,14 +51,14 @@ Value::~Value()
     m_id2objs()[ m_id ].erase( this );
 }
 
-const char* Value::name( void ) const
-{
-    return m_name.c_str();
-}
-
-std::string Value::str_name( void ) const
+std::string Value::name( void ) const
 {
     return m_name;
+}
+
+std::string Value::description( void ) const
+{
+    return type().name() + " " + name();
 }
 
 const Type& Value::type( void ) const
@@ -76,26 +76,16 @@ Value::ID Value::id( void ) const
     return m_id;
 }
 
-const char* Value::description( void ) const
-{
-    return str_description().c_str();
-}
-
-std::string Value::str_description( void ) const
-{
-    return type().str_name() + " " + str_name();
-}
-
 std::string Value::dump( void ) const
 {
-    std::string tmp = "[" + type().str_name() + "] " + str_label() + " = ";
+    std::string tmp = "[" + type().name() + "] " + label() + " = ";
 
     if( isa< Constant >( this ) )
     {
-        tmp += type().str_name() + " ";
+        tmp += type().name() + " ";
     }
 
-    tmp += str_name();
+    tmp += name();
 
     if( auto instr = cast< Instruction >( this ) )
     {
@@ -112,7 +102,7 @@ std::string Value::dump( void ) const
                 tmp += ", ";
             }
 
-            tmp += operand->type().str_name() + " " + operand->str_label();
+            tmp += operand->type().name() + " " + operand->label();
         }
     }
 
@@ -121,17 +111,12 @@ std::string Value::dump( void ) const
 
 std::string Value::make_hash( void ) const
 {
-    return "v:" + std::to_string( id() ) + ":" + str_description();
+    return "v:" + std::to_string( id() ) + ":" + description();
 }
 
-const char* Value::label( void ) const
+std::string Value::label( void ) const
 {
-    return str_label().c_str();
-}
-
-std::string Value::str_label( void ) const
-{
-    return str_name();
+    return name();
 }
 
 void Value::iterate( Traversal order,

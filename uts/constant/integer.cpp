@@ -30,8 +30,8 @@ static void libcasm_ir__constant_integer_test( i64 i )
     auto v = libstdhl::make< IntegerConstant >( i );
     ASSERT_TRUE( v != nullptr );
 
-    EXPECT_STREQ( v->name(), std::to_string( i ).c_str() );
-    EXPECT_STREQ( v->name(), std::to_string( v->value() ).c_str() );
+    EXPECT_STREQ( v->name().c_str(), std::to_string( i ).c_str() );
+    EXPECT_STREQ( v->name().c_str(), std::to_string( v->value() ).c_str() );
 
     EXPECT_EQ( v->defined(), true );
     EXPECT_EQ( v->symbolic(), false );

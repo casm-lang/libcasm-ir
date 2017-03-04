@@ -190,9 +190,9 @@ namespace libcasm_ir
 
         ~Value( void );
 
-        const char* name( void ) const;
+        std::string name( void ) const;
 
-        std::string str_name( void ) const;
+        std::string description( void ) const;
 
         const Type& type( void ) const;
 
@@ -200,23 +200,19 @@ namespace libcasm_ir
 
         ID id() const;
 
-        const char* description( void ) const;
-
-        std::string str_description( void ) const;
-
         std::string dump( void ) const;
 
         std::string make_hash( void ) const;
 
-        const char* label( void ) const;
+        std::string label( void ) const;
 
-        std::string str_label( void ) const;
+        const char* clabel( void ) const;
 
         inline u1 operator==( const Value& rhs ) const
         {
             if( this != &rhs )
             {
-                if( this->id() != rhs.id() or strcmp( this->name(), rhs.name() )
+                if( this->id() != rhs.id() or this->name().compare( rhs.name() )
                     or this->type() != rhs.type() )
                 {
                     return false;

@@ -65,25 +65,9 @@ u1 IRDumpSourcePass::run( libpass::PassResult& pr )
                 fprintf( stream, "\n" );
             }
 
-            fprintf( stream, "%s = %s %s\n", value.label(), value.type().name(),
-                value.name() );
+            fprintf( stream, "%s = %s %s\n", value.label().c_str(),
+                value.type().name().c_str(), value.name().c_str() );
         }
-        // else if( isa< Agent >( value ) )
-        // {
-        //     static u1 first = true;
-
-        //     if( first )
-        //     {
-        //         first = false;
-        //         fprintf( stream, "\n" );
-        //     }
-
-        //     Agent& val = static_cast< Agent& >( value );
-
-        //     fprintf( stream, "%s = %s %s\n", value.label(),
-        //         val.rulereference()->value()->type().name(),
-        //         val.rulereference()->value()->name() );
-        // }
         else if( isa< Function >( value ) )
         {
             static u1 first = true;
@@ -94,7 +78,8 @@ u1 IRDumpSourcePass::run( libpass::PassResult& pr )
                 fprintf( stream, "\n" );
             }
 
-            fprintf( stream, "%s = %s\n", value.name(), value.type().name() );
+            fprintf( stream, "%s = %s\n", value.name().c_str(),
+                value.type().name().c_str() );
         }
         else if( isa< Builtin >( value ) )
         {
@@ -106,8 +91,8 @@ u1 IRDumpSourcePass::run( libpass::PassResult& pr )
                 fprintf( stream, "\n" );
             }
 
-            fprintf( stream, "%s = %s %s\n", value.label(), value.type().name(),
-                value.name() );
+            fprintf( stream, "%s = %s %s\n", value.label().c_str(),
+                value.type().name().c_str(), value.name().c_str() );
         }
         else if( isa< Derived >( value ) )
         {
@@ -115,7 +100,7 @@ u1 IRDumpSourcePass::run( libpass::PassResult& pr )
                 "\n"
                 "%s %s = \n"
                 "[\n",
-                value.name(), value.type().name() );
+                value.name().c_str(), value.type().name().c_str() );
         }
         else if( isa< Rule >( value ) )
         {
@@ -123,14 +108,14 @@ u1 IRDumpSourcePass::run( libpass::PassResult& pr )
                 "\n"
                 "%s %s = \n"
                 "{\n",
-                value.name(), value.type().name() );
+                value.name().c_str(), value.type().name().c_str() );
         }
         else if( isa< Statement >( value ) )
         {
             // Statement& stmt = static_cast< Statement& >( value );
 
             const char* nline = "\n";
-            const char* label = value.label();
+            const char* label = value.label().c_str();
             std::string scope = "";
 
             fprintf( stream, "%s%s%s: %s\n", nline, indention( value ),
@@ -143,17 +128,18 @@ u1 IRDumpSourcePass::run( libpass::PassResult& pr )
                 fprintf( stream,
                     "%s%s %s %s %s\n",
                     indention( *instr ),
-                    instr->name(),
-                    instr->statement()->scope()->name(),
-                    instr->statement()->scope()->type().name(),
-                    instr->statement()->scope()->label() );
+                    instr->name().c_str(),
+                    instr->statement()->scope()->name().c_str(),
+                    instr->statement()->scope()->type().name().c_str(),
+                    instr->statement()->scope()->label().c_str() );
             }
             else if( isa< MergeInstruction >( instr ) )
             {
                 fprintf( stream, "%s%s %s %s %s\n", indention( *instr ),
-                    instr->statement()->scope()->name(), instr->name(),
-                    instr->statement()->scope()->type().name(),
-                    instr->statement()->scope()->label() );
+                    instr->statement()->scope()->name().c_str(),
+                    instr->name().c_str(),
+                    instr->statement()->scope()->type().name().c_str(),
+                    instr->statement()->scope()->label().c_str() );
             }
             else
             {
@@ -187,8 +173,8 @@ u1 IRDumpSourcePass::run( libpass::PassResult& pr )
                 uses += "}";
 
                 fprintf( stream, "%s%s = %s %s                 ;; uses = %s\n",
-                    indention( *instr ), instr->label(), instr->name(),
-                    tmp.c_str(), uses.c_str() );
+                    indention( *instr ), instr->label().c_str(),
+                    instr->name().c_str(), tmp.c_str(), uses.c_str() );
             }
 
             auto scope = instr->statement()->scope();

@@ -127,7 +127,7 @@ void Visitor::dispatch( Stage stage, Value& value, Context& cxt )
             fprintf( stderr,
                 "%s:%i: error: unimplemented value name '%s' with id '%i' to "
                 "dispatch\n",
-                __FILE__, __LINE__, value.name(), value.id() );
+                __FILE__, __LINE__, value.name().c_str(), value.id() );
             assert( 0 );
             break;
         }
