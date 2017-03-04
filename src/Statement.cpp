@@ -34,6 +34,23 @@ Statement::Statement( const std::string& name, Value::ID id )
 
 void Statement::add( const Instruction::Ptr& instruction )
 {
+    if( not instruction )
+    {
+        throw std::domain_error(
+            "adding a null pointer instruction is not allowed" );
+    }
+    if( instruction->statement() )
+    {
+        throw std::domain_error( "instruction '" + instruction->dump()
+                                 + "' is already bound to statement '"
+                                 + instruction->statement()->dump()
+                                 + "'" );
+    }
+
+    const auto self = ptr_this< Statement >();
+
+    instruction->setStatement( self );
+
     m_instructions.add( instruction );
 }
 
