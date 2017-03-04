@@ -34,13 +34,29 @@ Rule::Rule( const std::string& name, const Type::Ptr& type )
 {
 }
 
-void Rule::setContext(
-    const std::shared_ptr< ExecutionSemanticsBlock >& context )
+void Rule::setContext( const ParallelBlock::Ptr& context )
 {
+    if( not context )
+    {
+        throw std::domain_error(
+            "adding a null pointer context is not allowed" );
+    }
+    if( context->rule() )
+    {
+        throw std::domain_error( "block '" + context->dump()
+                                 + "' is already bound to rule '"
+                                 + context->rule()->dump()
+                                 + "'" );
+    }
+
+    const auto self = ptr_this< Rule >();
+
+    context->setRule( self );
+
     m_context = context;
 }
 
-ExecutionSemanticsBlock::Ptr Rule::context( void ) const
+ParallelBlock::Ptr Rule::context( void ) const
 {
     return m_context;
 }
