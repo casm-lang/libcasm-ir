@@ -123,6 +123,16 @@ namespace libcasm_ir
     {
         return cast< T >( &value );
     }
+
+    template < typename T >
+    static inline const T* cast( const std::shared_ptr< Value >& value )
+    {
+        if( auto ptr = value.get() )
+        {
+            return cast< T >( ptr );
+        }
+        return nullptr;
+    }
 }
 
 #endif // _LIB_CASMIR_CASMIR_H_
