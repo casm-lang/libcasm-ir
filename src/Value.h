@@ -36,11 +36,13 @@
 
 namespace libcasm_ir
 {
+    enum Traversal : u8;
     class Context;
     class Visitor;
-    enum Traversal : u8;
+    class Value;
+    using Values = libstdhl::List< Value >;
 
-    class Value : public CasmIR
+    class Value : public CasmIR, public std::enable_shared_from_this< Value >
     {
       public:
         using Ptr = std::shared_ptr< Value >;
@@ -226,6 +228,29 @@ namespace libcasm_ir
             return !operator==( rhs );
         }
 
+        virtual void iterate( Traversal order, Visitor* visitor = nullptr,
+            Context* context = nullptr,
+            std::function< void( Value&, Context& ) > action
+            = []( Value&, Context& ) {} ) final;
+
+        virtual void iterate( Traversal order,
+            std::function< void( Value&, Context& ) > action ) final;
+
+      protected:
+        template < typename T >
+        inline typename T::Ptr ptr_this( void )
+        {
+            return std::static_pointer_cast< T >( shared_from_this() );
+        }
+
+      private:
+        std::string m_name;
+
+        Type::Ptr m_type;
+
+        ID m_id;
+
+      public:
         static inline ID classid( void )
         {
             return Value::VALUE;
@@ -236,14 +261,6 @@ namespace libcasm_ir
             return true;
         }
 
-        virtual void iterate( Traversal order, Visitor* visitor = nullptr,
-            Context* context = nullptr,
-            std::function< void( Value&, Context& ) > action
-            = []( Value&, Context& ) {} ) final;
-
-        virtual void iterate( Traversal order,
-            std::function< void( Value&, Context& ) > action ) final;
-
       protected:
         static std::unordered_map< u8, std::unordered_set< Value* > >&
         m_id2objs( void )
@@ -251,16 +268,7 @@ namespace libcasm_ir
             static std::unordered_map< u8, std::unordered_set< Value* > > cache;
             return cache;
         }
-
-      private:
-        std::string m_name;
-
-        Type::Ptr m_type;
-
-        ID m_id;
     };
-
-    using Values = libstdhl::List< Value >;
 }
 
 #endif // _LIB_CASMIR_VALUE_H_
