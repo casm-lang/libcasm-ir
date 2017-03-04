@@ -28,10 +28,10 @@
 
 namespace libcasm_ir
 {
+    class Rule;
     class Statement;
     class ForkInstruction;
     class MergeInstruction;
-
     class ExecutionSemanticsBlock;
 
     class Block : public Value
@@ -69,11 +69,12 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< ExecutionSemanticsBlock >;
 
-        ExecutionSemanticsBlock( const std::string& name, u1 parallel,
-            const ExecutionSemanticsBlock::Ptr& scope,
-            Value::ID id = classid() );
+        ExecutionSemanticsBlock(
+            const std::string& name, u1 parallel, Value::ID id = classid() );
 
         ~ExecutionSemanticsBlock( void );
+
+        void init( void );
 
         u1 parallel( void ) const;
 
@@ -109,7 +110,13 @@ namespace libcasm_ir
     class ParallelBlock : public ExecutionSemanticsBlock
     {
       public:
+        using Ptr = std::shared_ptr< ParallelBlock >;
+
         ParallelBlock( void );
+
+        void setRule( const std::shared_ptr< Rule >& rule );
+
+        std::shared_ptr< Rule > rule( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -117,11 +124,16 @@ namespace libcasm_ir
         }
 
         static u1 classof( Value const* obj );
+
+      private:
+        std::weak_ptr< Rule > m_rule;
     };
 
     class SequentialBlock : public ExecutionSemanticsBlock
     {
       public:
+        using Ptr = std::shared_ptr< SequentialBlock >;
+
         SequentialBlock( void );
 
         static inline Value::ID classid( void )
