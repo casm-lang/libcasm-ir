@@ -131,14 +131,14 @@ u1 ConsistencyCheckPass::run( libpass::PassResult& pr )
 
     pr.setResult< ConsistencyCheckPass >( data );
 
+    libstdhl::Log::info( "%s: stopping", name );
+
     return true;
 }
 
 #define CONSISTENCY_CHECK_CASE2( CLASS )                                       \
     void ConsistencyCheckPass::visit_prolog( CLASS& value, Context& )          \
     {                                                                          \
-        libstdhl::Log::info( "%s: @%s", name, #CLASS );                        \
-                                                                               \
         if( not isa< CLASS >( value ) )                                        \
         {                                                                      \
             libstdhl::Log::error( #CLASS );                                    \
