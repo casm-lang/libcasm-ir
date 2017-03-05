@@ -76,25 +76,23 @@ ExecutionSemanticsBlock::~ExecutionSemanticsBlock( void )
 {
 }
 
-void ExecutionSemanticsBlock::init( void )
+ExecutionSemanticsBlock::Ptr ExecutionSemanticsBlock::init( void )
 {
-    const auto self = ptr_this< ExecutionSemanticsBlock >();
+    auto self = ptr_this< ExecutionSemanticsBlock >();
 
     m_entry = libstdhl::make< TrivialStatement >();
-    m_entry->setParent( self );
     self->add( m_entry );
 
     auto f = libstdhl::make< ForkInstruction >();
-    f->setStatement( m_entry );
     m_entry->add( f );
 
     m_exit = libstdhl::make< TrivialStatement >();
-    m_exit->setParent( self );
     self->add( m_exit );
 
     auto m = libstdhl::make< MergeInstruction >();
-    m->setStatement( m_exit );
     m_exit->add( m );
+
+    return self;
 }
 
 u1 ExecutionSemanticsBlock::parallel( void ) const
