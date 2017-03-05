@@ -208,8 +208,6 @@ namespace libcasm_ir
 
         std::string label( void ) const;
 
-        const char* clabel( void ) const;
-
         inline u1 operator==( const Value& rhs ) const
         {
             if( this != &rhs )
