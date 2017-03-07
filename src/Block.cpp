@@ -81,13 +81,15 @@ ExecutionSemanticsBlock::Ptr ExecutionSemanticsBlock::init( void )
     auto self = ptr_this< ExecutionSemanticsBlock >();
 
     m_entry = libstdhl::make< TrivialStatement >();
-    self->add( m_entry );
+    m_entry->setScope( self );
+    m_entry->setParent( self );
 
     auto f = libstdhl::make< ForkInstruction >();
     m_entry->add( f );
 
     m_exit = libstdhl::make< TrivialStatement >();
-    self->add( m_exit );
+    m_exit->setScope( self );
+    m_exit->setParent( self );
 
     auto m = libstdhl::make< MergeInstruction >();
     m_exit->add( m );
