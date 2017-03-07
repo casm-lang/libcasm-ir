@@ -303,8 +303,8 @@ RelationType::RelationType( const Type::Ptr& result, const Types& arguments )
 , m_result( result )
 , m_arguments( arguments )
 {
-    std::string m_name = "(";
-    std::string m_description = "(";
+    m_name = "(";
+    m_description = "(";
 
     u1 first = true;
     for( auto argument : m_arguments )
