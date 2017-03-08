@@ -116,7 +116,76 @@ std::string Value::make_hash( void ) const
 
 std::string Value::label( void ) const
 {
-    return name();
+    static std::unordered_map< u8, u64 > cnt;
+    static std::unordered_map< const Value*, std::string > lbl;
+
+    auto result = lbl.find( this );
+    if( result != lbl.end() )
+    {
+        return result->second;
+    }
+
+    if( isa< Instruction >( this ) )
+    {
+        auto result = cnt.find( INSTRUCTION );
+        if( result == cnt.end() )
+        {
+            cnt[ INSTRUCTION ] = 0;
+        }
+
+        if( this->type().result().isVoid() )
+        {
+            return "";
+        }
+        
+        return lbl
+            .emplace( this, "%r" + std::to_string( cnt[ INSTRUCTION ]++ ) )
+            .first->second;
+    }
+    else if( isa< Block >( this ) )
+    {
+        auto result = cnt.find( BLOCK );
+        if( result == cnt.end() )
+        {
+            cnt[ BLOCK ] = 0;
+        }
+
+        return lbl.emplace( this, "%lbl" + std::to_string( cnt[ BLOCK ]++ ) )
+            .first->second;
+    }
+    else if( isa< Constant >( this ) )
+    {
+        auto result = cnt.find( CONSTANT );
+        if( result == cnt.end() )
+        {
+            cnt[ CONSTANT ] = 0;
+        }
+
+        return lbl
+            .emplace( this, "@c" + std::to_string( cnt[ CONSTANT ]++ ) )
+            .first->second;
+    }
+    else if( isa< Builtin >( this ) )
+    {
+        auto result = cnt.find( BUILTIN );
+        if( result == cnt.end() )
+        {
+            cnt[ BUILTIN ] = 0;
+        }
+
+        return lbl
+            .emplace( this, "@b" + std::to_string( cnt[ BUILTIN ]++ ) )
+            .first->second;
+    }
+    else if( isa< Function >( this ) )
+    {
+        return name();
+    }
+    else
+    {
+        assert( !" TODO! " );
+        return "";
+    }
 }
 
 void Value::iterate( Traversal order,
