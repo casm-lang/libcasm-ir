@@ -137,7 +137,7 @@ std::string Value::label( void ) const
         {
             return "";
         }
-        
+
         return lbl
             .emplace( this, "%r" + std::to_string( cnt[ INSTRUCTION ]++ ) )
             .first->second;
@@ -161,8 +161,7 @@ std::string Value::label( void ) const
             cnt[ CONSTANT ] = 0;
         }
 
-        return lbl
-            .emplace( this, "@c" + std::to_string( cnt[ CONSTANT ]++ ) )
+        return lbl.emplace( this, "@c" + std::to_string( cnt[ CONSTANT ]++ ) )
             .first->second;
     }
     else if( isa< Builtin >( this ) )
@@ -173,18 +172,12 @@ std::string Value::label( void ) const
             cnt[ BUILTIN ] = 0;
         }
 
-        return lbl
-            .emplace( this, "@b" + std::to_string( cnt[ BUILTIN ]++ ) )
+        return lbl.emplace( this, "@b" + std::to_string( cnt[ BUILTIN ]++ ) )
             .first->second;
-    }
-    else if( isa< Function >( this ) )
-    {
-        return name();
     }
     else
     {
-        assert( !" TODO! " );
-        return "";
+        return name();
     }
 }
 
