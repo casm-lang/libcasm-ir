@@ -26,6 +26,9 @@
 
 #include "libpass.h"
 
+#include "../Specification.h"
+#include "../Visitor.h"
+
 /**
    @brief    TODO
 
@@ -34,12 +37,26 @@
 
 namespace libcasm_ir
 {
-    class IRDumpSourcePass final : public libpass::Pass
+    class Value;
+    class Constant;
+    class Instruction;
+
+    class IRDumpSourcePass final : public libpass::Pass, public Visitor
     {
       public:
         static char id;
 
         u1 run( libpass::PassResult& pr ) override;
+
+        LIB_CASMIR_VISITOR_INTERFACE;
+
+        std::string indention( Value& value ) const;
+
+        void visit( Instruction& value ) const;
+        void visit( Constant& value ) const;
+
+      private:
+        std::unordered_set< u8 > m_first;
     };
 }
 
