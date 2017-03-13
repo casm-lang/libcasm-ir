@@ -251,7 +251,7 @@ u1 MergeInstruction::classof( Value const* obj )
 
 LookupInstruction::LookupInstruction( const Value::Ptr& location )
 : Instruction(
-      "lookup", location->type().ptr_result(), { location }, classid() )
+      "lookup", location->ptr_type()->ptr_result(), { location }, classid() )
 , UnaryInstruction( this )
 {
 }
@@ -314,7 +314,7 @@ u1 LocationInstruction::classof( Value const* obj )
 
 CallInstruction::CallInstruction(
     const Value::Ptr& symbol, const std::vector< Value::Ptr >& operands )
-: Instruction( "call", symbol->type().ptr_result(), { symbol }, classid() )
+: Instruction( "call", symbol->ptr_type()->ptr_result(), { symbol }, classid() )
 {
     assert( isa< Rule >( symbol ) or isa< Derived >( symbol )
             or isa< Builtin >( symbol ) );
@@ -359,7 +359,7 @@ u1 PrintInstruction::classof( Value const* obj )
 
 AssertInstruction::AssertInstruction( const Value::Ptr& condition )
 : Instruction(
-      "assert", condition->type().ptr_result(), { condition }, classid() )
+      "assert", condition->ptr_type()->ptr_result(), { condition }, classid() )
 , UnaryInstruction( this )
 {
 }
@@ -374,8 +374,8 @@ u1 AssertInstruction::classof( Value const* obj )
 //
 
 SelectInstruction::SelectInstruction( const Value::Ptr& expression )
-: Instruction(
-      "select", expression->type().ptr_result(), { expression }, classid() )
+: Instruction( "select", expression->ptr_type()->ptr_result(), { expression },
+      classid() )
 {
 }
 

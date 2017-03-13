@@ -43,7 +43,7 @@ namespace libcasm_ir
     class Type;
     using Types = libstdhl::List< Type >;
 
-    class Type : public CasmIR
+    class Type : public CasmIR, public std::enable_shared_from_this< Type >
     {
       public:
         using Ptr = std::shared_ptr< Type >;
@@ -80,7 +80,7 @@ namespace libcasm_ir
 
         const Type& result( void ) const;
 
-        Type::Ptr ptr_result( void ) const;
+        Type::Ptr ptr_result( void );
 
         Types arguments( void ) const;
 
@@ -119,8 +119,23 @@ namespace libcasm_ir
         u1 isRelation( void ) const;
 
       protected:
+        template < typename T >
+        inline typename T::Ptr ptr_this( void )
+        {
+            return std::static_pointer_cast< T >( shared_from_this() );
+        }
+
+        template < typename T >
+        inline typename T::Ptr ptr_this( void ) const
+        {
+            return std::static_pointer_cast< T >( shared_from_this() );
+        }
+
         std::string m_name;
         std::string m_description;
+
+        Type::Ptr m_result;
+        Types m_arguments;
 
       private:
         ID m_id;
@@ -262,14 +277,6 @@ namespace libcasm_ir
 
       public:
         RelationType( const Type::Ptr& result, const Types& arguments );
-
-        Type::Ptr result( void ) const;
-
-        Types arguments( void ) const;
-
-      private:
-        Type::Ptr m_result;
-        Types m_arguments;
     };
 }
 

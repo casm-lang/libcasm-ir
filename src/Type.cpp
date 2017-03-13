@@ -55,30 +55,25 @@ const Type& Type::result( void ) const
 {
     if( isRelation() )
     {
-        return *static_cast< const RelationType* >( this )->result().get();
+        return *m_result.get();
     }
 
     return *this;
 }
 
-Type::Ptr Type::ptr_result( void ) const
+Type::Ptr Type::ptr_result( void )
 {
     if( isRelation() )
     {
-        return static_cast< const RelationType* >( this )->result();
+        return m_result;
     }
 
-    return libstdhl::get< Type >( *this );
+    return ptr_this< Type >();
 }
 
 Types Type::arguments( void ) const
 {
-    if( isRelation() )
-    {
-        return static_cast< const RelationType* >( this )->arguments();
-    }
-
-    return {};
+    return m_arguments;
 }
 
 std::string Type::make_hash( void ) const
@@ -300,9 +295,10 @@ AgentType::AgentType( const Agent::Ptr& agent )
 
 RelationType::RelationType( const Type::Ptr& result, const Types& arguments )
 : Type( "", "", Type::RELATION )
-, m_result( result )
-, m_arguments( arguments )
 {
+    m_result = result;
+    m_arguments = arguments;
+
     m_name = "(";
     m_description = "(";
 
@@ -323,16 +319,6 @@ RelationType::RelationType( const Type::Ptr& result, const Types& arguments )
 
     m_name += " -> " + m_result->name() + ")";
     m_description += " -> " + m_result->description() + ")";
-}
-
-Type::Ptr RelationType::result( void ) const
-{
-    return m_result;
-}
-
-Types RelationType::arguments( void ) const
-{
-    return m_arguments;
 }
 
 //
