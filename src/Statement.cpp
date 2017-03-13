@@ -39,12 +39,19 @@ void Statement::add( const Instruction::Ptr& instruction )
         throw std::domain_error(
             "adding a null pointer instruction is not allowed" );
     }
+
     if( instruction->statement() )
     {
-        throw std::domain_error( "instruction '" + instruction->dump()
-                                 + "' is already bound to statement '"
-                                 + instruction->statement()->dump()
-                                 + "'" );
+        // instruction already bound to a statement, just return
+        return;
+    }
+
+    for( auto operand : instruction->operands() )
+    {
+        if( isa< Instruction >( operand ) )
+        {
+            add( std::static_pointer_cast< Instruction >( operand ) );
+        }
     }
 
     const auto self = ptr_this< Statement >();
