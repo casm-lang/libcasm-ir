@@ -43,6 +43,7 @@ Value::Value( const std::string& name, const Type::Ptr& type, Value::ID id )
 , m_type( type )
 , m_id( id )
 {
+    assert( type );
     m_id2objs()[ m_id ].insert( this );
 }
 
