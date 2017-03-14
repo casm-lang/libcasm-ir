@@ -26,6 +26,15 @@
 
 #include "Value.h"
 
+#include "Agent.h"
+#include "Builtin.h"
+#include "Constant.h"
+#include "Derived.h"
+#include "Function.h"
+#include "Instruction.h"
+#include "Rule.h"
+#include "Statement.h"
+
 namespace libcasm_ir
 {
     class Specification final : public Value
@@ -37,21 +46,22 @@ namespace libcasm_ir
 
         ~Specification( void ) = default;
 
-        void add( const Value::Ptr& value );
+        void setAgent( const Agent::Ptr& agent );
+        Agent::Ptr agent( void ) const;
 
-        template < typename C >
-        u1 has( void ) const
-        {
-            return m_content.count( C::classid() ) > 0;
-        }
+        void add( const Constant::Ptr& constant );
+        void add( const Builtin::Ptr& builtin );
+        void add( const Function::Ptr& function );
+        void add( const Derived::Ptr& derived );
+        void add( const Rule::Ptr& rule );
 
-        template < typename C >
-        const std::unordered_map< std::string, Value::Ptr >& get( void ) const
-        {
-            auto result = m_content.find( C::classid() );
-            assert( result != m_content.end() );
-            return result->second;
-        }
+        Constants constants( void ) const;
+        Builtins builtins( void ) const;
+        Functions functions( void ) const;
+        Deriveds deriveds( void ) const;
+        Rules rules( void ) const;
+
+        void accept( Visitor& visitor ) override final;
 
         static inline Value::ID classid( void )
         {
@@ -61,8 +71,13 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
 
       private:
-        std::unordered_map< u8, std::unordered_map< std::string, Value::Ptr > >
-            m_content;
+        Agent::Ptr m_agent;
+
+        Constants m_constants;
+        Builtins m_builtins;
+        Functions m_functions;
+        Deriveds m_deriveds;
+        Rules m_rules;
     };
 }
 

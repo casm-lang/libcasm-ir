@@ -44,6 +44,8 @@ namespace libcasm_ir
         u1 defined( void ) const;
         u1 symbolic( void ) const;
 
+        void accept( Visitor& visitor ) override;
+
         static inline Value::ID classid( void )
         {
             return Value::CONSTANT;
@@ -74,12 +76,16 @@ namespace libcasm_ir
         }
     };
 
+    using Constants = ValueList< Constant >;
+
     class VoidConstant : public Constant
     {
       public:
         using Ptr = std::shared_ptr< VoidConstant >;
 
         VoidConstant( void );
+
+        void accept( Visitor& visitor ) override final;
 
         static inline Value::ID classid( void )
         {
@@ -104,6 +110,8 @@ namespace libcasm_ir
 
         Rule::Ptr value( void ) const;
 
+        void accept( Visitor& visitor ) override final;
+
         static inline Value::ID classid( void )
         {
             return Value::RULE_REFERENCE_CONSTANT;
@@ -126,6 +134,8 @@ namespace libcasm_ir
 
         u1 value( void ) const;
 
+        void accept( Visitor& visitor ) override final;
+
         static inline Value::ID classid( void )
         {
             return Value::BOOLEAN_CONSTANT;
@@ -147,6 +157,8 @@ namespace libcasm_ir
         IntegerConstant( void );
 
         i64 value( void ) const;
+
+        void accept( Visitor& visitor ) override final;
 
         static inline Value::ID classid( void )
         {
@@ -174,6 +186,8 @@ namespace libcasm_ir
 
         u64 value( void ) const;
 
+        void accept( Visitor& visitor ) override final;
+
         static inline Value::ID classid( void )
         {
             return Value::BIT_CONSTANT;
@@ -195,6 +209,8 @@ namespace libcasm_ir
         StringConstant( void );
 
         std::string value( void ) const;
+
+        void accept( Visitor& visitor ) override final;
 
         static inline Value::ID classid( void )
         {
@@ -218,9 +234,11 @@ namespace libcasm_ir
 
         double value( void ) const;
 
+        void accept( Visitor& visitor ) override final;
+
         static inline Value::ID classid( void )
         {
-            return Value::RATIONAL_CONSTANT;
+            return Value::FLOATING_CONSTANT;
         }
 
         static u1 classof( Value const* obj );
@@ -239,6 +257,8 @@ namespace libcasm_ir
         RationalConstant( void );
 
         std::string value( void ) const;
+
+        void accept( Visitor& visitor ) override final;
 
         static inline Value::ID classid( void )
         {
@@ -270,6 +290,8 @@ namespace libcasm_ir
         EnumerationConstant( const Enumeration::Ptr& kind );
 
         u64 value( void ) const;
+
+        void accept( Visitor& visitor ) override final;
 
         static inline Value::ID classid( void )
         {
@@ -308,6 +330,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< Identifier >;
 
         Identifier( const std::string& value, const Type::Ptr& type );
+
+        void accept( Visitor& visitor ) override final;
 
         static inline Value::ID classid( void )
         {

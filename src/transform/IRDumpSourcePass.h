@@ -27,7 +27,6 @@
 #include "libpass.h"
 
 #include "../Specification.h"
-#include "../Visitor.h"
 
 /**
    @brief    TODO
@@ -41,22 +40,91 @@ namespace libcasm_ir
     class Constant;
     class Instruction;
 
-    class IRDumpSourcePass final : public libpass::Pass, public Visitor
+    class IRDumpSourcePass final : public libpass::Pass, public RecursiveVisitor
     {
       public:
         static char id;
 
         u1 run( libpass::PassResult& pr ) override;
 
-        LIB_CASMIR_VISITOR_INTERFACE;
-
         std::string indention( Value& value ) const;
 
-        void visit( Instruction& value ) const;
-        void visit( Constant& value ) const;
+        void dump( Statement& value ) const;
+        void dump( Instruction& value ) const;
+        void dump( Constant& value ) const;
 
       private:
         std::unordered_set< u8 > m_first;
+
+      public:
+        //
+        // RecursiveVisitor General
+        //
+
+        void visit( Specification& value ) override;
+        void visit( Agent& value ) override;
+        void visit( Function& value ) override;
+        void visit( Derived& value ) override;
+        void visit( Rule& value ) override;
+        void visit( Builtin& value ) override;
+
+        void visit( Enumeration& value ) override;
+
+        void visit( TrivialStatement& value ) override;
+        void visit( BranchStatement& value ) override;
+
+        //
+        // RecursiveVisitor Instructions
+        //
+
+        void visit( SkipInstruction& value ) override;
+
+        void visit( ForkInstruction& value ) override;
+        void visit( MergeInstruction& value ) override;
+
+        void visit( LookupInstruction& value ) override;
+        void visit( UpdateInstruction& value ) override;
+
+        void visit( LocalInstruction& value ) override;
+        void visit( LocationInstruction& value ) override;
+        void visit( CallInstruction& value ) override;
+
+        void visit( AssertInstruction& value ) override;
+        void visit( SelectInstruction& value ) override;
+        void visit( SymbolicInstruction& value ) override;
+
+        void visit( AddInstruction& value ) override;
+        void visit( SubInstruction& value ) override;
+        void visit( MulInstruction& value ) override;
+        void visit( ModInstruction& value ) override;
+        void visit( DivInstruction& value ) override;
+
+        void visit( AndInstruction& value ) override;
+        void visit( XorInstruction& value ) override;
+        void visit( OrInstruction& value ) override;
+        void visit( NotInstruction& value ) override;
+
+        void visit( EquInstruction& value ) override;
+        void visit( NeqInstruction& value ) override;
+        void visit( LthInstruction& value ) override;
+        void visit( LeqInstruction& value ) override;
+        void visit( GthInstruction& value ) override;
+        void visit( GeqInstruction& value ) override;
+
+        //
+        // RecursiveVisitor Constants
+        //
+
+        void visit( VoidConstant& value ) override;
+        void visit( RuleReferenceConstant& value ) override;
+        void visit( BooleanConstant& value ) override;
+        void visit( IntegerConstant& value ) override;
+        void visit( BitConstant& value ) override;
+        void visit( StringConstant& value ) override;
+        void visit( FloatingConstant& value ) override;
+        void visit( RationalConstant& value ) override;
+        void visit( EnumerationConstant& value ) override;
+        void visit( AgentConstant& value ) override;
     };
 }
 

@@ -45,6 +45,53 @@ u1 Constant::symbolic( void ) const
     return m_symbolic;
 }
 
+void Constant::accept( Visitor& visitor )
+{
+    switch( id() )
+    {
+        case Value::VOID_CONSTANT:
+        {
+            static_cast< VoidConstant* >( this )->accept( visitor );
+        }
+        case Value::RULE_REFERENCE_CONSTANT:
+        {
+            static_cast< RuleReferenceConstant* >( this )->accept( visitor );
+        }
+        case Value::BOOLEAN_CONSTANT:
+        {
+            static_cast< BooleanConstant* >( this )->accept( visitor );
+        }
+        case Value::INTEGER_CONSTANT:
+        {
+            static_cast< IntegerConstant* >( this )->accept( visitor );
+        }
+        case Value::BIT_CONSTANT:
+        {
+            static_cast< BitConstant* >( this )->accept( visitor );
+        }
+        case Value::STRING_CONSTANT:
+        {
+            static_cast< StringConstant* >( this )->accept( visitor );
+        }
+        case Value::FLOATING_CONSTANT:
+        {
+            static_cast< FloatingConstant* >( this )->accept( visitor );
+        }
+        case Value::RATIONAL_CONSTANT:
+        {
+            static_cast< RationalConstant* >( this )->accept( visitor );
+        }
+        case Value::ENUMERATION_CONSTANT:
+        {
+            static_cast< EnumerationConstant* >( this )->accept( visitor );
+        }
+        default:
+        {
+            assert( !" invalid constant to dispatch found! " );
+        }
+    }
+}
+
 u1 Constant::classof( Value const* obj )
 {
     return obj->id() == classid() or VoidConstant::classof( obj )
@@ -52,6 +99,7 @@ u1 Constant::classof( Value const* obj )
            or RuleReferenceConstant::classof( obj )
            or BooleanConstant::classof( obj ) or IntegerConstant::classof( obj )
            or BitConstant::classof( obj ) or StringConstant::classof( obj )
+           or FloatingConstant::classof( obj )
            or RationalConstant::classof( obj )
            or EnumerationConstant::classof( obj );
 }
@@ -64,6 +112,11 @@ u1 Constant::classof( Value const* obj )
 VoidConstant::VoidConstant( void )
 : Constant( "void", libstdhl::get< VoidType >(), true, false, classid() )
 {
+}
+
+void VoidConstant::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
 }
 
 u1 VoidConstant::classof( Value const* obj )
@@ -98,6 +151,11 @@ Rule::Ptr RuleReferenceConstant::value( void ) const
     return std::static_pointer_cast< Rule >( m_value_ptr );
 }
 
+void RuleReferenceConstant::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 u1 RuleReferenceConstant::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -129,6 +187,11 @@ u1 BooleanConstant::value( void ) const
     return m_value.m_u1;
 }
 
+void BooleanConstant::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 u1 BooleanConstant::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -158,6 +221,11 @@ IntegerConstant::IntegerConstant( void )
 i64 IntegerConstant::value( void ) const
 {
     return (i64)m_value.m_u64;
+}
+
+void IntegerConstant::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
 }
 
 u1 IntegerConstant::classof( Value const* obj )
@@ -216,6 +284,11 @@ u64 BitConstant::value( void ) const
     return m_value.m_u64;
 }
 
+void BitConstant::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 u1 BitConstant::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -245,6 +318,11 @@ StringConstant::StringConstant( void )
 std::string StringConstant::value( void ) const
 {
     return name();
+}
+
+void StringConstant::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
 }
 
 u1 StringConstant::classof( Value const* obj )
@@ -279,6 +357,11 @@ double FloatingConstant::value( void ) const
     return m_value.m_dfp;
 }
 
+void FloatingConstant::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 u1 FloatingConstant::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -309,6 +392,11 @@ RationalConstant::RationalConstant( void )
 std::string RationalConstant::value( void ) const
 {
     return name();
+}
+
+void RationalConstant::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
 }
 
 u1 RationalConstant::classof( Value const* obj )
@@ -354,6 +442,18 @@ u64 EnumerationConstant::value( void ) const
     return m_value.m_u64;
 }
 
+void EnumerationConstant::accept( Visitor& visitor )
+{
+    if( isa< AgentConstant >( this ) )
+    {
+        visitor.visit( *static_cast< AgentConstant* >( this ) );
+    }
+    else
+    {
+        visitor.visit( *this );
+    }
+}
+
 u1 EnumerationConstant::classof( Value const* obj )
 {
     return obj->id() == classid() or AgentConstant::classof( obj );
@@ -392,6 +492,11 @@ u1 AgentConstant::classof( Value const* obj )
 Identifier::Identifier( const std::string& value, const Type::Ptr& type )
 : Constant( value, type, true, false, classid() )
 {
+}
+
+void Identifier::accept( Visitor& visitor )
+{
+    assert( !" TODO! " ); // visitor.visit( *this );
 }
 
 u1 Identifier::classof( Value const* obj )

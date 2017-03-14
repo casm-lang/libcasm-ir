@@ -32,8 +32,9 @@ Builtin::Builtin( const std::string& name, const Type::Ptr& type,
 {
 }
 
-Builtin::~Builtin( void )
+void Builtin::accept( Visitor& visitor )
 {
+    visitor.visit( *this );
 }
 
 u1 Builtin::classof( Value const* obj )
@@ -210,6 +211,47 @@ Builtin::Ptr Builtin::asBuiltin( const Type::Ptr& type )
             return nullptr;
         }
     }
+}
+
+//------------------------------------------------------------------------------
+
+//
+// GeneralBuiltin
+//
+
+GeneralBuiltin::GeneralBuiltin( const std::string& name, const Type::Ptr& type,
+    const TypeAnnotation& info, Value::ID id )
+: Builtin( name, type, info, id )
+{
+}
+
+u1 GeneralBuiltin::classof( Value const* obj )
+{
+    return obj->id() == classid() or PrintBuiltin::classof( obj );
+}
+
+//
+// PrintBuiltin
+//
+
+PrintBuiltin::PrintBuiltin( const std::string& channel )
+: GeneralBuiltin( "print",
+      libstdhl::get< RelationType >( libstdhl::get< VoidType >(),
+          Types( { libstdhl::get< StringType >() } ) ),
+      info, classid() )
+{
+}
+const TypeAnnotation PrintBuiltin::info( TypeAnnotation::Data{
+
+    { Type::VOID,
+        {
+            Type::STRING,
+        } }
+
+} );
+u1 PrintBuiltin::classof( Value const* obj )
+{
+    return obj->id() == classid();
 }
 
 //------------------------------------------------------------------------------

@@ -55,7 +55,7 @@ void User::removeUse( const User& user )
         "removeUse: %s in %s", user.name().c_str(), name().c_str() );
 
     m_uses.remove( std::remove_if(
-        m_uses.begin(), m_uses.end(), [user]( const Use::Ptr& element ) {
+        m_uses.begin(), m_uses.end(), [&user]( const Use::Ptr& element ) {
             return element->use() == user;
         } ) );
 }
@@ -69,7 +69,7 @@ void User::replaceAllUsesWith( const Value::Ptr& value )
 
         if( auto instr = cast< Instruction >( u->use() ) )
         {
-            instr->replace( libstdhl::make< Value >( u->def() ), value );
+            instr->replace( u->def(), value );
         }
     }
 }

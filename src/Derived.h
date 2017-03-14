@@ -43,6 +43,8 @@ namespace libcasm_ir
 
         std::shared_ptr< Statement > context( void ) const;
 
+        void accept( Visitor& visitor ) override final;
+
         static inline Value::ID classid( void )
         {
             return Value::DERIVED;
@@ -53,6 +55,8 @@ namespace libcasm_ir
       private:
         std::shared_ptr< Statement > m_context;
     };
+
+    using Deriveds = ValueList< Derived >;
 }
 
 #endif // _LIB_CASMIR_DERIVED_H_

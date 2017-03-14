@@ -22,12 +22,6 @@
 //
 
 #include "Specification.h"
-#include "Agent.h"
-#include "Builtin.h"
-#include "Constant.h"
-#include "Derived.h"
-#include "Function.h"
-#include "Rule.h"
 
 using namespace libcasm_ir;
 
@@ -36,40 +30,65 @@ Specification::Specification( const std::string& name )
 {
 }
 
-void Specification::add( const Value::Ptr& value )
+void Specification::setAgent( const Agent::Ptr& agent )
 {
-    assert( value );
+    m_agent = agent;
+}
 
-    if( isa< Rule >( value ) )
-    {
-        m_content[ Rule::classid() ].emplace( value->name(), value );
-    }
-    else if( isa< Derived >( value ) )
-    {
-        m_content[ Derived::classid() ].emplace( value->name(), value );
-    }
-    else if( isa< Function >( value ) )
-    {
-        m_content[ Function::classid() ].emplace( value->name(), value );
-    }
-    else if( isa< Agent >( value ) )
-    {
-        m_content[ Agent::classid() ].emplace( value->name(), value );
-    }
-    else if( isa< Constant >( value ) )
-    {
-        m_content[ Constant::classid() ].emplace( value->name(), value );
-    }
-    else if( isa< Builtin >( value ) )
-    {
-        Builtin& obj = static_cast< Builtin& >( *value );
+Agent::Ptr Specification::agent( void ) const
+{
+    return m_agent;
+}
 
-        m_content[ Builtin::classid() ].emplace( obj.description(), value );
-    }
-    else
-    {
-        assert( !"unsupported Specification content Value found!" );
-    }
+void Specification::add( const Constant::Ptr& constant )
+{
+    m_constants.add( constant );
+}
+void Specification::add( const Builtin::Ptr& builtin )
+{
+    m_builtins.add( builtin );
+}
+void Specification::add( const Function::Ptr& function )
+{
+    m_functions.add( function );
+}
+void Specification::add( const Derived::Ptr& derived )
+{
+    m_deriveds.add( derived );
+}
+void Specification::add( const Rule::Ptr& rule )
+{
+    m_rules.add( rule );
+}
+
+Constants Specification::constants( void ) const
+{
+    return m_constants;
+}
+
+Builtins Specification::builtins( void ) const
+{
+    return m_builtins;
+}
+
+Functions Specification::functions( void ) const
+{
+    return m_functions;
+}
+
+Deriveds Specification::deriveds( void ) const
+{
+    return m_deriveds;
+}
+
+Rules Specification::rules( void ) const
+{
+    return m_rules;
+}
+
+void Specification::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
 }
 
 u1 Specification::classof( Value const* obj )

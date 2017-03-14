@@ -40,13 +40,13 @@ namespace libcasm_ir
     class IRDumpDebugPass final : public libpass::Pass
     {
       public:
+        using Data = ConsistencyCheckPass::Data;
+
         static char id;
 
         u1 run( libpass::PassResult& pr ) override;
 
         std::string indention( Value& value ) const;
-
-        using Data = ConsistencyCheckPass::Data;
     };
 }
 

@@ -41,9 +41,13 @@ namespace libcasm_ir
 
         ~Enumeration( void ) = default;
 
+        std::vector< std::string > elements( void ) const;
+
         u64 encode( const std::string& value ) const;
 
         std::string decode( const u64 value ) const;
+
+        void accept( Visitor& visitor ) override final;
 
         static inline Value::ID classid( void )
         {

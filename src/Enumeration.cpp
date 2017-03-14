@@ -23,6 +23,8 @@
 
 #include "Enumeration.h"
 
+#include "Agent.h"
+
 using namespace libcasm_ir;
 
 Enumeration::Enumeration( const std::string& name,
@@ -50,6 +52,11 @@ Enumeration::Enumeration( const std::string& name,
     }
 }
 
+std::vector< std::string > Enumeration::elements( void ) const
+{
+    return m_values;
+}
+
 u64 Enumeration::encode( const std::string& value ) const
 {
     auto result = m_value2uid.find( value );
@@ -74,6 +81,18 @@ std::string Enumeration::decode( const u64 value ) const
     }
 
     return m_values[ value ];
+}
+
+void Enumeration::accept( Visitor& visitor )
+{
+    if( isa< Agent >( this ) )
+    {
+        visitor.visit( *static_cast< Agent* >( this ) );
+    }
+    else
+    {
+        visitor.visit( *this );
+    }
 }
 
 u1 Enumeration::classof( Value const* obj )

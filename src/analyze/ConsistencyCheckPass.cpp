@@ -23,8 +23,6 @@
 
 #include "ConsistencyCheckPass.h"
 
-#include "libcasm-ir.h"
-
 using namespace libcasm_ir;
 
 char ConsistencyCheckPass::id = 0;
@@ -48,80 +46,90 @@ u1 ConsistencyCheckPass::run( libpass::PassResult& pr )
     {
 #ifndef NDEBUG
         // check 'is-a' relation only in 'debug' builds
-        data->specification()->iterate( Traversal::PREORDER, this );
+        data->specification()->accept( *this );
+
+// data->specification()->iterate( Traversal::PREORDER, this );
 #endif
 
-        data->specification()->iterate( Traversal::PREORDER, [this](
-                                                                 Value& value,
-                                                                 Context& ) {
-            if( const auto v = cast< Rule >( value ) )
-            {
-                if( not v->context() )
-                {
-                    libstdhl::Log::error(
-                        "rule '%p' %s: has no context", v, v->dump().c_str() );
-                }
-                if( const auto p = cast< ParallelBlock >( v->context() ) )
-                {
-                    if( *p->rule() != value )
-                    {
-                        libstdhl::Log::error(
-                            "rule '%p' %s: context does not point to this rule",
-                            v, v->dump().c_str() );
-                    }
-                }
-                else
-                {
-                    libstdhl::Log::error(
-                        "rule '%p' %s: does not start with a parallel block", v,
-                        v->dump().c_str() );
-                }
-            }
-            else if( const auto v = cast< ExecutionSemanticsBlock >( value ) )
-            {
-                u1 block_is_context_of_rule = false;
+        // data->specification()->iterate( Traversal::PREORDER, [this](
+        //                                                          Value&
+        //                                                          value,
+        //                                                          Context& ) {
+        //     if( const auto v = cast< Rule >( value ) )
+        //     {
+        //         if( not v->context() )
+        //         {
+        //             libstdhl::Log::error(
+        //                 "rule '%p' %s: has no context", v, v->dump().c_str()
+        //                 );
+        //         }
+        //         if( const auto p = cast< ParallelBlock >( v->context() ) )
+        //         {
+        //             if( *p->rule() != value )
+        //             {
+        //                 libstdhl::Log::error(
+        //                     "rule '%p' %s: context does not point to this
+        //                     rule",
+        //                     v, v->dump().c_str() );
+        //             }
+        //         }
+        //         else
+        //         {
+        //             libstdhl::Log::error(
+        //                 "rule '%p' %s: does not start with a parallel block",
+        //                 v,
+        //                 v->dump().c_str() );
+        //         }
+        //     }
+        //     else if( const auto v = cast< ExecutionSemanticsBlock >( value )
+        //     )
+        //     {
+        //         u1 block_is_context_of_rule = false;
 
-                if( const auto p = cast< ParallelBlock >( value ) )
-                {
-                    if( p->rule() )
-                    {
-                        block_is_context_of_rule = true;
-                    }
-                }
+        //         if( const auto p = cast< ParallelBlock >( value ) )
+        //         {
+        //             if( p->rule() )
+        //             {
+        //                 block_is_context_of_rule = true;
+        //             }
+        //         }
 
-                if( not v->parent() and not block_is_context_of_rule )
-                {
-                    libstdhl::Log::error(
-                        "stmt '%p' %s: has no parent", v, v->dump().c_str() );
-                }
-                if( not v->scope() and not block_is_context_of_rule )
-                {
-                    libstdhl::Log::error(
-                        "stmt '%p' %s: has no scope", v, v->dump().c_str() );
-                }
-            }
-            else if( const auto v = cast< Statement >( value ) )
-            {
-                if( not v->parent() )
-                {
-                    libstdhl::Log::error(
-                        "stmt '%p' %s: has no parent", v, v->dump().c_str() );
-                }
-                if( not v->scope() )
-                {
-                    libstdhl::Log::error(
-                        "stmt '%p' %s: has no scope", v, v->dump().c_str() );
-                }
-            }
-            else if( const auto v = cast< Instruction >( value ) )
-            {
-                if( not v->statement() )
-                {
-                    libstdhl::Log::error( "inst '%p' %s: has no statement", v,
-                        v->dump().c_str() );
-                }
-            }
-        } );
+        //         if( not v->parent() and not block_is_context_of_rule )
+        //         {
+        //             libstdhl::Log::error(
+        //                 "stmt '%p' %s: has no parent", v, v->dump().c_str()
+        //                 );
+        //         }
+        //         if( not v->scope() and not block_is_context_of_rule )
+        //         {
+        //             libstdhl::Log::error(
+        //                 "stmt '%p' %s: has no scope", v, v->dump().c_str() );
+        //         }
+        //     }
+        //     else if( const auto v = cast< Statement >( value ) )
+        //     {
+        //         if( not v->parent() )
+        //         {
+        //             libstdhl::Log::error(
+        //                 "stmt '%p' %s: has no parent", v, v->dump().c_str()
+        //                 );
+        //         }
+        //         if( not v->scope() )
+        //         {
+        //             libstdhl::Log::error(
+        //                 "stmt '%p' %s: has no scope", v, v->dump().c_str() );
+        //         }
+        //     }
+        //     else if( const auto v = cast< Instruction >( value ) )
+        //     {
+        //         if( not v->statement() )
+        //         {
+        //             libstdhl::Log::error( "inst '%p' %s: has no statement",
+        //             v,
+        //                 v->dump().c_str() );
+        //         }
+        //     }
+        // } );
     }
     catch( ... )
     {
@@ -136,76 +144,180 @@ u1 ConsistencyCheckPass::run( libpass::PassResult& pr )
     return true;
 }
 
-#define CONSISTENCY_CHECK_CASE2( CLASS )                                       \
-    void ConsistencyCheckPass::visit_prolog( CLASS& value, Context& )          \
-    {                                                                          \
-        if( not isa< CLASS >( value ) )                                        \
-        {                                                                      \
-            libstdhl::Log::error( #CLASS );                                    \
-        }                                                                      \
-    }                                                                          \
-    void ConsistencyCheckPass::visit_epilog( CLASS& value, Context& )          \
-    {                                                                          \
-        if( not cast< CLASS >( value ) )                                       \
-        {                                                                      \
-            libstdhl::Log::error( #CLASS );                                    \
-        }                                                                      \
+template < typename T >
+void ConsistencyCheckPass::verify( Value& value )
+{
+    if( not isa< T >( value ) )
+    {
+        libstdhl::Log::error(
+            "inconsistent class value '%u' found", value.id() );
     }
-
-#define CONSISTENCY_CHECK_CASE3( CLASS )                                       \
-    CONSISTENCY_CHECK_CASE2( CLASS );                                          \
-    void ConsistencyCheckPass::visit_interlog( CLASS& value, Context& )        \
-    {                                                                          \
-        if( not isa< CLASS >( value ) )                                        \
-        {                                                                      \
-            libstdhl::Log::error( #CLASS );                                    \
-        }                                                                      \
+    if( not value.ptr_type() )
+    {
+        libstdhl::Log::error( "value with no type found" );
     }
+}
 
-CONSISTENCY_CHECK_CASE2( Specification );
+//
+// RecursiveVisitor General
+//
 
-CONSISTENCY_CHECK_CASE2( Agent );
-CONSISTENCY_CHECK_CASE2( Builtin );
-CONSISTENCY_CHECK_CASE2( Function );
-CONSISTENCY_CHECK_CASE3( Derived );
-CONSISTENCY_CHECK_CASE3( Rule );
+void ConsistencyCheckPass::visit( SkipInstruction& value )
+{
+    verify< SkipInstruction >( value );
+}
 
-CONSISTENCY_CHECK_CASE2( ParallelBlock );
-CONSISTENCY_CHECK_CASE2( SequentialBlock );
+void ConsistencyCheckPass::visit( ForkInstruction& value )
+{
+    verify< ForkInstruction >( value );
+}
+void ConsistencyCheckPass::visit( MergeInstruction& value )
+{
+    verify< MergeInstruction >( value );
+}
 
-CONSISTENCY_CHECK_CASE2( TrivialStatement );
-CONSISTENCY_CHECK_CASE3( BranchStatement );
+void ConsistencyCheckPass::visit( LookupInstruction& value )
+{
+    verify< LookupInstruction >( value );
+}
+void ConsistencyCheckPass::visit( UpdateInstruction& value )
+{
+    verify< UpdateInstruction >( value );
+}
 
-CONSISTENCY_CHECK_CASE2( ForkInstruction );
-CONSISTENCY_CHECK_CASE2( MergeInstruction );
-CONSISTENCY_CHECK_CASE2( LocalInstruction );
-CONSISTENCY_CHECK_CASE2( AssertInstruction );
-CONSISTENCY_CHECK_CASE2( SelectInstruction );
-CONSISTENCY_CHECK_CASE2( SkipInstruction );
-CONSISTENCY_CHECK_CASE2( LocationInstruction );
-CONSISTENCY_CHECK_CASE2( LookupInstruction );
-CONSISTENCY_CHECK_CASE2( UpdateInstruction );
-CONSISTENCY_CHECK_CASE2( CallInstruction );
-CONSISTENCY_CHECK_CASE2( PrintInstruction );
+void ConsistencyCheckPass::visit( LocalInstruction& value )
+{
+    verify< LocalInstruction >( value );
+}
+void ConsistencyCheckPass::visit( LocationInstruction& value )
+{
+    verify< LocationInstruction >( value );
+}
+void ConsistencyCheckPass::visit( CallInstruction& value )
+{
+    verify< CallInstruction >( value );
+}
 
-CONSISTENCY_CHECK_CASE2( AddInstruction );
-CONSISTENCY_CHECK_CASE2( SubInstruction );
-CONSISTENCY_CHECK_CASE2( MulInstruction );
-CONSISTENCY_CHECK_CASE2( ModInstruction );
-CONSISTENCY_CHECK_CASE2( DivInstruction );
-CONSISTENCY_CHECK_CASE2( AndInstruction );
-CONSISTENCY_CHECK_CASE2( XorInstruction );
-CONSISTENCY_CHECK_CASE2( OrInstruction );
-CONSISTENCY_CHECK_CASE2( EquInstruction );
-CONSISTENCY_CHECK_CASE2( NeqInstruction );
-CONSISTENCY_CHECK_CASE2( LthInstruction );
+void ConsistencyCheckPass::visit( AssertInstruction& value )
+{
+    verify< AssertInstruction >( value );
+}
+void ConsistencyCheckPass::visit( SelectInstruction& value )
+{
+    verify< SelectInstruction >( value );
+}
+void ConsistencyCheckPass::visit( SymbolicInstruction& value )
+{
+    verify< SymbolicInstruction >( value );
+}
 
-CONSISTENCY_CHECK_CASE2( AgentConstant );
-CONSISTENCY_CHECK_CASE2( RuleReferenceConstant );
-CONSISTENCY_CHECK_CASE2( BooleanConstant );
-CONSISTENCY_CHECK_CASE2( IntegerConstant );
-CONSISTENCY_CHECK_CASE2( BitConstant );
-CONSISTENCY_CHECK_CASE2( StringConstant );
+void ConsistencyCheckPass::visit( AddInstruction& value )
+{
+    verify< AddInstruction >( value );
+}
+void ConsistencyCheckPass::visit( SubInstruction& value )
+{
+    verify< SubInstruction >( value );
+}
+void ConsistencyCheckPass::visit( MulInstruction& value )
+{
+    verify< MulInstruction >( value );
+}
+void ConsistencyCheckPass::visit( ModInstruction& value )
+{
+    verify< ModInstruction >( value );
+}
+void ConsistencyCheckPass::visit( DivInstruction& value )
+{
+    verify< DivInstruction >( value );
+}
+
+void ConsistencyCheckPass::visit( AndInstruction& value )
+{
+    verify< AndInstruction >( value );
+}
+void ConsistencyCheckPass::visit( XorInstruction& value )
+{
+    verify< XorInstruction >( value );
+}
+void ConsistencyCheckPass::visit( OrInstruction& value )
+{
+    verify< OrInstruction >( value );
+}
+void ConsistencyCheckPass::visit( NotInstruction& value )
+{
+    verify< NotInstruction >( value );
+}
+
+void ConsistencyCheckPass::visit( EquInstruction& value )
+{
+    verify< EquInstruction >( value );
+}
+void ConsistencyCheckPass::visit( NeqInstruction& value )
+{
+    verify< NeqInstruction >( value );
+}
+void ConsistencyCheckPass::visit( LthInstruction& value )
+{
+    verify< LthInstruction >( value );
+}
+void ConsistencyCheckPass::visit( LeqInstruction& value )
+{
+    verify< LeqInstruction >( value );
+}
+void ConsistencyCheckPass::visit( GthInstruction& value )
+{
+    verify< GthInstruction >( value );
+}
+void ConsistencyCheckPass::visit( GeqInstruction& value )
+{
+    verify< GeqInstruction >( value );
+}
+
+//
+// RecursiveVisitor Constants
+//
+
+void ConsistencyCheckPass::visit( VoidConstant& value )
+{
+    verify< VoidConstant >( value );
+}
+void ConsistencyCheckPass::visit( RuleReferenceConstant& value )
+{
+    verify< RuleReferenceConstant >( value );
+}
+void ConsistencyCheckPass::visit( BooleanConstant& value )
+{
+    verify< BooleanConstant >( value );
+}
+void ConsistencyCheckPass::visit( IntegerConstant& value )
+{
+    verify< IntegerConstant >( value );
+}
+void ConsistencyCheckPass::visit( BitConstant& value )
+{
+    verify< BitConstant >( value );
+}
+void ConsistencyCheckPass::visit( StringConstant& value )
+{
+    verify< StringConstant >( value );
+}
+void ConsistencyCheckPass::visit( FloatingConstant& value )
+{
+    verify< FloatingConstant >( value );
+}
+void ConsistencyCheckPass::visit( RationalConstant& value )
+{
+    verify< RationalConstant >( value );
+}
+void ConsistencyCheckPass::visit( EnumerationConstant& value )
+{
+    verify< EnumerationConstant >( value );
+}
+void ConsistencyCheckPass::visit( AgentConstant& value )
+{
+    verify< AgentConstant >( value );
+}
 
 //
 //  Local variables:

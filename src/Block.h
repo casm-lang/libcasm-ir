@@ -62,7 +62,7 @@ namespace libcasm_ir
         std::weak_ptr< ExecutionSemanticsBlock > m_scope;
     };
 
-    using Blocks = libstdhl::List< Block >;
+    using Blocks = ValueList< Block >;
 
     class ExecutionSemanticsBlock : public Block
     {
@@ -71,8 +71,6 @@ namespace libcasm_ir
 
         ExecutionSemanticsBlock(
             const std::string& name, u1 parallel, Value::ID id = classid() );
-
-        ~ExecutionSemanticsBlock( void );
 
         u1 parallel( void ) const;
 
@@ -106,7 +104,7 @@ namespace libcasm_ir
         Blocks m_blocks;
     };
 
-    using ExecutionSemanticsBlocks = libstdhl::List< ExecutionSemanticsBlock >;
+    using ExecutionSemanticsBlocks = ValueList< ExecutionSemanticsBlock >;
 
     class ParallelBlock final : public ExecutionSemanticsBlock
     {
@@ -124,6 +122,8 @@ namespace libcasm_ir
         void setRule( const std::shared_ptr< Rule >& rule );
 
         std::shared_ptr< Rule > rule( void ) const;
+
+        void accept( Visitor& visitor ) override final;
 
         static inline Value::ID classid( void )
         {
@@ -148,6 +148,8 @@ namespace libcasm_ir
             return std::static_pointer_cast< SequentialBlock >(
                 ExecutionSemanticsBlock::init() );
         }
+
+        void accept( Visitor& visitor ) override final;
 
         static inline Value::ID classid( void )
         {

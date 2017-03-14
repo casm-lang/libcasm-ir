@@ -100,6 +100,11 @@ TrivialStatement::TrivialStatement( void )
 {
 }
 
+void TrivialStatement::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 u1 TrivialStatement::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -108,6 +113,11 @@ u1 TrivialStatement::classof( Value const* obj )
 BranchStatement::BranchStatement( void )
 : Statement( "branch", classid() )
 {
+}
+
+void BranchStatement::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
 }
 
 u1 BranchStatement::classof( Value const* obj )

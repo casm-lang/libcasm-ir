@@ -72,10 +72,6 @@ ExecutionSemanticsBlock::ExecutionSemanticsBlock(
 {
 }
 
-ExecutionSemanticsBlock::~ExecutionSemanticsBlock( void )
-{
-}
-
 ExecutionSemanticsBlock::Ptr ExecutionSemanticsBlock::init( void )
 {
     auto self = ptr_this< ExecutionSemanticsBlock >();
@@ -171,6 +167,11 @@ Rule::Ptr ParallelBlock::rule( void ) const
     return m_rule.lock();
 }
 
+void ParallelBlock::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 u1 ParallelBlock::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -184,6 +185,11 @@ u1 ParallelBlock::classof( Value const* obj )
 SequentialBlock::SequentialBlock( void )
 : ExecutionSemanticsBlock( "seq", false, classid() )
 {
+}
+
+void SequentialBlock::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
 }
 
 u1 SequentialBlock::classof( Value const* obj )

@@ -43,6 +43,11 @@ Statement::Ptr Derived::context( void ) const
     return m_context;
 }
 
+void Derived::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 u1 Derived::classof( Value const* obj )
 {
     return obj->id() == classid();

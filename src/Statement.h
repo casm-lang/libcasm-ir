@@ -64,6 +64,8 @@ namespace libcasm_ir
 
         TrivialStatement( void );
 
+        void accept( Visitor& visitor ) override final;
+
         static inline Value::ID classid( void )
         {
             return Value::TRIVIAL_STATEMENT;
@@ -78,6 +80,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< BranchStatement >;
 
         BranchStatement( void );
+
+        void accept( Visitor& visitor ) override final;
 
         static inline Value::ID classid( void )
         {

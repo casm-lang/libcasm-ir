@@ -43,6 +43,8 @@ namespace libcasm_ir
 
         std::shared_ptr< ParallelBlock > context( void ) const;
 
+        void accept( Visitor& visitor ) override final;
+
         static inline Value::ID classid( void )
         {
             return Value::RULE;
@@ -53,6 +55,8 @@ namespace libcasm_ir
       private:
         std::shared_ptr< ParallelBlock > m_context;
     };
+
+    using Rules = ValueList< Rule >;
 }
 
 #endif // _LIB_CASMIR_RULE_H_

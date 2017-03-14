@@ -61,6 +61,11 @@ ParallelBlock::Ptr Rule::context( void ) const
     return m_context;
 }
 
+void Rule::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 u1 Rule::classof( Value const* obj )
 {
     return obj->id() == classid();

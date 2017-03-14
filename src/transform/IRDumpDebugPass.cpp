@@ -41,7 +41,7 @@ u1 IRDumpDebugPass::run( libpass::PassResult& pr )
     try
     {
         data->specification()->iterate(
-            Traversal::PREORDER, [this]( Value& value, Context& ) {
+            Traversal::PREORDER, [this]( Value& value ) {
                 libstdhl::Log::info( "%p: %s%s", &value,
                     this->indention( value ).c_str(), value.dump().c_str() );
             } );

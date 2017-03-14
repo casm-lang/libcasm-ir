@@ -23,115 +23,376 @@
 
 #include "Visitor.h"
 
-#include "libcasm-ir.h"
+#include "Specification.h"
 
 using namespace libcasm_ir;
 
-#define CASE_VALUE( VID, CLASS )                                               \
-    case Value::ID::VID:                                                       \
-        if( stage == Stage::PROLOG )                                           \
-            visit_prolog( static_cast< CLASS& >( value ), cxt );               \
-        else if( stage == Stage::EPILOG )                                      \
-            visit_epilog( static_cast< CLASS& >( value ), cxt );               \
-        else                                                                   \
-            assert( !"invalid visitor stage value!" );                         \
-        break
+//
+// RecursiveVisitor
+//
 
-#define CASE_VALUE_INTER( VID, CLASS )                                         \
-    case Value::ID::VID:                                                       \
-        if( stage == Stage::PROLOG )                                           \
-            visit_prolog( static_cast< CLASS& >( value ), cxt );               \
-        else if( stage == Stage::INTERLOG )                                    \
-            visit_interlog( static_cast< CLASS& >( value ), cxt );             \
-        else if( stage == Stage::EPILOG )                                      \
-            visit_epilog( static_cast< CLASS& >( value ), cxt );               \
-        else                                                                   \
-            assert( !"invalid visitor stage value!" );                         \
-        break
-
-void Visitor::dispatch( Stage stage, Value& value, Context& cxt )
+void RecursiveVisitor::visit( Specification& value )
 {
-    switch( value.id() )
+    value.constants().accept( *this );
+    value.builtins().accept( *this );
+    value.functions().accept( *this );
+    value.deriveds().accept( *this );
+    value.rules().accept( *this );
+    value.agent()->accept( *this );
+}
+void RecursiveVisitor::visit( Agent& value )
+{
+}
+void RecursiveVisitor::visit( Function& value )
+{
+}
+void RecursiveVisitor::visit( Derived& value )
+{
+    value.context()->accept( *this );
+}
+void RecursiveVisitor::visit( Rule& value )
+{
+    value.context()->accept( *this );
+}
+void RecursiveVisitor::visit( Builtin& value )
+{
+}
+
+void RecursiveVisitor::visit( Enumeration& value )
+{
+}
+
+void RecursiveVisitor::visit( ParallelBlock& value )
+{
+    value.entry()->accept( *this );
+    value.blocks().accept( *this );
+    value.exit()->accept( *this );
+}
+void RecursiveVisitor::visit( SequentialBlock& value )
+{
+    value.entry()->accept( *this );
+    value.blocks().accept( *this );
+    value.exit()->accept( *this );
+}
+
+void RecursiveVisitor::visit( TrivialStatement& value )
+{
+    value.instructions().accept( *this );
+}
+void RecursiveVisitor::visit( BranchStatement& value )
+{
+    value.instructions().accept( *this );
+    value.blocks().accept( *this );
+}
+
+//
+// TraversalVisitor
+//
+
+TraversalVisitor::TraversalVisitor(
+    const Traversal order, std::function< void( Value& ) > callback )
+: m_order( order )
+, m_callback( callback )
+{
+}
+
+Traversal TraversalVisitor::order( void ) const
+{
+    return m_order;
+}
+
+std::function< void( Value& ) > TraversalVisitor::callback( void ) const
+{
+    return m_callback;
+}
+
+void TraversalVisitor::visit( Specification& value )
+{
+    if( order() == PREORDER )
     {
-        CASE_VALUE( SPECIFICATION, Specification );
-        CASE_VALUE( AGENT, Agent );
-
-        CASE_VALUE( FUNCTION, Function );
-        CASE_VALUE_INTER( DERIVED, Derived );
-        CASE_VALUE_INTER( RULE, Rule );
-
-        CASE_VALUE( PARALLEL_BLOCK, ParallelBlock );
-        CASE_VALUE( SEQUENTIAL_BLOCK, SequentialBlock );
-
-        CASE_VALUE( TRIVIAL_STATEMENT, TrivialStatement );
-        CASE_VALUE_INTER( BRANCH_STATEMENT, BranchStatement );
-
-        CASE_VALUE( LOCAL_INSTRUCTION, LocalInstruction );
-
-        CASE_VALUE( ASSERT_INSTRUCTION, AssertInstruction );
-        CASE_VALUE( SELECT_INSTRUCTION, SelectInstruction );
-
-        CASE_VALUE( SKIP_INSTRUCTION, SkipInstruction );
-        CASE_VALUE( FORK_INSTRUCTION, ForkInstruction );
-        CASE_VALUE( MERGE_INSTRUCTION, MergeInstruction );
-
-        CASE_VALUE( LOCATION_INSTRUCTION, LocationInstruction );
-        CASE_VALUE( LOOKUP_INSTRUCTION, LookupInstruction );
-        CASE_VALUE( UPDATE_INSTRUCTION, UpdateInstruction );
-
-        CASE_VALUE( CALL_INSTRUCTION, CallInstruction );
-        CASE_VALUE( PRINT_INSTRUCTION, PrintInstruction );
-
-        CASE_VALUE( ADD_INSTRUCTION, AddInstruction );
-        CASE_VALUE( SUB_INSTRUCTION, SubInstruction );
-        CASE_VALUE( MUL_INSTRUCTION, MulInstruction );
-        CASE_VALUE( MOD_INSTRUCTION, ModInstruction );
-        CASE_VALUE( DIV_INSTRUCTION, DivInstruction );
-
-        CASE_VALUE( AND_INSTRUCTION, AndInstruction );
-        CASE_VALUE( XOR_INSTRUCTION, XorInstruction );
-        CASE_VALUE( OR_INSTRUCTION, OrInstruction );
-
-        CASE_VALUE( EQU_INSTRUCTION, EquInstruction );
-        CASE_VALUE( NEQ_INSTRUCTION, NeqInstruction );
-        CASE_VALUE( LTH_INSTRUCTION, LthInstruction );
-
-        CASE_VALUE( AGENT_CONSTANT, AgentConstant );
-        CASE_VALUE( RULE_REFERENCE_CONSTANT, RuleReferenceConstant );
-        CASE_VALUE( BOOLEAN_CONSTANT, BooleanConstant );
-        CASE_VALUE( INTEGER_CONSTANT, IntegerConstant );
-        CASE_VALUE( BIT_CONSTANT, BitConstant );
-        CASE_VALUE( STRING_CONSTANT, StringConstant );
-
-        default:
-        {
-            if( isa< Builtin >( value ) )
-            {
-                Builtin& b = static_cast< Builtin& >( value );
-
-                if( stage == Stage::PROLOG )
-                {
-                    visit_prolog( b, cxt );
-                }
-                else if( stage == Stage::EPILOG )
-                {
-                    visit_epilog( b, cxt );
-                }
-                else
-                {
-                    assert( !"invalid visitor stage value!" );
-                }
-                break;
-            }
-
-            fprintf( stderr,
-                "%s:%i: error: unimplemented value name '%s' with id '%i' to "
-                "dispatch\n",
-                __FILE__, __LINE__, value.name().c_str(), value.id() );
-            assert( 0 );
-            break;
-        }
+        callback()( value );
     }
+
+    value.constants().accept( *this );
+    value.builtins().accept( *this );
+    value.functions().accept( *this );
+    value.deriveds().accept( *this );
+    value.rules().accept( *this );
+    value.agent()->accept( *this );
+
+    if( order() == POSTORDER )
+    {
+        callback()( value );
+    }
+}
+void TraversalVisitor::visit( Agent& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( Function& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( Derived& value )
+{
+    if( order() == PREORDER )
+    {
+        callback()( value );
+    }
+
+    value.context()->accept( *this );
+
+    if( order() == POSTORDER )
+    {
+        callback()( value );
+    }
+}
+void TraversalVisitor::visit( Rule& value )
+{
+    if( order() == PREORDER )
+    {
+        callback()( value );
+    }
+
+    value.context()->accept( *this );
+
+    if( order() == POSTORDER )
+    {
+        callback()( value );
+    }
+}
+void TraversalVisitor::visit( Builtin& value )
+{
+    callback()( value );
+}
+
+void TraversalVisitor::visit( Enumeration& value )
+{
+    callback()( value );
+}
+
+void TraversalVisitor::visit( ParallelBlock& value )
+{
+    if( order() == PREORDER )
+    {
+        callback()( value );
+    }
+
+    value.entry()->accept( *this );
+    value.blocks().accept( *this );
+    value.exit()->accept( *this );
+
+    if( order() == POSTORDER )
+    {
+        callback()( value );
+    }
+}
+void TraversalVisitor::visit( SequentialBlock& value )
+{
+    if( order() == PREORDER )
+    {
+        callback()( value );
+    }
+
+    value.entry()->accept( *this );
+    value.blocks().accept( *this );
+    value.exit()->accept( *this );
+
+    if( order() == POSTORDER )
+    {
+        callback()( value );
+    }
+}
+
+void TraversalVisitor::visit( TrivialStatement& value )
+{
+    if( order() == PREORDER )
+    {
+        callback()( value );
+    }
+
+    value.instructions().accept( *this );
+
+    if( order() == POSTORDER )
+    {
+        callback()( value );
+    }
+}
+void TraversalVisitor::visit( BranchStatement& value )
+{
+    if( order() == PREORDER )
+    {
+        callback()( value );
+    }
+
+    value.instructions().accept( *this );
+    value.blocks().accept( *this );
+
+    if( order() == POSTORDER )
+    {
+        callback()( value );
+    }
+}
+
+//
+// Visitor Instructions
+//
+
+void TraversalVisitor::visit( SkipInstruction& value )
+{
+    callback()( value );
+}
+
+void TraversalVisitor::visit( ForkInstruction& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( MergeInstruction& value )
+{
+    callback()( value );
+}
+
+void TraversalVisitor::visit( LookupInstruction& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( UpdateInstruction& value )
+{
+    callback()( value );
+}
+
+void TraversalVisitor::visit( LocalInstruction& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( LocationInstruction& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( CallInstruction& value )
+{
+    callback()( value );
+}
+
+void TraversalVisitor::visit( AssertInstruction& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( SelectInstruction& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( SymbolicInstruction& value )
+{
+    callback()( value );
+}
+
+void TraversalVisitor::visit( AddInstruction& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( SubInstruction& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( MulInstruction& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( ModInstruction& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( DivInstruction& value )
+{
+    callback()( value );
+}
+
+void TraversalVisitor::visit( AndInstruction& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( XorInstruction& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( OrInstruction& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( NotInstruction& value )
+{
+    callback()( value );
+}
+
+void TraversalVisitor::visit( EquInstruction& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( NeqInstruction& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( LthInstruction& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( LeqInstruction& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( GthInstruction& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( GeqInstruction& value )
+{
+    callback()( value );
+}
+
+//
+// Visitor Constants
+//
+
+void TraversalVisitor::visit( VoidConstant& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( RuleReferenceConstant& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( BooleanConstant& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( IntegerConstant& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( BitConstant& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( StringConstant& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( FloatingConstant& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( RationalConstant& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( EnumerationConstant& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( AgentConstant& value )
+{
+    callback()( value );
 }
 
 //
