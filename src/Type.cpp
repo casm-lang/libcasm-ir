@@ -286,6 +286,8 @@ Enumeration::Ptr EnumerationType::ptr_kind( void ) const
 AgentType::AgentType( const Agent::Ptr& agent )
 : EnumerationType( agent, Type::AGENT )
 {
+    m_name = "a";
+    m_description = "Agent";
 }
 
 //
