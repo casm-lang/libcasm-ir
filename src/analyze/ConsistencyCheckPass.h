@@ -69,6 +69,25 @@ namespace libcasm_ir
 
       public:
         //
+        // RecursiveVisitor General
+        //
+
+        void visit( Specification& value ) override;
+        void visit( Agent& value ) override;
+        void visit( Function& value ) override;
+        void visit( Derived& value ) override;
+        void visit( Rule& value ) override;
+        void visit( Builtin& value ) override;
+
+        void visit( Enumeration& value ) override;
+
+        void visit( ParallelBlock& value ) override;
+        void visit( SequentialBlock& value ) override;
+
+        void visit( TrivialStatement& value ) override;
+        void visit( BranchStatement& value ) override;
+
+        //
         // RecursiveVisitor Instructions
         //
 

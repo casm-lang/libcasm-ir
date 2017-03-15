@@ -45,91 +45,101 @@ u1 ConsistencyCheckPass::run( libpass::PassResult& pr )
     try
     {
 #ifndef NDEBUG
-        // check 'is-a' relation only in 'debug' builds
+        // check 'is-a' relation and 'type of value' only in 'debug' builds
         data->specification()->accept( *this );
-
-// data->specification()->iterate( Traversal::PREORDER, this );
 #endif
+        data->specification()->iterate( Traversal::PREORDER, [this]( Value&
+                                                                     value ) {
+            if( value.label().empty() )
+            {
+                libstdhl::Log::error( "value '%p' %s: has no label", &value,
+                    value.dump().c_str() );
+            }
 
-        // data->specification()->iterate( Traversal::PREORDER, [this](
-        //                                                          Value&
-        //                                                          value,
-        //                                                          Context& ) {
-        //     if( const auto v = cast< Rule >( value ) )
-        //     {
-        //         if( not v->context() )
-        //         {
-        //             libstdhl::Log::error(
-        //                 "rule '%p' %s: has no context", v, v->dump().c_str()
-        //                 );
-        //         }
-        //         if( const auto p = cast< ParallelBlock >( v->context() ) )
-        //         {
-        //             if( *p->rule() != value )
-        //             {
-        //                 libstdhl::Log::error(
-        //                     "rule '%p' %s: context does not point to this
-        //                     rule",
-        //                     v, v->dump().c_str() );
-        //             }
-        //         }
-        //         else
-        //         {
-        //             libstdhl::Log::error(
-        //                 "rule '%p' %s: does not start with a parallel block",
-        //                 v,
-        //                 v->dump().c_str() );
-        //         }
-        //     }
-        //     else if( const auto v = cast< ExecutionSemanticsBlock >( value )
-        //     )
-        //     {
-        //         u1 block_is_context_of_rule = false;
+            if( const auto v = cast< Specification >( value ) )
+            {
+                if( not( v->rules().size() > 0 ) )
+                {
+                    libstdhl::Log::error( "specification '%p' %s: has no rules",
+                        v, v->dump().c_str() );
+                }
+                if( not v->agent() )
+                {
+                    libstdhl::Log::error( "specification '%p' %s: has no agent",
+                        v, v->dump().c_str() );
+                }
+            }
+            else if( const auto v = cast< Rule >( value ) )
+            {
+                if( not v->context() )
+                {
+                    libstdhl::Log::error(
+                        "rule '%p' %s: has no context", v, v->dump().c_str() );
+                }
+                if( const auto p = cast< ParallelBlock >( v->context() ) )
+                {
+                    if( *p->rule() != value )
+                    {
+                        libstdhl::Log::error(
+                            "rule '%p' %s: context does not point to this rule",
+                            v,
+                            v->dump().c_str() );
+                    }
+                }
+                else
+                {
+                    libstdhl::Log::error(
+                        "rule '%p' %s: does not start with a parallel block",
+                        v,
+                        v->dump().c_str() );
+                }
+            }
+            else if( const auto v = cast< ExecutionSemanticsBlock >( value ) )
+            {
+                u1 block_is_context_of_rule = false;
 
-        //         if( const auto p = cast< ParallelBlock >( value ) )
-        //         {
-        //             if( p->rule() )
-        //             {
-        //                 block_is_context_of_rule = true;
-        //             }
-        //         }
+                if( const auto p = cast< ParallelBlock >( value ) )
+                {
+                    if( p->rule() )
+                    {
+                        block_is_context_of_rule = true;
+                    }
+                }
 
-        //         if( not v->parent() and not block_is_context_of_rule )
-        //         {
-        //             libstdhl::Log::error(
-        //                 "stmt '%p' %s: has no parent", v, v->dump().c_str()
-        //                 );
-        //         }
-        //         if( not v->scope() and not block_is_context_of_rule )
-        //         {
-        //             libstdhl::Log::error(
-        //                 "stmt '%p' %s: has no scope", v, v->dump().c_str() );
-        //         }
-        //     }
-        //     else if( const auto v = cast< Statement >( value ) )
-        //     {
-        //         if( not v->parent() )
-        //         {
-        //             libstdhl::Log::error(
-        //                 "stmt '%p' %s: has no parent", v, v->dump().c_str()
-        //                 );
-        //         }
-        //         if( not v->scope() )
-        //         {
-        //             libstdhl::Log::error(
-        //                 "stmt '%p' %s: has no scope", v, v->dump().c_str() );
-        //         }
-        //     }
-        //     else if( const auto v = cast< Instruction >( value ) )
-        //     {
-        //         if( not v->statement() )
-        //         {
-        //             libstdhl::Log::error( "inst '%p' %s: has no statement",
-        //             v,
-        //                 v->dump().c_str() );
-        //         }
-        //     }
-        // } );
+                if( not v->parent() and not block_is_context_of_rule )
+                {
+                    libstdhl::Log::error(
+                        "stmt '%p' %s: has no parent", v, v->dump().c_str() );
+                }
+                if( not v->scope() and not block_is_context_of_rule )
+                {
+                    libstdhl::Log::error(
+                        "stmt '%p' %s: has no scope", v, v->dump().c_str() );
+                }
+            }
+            else if( const auto v = cast< Statement >( value ) )
+            {
+                if( not v->parent() )
+                {
+                    libstdhl::Log::error(
+                        "stmt '%p' %s: has no parent", v, v->dump().c_str() );
+                }
+                if( not v->scope() )
+                {
+                    libstdhl::Log::error(
+                        "stmt '%p' %s: has no scope", v, v->dump().c_str() );
+                }
+            }
+            else if( const auto v = cast< Instruction >( value ) )
+            {
+                if( not v->statement() )
+                {
+                    libstdhl::Log::error( "inst '%p' %s: has no statement",
+                        v,
+                        v->dump().c_str() );
+                }
+            }
+        } );
     }
     catch( ... )
     {
@@ -160,6 +170,72 @@ void ConsistencyCheckPass::verify( Value& value )
 
 //
 // RecursiveVisitor General
+//
+
+void ConsistencyCheckPass::visit( Specification& value )
+{
+    verify< Specification >( value );
+
+    RecursiveVisitor::visit( value );
+}
+void ConsistencyCheckPass::visit( Agent& value )
+{
+    verify< Agent >( value );
+}
+void ConsistencyCheckPass::visit( Function& value )
+{
+    verify< Function >( value );
+}
+void ConsistencyCheckPass::visit( Derived& value )
+{
+    verify< Derived >( value );
+
+    RecursiveVisitor::visit( value );
+}
+void ConsistencyCheckPass::visit( Rule& value )
+{
+    verify< Rule >( value );
+
+    RecursiveVisitor::visit( value );
+}
+void ConsistencyCheckPass::visit( Builtin& value )
+{
+    verify< Builtin >( value );
+}
+
+void ConsistencyCheckPass::visit( Enumeration& value )
+{
+    verify< Enumeration >( value );
+}
+
+void ConsistencyCheckPass::visit( ParallelBlock& value )
+{
+    verify< ParallelBlock >( value );
+
+    RecursiveVisitor::visit( value );
+}
+void ConsistencyCheckPass::visit( SequentialBlock& value )
+{
+    verify< SequentialBlock >( value );
+
+    RecursiveVisitor::visit( value );
+}
+
+void ConsistencyCheckPass::visit( TrivialStatement& value )
+{
+    verify< TrivialStatement >( value );
+
+    RecursiveVisitor::visit( value );
+}
+void ConsistencyCheckPass::visit( BranchStatement& value )
+{
+    verify< BranchStatement >( value );
+
+    RecursiveVisitor::visit( value );
+}
+
+//
+// RecursiveVisitor Instructions
 //
 
 void ConsistencyCheckPass::visit( SkipInstruction& value )

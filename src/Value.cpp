@@ -136,7 +136,7 @@ std::string Value::label( void ) const
 
         if( this->type().result().isVoid() )
         {
-            return "";
+            return name();
         }
 
         return lbl
