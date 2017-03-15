@@ -33,12 +33,12 @@ using namespace libcasm_ir;
 
 void RecursiveVisitor::visit( Specification& value )
 {
+    value.agent()->accept( *this );
     value.constants().accept( *this );
     value.builtins().accept( *this );
     value.functions().accept( *this );
     value.deriveds().accept( *this );
     value.rules().accept( *this );
-    value.agent()->accept( *this );
 }
 void RecursiveVisitor::visit( Agent& value )
 {
@@ -113,12 +113,12 @@ void TraversalVisitor::visit( Specification& value )
         callback()( value );
     }
 
+    value.agent()->accept( *this );
     value.constants().accept( *this );
     value.builtins().accept( *this );
     value.functions().accept( *this );
     value.deriveds().accept( *this );
     value.rules().accept( *this );
-    value.agent()->accept( *this );
 
     if( order() == POSTORDER )
     {
