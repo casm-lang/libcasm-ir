@@ -100,26 +100,26 @@ Values Instruction::operands( void ) const
 
 void Instruction::replace( const Value& from, const Value::Ptr& to )
 {
-    assert( !" TODO " );
+    libstdhl::Log::info(
+        "replace: %s -> %s", from.label().c_str(), to->label().c_str() );
 
-    // libstdhl::Log::info( "replace: %s -> %s", from->label(), to->label() );
+    std::replace_if( m_operands.begin(), m_operands.end(),
+        [&]( const Value::Ptr& v ) { return *v.get() == from; }, to );
 
-    // std::replace( m_values.begin(), m_values.end(), &from, &to );
+    if( isa< User >( from ) )
+    {
+        libstdhl::Log::info( "replace-from: remove use of %s -> %s",
+            this->label().c_str(), from.label().c_str() );
+        auto user = static_cast< const User& >( from );
+        user.removeUse( *this );
+    }
 
-    // if( isa< User >( from ) )
-    // {
-    //     libstdhl::Log::info( "replace-from: remove use of %s -> %s",
-    //         this->label(), from.label() );
-    //     User& user = static_cast< User& >( from );
-    //     user.removeUse( *this );
-    // }
-
-    // if( isa< User >( to ) )
-    // {
-    //     libstdhl::Log::info( "replace-to: set use of %s", to.label() );
-    //     User& user = static_cast< User& >( to );
-    //     user.setUse( *this );
-    // }
+    if( isa< User >( to ) )
+    {
+        libstdhl::Log::info( "replace-to: set use of %s", to->label().c_str() );
+        auto user = std::static_pointer_cast< User >( to );
+        user->setUse( *this );
+    }
 }
 
 void Instruction::setStatement( const Statement::Ptr& statement )
