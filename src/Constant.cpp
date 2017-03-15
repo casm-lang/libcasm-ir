@@ -25,6 +25,7 @@
 
 #include "../stdhl/cpp/FloatingPoint.h"
 #include "../stdhl/cpp/Integer.h"
+#include "../stdhl/cpp/Math.h"
 #include "../stdhl/cpp/Rational.h"
 
 using namespace libcasm_ir;
@@ -279,10 +280,9 @@ BitConstant::BitConstant(
 
 BitConstant::BitConstant( const BitType::Ptr& type, const std::string& value,
     const libstdhl::Type::Radix radix )
-: Constant( value, type, libstdhl::Type( value, type->bitsize(), false, radix ),
-      nullptr, true, false, classid() )
+: Constant( value, type, libstdhl::Type( value, type->bitsize() ), nullptr,
+      true, false, classid() )
 {
-    // TODO: PPA: str2bit converstion
     if( type->bitsize() > BitType::SizeMax )
     {
         throw std::domain_error( "invalid bit size '"
@@ -301,8 +301,11 @@ BitConstant::BitConstant( const BitType::Ptr& type )
 {
 }
 
-BitConstant::BitConstant( u16 bitsize, const std::string& value )
-: BitConstant( libstdhl::get< BitType >( bitsize ), value )
+BitConstant::BitConstant(
+    const std::string& value, const libstdhl::Type::Radix radix )
+: BitConstant( libstdhl::get< BitType >(
+                   (u16)value.size() * std::log2( (double)radix ) ),
+      value, radix )
 {
 }
 

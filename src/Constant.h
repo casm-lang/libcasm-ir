@@ -179,14 +179,19 @@ namespace libcasm_ir
         BitConstant(
             const BitType::Ptr& type, u64 value, u1 defined, u1 symbolic );
 
-      public:
         BitConstant( const BitType::Ptr& type, const std::string& value,
-            const libstdhl::Type::Radix radix = libstdhl::Type::BINARY );
+            const libstdhl::Type::Radix radix );
+
+      public:
         BitConstant( const BitType::Ptr& type, u64 value );
+
         BitConstant( const BitType::Ptr& type );
 
-        BitConstant( u16 bitsize, const std::string& value );
+        BitConstant( const std::string& value,
+            const libstdhl::Type::Radix radix = libstdhl::Type::BINARY );
+
         BitConstant( u16 bitsize, u64 value );
+
         BitConstant( u16 bitsize );
 
         std::string literal(
