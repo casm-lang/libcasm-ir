@@ -58,6 +58,11 @@ ExecutionSemanticsBlock::Ptr Block::scope( void ) const
     return m_scope.lock();
 }
 
+void Block::accept( Visitor& visitor )
+{
+    assert( !" abstract class 'Block' is not allowed to accept visitors " );
+}
+
 u1 Block::classof( Value const* obj )
 {
     return obj->id() == classid() or ExecutionSemanticsBlock::classof( obj )
