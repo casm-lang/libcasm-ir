@@ -37,11 +37,13 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< Constant >;
 
       protected:
-        Constant( const std::string& name, const Type::Ptr& type, u1 defined,
-            u1 symbolic, Value::ID id = classid() );
+        Constant( const std::string& name, const Type::Ptr& type,
+            const libstdhl::Type& data, const Value::Ptr& value, u1 defined,
+            u1 symbolic, Value::ID id );
 
       public:
         u1 defined( void ) const;
+
         u1 symbolic( void ) const;
 
         void accept( Visitor& visitor ) override;
@@ -53,20 +55,15 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
+      protected:
+        libstdhl::Type m_data;
+
+        Value::Ptr m_value;
+
       private:
         u1 m_defined;
+
         u1 m_symbolic;
-
-      protected:
-        // PPA: this will be replaced later with a std::variant mechanism!
-        union {
-            u1 m_u1;
-            u64 m_u64;
-            u64* m_ptr;
-            double m_dfp;
-        } m_value;
-
-        Value::Ptr m_value_ptr;
 
       public:
         std::unordered_map< std::string, Constant::Ptr >& make_cache( void )
@@ -153,8 +150,13 @@ namespace libcasm_ir
         IntegerConstant( i64 value, u1 defined, u1 symbolic );
 
       public:
+        IntegerConstant( const std::string& value,
+            const libstdhl::Type::Radix radix = libstdhl::Type::DECIMAL );
         IntegerConstant( i64 value );
         IntegerConstant( void );
+
+        std::string literal(
+            libstdhl::Type::Radix radix = libstdhl::Type::DECIMAL ) const;
 
         i64 value( void ) const;
 
@@ -178,11 +180,16 @@ namespace libcasm_ir
             const BitType::Ptr& type, u64 value, u1 defined, u1 symbolic );
 
       public:
+        BitConstant( const BitType::Ptr& type, const std::string& value );
         BitConstant( const BitType::Ptr& type, u64 value );
         BitConstant( const BitType::Ptr& type );
 
+        BitConstant( u16 bitsize, const std::string& value );
         BitConstant( u16 bitsize, u64 value );
         BitConstant( u16 bitsize );
+
+        std::string literal(
+            libstdhl::Type::Radix radix = libstdhl::Type::HEXADECIMAL ) const;
 
         u64 value( void ) const;
 
@@ -229,6 +236,7 @@ namespace libcasm_ir
         FloatingConstant( const double value, u1 defined, u1 symbolic );
 
       public:
+        FloatingConstant( const std::string& value );
         FloatingConstant( const double value );
         FloatingConstant( void );
 
