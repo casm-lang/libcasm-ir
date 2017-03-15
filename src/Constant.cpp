@@ -277,9 +277,10 @@ BitConstant::BitConstant(
     }
 }
 
-BitConstant::BitConstant( const BitType::Ptr& type, const std::string& value )
-: Constant( value, type, libstdhl::Type( value, type->bitsize() ), nullptr,
-      true, false, classid() )
+BitConstant::BitConstant( const BitType::Ptr& type, const std::string& value,
+    const libstdhl::Type::Radix radix )
+: Constant( value, type, libstdhl::Type( value, type->bitsize(), false, radix ),
+      nullptr, true, false, classid() )
 {
     // TODO: PPA: str2bit converstion
     if( type->bitsize() > BitType::SizeMax )
