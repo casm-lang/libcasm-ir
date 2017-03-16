@@ -23,7 +23,7 @@
 
 #include "IRDumpDebugPass.h"
 
-#include "libcasm-ir.h"
+#include "Specification.h"
 
 using namespace libcasm_ir;
 
