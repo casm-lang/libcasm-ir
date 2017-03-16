@@ -43,8 +43,8 @@
 #include "src/Visitor.h"
 
 #include "src/analyze/ConsistencyCheckPass.h"
+#include "src/analyze/IRDumpDebugPass.h"
 
-#include "src/transform/IRDumpDebugPass.h"
 #include "src/transform/IRDumpSourcePass.h"
 
 namespace libcasm_ir
