@@ -34,8 +34,6 @@ static libpass::PassRegistration< IRDumpSourcePass > PASS(
     "translates the CASM IR to the ASCII source code representation", "ir-dump",
     0 );
 
-static FILE* stream = stdout;
-
 static const char* name = 0;
 
 u1 IRDumpSourcePass::run( libpass::PassResult& pr )
@@ -44,14 +42,13 @@ u1 IRDumpSourcePass::run( libpass::PassResult& pr )
 
     libstdhl::Log::info( "%s: starting", name );
 
-    auto data = pr.result< ConsistencyCheckPass >();
-    assert( data );
-
     try
     {
-        m_first.clear();
+        const auto data = pr.result< ConsistencyCheckPass >();
 
-        data->specification()->accept( *this );
+        IRDumpSourceVisitor visitor{ std::cout };
+
+        data->specification()->accept( visitor );
     }
     catch( ... )
     {
@@ -64,7 +61,12 @@ u1 IRDumpSourcePass::run( libpass::PassResult& pr )
     return true;
 }
 
-std::string IRDumpSourcePass::indention( Value& value ) const
+IRDumpSourceVisitor::IRDumpSourceVisitor( std::ostream& stream )
+: m_stream( stream )
+{
+}
+
+std::string IRDumpSourceVisitor::indention( Value& value ) const
 {
 #define INDENT "  "
 
@@ -82,7 +84,7 @@ std::string IRDumpSourcePass::indention( Value& value ) const
     }
 }
 
-void IRDumpSourcePass::dump( Statement& value ) const
+void IRDumpSourceVisitor::dump( Statement& value ) const
 {
     const char* nline = "\n";
     const char* label = &value.label().c_str()[ 1 ];
@@ -116,19 +118,15 @@ void IRDumpSourcePass::dump( Statement& value ) const
         }
     }
 
-    fprintf( stream, "%s%s%s: %s\n", nline, indention( value ).c_str(), label,
-        scope );
+    m_stream << nline << indention( value ) << label << ": " << scope << "\n";
 }
 
-void IRDumpSourcePass::dump( Instruction& value ) const
+void IRDumpSourceVisitor::dump( Instruction& value ) const
 {
     if( isa< ForkInstruction >( value ) or isa< MergeInstruction >( value ) )
     {
-        fprintf( stream,
-            "%s%s %s\n",
-            indention( value ).c_str(),
-            value.name().c_str(),
-            value.statement()->scope()->name().c_str() );
+        m_stream << indention( value ) << value.name() << " "
+                 << value.statement()->scope()->name() << "\n";
     }
     else
     {
@@ -161,13 +159,12 @@ void IRDumpSourcePass::dump( Instruction& value ) const
         }
         uses += "}";
 
-        fprintf( stream, "%s%s = %s %s                 ;; uses = %s\n",
-            indention( value ).c_str(), value.label().c_str(),
-            value.name().c_str(), tmp.c_str(), uses.c_str() );
+        m_stream << indention( value ) << value.label() << " = " << value.name()
+                 << " " << tmp << "                 ;; uses = " << uses << "\n";
     }
 }
 
-void IRDumpSourcePass::dump( Constant& value ) const
+void IRDumpSourceVisitor::dump( Constant& value ) const
 {
     static u1 first = true;
 
@@ -175,103 +172,101 @@ void IRDumpSourcePass::dump( Constant& value ) const
     {
         first = false;
 
-        fprintf( stream, "\n" );
+        m_stream << "\n";
     }
 
-    fprintf( stream, "%s = %s %s\n", value.label().c_str(),
-        value.type().name().c_str(), value.name().c_str() );
+    m_stream << value.label() << " = " << value.type().name() << " "
+             << value.name() << "\n";
 }
 
 //
 // RecursiveVisitor General
 //
 
-void IRDumpSourcePass::visit( Specification& value )
+void IRDumpSourceVisitor::visit( Specification& value )
 {
+    m_stream << ";; " << value.name() << "\n";
+
     RecursiveVisitor::visit( value );
+
+    m_stream << "\n";
 }
-void IRDumpSourcePass::visit( Agent& value )
+void IRDumpSourceVisitor::visit( Agent& value )
 {
     auto result = m_first.find( value.id() );
     if( result == m_first.end() )
     {
         m_first.insert( value.id() );
-        fprintf( stream, "\n" );
+        m_stream << "\n";
     }
 
-    fprintf(
-        stream, "%s = %s", value.name().c_str(), value.type().name().c_str() );
+    m_stream << value.name() << " = " << value.type().name();
 
     u1 first = true;
 
     for( auto element : value.elements() )
     {
-        fprintf( stream, "%s %s", first ? "" : ",", element.c_str() );
+        m_stream << ( first ? "" : "," ) << " " << element;
         first = false;
     }
 
-    fprintf( stream, "\n" );
+    m_stream << "\n";
 }
-void IRDumpSourcePass::visit( Function& value )
+void IRDumpSourceVisitor::visit( Function& value )
 {
     auto result = m_first.find( value.id() );
     if( result == m_first.end() )
     {
         m_first.insert( value.id() );
-        fprintf( stream, "\n" );
+        m_stream << "\n";
     }
 
-    fprintf( stream, "%s = %s\n", value.name().c_str(),
-        value.type().name().c_str() );
+    m_stream << value.name() << " = " << value.type().name() << "\n";
 }
-void IRDumpSourcePass::visit( Derived& value )
+void IRDumpSourceVisitor::visit( Derived& value )
 {
-    fprintf( stream,
-        "\n"
-        "%s %s = \n"
-        "[\n",
-        value.name().c_str(), value.type().name().c_str() );
+    m_stream << "\n"
+             << value.name() << " " << value.type().name() << " =\n"
+             << "[\n";
 
     RecursiveVisitor::visit( value );
 
-    fprintf( stream, "]\n" );
+    m_stream << "]\n";
 }
-void IRDumpSourcePass::visit( Rule& value )
+void IRDumpSourceVisitor::visit( Rule& value )
 {
-    fprintf( stream,
-        "\n"
-        "%s %s = \n"
-        "{\n",
-        value.name().c_str(), value.type().name().c_str() );
+    m_stream << "\n"
+             << value.name() << " " << value.type().name() << " =\n"
+             << "{\n";
 
     RecursiveVisitor::visit( value );
 
-    fprintf( stream, "}\n" );
+    m_stream << "}\n";
 }
-void IRDumpSourcePass::visit( Builtin& value )
+void IRDumpSourceVisitor::visit( Builtin& value )
 {
     auto result = m_first.find( value.id() );
     if( result == m_first.end() )
     {
         m_first.insert( value.id() );
-        fprintf( stream, "\n" );
+        m_stream << "\n";
     }
 
-    fprintf( stream, "%s = %s %s\n", value.label().c_str(),
-        value.type().name().c_str(), value.name().c_str() );
+    m_stream << value.label() << " = " << value.type().name() << " "
+             << value.name() << "\n";
 }
 
-void IRDumpSourcePass::visit( Enumeration& value )
+void IRDumpSourceVisitor::visit( Enumeration& value )
 {
-    fprintf( stream, ";; %s\n", value.dump().c_str() );
+    m_stream << ";; " << value.dump() << "\n";
 }
 
-void IRDumpSourcePass::visit( TrivialStatement& value )
+void IRDumpSourceVisitor::visit( TrivialStatement& value )
 {
     dump( value );
     RecursiveVisitor::visit( value );
 }
-void IRDumpSourcePass::visit( BranchStatement& value )
+void IRDumpSourceVisitor::visit( BranchStatement& value )
 {
     dump( value );
     RecursiveVisitor::visit( value );
@@ -281,114 +276,114 @@ void IRDumpSourcePass::visit( BranchStatement& value )
 // RecursiveVisitor Instructions
 //
 
-void IRDumpSourcePass::visit( SkipInstruction& value )
+void IRDumpSourceVisitor::visit( SkipInstruction& value )
 {
     dump( value );
 }
 
-void IRDumpSourcePass::visit( ForkInstruction& value )
+void IRDumpSourceVisitor::visit( ForkInstruction& value )
 {
     dump( value );
 }
-void IRDumpSourcePass::visit( MergeInstruction& value )
-{
-    dump( value );
-}
-
-void IRDumpSourcePass::visit( LookupInstruction& value )
-{
-    dump( value );
-}
-void IRDumpSourcePass::visit( UpdateInstruction& value )
+void IRDumpSourceVisitor::visit( MergeInstruction& value )
 {
     dump( value );
 }
 
-void IRDumpSourcePass::visit( LocalInstruction& value )
+void IRDumpSourceVisitor::visit( LookupInstruction& value )
 {
     dump( value );
 }
-void IRDumpSourcePass::visit( LocationInstruction& value )
-{
-    dump( value );
-}
-void IRDumpSourcePass::visit( CallInstruction& value )
+void IRDumpSourceVisitor::visit( UpdateInstruction& value )
 {
     dump( value );
 }
 
-void IRDumpSourcePass::visit( AssertInstruction& value )
+void IRDumpSourceVisitor::visit( LocalInstruction& value )
 {
     dump( value );
 }
-void IRDumpSourcePass::visit( SelectInstruction& value )
+void IRDumpSourceVisitor::visit( LocationInstruction& value )
 {
     dump( value );
 }
-void IRDumpSourcePass::visit( SymbolicInstruction& value )
-{
-    dump( value );
-}
-
-void IRDumpSourcePass::visit( AddInstruction& value )
-{
-    dump( value );
-}
-void IRDumpSourcePass::visit( SubInstruction& value )
-{
-    dump( value );
-}
-void IRDumpSourcePass::visit( MulInstruction& value )
-{
-    dump( value );
-}
-void IRDumpSourcePass::visit( ModInstruction& value )
-{
-    dump( value );
-}
-void IRDumpSourcePass::visit( DivInstruction& value )
+void IRDumpSourceVisitor::visit( CallInstruction& value )
 {
     dump( value );
 }
 
-void IRDumpSourcePass::visit( AndInstruction& value )
+void IRDumpSourceVisitor::visit( AssertInstruction& value )
 {
     dump( value );
 }
-void IRDumpSourcePass::visit( XorInstruction& value )
+void IRDumpSourceVisitor::visit( SelectInstruction& value )
 {
     dump( value );
 }
-void IRDumpSourcePass::visit( OrInstruction& value )
-{
-    dump( value );
-}
-void IRDumpSourcePass::visit( NotInstruction& value )
+void IRDumpSourceVisitor::visit( SymbolicInstruction& value )
 {
     dump( value );
 }
 
-void IRDumpSourcePass::visit( EquInstruction& value )
+void IRDumpSourceVisitor::visit( AddInstruction& value )
 {
     dump( value );
 }
-void IRDumpSourcePass::visit( NeqInstruction& value )
+void IRDumpSourceVisitor::visit( SubInstruction& value )
 {
     dump( value );
 }
-void IRDumpSourcePass::visit( LthInstruction& value )
+void IRDumpSourceVisitor::visit( MulInstruction& value )
 {
     dump( value );
 }
-void IRDumpSourcePass::visit( LeqInstruction& value )
+void IRDumpSourceVisitor::visit( ModInstruction& value )
 {
     dump( value );
 }
-void IRDumpSourcePass::visit( GthInstruction& value )
+void IRDumpSourceVisitor::visit( DivInstruction& value )
 {
     dump( value );
 }
-void IRDumpSourcePass::visit( GeqInstruction& value )
+
+void IRDumpSourceVisitor::visit( AndInstruction& value )
+{
+    dump( value );
+}
+void IRDumpSourceVisitor::visit( XorInstruction& value )
+{
+    dump( value );
+}
+void IRDumpSourceVisitor::visit( OrInstruction& value )
+{
+    dump( value );
+}
+void IRDumpSourceVisitor::visit( NotInstruction& value )
+{
+    dump( value );
+}
+
+void IRDumpSourceVisitor::visit( EquInstruction& value )
+{
+    dump( value );
+}
+void IRDumpSourceVisitor::visit( NeqInstruction& value )
+{
+    dump( value );
+}
+void IRDumpSourceVisitor::visit( LthInstruction& value )
+{
+    dump( value );
+}
+void IRDumpSourceVisitor::visit( LeqInstruction& value )
+{
+    dump( value );
+}
+void IRDumpSourceVisitor::visit( GthInstruction& value )
+{
+    dump( value );
+}
+void IRDumpSourceVisitor::visit( GeqInstruction& value )
 {
     dump( value );
 }
@@ -397,43 +392,43 @@ void IRDumpSourcePass::visit( GeqInstruction& value )
 // RecursiveVisitor Constants
 //
 
-void IRDumpSourcePass::visit( VoidConstant& value )
+void IRDumpSourceVisitor::visit( VoidConstant& value )
 {
     dump( value );
 }
-void IRDumpSourcePass::visit( RuleReferenceConstant& value )
+void IRDumpSourceVisitor::visit( RuleReferenceConstant& value )
 {
     dump( value );
 }
-void IRDumpSourcePass::visit( BooleanConstant& value )
+void IRDumpSourceVisitor::visit( BooleanConstant& value )
 {
     dump( value );
 }
-void IRDumpSourcePass::visit( IntegerConstant& value )
+void IRDumpSourceVisitor::visit( IntegerConstant& value )
 {
     dump( value );
 }
-void IRDumpSourcePass::visit( BitConstant& value )
+void IRDumpSourceVisitor::visit( BitConstant& value )
 {
     dump( value );
 }
-void IRDumpSourcePass::visit( StringConstant& value )
+void IRDumpSourceVisitor::visit( StringConstant& value )
 {
     dump( value );
 }
-void IRDumpSourcePass::visit( FloatingConstant& value )
+void IRDumpSourceVisitor::visit( FloatingConstant& value )
 {
     dump( value );
 }
-void IRDumpSourcePass::visit( RationalConstant& value )
+void IRDumpSourceVisitor::visit( RationalConstant& value )
 {
     dump( value );
 }
-void IRDumpSourcePass::visit( EnumerationConstant& value )
+void IRDumpSourceVisitor::visit( EnumerationConstant& value )
 {
     dump( value );
 }
-void IRDumpSourcePass::visit( AgentConstant& value )
+void IRDumpSourceVisitor::visit( AgentConstant& value )
 {
     dump( value );
 }

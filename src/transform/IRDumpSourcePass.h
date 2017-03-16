@@ -40,21 +40,28 @@ namespace libcasm_ir
     class Constant;
     class Instruction;
 
-    class IRDumpSourcePass final : public libpass::Pass, public RecursiveVisitor
+    class IRDumpSourcePass final : public libpass::Pass
     {
       public:
         static char id;
 
         u1 run( libpass::PassResult& pr ) override;
+    };
+
+    class IRDumpSourceVisitor final : public RecursiveVisitor
+    {
+      public:
+        IRDumpSourceVisitor( std::ostream& stream );
+
+      private:
+        std::ostream& m_stream;
+        std::unordered_set< u8 > m_first;
 
         std::string indention( Value& value ) const;
 
         void dump( Statement& value ) const;
         void dump( Instruction& value ) const;
         void dump( Constant& value ) const;
-
-      private:
-        std::unordered_set< u8 > m_first;
 
       public:
         //
