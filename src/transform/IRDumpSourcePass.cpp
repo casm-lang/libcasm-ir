@@ -85,12 +85,12 @@ std::string IRDumpSourcePass::indention( Value& value ) const
 void IRDumpSourcePass::dump( Statement& value ) const
 {
     const char* nline = "\n";
-    const char* label = value.label().c_str();
+    const char* label = &value.label().c_str()[ 1 ];
     const char* scope = value.scope()->label().c_str();
 
     if( value.scope()->entry().get() == &value )
     {
-        label = value.scope()->label().c_str();
+        label = &value.scope()->label().c_str()[ 1 ];
 
         if( not value.scope()->scope() )
         {
@@ -104,20 +104,20 @@ void IRDumpSourcePass::dump( Statement& value ) const
     }
     else if( value.scope()->exit().get() == &value )
     {
-        label = value.scope()->label().c_str();
+        scope = value.scope()->label().c_str();
 
         if( not value.scope()->scope() )
         {
-            scope = "exit";
+            label = "exit";
         }
         else
         {
-            scope = value.scope()->scope()->label().c_str();
+            label = &value.scope()->scope()->label().c_str()[ 1 ];
         }
     }
 
-    fprintf( stream, "%s%s%s: %s\n", nline, indention( value ).c_str(),
-        &label[ 1 ], scope );
+    fprintf( stream, "%s%s%s: %s\n", nline, indention( value ).c_str(), label,
+        scope );
 }
 
 void IRDumpSourcePass::dump( Instruction& value ) const
@@ -125,12 +125,10 @@ void IRDumpSourcePass::dump( Instruction& value ) const
     if( isa< ForkInstruction >( value ) or isa< MergeInstruction >( value ) )
     {
         fprintf( stream,
-            "%s%s %s %s %s\n",
+            "%s%s %s\n",
             indention( value ).c_str(),
             value.name().c_str(),
-            value.statement()->scope()->name().c_str(),
-            value.statement()->scope()->type().name().c_str(),
-            value.statement()->scope()->label().c_str() );
+            value.statement()->scope()->name().c_str() );
     }
     else
     {
