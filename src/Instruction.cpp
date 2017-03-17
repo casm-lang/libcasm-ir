@@ -132,6 +132,20 @@ Statement::Ptr Instruction::statement( void ) const
     return m_statement.lock();
 }
 
+void Instruction::setNext( const Instruction::Ptr& instruction )
+{
+    assert( instruction );
+    assert( instruction.get() != this );
+    assert( next() == nullptr );
+
+    m_next = instruction;
+}
+
+Instruction::Ptr Instruction::next( void ) const
+{
+    return m_next.lock();
+}
+
 u1 Instruction::classof( Value const* obj )
 {
     return obj->id() == classid() or SkipInstruction::classof( obj )

@@ -53,6 +53,10 @@ namespace libcasm_ir
 
         std::shared_ptr< Statement > statement( void ) const;
 
+        void setNext( const Instruction::Ptr& instruction );
+
+        Instruction::Ptr next( void ) const;
+
         static inline Value::ID classid( void )
         {
             return Value::INSTRUCTION;
@@ -64,6 +68,8 @@ namespace libcasm_ir
         Values m_operands;
 
         std::weak_ptr< Statement > m_statement;
+
+        std::weak_ptr< Instruction > m_next;
     };
 
     using Instructions = ValueList< Instruction >;
