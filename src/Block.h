@@ -41,9 +41,9 @@ namespace libcasm_ir
 
         Block( const std::string& name, Value::ID id = classid() );
 
-        void setParent( const Ptr& parent );
+        void setParent( const Block::Ptr& parent );
 
-        Ptr parent( void ) const;
+        Block::Ptr parent( void ) const;
 
         void setScope(
             const std::shared_ptr< ExecutionSemanticsBlock >& scope );
