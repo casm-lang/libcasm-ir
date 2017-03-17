@@ -79,17 +79,31 @@ Value::ID Value::id( void ) const
 
 std::string Value::dump( void ) const
 {
-    std::string tmp = "[" + type().name() + "] " + label() + " = ";
+    std::string tmp = "[" + type().name() + "] ";
 
-    if( isa< Constant >( this ) )
+    if( not type().isVoid() )
+    {
+        tmp += label() + " = ";
+    }
+
+    if( isa< Constant >( this ) or isa< Builtin >( this )
+        or isa< Function >( this ) )
     {
         tmp += type().name() + " ";
     }
 
-    tmp += name();
+    if( not isa< Function >( this ) )
+    {
+        tmp += name();
+    }
 
     if( auto instr = cast< Instruction >( this ) )
     {
+        if( isa< ForkInstruction >( this ) or isa< MergeInstruction >( this ) )
+        {
+            tmp += " " + instr->statement()->scope()->name();
+        }
+
         u1 first = true;
         for( auto operand : instr->operands() )
         {
