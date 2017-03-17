@@ -45,6 +45,7 @@
 #include "src/analyze/ConsistencyCheckPass.h"
 #include "src/analyze/IRDumpDebugPass.h"
 
+#include "src/transform/IRDumpDotPass.h"
 #include "src/transform/IRDumpSourcePass.h"
 
 namespace libcasm_ir
