@@ -58,6 +58,11 @@ void Statement::add( const Instruction::Ptr& instruction )
 
     instruction->setStatement( self );
 
+    if( m_instructions.size() > 0 )
+    {
+        m_instructions.back()->setNext( instruction );
+    }
+
     m_instructions.add( instruction );
 }
 
