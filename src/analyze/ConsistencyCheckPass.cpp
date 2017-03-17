@@ -76,6 +76,7 @@ u1 ConsistencyCheckPass::run( libpass::PassResult& pr )
                     libstdhl::Log::error(
                         "rule '%p' %s: has no context", v, v->dump().c_str() );
                 }
+
                 if( const auto p = cast< ParallelBlock >( v->context() ) )
                 {
                     if( *p->rule() != value )
@@ -109,12 +110,37 @@ u1 ConsistencyCheckPass::run( libpass::PassResult& pr )
                 if( not v->parent() and not block_is_context_of_rule )
                 {
                     libstdhl::Log::error(
-                        "stmt '%p' %s: has no parent", v, v->dump().c_str() );
+                        "eblk '%p' %s: has no parent", v, v->dump().c_str() );
                 }
+
                 if( not v->scope() and not block_is_context_of_rule )
                 {
                     libstdhl::Log::error(
-                        "stmt '%p' %s: has no scope", v, v->dump().c_str() );
+                        "eblk '%p' %s: has no scope", v, v->dump().c_str() );
+                }
+
+                if( v->blocks().size() < 1 )
+                {
+                    libstdhl::Log::error(
+                        "eblk '%p' %s: shall contain at least 1 block", v,
+                        v->dump().c_str() );
+                }
+
+                if( ( not v->entry() ) and ( not v->exit() )
+                    and ( v->blocks().size() != 1 ) )
+                {
+                    libstdhl::Log::error(
+                        "eblk '%p' %s: if empty entry and exit section, inner "
+                        "blocks size shall be 1",
+                        v, v->dump().c_str() );
+                }
+
+                if( ( ( not v->entry() ) and ( v->exit() ) )
+                    or ( ( v->entry() ) and ( not v->exit() ) ) )
+                {
+                    libstdhl::Log::error(
+                        "eblk '%p' %s: empty entry or empty exit found", v,
+                        v->dump().c_str() );
                 }
             }
             else if( const auto v = cast< Statement >( value ) )
@@ -124,10 +150,18 @@ u1 ConsistencyCheckPass::run( libpass::PassResult& pr )
                     libstdhl::Log::error(
                         "stmt '%p' %s: has no parent", v, v->dump().c_str() );
                 }
+
                 if( not v->scope() )
                 {
                     libstdhl::Log::error(
                         "stmt '%p' %s: has no scope", v, v->dump().c_str() );
+                }
+
+                if( v->instructions().size() < 1 )
+                {
+                    libstdhl::Log::error(
+                        "stmt '%p' %s: shall contain at least 1 instruction", v,
+                        v->dump().c_str() );
                 }
             }
             else if( const auto v = cast< Instruction >( value ) )
