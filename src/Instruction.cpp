@@ -100,15 +100,15 @@ Values Instruction::operands( void ) const
 
 void Instruction::replace( const Value& from, const Value::Ptr& to )
 {
-    libstdhl::Log::info(
-        "replace: %s -> %s", from.label().c_str(), to->label().c_str() );
+    fprintf( stderr, "replace: %s -> %s\n", from.label().c_str(),
+        to->label().c_str() );
 
     std::replace_if( m_operands.begin(), m_operands.end(),
         [&]( const Value::Ptr& v ) { return *v.get() == from; }, to );
 
     if( isa< User >( from ) )
     {
-        libstdhl::Log::info( "replace-from: remove use of %s -> %s",
+        fprintf( stderr, "replace-from: remove use of %s -> %s\n",
             this->label().c_str(), from.label().c_str() );
         auto user = static_cast< const User& >( from );
         user.removeUse( *this );
@@ -116,7 +116,7 @@ void Instruction::replace( const Value& from, const Value::Ptr& to )
 
     if( isa< User >( to ) )
     {
-        libstdhl::Log::info( "replace-to: set use of %s", to->label().c_str() );
+        fprintf( stderr, "replace-to: set use of %s\n", to->label().c_str() );
         auto user = std::static_pointer_cast< User >( to );
         user->setUse( *this );
     }

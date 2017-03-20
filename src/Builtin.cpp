@@ -165,9 +165,8 @@ Builtin::Ptr Builtin::find( const std::string& name, const Type::Ptr& type )
 
     else
     {
-        libstdhl::Log::error(
-            "could not find a builtin for '%s'", name.c_str() );
-        return nullptr;
+        throw std::domain_error(
+            "could not find a builtin for '" + name + "'" );
     }
 }
 
@@ -205,10 +204,8 @@ Builtin::Ptr Builtin::asBuiltin( const Type::Ptr& type )
         }
         default:
         {
-            libstdhl::Log::error(
-                "could not find a builtin for '%s'", type->name().c_str() );
-
-            return nullptr;
+            throw std::domain_error(
+                "could not find a builtin for '" + type->name() + "'" );
         }
     }
 }
