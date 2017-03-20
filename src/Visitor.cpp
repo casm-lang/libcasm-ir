@@ -234,10 +234,6 @@ void TraversalVisitor::visit( BranchStatement& value )
     }
 }
 
-//
-// Visitor Instructions
-//
-
 void TraversalVisitor::visit( SkipInstruction& value )
 {
     callback()( value );
@@ -350,10 +346,6 @@ void TraversalVisitor::visit( GeqInstruction& value )
     callback()( value );
 }
 
-//
-// Visitor Constants
-//
-
 void TraversalVisitor::visit( VoidConstant& value )
 {
     callback()( value );
@@ -391,6 +383,11 @@ void TraversalVisitor::visit( EnumerationConstant& value )
     callback()( value );
 }
 void TraversalVisitor::visit( AgentConstant& value )
+{
+    callback()( value );
+}
+
+void TraversalVisitor::visit( Identifier& value )
 {
     callback()( value );
 }

@@ -50,8 +50,6 @@ namespace libcasm_ir
 
         std::shared_ptr< ExecutionSemanticsBlock > scope( void ) const;
 
-        void accept( Visitor& visitor ) override;
-
         static inline Value::ID classid( void )
         {
             return Value::BLOCK;
@@ -123,9 +121,13 @@ namespace libcasm_ir
 
         void setRule( const std::shared_ptr< Rule >& rule );
 
+        /**
+           @return rule pointer if this parallel block is the context of a rule,
+                   otherwise nullptr
+         */
         std::shared_ptr< Rule > rule( void ) const;
 
-        void accept( Visitor& visitor ) override final;
+        void accept( Visitor& visitor ) override;
 
         static inline Value::ID classid( void )
         {
@@ -151,7 +153,7 @@ namespace libcasm_ir
                 ExecutionSemanticsBlock::init() );
         }
 
-        void accept( Visitor& visitor ) override final;
+        void accept( Visitor& visitor ) override;
 
         static inline Value::ID classid( void )
         {

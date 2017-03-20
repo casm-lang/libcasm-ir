@@ -36,8 +36,7 @@
 
 namespace libcasm_ir
 {
-    class ConsistencyCheckPass final : public libpass::Pass,
-                                       public RecursiveVisitor
+    class ConsistencyCheckPass final : public libpass::Pass
     {
       public:
         class Data : public libpass::PassData
@@ -62,14 +61,17 @@ namespace libcasm_ir
         static char id;
 
         u1 run( libpass::PassResult& pr ) override;
+    };
 
+    class ConsistencyCheckVisitor final : public RecursiveVisitor
+    {
       private:
         template < typename T >
         void verify( Value& value );
 
       public:
         //
-        // RecursiveVisitor General
+        // General
         //
 
         void visit( Specification& value ) override;
@@ -88,7 +90,7 @@ namespace libcasm_ir
         void visit( BranchStatement& value ) override;
 
         //
-        // RecursiveVisitor Instructions
+        // Instructions
         //
 
         void visit( SkipInstruction& value ) override;
@@ -126,7 +128,7 @@ namespace libcasm_ir
         void visit( GeqInstruction& value ) override;
 
         //
-        // RecursiveVisitor Constants
+        // Constants
         //
 
         void visit( VoidConstant& value ) override;
@@ -139,6 +141,8 @@ namespace libcasm_ir
         void visit( RationalConstant& value ) override;
         void visit( EnumerationConstant& value ) override;
         void visit( AgentConstant& value ) override;
+
+        void visit( Identifier& value ) override;
     };
 }
 

@@ -55,11 +55,11 @@ namespace libcasm_ir
         void add( const Derived::Ptr& derived );
         void add( const Rule::Ptr& rule );
 
-        Constants constants( void ) const;
-        Builtins builtins( void ) const;
-        Functions functions( void ) const;
-        Deriveds deriveds( void ) const;
-        Rules rules( void ) const;
+        Constants& constants( void );
+        Builtins& builtins( void );
+        Functions& functions( void );
+        Deriveds& deriveds( void );
+        Rules& rules( void );
 
         void accept( Visitor& visitor ) override final;
 

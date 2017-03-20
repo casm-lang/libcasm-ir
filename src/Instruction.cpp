@@ -98,25 +98,26 @@ Values Instruction::operands( void ) const
     return m_operands;
 }
 
-void Instruction::replace( const Value& from, const Value::Ptr& to )
+void Instruction::replace( Value& from, const Value::Ptr& to )
 {
-    fprintf( stderr, "replace: %s -> %s\n", from.label().c_str(),
-        to->label().c_str() );
+    std::cerr << "replace: " << from.label() << " -> " << to->label() << "\n";
 
     std::replace_if( m_operands.begin(), m_operands.end(),
         [&]( const Value::Ptr& v ) { return *v.get() == from; }, to );
 
     if( isa< User >( from ) )
     {
-        fprintf( stderr, "replace-from: remove use of %s -> %s\n",
-            this->label().c_str(), from.label().c_str() );
-        auto user = static_cast< const User& >( from );
+        std::cerr << "replace-from: remove use of " << this->label() << " -> "
+                  << from.label() << "\n";
+
+        User& user = static_cast< User& >( from );
         user.removeUse( *this );
     }
 
     if( isa< User >( to ) )
     {
-        fprintf( stderr, "replace-to: set use of %s\n", to->label().c_str() );
+        std::cerr << "replace-to: set use of " << to->label() << "\n";
+
         auto user = std::static_pointer_cast< User >( to );
         user->setUse( *this );
     }

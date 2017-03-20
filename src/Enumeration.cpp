@@ -52,7 +52,7 @@ Enumeration::Enumeration( const std::string& name,
     }
 }
 
-std::vector< std::string > Enumeration::elements( void ) const
+const std::vector< std::string >& Enumeration::elements( void ) const
 {
     return m_values;
 }

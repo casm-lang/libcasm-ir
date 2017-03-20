@@ -180,7 +180,7 @@ void IRDumpSourceVisitor::dump( Constant& value ) const
 }
 
 //
-// RecursiveVisitor General
+// General
 //
 
 void IRDumpSourceVisitor::visit( Specification& value )
@@ -273,7 +273,7 @@ void IRDumpSourceVisitor::visit( BranchStatement& value )
 }
 
 //
-// RecursiveVisitor Instructions
+// Instructions
 //
 
 void IRDumpSourceVisitor::visit( SkipInstruction& value )
@@ -389,7 +389,7 @@ void IRDumpSourceVisitor::visit( GeqInstruction& value )
 }
 
 //
-// RecursiveVisitor Constants
+// Constants
 //
 
 void IRDumpSourceVisitor::visit( VoidConstant& value )
@@ -429,6 +429,11 @@ void IRDumpSourceVisitor::visit( EnumerationConstant& value )
     dump( value );
 }
 void IRDumpSourceVisitor::visit( AgentConstant& value )
+{
+    dump( value );
+}
+
+void IRDumpSourceVisitor::visit( Identifier& value )
 {
     dump( value );
 }

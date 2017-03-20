@@ -61,27 +61,27 @@ void Specification::add( const Rule::Ptr& rule )
     m_rules.add( rule );
 }
 
-Constants Specification::constants( void ) const
+Constants& Specification::constants( void )
 {
     return m_constants;
 }
 
-Builtins Specification::builtins( void ) const
+Builtins& Specification::builtins( void )
 {
     return m_builtins;
 }
 
-Functions Specification::functions( void ) const
+Functions& Specification::functions( void )
 {
     return m_functions;
 }
 
-Deriveds Specification::deriveds( void ) const
+Deriveds& Specification::deriveds( void )
 {
     return m_deriveds;
 }
 
-Rules Specification::rules( void ) const
+Rules& Specification::rules( void )
 {
     return m_rules;
 }

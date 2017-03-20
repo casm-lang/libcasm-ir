@@ -65,7 +65,7 @@ namespace libcasm_ir
 
       public:
         //
-        // RecursiveVisitor General
+        // General
         //
 
         void visit( Specification& value ) override;
@@ -81,7 +81,7 @@ namespace libcasm_ir
         void visit( BranchStatement& value ) override;
 
         //
-        // RecursiveVisitor Instructions
+        // Instructions
         //
 
         void visit( SkipInstruction& value ) override;
@@ -119,7 +119,7 @@ namespace libcasm_ir
         void visit( GeqInstruction& value ) override;
 
         //
-        // RecursiveVisitor Constants
+        // Constants
         //
 
         void visit( VoidConstant& value ) override;
@@ -132,6 +132,8 @@ namespace libcasm_ir
         void visit( RationalConstant& value ) override;
         void visit( EnumerationConstant& value ) override;
         void visit( AgentConstant& value ) override;
+
+        void visit( Identifier& value ) override;
     };
 }
 

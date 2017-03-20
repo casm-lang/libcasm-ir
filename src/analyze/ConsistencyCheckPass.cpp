@@ -46,7 +46,8 @@ u1 ConsistencyCheckPass::run( libpass::PassResult& pr )
     {
 #ifndef NDEBUG
         // check 'is-a' relation and 'type of value' only in 'debug' builds
-        data->specification()->accept( *this );
+        ConsistencyCheckVisitor visitor;
+        data->specification()->accept( visitor );
 #endif
         data->specification()->iterate( Traversal::PREORDER, [this]( Value&
                                                                      value ) {
@@ -189,7 +190,7 @@ u1 ConsistencyCheckPass::run( libpass::PassResult& pr )
 }
 
 template < typename T >
-void ConsistencyCheckPass::verify( Value& value )
+void ConsistencyCheckVisitor::verify( Value& value )
 {
     if( not isa< T >( value ) )
     {
@@ -203,65 +204,65 @@ void ConsistencyCheckPass::verify( Value& value )
 }
 
 //
-// RecursiveVisitor General
+// General
 //
 
-void ConsistencyCheckPass::visit( Specification& value )
+void ConsistencyCheckVisitor::visit( Specification& value )
 {
     verify< Specification >( value );
 
     RecursiveVisitor::visit( value );
 }
-void ConsistencyCheckPass::visit( Agent& value )
+void ConsistencyCheckVisitor::visit( Agent& value )
 {
     verify< Agent >( value );
 }
-void ConsistencyCheckPass::visit( Function& value )
+void ConsistencyCheckVisitor::visit( Function& value )
 {
     verify< Function >( value );
 }
-void ConsistencyCheckPass::visit( Derived& value )
+void ConsistencyCheckVisitor::visit( Derived& value )
 {
     verify< Derived >( value );
 
     RecursiveVisitor::visit( value );
 }
-void ConsistencyCheckPass::visit( Rule& value )
+void ConsistencyCheckVisitor::visit( Rule& value )
 {
     verify< Rule >( value );
 
     RecursiveVisitor::visit( value );
 }
-void ConsistencyCheckPass::visit( Builtin& value )
+void ConsistencyCheckVisitor::visit( Builtin& value )
 {
     verify< Builtin >( value );
 }
 
-void ConsistencyCheckPass::visit( Enumeration& value )
+void ConsistencyCheckVisitor::visit( Enumeration& value )
 {
     verify< Enumeration >( value );
 }
 
-void ConsistencyCheckPass::visit( ParallelBlock& value )
+void ConsistencyCheckVisitor::visit( ParallelBlock& value )
 {
     verify< ParallelBlock >( value );
 
     RecursiveVisitor::visit( value );
 }
-void ConsistencyCheckPass::visit( SequentialBlock& value )
+void ConsistencyCheckVisitor::visit( SequentialBlock& value )
 {
     verify< SequentialBlock >( value );
 
     RecursiveVisitor::visit( value );
 }
 
-void ConsistencyCheckPass::visit( TrivialStatement& value )
+void ConsistencyCheckVisitor::visit( TrivialStatement& value )
 {
     verify< TrivialStatement >( value );
 
     RecursiveVisitor::visit( value );
 }
-void ConsistencyCheckPass::visit( BranchStatement& value )
+void ConsistencyCheckVisitor::visit( BranchStatement& value )
 {
     verify< BranchStatement >( value );
 
@@ -269,164 +270,168 @@ void ConsistencyCheckPass::visit( BranchStatement& value )
 }
 
 //
-// RecursiveVisitor Instructions
+// Instructions
 //
 
-void ConsistencyCheckPass::visit( SkipInstruction& value )
+void ConsistencyCheckVisitor::visit( SkipInstruction& value )
 {
     verify< SkipInstruction >( value );
 }
 
-void ConsistencyCheckPass::visit( ForkInstruction& value )
+void ConsistencyCheckVisitor::visit( ForkInstruction& value )
 {
     verify< ForkInstruction >( value );
 }
-void ConsistencyCheckPass::visit( MergeInstruction& value )
+void ConsistencyCheckVisitor::visit( MergeInstruction& value )
 {
     verify< MergeInstruction >( value );
 }
 
-void ConsistencyCheckPass::visit( LookupInstruction& value )
+void ConsistencyCheckVisitor::visit( LookupInstruction& value )
 {
     verify< LookupInstruction >( value );
 }
-void ConsistencyCheckPass::visit( UpdateInstruction& value )
+void ConsistencyCheckVisitor::visit( UpdateInstruction& value )
 {
     verify< UpdateInstruction >( value );
 }
 
-void ConsistencyCheckPass::visit( LocalInstruction& value )
+void ConsistencyCheckVisitor::visit( LocalInstruction& value )
 {
     verify< LocalInstruction >( value );
 }
-void ConsistencyCheckPass::visit( LocationInstruction& value )
+void ConsistencyCheckVisitor::visit( LocationInstruction& value )
 {
     verify< LocationInstruction >( value );
 }
-void ConsistencyCheckPass::visit( CallInstruction& value )
+void ConsistencyCheckVisitor::visit( CallInstruction& value )
 {
     verify< CallInstruction >( value );
 }
 
-void ConsistencyCheckPass::visit( AssertInstruction& value )
+void ConsistencyCheckVisitor::visit( AssertInstruction& value )
 {
     verify< AssertInstruction >( value );
 }
-void ConsistencyCheckPass::visit( SelectInstruction& value )
+void ConsistencyCheckVisitor::visit( SelectInstruction& value )
 {
     verify< SelectInstruction >( value );
 }
-void ConsistencyCheckPass::visit( SymbolicInstruction& value )
+void ConsistencyCheckVisitor::visit( SymbolicInstruction& value )
 {
     verify< SymbolicInstruction >( value );
 }
 
-void ConsistencyCheckPass::visit( AddInstruction& value )
+void ConsistencyCheckVisitor::visit( AddInstruction& value )
 {
     verify< AddInstruction >( value );
 }
-void ConsistencyCheckPass::visit( SubInstruction& value )
+void ConsistencyCheckVisitor::visit( SubInstruction& value )
 {
     verify< SubInstruction >( value );
 }
-void ConsistencyCheckPass::visit( MulInstruction& value )
+void ConsistencyCheckVisitor::visit( MulInstruction& value )
 {
     verify< MulInstruction >( value );
 }
-void ConsistencyCheckPass::visit( ModInstruction& value )
+void ConsistencyCheckVisitor::visit( ModInstruction& value )
 {
     verify< ModInstruction >( value );
 }
-void ConsistencyCheckPass::visit( DivInstruction& value )
+void ConsistencyCheckVisitor::visit( DivInstruction& value )
 {
     verify< DivInstruction >( value );
 }
 
-void ConsistencyCheckPass::visit( AndInstruction& value )
+void ConsistencyCheckVisitor::visit( AndInstruction& value )
 {
     verify< AndInstruction >( value );
 }
-void ConsistencyCheckPass::visit( XorInstruction& value )
+void ConsistencyCheckVisitor::visit( XorInstruction& value )
 {
     verify< XorInstruction >( value );
 }
-void ConsistencyCheckPass::visit( OrInstruction& value )
+void ConsistencyCheckVisitor::visit( OrInstruction& value )
 {
     verify< OrInstruction >( value );
 }
-void ConsistencyCheckPass::visit( NotInstruction& value )
+void ConsistencyCheckVisitor::visit( NotInstruction& value )
 {
     verify< NotInstruction >( value );
 }
 
-void ConsistencyCheckPass::visit( EquInstruction& value )
+void ConsistencyCheckVisitor::visit( EquInstruction& value )
 {
     verify< EquInstruction >( value );
 }
-void ConsistencyCheckPass::visit( NeqInstruction& value )
+void ConsistencyCheckVisitor::visit( NeqInstruction& value )
 {
     verify< NeqInstruction >( value );
 }
-void ConsistencyCheckPass::visit( LthInstruction& value )
+void ConsistencyCheckVisitor::visit( LthInstruction& value )
 {
     verify< LthInstruction >( value );
 }
-void ConsistencyCheckPass::visit( LeqInstruction& value )
+void ConsistencyCheckVisitor::visit( LeqInstruction& value )
 {
     verify< LeqInstruction >( value );
 }
-void ConsistencyCheckPass::visit( GthInstruction& value )
+void ConsistencyCheckVisitor::visit( GthInstruction& value )
 {
     verify< GthInstruction >( value );
 }
-void ConsistencyCheckPass::visit( GeqInstruction& value )
+void ConsistencyCheckVisitor::visit( GeqInstruction& value )
 {
     verify< GeqInstruction >( value );
 }
 
 //
-// RecursiveVisitor Constants
+// Constants
 //
 
-void ConsistencyCheckPass::visit( VoidConstant& value )
+void ConsistencyCheckVisitor::visit( VoidConstant& value )
 {
     verify< VoidConstant >( value );
 }
-void ConsistencyCheckPass::visit( RuleReferenceConstant& value )
+void ConsistencyCheckVisitor::visit( RuleReferenceConstant& value )
 {
     verify< RuleReferenceConstant >( value );
 }
-void ConsistencyCheckPass::visit( BooleanConstant& value )
+void ConsistencyCheckVisitor::visit( BooleanConstant& value )
 {
     verify< BooleanConstant >( value );
 }
-void ConsistencyCheckPass::visit( IntegerConstant& value )
+void ConsistencyCheckVisitor::visit( IntegerConstant& value )
 {
     verify< IntegerConstant >( value );
 }
-void ConsistencyCheckPass::visit( BitConstant& value )
+void ConsistencyCheckVisitor::visit( BitConstant& value )
 {
     verify< BitConstant >( value );
 }
-void ConsistencyCheckPass::visit( StringConstant& value )
+void ConsistencyCheckVisitor::visit( StringConstant& value )
 {
     verify< StringConstant >( value );
 }
-void ConsistencyCheckPass::visit( FloatingConstant& value )
+void ConsistencyCheckVisitor::visit( FloatingConstant& value )
 {
     verify< FloatingConstant >( value );
 }
-void ConsistencyCheckPass::visit( RationalConstant& value )
+void ConsistencyCheckVisitor::visit( RationalConstant& value )
 {
     verify< RationalConstant >( value );
 }
-void ConsistencyCheckPass::visit( EnumerationConstant& value )
+void ConsistencyCheckVisitor::visit( EnumerationConstant& value )
 {
     verify< EnumerationConstant >( value );
 }
-void ConsistencyCheckPass::visit( AgentConstant& value )
+void ConsistencyCheckVisitor::visit( AgentConstant& value )
 {
     verify< AgentConstant >( value );
+}
+void ConsistencyCheckVisitor::visit( Identifier& value )
+{
+    verify< Identifier >( value );
 }
 
 //

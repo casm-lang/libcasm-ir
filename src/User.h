@@ -72,8 +72,6 @@ namespace libcasm_ir
 
         void replaceAllUsesWith( const Value::Ptr& value );
 
-        void accept( Visitor& visitor ) override;
-
         static inline Value::ID classid( void )
         {
             return Value::USER;

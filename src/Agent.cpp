@@ -30,7 +30,13 @@ Agent::Agent( const std::vector< std::string >& agents )
 : Enumeration( "agent", agents, classid() )
 {
     static Agent* check = 0;
-    assert( not check );
+
+    if( check )
+    {
+        throw std::domain_error(
+            "agent instance already present as '" + check->name() + "'" );
+    }
+
     check = this;
 }
 

@@ -74,11 +74,6 @@ void User::replaceAllUsesWith( const Value::Ptr& value )
     }
 }
 
-void User::accept( Visitor& visitor )
-{
-    assert( !" abstract class 'User' is not allowed to accept visitors " );
-}
-
 u1 User::classof( Value const* obj )
 {
     return obj->id() == classid() or Agent::classof( obj )

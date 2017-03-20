@@ -41,7 +41,7 @@ namespace libcasm_ir
 
         ~Enumeration( void ) = default;
 
-        std::vector< std::string > elements( void ) const;
+        const std::vector< std::string >& elements( void ) const;
 
         u64 encode( const std::string& value ) const;
 

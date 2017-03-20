@@ -90,6 +90,8 @@ namespace libcasm_ir
     class EnumerationConstant;
     class AgentConstant;
 
+    class Identifier;
+
     enum Traversal : u8
     {
         PREORDER = 0,
@@ -172,13 +174,15 @@ namespace libcasm_ir
         virtual void visit( RationalConstant& value ) = 0;
         virtual void visit( EnumerationConstant& value ) = 0;
         virtual void visit( AgentConstant& value ) = 0;
+
+        virtual void visit( Identifier& value ) = 0;
     };
 
     class RecursiveVisitor : public Visitor
     {
       public:
         //
-        // Visitor General
+        // General
         //
 
         void visit( Specification& value ) override;
@@ -197,7 +201,7 @@ namespace libcasm_ir
         void visit( BranchStatement& value ) override;
 
         //
-        // Visitor Instructions
+        // Instructions
         //
 
         virtual void visit( SkipInstruction& value ) override = 0;
@@ -235,7 +239,7 @@ namespace libcasm_ir
         virtual void visit( GeqInstruction& value ) override = 0;
 
         //
-        // Visitor Constants
+        // Constants
         //
 
         virtual void visit( VoidConstant& value ) override = 0;
@@ -248,6 +252,8 @@ namespace libcasm_ir
         virtual void visit( RationalConstant& value ) override = 0;
         virtual void visit( EnumerationConstant& value ) override = 0;
         virtual void visit( AgentConstant& value ) override = 0;
+
+        virtual void visit( Identifier& value ) override = 0;
     };
 
     class TraversalVisitor : public Visitor
@@ -267,7 +273,7 @@ namespace libcasm_ir
 
       public:
         //
-        // Visitor General
+        // General
         //
 
         void visit( Specification& value ) override;
@@ -286,7 +292,7 @@ namespace libcasm_ir
         void visit( BranchStatement& value ) override;
 
         //
-        // Visitor Instructions
+        // Instructions
         //
 
         void visit( SkipInstruction& value ) override;
@@ -324,7 +330,7 @@ namespace libcasm_ir
         void visit( GeqInstruction& value ) override;
 
         //
-        // Visitor Constants
+        // Constants
         //
 
         void visit( VoidConstant& value ) override;
@@ -337,6 +343,8 @@ namespace libcasm_ir
         void visit( RationalConstant& value ) override;
         void visit( EnumerationConstant& value ) override;
         void visit( AgentConstant& value ) override;
+
+        void visit( Identifier& value ) override;
     };
 }
 

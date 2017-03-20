@@ -109,7 +109,7 @@ u1 Constant::classof( Value const* obj )
            or BitConstant::classof( obj ) or StringConstant::classof( obj )
            or FloatingConstant::classof( obj )
            or RationalConstant::classof( obj )
-           or EnumerationConstant::classof( obj );
+           or EnumerationConstant::classof( obj ) or Identifier::classof( obj );
 }
 
 //
@@ -543,7 +543,7 @@ Identifier::Identifier( const std::string& value, const Type::Ptr& type )
 
 void Identifier::accept( Visitor& visitor )
 {
-    assert( !" TODO! " ); // visitor.visit( *this );
+    visitor.visit( *this );
 }
 
 u1 Identifier::classof( Value const* obj )
