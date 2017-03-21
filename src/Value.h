@@ -254,6 +254,7 @@ namespace libcasm_ir
             return true;
         }
 
+#ifndef NDEBUG
       protected:
         static std::unordered_map< u8, std::unordered_set< Value* > >&
         m_id2objs( void )
@@ -261,6 +262,7 @@ namespace libcasm_ir
             static std::unordered_map< u8, std::unordered_set< Value* > > cache;
             return cache;
         }
+#endif
     };
 
     template < typename T >

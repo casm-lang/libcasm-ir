@@ -44,12 +44,16 @@ Value::Value( const std::string& name, const Type::Ptr& type, Value::ID id )
 , m_id( id )
 {
     assert( type );
+#ifndef NDEBUG
     m_id2objs()[ m_id ].insert( this );
+#endif
 }
 
 Value::~Value()
 {
+#ifndef NDEBUG
     m_id2objs()[ m_id ].erase( this );
+#endif
 }
 
 std::string Value::name( void ) const
