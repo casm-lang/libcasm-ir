@@ -37,12 +37,16 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< Constant >;
 
       protected:
-        Constant( const std::string& name, const Type::Ptr& type, u1 defined,
-            u1 symbolic, Value::ID id = classid() );
+        Constant( const std::string& name, const Type::Ptr& type,
+            const libstdhl::Type& data, const Value::Ptr& value, u1 defined,
+            u1 symbolic, Value::ID id );
 
       public:
         u1 defined( void ) const;
+
         u1 symbolic( void ) const;
+
+        void accept( Visitor& visitor ) override;
 
         static inline Value::ID classid( void )
         {
@@ -51,20 +55,15 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
+      protected:
+        libstdhl::Type m_data;
+
+        Value::Ptr m_value;
+
       private:
         u1 m_defined;
+
         u1 m_symbolic;
-
-      protected:
-        // PPA: this will be replaced later with a std::variant mechanism!
-        union {
-            u1 m_u1;
-            u64 m_u64;
-            u64* m_ptr;
-            double m_dfp;
-        } m_value;
-
-        Value::Ptr m_value_ptr;
 
       public:
         std::unordered_map< std::string, Constant::Ptr >& make_cache( void )
@@ -74,6 +73,8 @@ namespace libcasm_ir
         }
     };
 
+    using Constants = ValueList< Constant >;
+
     class VoidConstant : public Constant
     {
       public:
@@ -81,31 +82,11 @@ namespace libcasm_ir
 
         VoidConstant( void );
 
+        void accept( Visitor& visitor ) override final;
+
         static inline Value::ID classid( void )
         {
             return Value::VOID_CONSTANT;
-        }
-
-        static u1 classof( Value const* obj );
-    };
-
-    class AgentConstant : public Constant
-    {
-      public:
-        using Ptr = std::shared_ptr< AgentConstant >;
-
-      private:
-        AgentConstant( const Agent::Ptr& value, u1 defined, u1 symbolic );
-
-      public:
-        AgentConstant( const Agent::Ptr& value );
-        AgentConstant( void );
-
-        Agent::Ptr value( void ) const;
-
-        static inline Value::ID classid( void )
-        {
-            return Value::AGENT_CONSTANT;
         }
 
         static u1 classof( Value const* obj );
@@ -125,6 +106,8 @@ namespace libcasm_ir
         RuleReferenceConstant( void );
 
         Rule::Ptr value( void ) const;
+
+        void accept( Visitor& visitor ) override final;
 
         static inline Value::ID classid( void )
         {
@@ -148,6 +131,8 @@ namespace libcasm_ir
 
         u1 value( void ) const;
 
+        void accept( Visitor& visitor ) override final;
+
         static inline Value::ID classid( void )
         {
             return Value::BOOLEAN_CONSTANT;
@@ -165,10 +150,17 @@ namespace libcasm_ir
         IntegerConstant( i64 value, u1 defined, u1 symbolic );
 
       public:
+        IntegerConstant( const std::string& value,
+            const libstdhl::Type::Radix radix = libstdhl::Type::DECIMAL );
         IntegerConstant( i64 value );
         IntegerConstant( void );
 
+        std::string literal(
+            libstdhl::Type::Radix radix = libstdhl::Type::DECIMAL ) const;
+
         i64 value( void ) const;
+
+        void accept( Visitor& visitor ) override final;
 
         static inline Value::ID classid( void )
         {
@@ -187,14 +179,27 @@ namespace libcasm_ir
         BitConstant(
             const BitType::Ptr& type, u64 value, u1 defined, u1 symbolic );
 
+        BitConstant( const BitType::Ptr& type, const std::string& value,
+            const libstdhl::Type::Radix radix );
+
       public:
         BitConstant( const BitType::Ptr& type, u64 value );
+
         BitConstant( const BitType::Ptr& type );
 
+        BitConstant( const std::string& value,
+            const libstdhl::Type::Radix radix = libstdhl::Type::BINARY );
+
         BitConstant( u16 bitsize, u64 value );
+
         BitConstant( u16 bitsize );
 
+        std::string literal(
+            libstdhl::Type::Radix radix = libstdhl::Type::HEXADECIMAL ) const;
+
         u64 value( void ) const;
+
+        void accept( Visitor& visitor ) override final;
 
         static inline Value::ID classid( void )
         {
@@ -218,6 +223,8 @@ namespace libcasm_ir
 
         std::string value( void ) const;
 
+        void accept( Visitor& visitor ) override final;
+
         static inline Value::ID classid( void )
         {
             return Value::STRING_CONSTANT;
@@ -235,14 +242,17 @@ namespace libcasm_ir
         FloatingConstant( const double value, u1 defined, u1 symbolic );
 
       public:
+        FloatingConstant( const std::string& value );
         FloatingConstant( const double value );
         FloatingConstant( void );
 
         double value( void ) const;
 
+        void accept( Visitor& visitor ) override final;
+
         static inline Value::ID classid( void )
         {
-            return Value::RATIONAL_CONSTANT;
+            return Value::FLOATING_CONSTANT;
         }
 
         static u1 classof( Value const* obj );
@@ -262,6 +272,8 @@ namespace libcasm_ir
 
         std::string value( void ) const;
 
+        void accept( Visitor& visitor ) override final;
+
         static inline Value::ID classid( void )
         {
             return Value::RATIONAL_CONSTANT;
@@ -275,9 +287,10 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< EnumerationConstant >;
 
-      private:
+      protected:
         EnumerationConstant( const EnumerationType::Ptr& type,
-            const std::string& value, u1 defined, u1 symbolic );
+            const std::string& value, u1 defined, u1 symbolic,
+            Value::ID id = classid() );
 
       public:
         EnumerationConstant(
@@ -292,9 +305,34 @@ namespace libcasm_ir
 
         u64 value( void ) const;
 
+        void accept( Visitor& visitor ) override final;
+
         static inline Value::ID classid( void )
         {
             return Value::ENUMERATION_CONSTANT;
+        }
+
+        static u1 classof( Value const* obj );
+    };
+
+    class AgentConstant : public EnumerationConstant
+    {
+      public:
+        using Ptr = std::shared_ptr< AgentConstant >;
+
+      private:
+        AgentConstant( const AgentType::Ptr& type, const std::string& value,
+            u1 defined, u1 symbolic );
+
+      public:
+        AgentConstant( const AgentType::Ptr& type, const std::string& value );
+        AgentConstant( const AgentType::Ptr& type );
+
+        Agent::Ptr value( void ) const;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::AGENT_CONSTANT;
         }
 
         static u1 classof( Value const* obj );
@@ -306,6 +344,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< Identifier >;
 
         Identifier( const std::string& value, const Type::Ptr& type );
+
+        void accept( Visitor& visitor ) override final;
 
         static inline Value::ID classid( void )
         {

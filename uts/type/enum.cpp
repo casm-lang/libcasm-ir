@@ -21,16 +21,34 @@
 //  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "gtest/gtest.h"
-
-#include "libcasm-ir.h"
+#include "uts/main.h"
 
 using namespace libcasm_ir;
 
-TEST( libcasm_ir__type, VoidType_make_valid )
+TEST( libcasm_ir__type_enum, make_and_get )
 {
-    auto v = libstdhl::make< VoidType >();
+    const std::vector< std::string > elements = { "foo", "bar", "baz" };
+    const auto example = libstdhl::make< Enumeration >( "example", elements );
+
+    auto v = libstdhl::make< EnumerationType >( example );
     ASSERT_TRUE( v != nullptr );
+
+    EXPECT_STREQ( v->name().c_str(), "@example" );
+    EXPECT_STREQ( v->description().c_str(), "@example" );
+
+    auto w = libstdhl::make< EnumerationType >( example );
+    ASSERT_TRUE( w != nullptr );
+
+    EXPECT_TRUE( v != w );
+    EXPECT_TRUE( *w == *w );
+
+    auto a = libstdhl::get< EnumerationType >( example );
+    auto b = libstdhl::get< EnumerationType >( example );
+    ASSERT_TRUE( a != nullptr );
+    ASSERT_TRUE( b != nullptr );
+
+    EXPECT_TRUE( a == b );
+    EXPECT_TRUE( *a == *b );
 }
 
 //

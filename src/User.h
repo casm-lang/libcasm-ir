@@ -30,7 +30,7 @@ namespace libcasm_ir
 {
     class User;
 
-    class Use
+    class Use : public CasmIR
     {
       public:
         using Ptr = std::shared_ptr< Use >;

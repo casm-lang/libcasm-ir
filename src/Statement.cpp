@@ -34,6 +34,35 @@ Statement::Statement( const std::string& name, Value::ID id )
 
 void Statement::add( const Instruction::Ptr& instruction )
 {
+    if( not instruction )
+    {
+        throw std::domain_error(
+            "adding a null pointer instruction is not allowed" );
+    }
+
+    if( instruction->statement() )
+    {
+        // instruction already bound to a statement, just return
+        return;
+    }
+
+    for( auto operand : instruction->operands() )
+    {
+        if( isa< Instruction >( operand ) )
+        {
+            add( std::static_pointer_cast< Instruction >( operand ) );
+        }
+    }
+
+    const auto self = ptr_this< Statement >();
+
+    instruction->setStatement( self );
+
+    if( m_instructions.size() > 0 )
+    {
+        m_instructions.back()->setNext( instruction );
+    }
+
     m_instructions.add( instruction );
 }
 
@@ -76,6 +105,11 @@ TrivialStatement::TrivialStatement( void )
 {
 }
 
+void TrivialStatement::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 u1 TrivialStatement::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -84,6 +118,11 @@ u1 TrivialStatement::classof( Value const* obj )
 BranchStatement::BranchStatement( void )
 : Statement( "branch", classid() )
 {
+}
+
+void BranchStatement::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
 }
 
 u1 BranchStatement::classof( Value const* obj )

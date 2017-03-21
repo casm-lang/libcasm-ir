@@ -32,8 +32,9 @@ Builtin::Builtin( const std::string& name, const Type::Ptr& type,
 {
 }
 
-Builtin::~Builtin( void )
+void Builtin::accept( Visitor& visitor )
 {
+    visitor.visit( *this );
 }
 
 u1 Builtin::classof( Value const* obj )
@@ -164,9 +165,8 @@ Builtin::Ptr Builtin::find( const std::string& name, const Type::Ptr& type )
 
     else
     {
-        libstdhl::Log::error(
-            "could not find a builtin for '%s'", name.c_str() );
-        return nullptr;
+        throw std::domain_error(
+            "could not find a builtin for '" + name + "'" );
     }
 }
 
@@ -204,12 +204,51 @@ Builtin::Ptr Builtin::asBuiltin( const Type::Ptr& type )
         }
         default:
         {
-            libstdhl::Log::error(
-                "could not find a builtin for '%s'", type->name() );
-
-            return nullptr;
+            throw std::domain_error(
+                "could not find a builtin for '" + type->name() + "'" );
         }
     }
+}
+
+//------------------------------------------------------------------------------
+
+//
+// GeneralBuiltin
+//
+
+GeneralBuiltin::GeneralBuiltin( const std::string& name, const Type::Ptr& type,
+    const TypeAnnotation& info, Value::ID id )
+: Builtin( name, type, info, id )
+{
+}
+
+u1 GeneralBuiltin::classof( Value const* obj )
+{
+    return obj->id() == classid() or PrintBuiltin::classof( obj );
+}
+
+//
+// PrintBuiltin
+//
+
+PrintBuiltin::PrintBuiltin( const std::string& channel )
+: GeneralBuiltin( "print",
+      libstdhl::get< RelationType >( libstdhl::get< VoidType >(),
+          Types( { libstdhl::get< StringType >() } ) ),
+      info, classid() )
+{
+}
+const TypeAnnotation PrintBuiltin::info( TypeAnnotation::Data{
+
+    { Type::VOID,
+        {
+            Type::STRING,
+        } }
+
+} );
+u1 PrintBuiltin::classof( Value const* obj )
+{
+    return obj->id() == classid();
 }
 
 //------------------------------------------------------------------------------
@@ -446,7 +485,7 @@ u1 AsRationalBuiltin::classof( Value const* obj )
 //
 
 AsEnumerationBuiltin::AsEnumerationBuiltin( const Type::Ptr& type )
-: CastingBuiltin( "as" + type->str_name(), type, info, classid() )
+: CastingBuiltin( "as" + type->name(), type, info, classid() )
 {
 }
 const TypeAnnotation AsEnumerationBuiltin::info( TypeAnnotation::Data{

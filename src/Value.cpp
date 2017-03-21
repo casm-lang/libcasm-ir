@@ -43,22 +43,27 @@ Value::Value( const std::string& name, const Type::Ptr& type, Value::ID id )
 , m_type( type )
 , m_id( id )
 {
+    assert( type );
+#ifndef NDEBUG
     m_id2objs()[ m_id ].insert( this );
+#endif
 }
 
 Value::~Value()
 {
+#ifndef NDEBUG
     m_id2objs()[ m_id ].erase( this );
+#endif
 }
 
-const char* Value::name( void ) const
-{
-    return m_name.c_str();
-}
-
-std::string Value::str_name( void ) const
+std::string Value::name( void ) const
 {
     return m_name;
+}
+
+std::string Value::description( void ) const
+{
+    return type().name() + " " + name();
 }
 
 const Type& Value::type( void ) const
@@ -76,29 +81,33 @@ Value::ID Value::id( void ) const
     return m_id;
 }
 
-const char* Value::description( void ) const
-{
-    return str_description().c_str();
-}
-
-std::string Value::str_description( void ) const
-{
-    return type().str_name() + " " + str_name();
-}
-
 std::string Value::dump( void ) const
 {
-    std::string tmp = "[" + type().str_name() + "] " + str_label() + " = ";
+    std::string tmp = "[" + type().name() + "] ";
 
-    if( isa< Constant >( this ) )
+    if( not type().isVoid() )
     {
-        tmp += type().str_name() + " ";
+        tmp += label() + " = ";
     }
 
-    tmp += str_name();
+    if( isa< Constant >( this ) or isa< Builtin >( this )
+        or isa< Function >( this ) )
+    {
+        tmp += type().name() + " ";
+    }
+
+    if( not isa< Function >( this ) )
+    {
+        tmp += name();
+    }
 
     if( auto instr = cast< Instruction >( this ) )
     {
+        if( isa< ForkInstruction >( this ) or isa< MergeInstruction >( this ) )
+        {
+            tmp += " " + instr->statement()->scope()->name();
+        }
+
         u1 first = true;
         for( auto operand : instr->operands() )
         {
@@ -112,7 +121,7 @@ std::string Value::dump( void ) const
                 tmp += ", ";
             }
 
-            tmp += operand->type().str_name() + " " + operand->str_label();
+            tmp += operand->type().name() + " " + operand->label();
         }
     }
 
@@ -121,171 +130,82 @@ std::string Value::dump( void ) const
 
 std::string Value::make_hash( void ) const
 {
-    return "v:" + std::to_string( id() ) + ":" + str_description();
+    return "v:" + std::to_string( id() ) + ":" + description();
 }
 
-const char* Value::label( void ) const
+std::string Value::label( void ) const
 {
-    return str_label().c_str();
-}
+    static std::unordered_map< u8, u64 > cnt;
+    static std::unordered_map< const Value*, std::string > lbl;
 
-std::string Value::str_label( void ) const
-{
-    return str_name();
-}
-
-void Value::iterate( Traversal order,
-    Visitor* visitor,
-    Context* context,
-    std::function< void( Value&, Context& ) >
-        action )
-{
-    static Context default_context = Context();
-
-    Context* cxt = context ? context : &default_context;
-
-    Value& value = static_cast< Value& >( *this );
-
-    if( order == Traversal::PREORDER )
+    auto result = lbl.find( this );
+    if( result != lbl.end() )
     {
-        action( /*order, */ value, *cxt );
+        return result->second;
     }
 
-    if( visitor )
+    if( isa< Instruction >( this ) )
     {
-        visitor->dispatch( Visitor::Stage::PROLOG, value, *cxt );
+        auto result = cnt.find( INSTRUCTION );
+        if( result == cnt.end() )
+        {
+            cnt[ INSTRUCTION ] = 0;
+        }
+
+        if( this->type().result().isVoid() )
+        {
+            return name();
+        }
+
+        return lbl
+            .emplace( this, "%r" + std::to_string( cnt[ INSTRUCTION ]++ ) )
+            .first->second;
     }
-
-    if( isa< Specification >( value ) )
+    else if( isa< Block >( this ) )
     {
-        Specification& obj = static_cast< Specification& >( value );
-
-        const std::unordered_map< std::string, Value::Ptr > empty = {};
-
-        for( auto p :
-            ( obj.has< Constant >() ? obj.get< Constant >() : empty ) )
+        auto result = cnt.find( BLOCK );
+        if( result == cnt.end() )
         {
-            p.second->iterate( order, visitor, cxt, action );
+            cnt[ BLOCK ] = 0;
         }
 
-        for( auto p : ( obj.has< Builtin >() ? obj.get< Builtin >() : empty ) )
-        {
-            p.second->iterate( order, visitor, cxt, action );
-        }
-
-        for( auto p :
-            ( obj.has< Function >() ? obj.get< Function >() : empty ) )
-        {
-            p.second->iterate( order, visitor, cxt, action );
-        }
-
-        for( auto p : ( obj.has< Derived >() ? obj.get< Derived >() : empty ) )
-        {
-            p.second->iterate( order, visitor, cxt, action );
-        }
-
-        for( auto p : ( obj.has< Rule >() ? obj.get< Rule >() : empty ) )
-        {
-            p.second->iterate( order, visitor, cxt, action );
-        }
-
-        for( auto p : ( obj.has< Agent >() ? obj.get< Agent >() : empty ) )
-        {
-            p.second->iterate( order, visitor, cxt, action );
-        }
+        return lbl.emplace( this, "%lbl" + std::to_string( cnt[ BLOCK ]++ ) )
+            .first->second;
     }
-    else if( isa< Rule >( value ) )
+    else if( isa< Constant >( this ) )
     {
-        Rule& obj = static_cast< Rule& >( value );
-
-        if( visitor )
+        auto result = cnt.find( CONSTANT );
+        if( result == cnt.end() )
         {
-            visitor->dispatch( Visitor::Stage::INTERLOG, value, *cxt );
+            cnt[ CONSTANT ] = 0;
         }
 
-        auto context = obj.context();
-        assert( context );
-
-        context->iterate( order, visitor, cxt, action );
+        return lbl.emplace( this, "@c" + std::to_string( cnt[ CONSTANT ]++ ) )
+            .first->second;
     }
-    else if( isa< Derived >( value ) )
+    else if( isa< Builtin >( this ) )
     {
-        Derived& obj = static_cast< Derived& >( value );
-
-        if( visitor )
+        auto result = cnt.find( BUILTIN );
+        if( result == cnt.end() )
         {
-            visitor->dispatch( Visitor::Stage::INTERLOG, value, *cxt );
+            cnt[ BUILTIN ] = 0;
         }
 
-        auto context = obj.context();
-        assert( context );
-
-        context->iterate( order, visitor, cxt, action );
+        return lbl.emplace( this, "@b" + std::to_string( cnt[ BUILTIN ]++ ) )
+            .first->second;
     }
-    else if( isa< ExecutionSemanticsBlock >( value ) )
+    else
     {
-        ExecutionSemanticsBlock& obj
-            = static_cast< ExecutionSemanticsBlock& >( value );
-
-        if( auto entry = obj.entry() )
-        {
-            entry->iterate( order, visitor, cxt, action );
-        }
-
-        for( auto block : obj.blocks() )
-        {
-            assert( block );
-            block->iterate( order, visitor, cxt, action );
-        }
-
-        if( auto exit = obj.exit() )
-        {
-            exit->iterate( order, visitor, cxt, action );
-        }
-    }
-    else if( isa< Statement >( value ) )
-    {
-        Statement& obj = static_cast< Statement& >( value );
-
-        assert( obj.instructions().size() > 0
-                and " a statement must contain at least one instruction " );
-
-        for( auto instr : obj.instructions() )
-        {
-            assert( instr );
-            instr->iterate( order, visitor, cxt, action );
-        }
-
-        if( not isa< TrivialStatement >( value ) )
-        {
-            if( visitor )
-            {
-                visitor->dispatch( Visitor::Stage::INTERLOG, value, *cxt );
-            }
-
-            for( auto sco : obj.blocks() )
-            {
-                assert( sco );
-                sco->iterate( order, visitor, cxt, action );
-            }
-        }
-    }
-
-    if( visitor )
-    {
-        visitor->dispatch( Visitor::Stage::EPILOG, value, *cxt );
-    }
-
-    if( order == Traversal::POSTORDER )
-    {
-        action( /*order, */ value, *cxt );
+        return name();
     }
 }
 
 void Value::iterate(
-    Traversal order, std::function< void( Value&, Context& ) > action )
+    const Traversal order, std::function< void( Value& ) > action )
 {
-    iterate( order, nullptr, nullptr, action );
+    TraversalVisitor visitor( order, action );
+
+    accept( visitor );
 }
 
 //

@@ -33,14 +33,11 @@
 #include "CasmIR.h"
 
 #include "Type.h"
+#include "Visitor.h"
 
 namespace libcasm_ir
 {
-    class Context;
-    class Visitor;
-    enum Traversal : u8;
-
-    class Value : public CasmIR
+    class Value : public CasmIR, public std::enable_shared_from_this< Value >
     {
       public:
         using Ptr = std::shared_ptr< Value >;
@@ -48,6 +45,7 @@ namespace libcasm_ir
         enum ID : u8
         {
             VALUE = 0,
+            VALUE_LIST,
             USER
 
             ,
@@ -77,6 +75,7 @@ namespace libcasm_ir
             INTEGER_CONSTANT,
             BIT_CONSTANT,
             STRING_CONSTANT,
+            FLOATING_CONSTANT,
             RATIONAL_CONSTANT,
             ENUMERATION_CONSTANT,
             IDENTIFIER
@@ -84,13 +83,12 @@ namespace libcasm_ir
             ,
             INSTRUCTION,
             UNARY_INSTRUCTION,
-            BINARY_INSTRUCTION
+            BINARY_INSTRUCTION,
 
-            ,
             ASSERT_INSTRUCTION,
-            SELECT_INSTRUCTION
+            SELECT_INSTRUCTION,
+            SYMBOLIC_INSTRUCTION,
 
-            ,
             SKIP_INSTRUCTION,
             FORK_INSTRUCTION,
             MERGE_INSTRUCTION,
@@ -98,7 +96,6 @@ namespace libcasm_ir
             UPDATE_INSTRUCTION,
             LOCATION_INSTRUCTION,
             CALL_INSTRUCTION,
-            PRINT_INSTRUCTION,
             LOCAL_INSTRUCTION
 
             ,
@@ -126,7 +123,9 @@ namespace libcasm_ir
             NOT_INSTRUCTION,
 
             BUILTIN,
-            IS_SYMBOLIC_BUILTIN,
+
+            GENERAL_BUILTIN,
+            PRINT_BUILTIN,
 
             CASTING_BUILTIN,
             AS_BOOLEAN_BUILTIN,
@@ -190,9 +189,9 @@ namespace libcasm_ir
 
         ~Value( void );
 
-        const char* name( void ) const;
+        std::string name( void ) const;
 
-        std::string str_name( void ) const;
+        std::string description( void ) const;
 
         const Type& type( void ) const;
 
@@ -200,23 +199,17 @@ namespace libcasm_ir
 
         ID id() const;
 
-        const char* description( void ) const;
-
-        std::string str_description( void ) const;
-
         std::string dump( void ) const;
 
         std::string make_hash( void ) const;
 
-        const char* label( void ) const;
-
-        std::string str_label( void ) const;
+        std::string label( void ) const;
 
         inline u1 operator==( const Value& rhs ) const
         {
             if( this != &rhs )
             {
-                if( this->id() != rhs.id() or strcmp( this->name(), rhs.name() )
+                if( this->id() != rhs.id() or this->name().compare( rhs.name() )
                     or this->type() != rhs.type() )
                 {
                     return false;
@@ -230,6 +223,27 @@ namespace libcasm_ir
             return !operator==( rhs );
         }
 
+        virtual void iterate(
+            const Traversal order, std::function< void( Value& ) > callback )
+            final;
+
+        virtual void accept( Visitor& visitor ) = 0;
+
+      protected:
+        template < typename T >
+        inline typename T::Ptr ptr_this( void )
+        {
+            return std::static_pointer_cast< T >( shared_from_this() );
+        }
+
+      private:
+        std::string m_name;
+
+        Type::Ptr m_type;
+
+        ID m_id;
+
+      public:
         static inline ID classid( void )
         {
             return Value::VALUE;
@@ -240,14 +254,7 @@ namespace libcasm_ir
             return true;
         }
 
-        virtual void iterate( Traversal order, Visitor* visitor = nullptr,
-            Context* context = nullptr,
-            std::function< void( Value&, Context& ) > action
-            = []( Value&, Context& ) {} ) final;
-
-        virtual void iterate( Traversal order,
-            std::function< void( Value&, Context& ) > action ) final;
-
+#ifndef NDEBUG
       protected:
         static std::unordered_map< u8, std::unordered_set< Value* > >&
         m_id2objs( void )
@@ -255,16 +262,30 @@ namespace libcasm_ir
             static std::unordered_map< u8, std::unordered_set< Value* > > cache;
             return cache;
         }
-
-      private:
-        std::string m_name;
-
-        Type::Ptr m_type;
-
-        ID m_id;
+#endif
     };
 
-    using Values = libstdhl::List< Value >;
+    template < typename T >
+    class ValueList : public Value, public libstdhl::List< T >
+    {
+      public:
+        using Ptr = std::shared_ptr< ValueList >;
+
+        ValueList( void )
+        : Value( "value_list", libstdhl::get< VoidType >(), Value::VALUE_LIST )
+        {
+        }
+
+        void accept( Visitor& visitor ) override final
+        {
+            for( auto& value : *this )
+            {
+                value->accept( visitor );
+            }
+        }
+    };
+
+    using Values = ValueList< Value >;
 }
 
 #endif // _LIB_CASMIR_VALUE_H_

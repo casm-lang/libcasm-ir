@@ -28,19 +28,26 @@
 
 namespace libcasm_ir
 {
+    class EnumerationType;
+
     class Enumeration : public Value
     {
       public:
         using Ptr = std::shared_ptr< Enumeration >;
 
-        Enumeration( const std::string& name, const Type::Ptr& type,
-            const std::vector< std::string >& values );
+        Enumeration( const std::string& name,
+            const std::vector< std::string >& values,
+            Value::ID id = classid() );
 
         ~Enumeration( void ) = default;
+
+        const std::vector< std::string >& elements( void ) const;
 
         u64 encode( const std::string& value ) const;
 
         std::string decode( const u64 value ) const;
+
+        void accept( Visitor& visitor ) override final;
 
         static inline Value::ID classid( void )
         {
@@ -51,6 +58,7 @@ namespace libcasm_ir
 
       private:
         std::vector< std::string > m_values;
+
         std::unordered_map< std::string, u64 > m_value2uid;
     };
 }

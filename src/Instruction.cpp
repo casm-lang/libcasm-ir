@@ -98,28 +98,29 @@ Values Instruction::operands( void ) const
     return m_operands;
 }
 
-void Instruction::replace( const Value::Ptr& from, const Value::Ptr& to )
+void Instruction::replace( Value& from, const Value::Ptr& to )
 {
-    assert( !" TODO " );
+    std::cerr << "replace: " << from.label() << " -> " << to->label() << "\n";
 
-    // libstdhl::Log::info( "replace: %s -> %s", from->label(), to->label() );
+    std::replace_if( m_operands.begin(), m_operands.end(),
+        [&]( const Value::Ptr& v ) { return *v.get() == from; }, to );
 
-    // std::replace( m_values.begin(), m_values.end(), &from, &to );
+    if( isa< User >( from ) )
+    {
+        std::cerr << "replace-from: remove use of " << this->label() << " -> "
+                  << from.label() << "\n";
 
-    // if( isa< User >( from ) )
-    // {
-    //     libstdhl::Log::info( "replace-from: remove use of %s -> %s",
-    //         this->label(), from.label() );
-    //     User& user = static_cast< User& >( from );
-    //     user.removeUse( *this );
-    // }
+        User& user = static_cast< User& >( from );
+        user.removeUse( *this );
+    }
 
-    // if( isa< User >( to ) )
-    // {
-    //     libstdhl::Log::info( "replace-to: set use of %s", to.label() );
-    //     User& user = static_cast< User& >( to );
-    //     user.setUse( *this );
-    // }
+    if( isa< User >( to ) )
+    {
+        std::cerr << "replace-to: set use of " << to->label() << "\n";
+
+        auto user = std::static_pointer_cast< User >( to );
+        user->setUse( *this );
+    }
 }
 
 void Instruction::setStatement( const Statement::Ptr& statement )
@@ -132,6 +133,20 @@ Statement::Ptr Instruction::statement( void ) const
     return m_statement.lock();
 }
 
+void Instruction::setNext( const Instruction::Ptr& instruction )
+{
+    assert( instruction );
+    assert( instruction.get() != this );
+    assert( next() == nullptr );
+
+    m_next = instruction;
+}
+
+Instruction::Ptr Instruction::next( void ) const
+{
+    return m_next.lock();
+}
+
 u1 Instruction::classof( Value const* obj )
 {
     return obj->id() == classid() or SkipInstruction::classof( obj )
@@ -142,9 +157,9 @@ u1 Instruction::classof( Value const* obj )
            or LocalInstruction::classof( obj )
            or LocationInstruction::classof( obj )
            or CallInstruction::classof( obj )
-           or PrintInstruction::classof( obj )
            or AssertInstruction::classof( obj )
            or SelectInstruction::classof( obj )
+           or SymbolicInstruction::classof( obj )
            or OperatorInstruction::classof( obj );
 }
 
@@ -204,12 +219,21 @@ u1 BinaryInstruction::classof( Value const* obj )
 }
 
 //
+// INSTRUCTION IMPLEMENTATIONS
+//
+
+//
 // Skip Instruction
 //
 
 SkipInstruction::SkipInstruction( void )
 : Instruction( "skip", libstdhl::get< VoidType >(), {}, classid() )
 {
+}
+
+void SkipInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
 }
 
 u1 SkipInstruction::classof( Value const* obj )
@@ -226,6 +250,11 @@ ForkInstruction::ForkInstruction( void )
 {
 }
 
+void ForkInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 u1 ForkInstruction::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -240,6 +269,11 @@ MergeInstruction::MergeInstruction( void )
 {
 }
 
+void MergeInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 u1 MergeInstruction::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -251,9 +285,14 @@ u1 MergeInstruction::classof( Value const* obj )
 
 LookupInstruction::LookupInstruction( const Value::Ptr& location )
 : Instruction(
-      "lookup", location->type().ptr_result(), { location }, classid() )
+      "lookup", location->ptr_type()->ptr_result(), { location }, classid() )
 , UnaryInstruction( this )
 {
+}
+
+void LookupInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
 }
 
 u1 LookupInstruction::classof( Value const* obj )
@@ -272,6 +311,11 @@ UpdateInstruction::UpdateInstruction(
 {
 }
 
+void UpdateInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 u1 UpdateInstruction::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -286,6 +330,11 @@ LocalInstruction::LocalInstruction(
 : Instruction( "local", expr->ptr_type(), { ident, expr }, classid() )
 , BinaryInstruction( this )
 {
+}
+
+void LocalInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
 }
 
 u1 LocalInstruction::classof( Value const* obj )
@@ -303,6 +352,11 @@ LocationInstruction::LocationInstruction( const Value::Ptr& function )
     assert( isa< Function >( function ) );
 }
 
+void LocationInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 u1 LocationInstruction::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -314,7 +368,7 @@ u1 LocationInstruction::classof( Value const* obj )
 
 CallInstruction::CallInstruction(
     const Value::Ptr& symbol, const std::vector< Value::Ptr >& operands )
-: Instruction( "call", symbol->type().ptr_result(), { symbol }, classid() )
+: Instruction( "call", symbol->ptr_type()->ptr_result(), { symbol }, classid() )
 {
     assert( isa< Rule >( symbol ) or isa< Derived >( symbol )
             or isa< Builtin >( symbol ) );
@@ -330,25 +384,12 @@ Value::Ptr CallInstruction::callee( void ) const
     return operand( 0 );
 }
 
+void CallInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 u1 CallInstruction::classof( Value const* obj )
-{
-    return obj->id() == classid();
-}
-
-//
-// Print Instruction
-//
-
-PrintInstruction::PrintInstruction( const Value::Ptr& channel )
-: Instruction( "print", libstdhl::get< StringType >(), {}, classid() )
-{
-    if( channel )
-    {
-        assert( 0 && "debug channel not implemented yet!" );
-    }
-}
-
-u1 PrintInstruction::classof( Value const* obj )
 {
     return obj->id() == classid();
 }
@@ -359,9 +400,14 @@ u1 PrintInstruction::classof( Value const* obj )
 
 AssertInstruction::AssertInstruction( const Value::Ptr& condition )
 : Instruction(
-      "assert", condition->type().ptr_result(), { condition }, classid() )
+      "assert", condition->ptr_type()->ptr_result(), { condition }, classid() )
 , UnaryInstruction( this )
 {
+}
+
+void AssertInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
 }
 
 u1 AssertInstruction::classof( Value const* obj )
@@ -374,12 +420,42 @@ u1 AssertInstruction::classof( Value const* obj )
 //
 
 SelectInstruction::SelectInstruction( const Value::Ptr& expression )
-: Instruction(
-      "select", expression->type().ptr_result(), { expression }, classid() )
+: Instruction( "select", expression->ptr_type()->ptr_result(), { expression },
+      classid() )
 {
 }
 
+void SelectInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 u1 SelectInstruction::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
+
+//
+// Symbolic Instruction
+//
+
+SymbolicInstruction::SymbolicInstruction( const Value::Ptr& symbol )
+: Instruction(
+      "symbolic", libstdhl::get< BooleanType >(), { symbol }, classid() )
+{
+    if( not isa< Function >( symbol ) )
+    {
+        throw std::domain_error(
+            "symbol '" + symbol->name() + "' is not a Function" );
+    }
+}
+
+void SymbolicInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
+u1 SymbolicInstruction::classof( Value const* obj )
 {
     return obj->id() == classid();
 }
@@ -528,6 +604,11 @@ const TypeAnnotation AddInstruction::info( TypeAnnotation::Data{
 
 } );
 
+void AddInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 u1 AddInstruction::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -555,6 +636,11 @@ const TypeAnnotation SubInstruction::info( TypeAnnotation::Data{
         } }
 
 } );
+
+void SubInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
 
 u1 SubInstruction::classof( Value const* obj )
 {
@@ -584,7 +670,41 @@ const TypeAnnotation MulInstruction::info( TypeAnnotation::Data{
 
 } );
 
+void MulInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 u1 MulInstruction::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
+
+//
+// Mod Instruction
+//
+
+ModInstruction::ModInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
+: ArithmeticInstruction( "mod", { lhs, rhs }, info, classid() )
+, BinaryInstruction( this )
+{
+}
+
+const TypeAnnotation ModInstruction::info( TypeAnnotation::Data{
+
+    { Type::INTEGER,
+        {
+            Type::INTEGER, Type::INTEGER,
+        } }
+
+} );
+
+void ModInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
+u1 ModInstruction::classof( Value const* obj )
 {
     return obj->id() == classid();
 }
@@ -612,31 +732,148 @@ const TypeAnnotation DivInstruction::info( TypeAnnotation::Data{
 
 } );
 
+void DivInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 u1 DivInstruction::classof( Value const* obj )
 {
     return obj->id() == classid();
 }
 
 //
-// Mod Instruction
+// And Instruction
 //
 
-ModInstruction::ModInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: ArithmeticInstruction( "mod", { lhs, rhs }, info, classid() )
+AndInstruction::AndInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
+: LogicalInstruction( "and", { lhs, rhs }, info, classid() )
 , BinaryInstruction( this )
 {
 }
 
-const TypeAnnotation ModInstruction::info( TypeAnnotation::Data{
+const TypeAnnotation AndInstruction::info( TypeAnnotation::Data{
 
-    { Type::INTEGER,
+    { Type::BOOLEAN,
         {
-            Type::INTEGER, Type::INTEGER,
+            Type::BOOLEAN, Type::BOOLEAN,
+        } },
+    { Type::BIT,
+        {
+            Type::BIT, Type::BIT,
         } }
 
 } );
 
-u1 ModInstruction::classof( Value const* obj )
+void AndInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
+u1 AndInstruction::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
+
+//
+// Xor Instruction
+//
+
+XorInstruction::XorInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
+: LogicalInstruction( "xor", { lhs, rhs }, info, classid() )
+, BinaryInstruction( this )
+{
+}
+
+const TypeAnnotation XorInstruction::info( TypeAnnotation::Data{
+
+    { Type::BOOLEAN,
+        {
+            Type::BOOLEAN, Type::BOOLEAN,
+        } },
+    { Type::BIT,
+        {
+            Type::BIT, Type::BIT,
+        } }
+
+} );
+
+void XorInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
+u1 XorInstruction::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
+
+//
+// Or Instruction
+//
+
+OrInstruction::OrInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
+: LogicalInstruction( "or", { lhs, rhs }, info, classid() )
+, BinaryInstruction( this )
+{
+}
+
+const TypeAnnotation OrInstruction::info( TypeAnnotation::Data{
+
+    { Type::BOOLEAN,
+        {
+            Type::BOOLEAN, Type::BOOLEAN,
+        } },
+    { Type::BIT,
+        {
+            Type::BIT, Type::BIT,
+        } }
+
+} );
+
+void OrInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
+u1 OrInstruction::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
+
+//
+// Not Instruction
+//
+
+NotInstruction::NotInstruction( const Value::Ptr& lhs )
+: LogicalInstruction( "not", { lhs }, info, classid() )
+, UnaryInstruction( this )
+{
+}
+
+const TypeAnnotation NotInstruction::info( TypeAnnotation::Data{
+
+    { Type::BOOLEAN,
+        {
+            Type::BOOLEAN,
+        } },
+    { Type::BOOLEAN,
+        {
+            Type::INTEGER,
+        } },
+    { Type::BIT,
+        {
+            Type::BIT,
+        } }
+
+} );
+
+void NotInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
+u1 NotInstruction::classof( Value const* obj )
 {
     return obj->id() == classid();
 }
@@ -683,6 +920,11 @@ const TypeAnnotation EquInstruction::info( TypeAnnotation::Data{
         } }
 
 } );
+
+void EquInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
 
 u1 EquInstruction::classof( Value const* obj )
 {
@@ -732,6 +974,11 @@ const TypeAnnotation NeqInstruction::info( TypeAnnotation::Data{
 
 } );
 
+void NeqInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 u1 NeqInstruction::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -755,6 +1002,11 @@ const TypeAnnotation LthInstruction::info( TypeAnnotation::Data{
         } }
 
 } );
+
+void LthInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
 
 u1 LthInstruction::classof( Value const* obj )
 {
@@ -780,6 +1032,11 @@ const TypeAnnotation LeqInstruction::info( TypeAnnotation::Data{
 
 } );
 
+void LeqInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 u1 LeqInstruction::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -804,6 +1061,11 @@ const TypeAnnotation GthInstruction::info( TypeAnnotation::Data{
 
 } );
 
+void GthInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 u1 GthInstruction::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -825,123 +1087,12 @@ const TypeAnnotation GeqInstruction::info( TypeAnnotation::Data{
 
 } );
 
+void GeqInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 u1 GeqInstruction::classof( Value const* obj )
-{
-    return obj->id() == classid();
-}
-
-//
-// Or Instruction
-//
-
-OrInstruction::OrInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: LogicalInstruction( "or", { lhs, rhs }, info, classid() )
-, BinaryInstruction( this )
-{
-}
-
-const TypeAnnotation OrInstruction::info( TypeAnnotation::Data{
-
-    { Type::BOOLEAN,
-        {
-            Type::BOOLEAN, Type::BOOLEAN,
-        } },
-    { Type::BIT,
-        {
-            Type::BIT, Type::BIT,
-        } }
-
-} );
-
-u1 OrInstruction::classof( Value const* obj )
-{
-    return obj->id() == classid();
-}
-
-//
-// Xor Instruction
-//
-
-XorInstruction::XorInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: LogicalInstruction( "xor", { lhs, rhs }, info, classid() )
-, BinaryInstruction( this )
-{
-}
-
-const TypeAnnotation XorInstruction::info( TypeAnnotation::Data{
-
-    { Type::BOOLEAN,
-        {
-            Type::BOOLEAN, Type::BOOLEAN,
-        } },
-    { Type::BIT,
-        {
-            Type::BIT, Type::BIT,
-        } }
-
-} );
-
-u1 XorInstruction::classof( Value const* obj )
-{
-    return obj->id() == classid();
-}
-
-//
-// And Instruction
-//
-
-AndInstruction::AndInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: LogicalInstruction( "and", { lhs, rhs }, info, classid() )
-, BinaryInstruction( this )
-{
-}
-
-const TypeAnnotation AndInstruction::info( TypeAnnotation::Data{
-
-    { Type::BOOLEAN,
-        {
-            Type::BOOLEAN, Type::BOOLEAN,
-        } },
-    { Type::BIT,
-        {
-            Type::BIT, Type::BIT,
-        } }
-
-} );
-
-u1 AndInstruction::classof( Value const* obj )
-{
-    return obj->id() == classid();
-}
-
-//
-// Not Instruction
-//
-
-NotInstruction::NotInstruction( const Value::Ptr& lhs )
-: LogicalInstruction( "not", { lhs }, info, classid() )
-, UnaryInstruction( this )
-{
-}
-
-const TypeAnnotation NotInstruction::info( TypeAnnotation::Data{
-
-    { Type::BOOLEAN,
-        {
-            Type::BOOLEAN,
-        } },
-    { Type::BOOLEAN,
-        {
-            Type::INTEGER,
-        } },
-    { Type::BIT,
-        {
-            Type::BIT,
-        } }
-
-} );
-
-u1 NotInstruction::classof( Value const* obj )
 {
     return obj->id() == classid();
 }

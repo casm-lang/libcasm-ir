@@ -30,6 +30,7 @@
 #include "src/CasmIR.h"
 #include "src/Constant.h"
 #include "src/Derived.h"
+#include "src/Enumeration.h"
 #include "src/Function.h"
 #include "src/Instruction.h"
 #include "src/Rule.h"
@@ -41,9 +42,11 @@
 #include "src/Value.h"
 #include "src/Visitor.h"
 
-#include "src/analyze/CasmIRDumpPass.h"
+#include "src/analyze/ConsistencyCheckPass.h"
+#include "src/analyze/IRDumpDebugPass.h"
 
-#include "src/transform/CasmIRToSourcePass.h"
+#include "src/transform/IRDumpDotPass.h"
+#include "src/transform/IRDumpSourcePass.h"
 
 namespace libcasm_ir
 {

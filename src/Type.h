@@ -37,9 +37,13 @@
 
 namespace libcasm_ir
 {
+    class Agent;
     class Enumeration;
 
-    class Type : public CasmIR
+    class Type;
+    using Types = libstdhl::List< Type >;
+
+    class Type : public CasmIR, public std::enable_shared_from_this< Type >
     {
       public:
         using Ptr = std::shared_ptr< Type >;
@@ -68,19 +72,17 @@ namespace libcasm_ir
 
         ~Type( void ) = default;
 
-        const char* name( void ) const;
+        std::string name( void ) const;
 
-        std::string str_name( void ) const;
-
-        const char* description( void ) const;
-
-        std::string str_description( void ) const;
+        std::string description( void ) const;
 
         ID id( void ) const;
 
         const Type& result( void ) const;
 
-        Type::Ptr ptr_result( void ) const;
+        Type::Ptr ptr_result( void );
+
+        Types arguments( void ) const;
 
         std::string make_hash( void ) const;
 
@@ -89,7 +91,7 @@ namespace libcasm_ir
             if( this != &rhs )
             {
                 if( this->id() != rhs.id()
-                    or strcmp( this->name(), rhs.name() ) )
+                    or this->name().compare( rhs.name() ) )
                 {
                     return false;
                 }
@@ -105,7 +107,6 @@ namespace libcasm_ir
         u1 isVoid( void ) const;
         u1 isLabel( void ) const;
         u1 isLocation( void ) const;
-        u1 isAgent( void ) const;
         u1 isRuleReference( void ) const;
         u1 isBoolean( void ) const;
         u1 isInteger( void ) const;
@@ -114,11 +115,27 @@ namespace libcasm_ir
         u1 isFloating( void ) const;
         u1 isRational( void ) const;
         u1 isEnumeration( void ) const;
+        u1 isAgent( void ) const;
         u1 isRelation( void ) const;
 
       protected:
+        template < typename T >
+        inline typename T::Ptr ptr_this( void )
+        {
+            return std::static_pointer_cast< T >( shared_from_this() );
+        }
+
+        template < typename T >
+        inline typename T::Ptr ptr_this( void ) const
+        {
+            return std::static_pointer_cast< T >( shared_from_this() );
+        }
+
         std::string m_name;
         std::string m_description;
+
+        Type::Ptr m_result;
+        Types m_arguments;
 
       private:
         ID m_id;
@@ -131,8 +148,6 @@ namespace libcasm_ir
         }
     };
 
-    using Types = libstdhl::List< Type >;
-
     class PrimitiveType : public Type
     {
       public:
@@ -140,7 +155,7 @@ namespace libcasm_ir
             Type::ID id );
     };
 
-    class VoidType : public PrimitiveType
+    class VoidType final : public PrimitiveType
     {
       public:
         using Ptr = std::shared_ptr< VoidType >;
@@ -148,7 +163,7 @@ namespace libcasm_ir
         VoidType( void );
     };
 
-    class LabelType : public PrimitiveType
+    class LabelType final : public PrimitiveType
     {
       public:
         using Ptr = std::shared_ptr< LabelType >;
@@ -156,7 +171,7 @@ namespace libcasm_ir
         LabelType( void );
     };
 
-    class LocationType : public PrimitiveType
+    class LocationType final : public PrimitiveType
     {
       public:
         using Ptr = std::shared_ptr< LocationType >;
@@ -164,15 +179,7 @@ namespace libcasm_ir
         LocationType( void );
     };
 
-    class AgentType : public PrimitiveType
-    {
-      public:
-        using Ptr = std::shared_ptr< AgentType >;
-
-        AgentType( void );
-    };
-
-    class RuleReferenceType : public PrimitiveType
+    class RuleReferenceType final : public PrimitiveType
     {
       public:
         using Ptr = std::shared_ptr< RuleReferenceType >;
@@ -180,7 +187,7 @@ namespace libcasm_ir
         RuleReferenceType( void );
     };
 
-    class BooleanType : public PrimitiveType
+    class BooleanType final : public PrimitiveType
     {
       public:
         using Ptr = std::shared_ptr< BooleanType >;
@@ -188,7 +195,7 @@ namespace libcasm_ir
         BooleanType( void );
     };
 
-    class IntegerType : public PrimitiveType
+    class IntegerType final : public PrimitiveType
     {
       public:
         using Ptr = std::shared_ptr< IntegerType >;
@@ -196,7 +203,7 @@ namespace libcasm_ir
         IntegerType( void );
     };
 
-    class BitType : public PrimitiveType
+    class BitType final : public PrimitiveType
     {
       public:
         using Ptr = std::shared_ptr< BitType >;
@@ -211,7 +218,7 @@ namespace libcasm_ir
         u16 m_bitsize;
     };
 
-    class StringType : public PrimitiveType
+    class StringType final : public PrimitiveType
     {
       public:
         using Ptr = std::shared_ptr< StringType >;
@@ -219,7 +226,7 @@ namespace libcasm_ir
         StringType( void );
     };
 
-    class FloatingType : public PrimitiveType
+    class FloatingType final : public PrimitiveType
     {
       public:
         using Ptr = std::shared_ptr< FloatingType >;
@@ -227,7 +234,7 @@ namespace libcasm_ir
         FloatingType( void );
     };
 
-    class RationalType : public PrimitiveType
+    class RationalType final : public PrimitiveType
     {
       public:
         using Ptr = std::shared_ptr< RationalType >;
@@ -240,6 +247,11 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< EnumerationType >;
 
+      protected:
+        EnumerationType(
+            const std::shared_ptr< Enumeration >& kind, Type::ID id );
+
+      public:
         EnumerationType( const std::shared_ptr< Enumeration >& kind );
 
         Enumeration& kind( void ) const;
@@ -250,21 +262,21 @@ namespace libcasm_ir
         std::shared_ptr< Enumeration > m_kind;
     };
 
-    class RelationType : public Type
+    class AgentType final : public EnumerationType
+    {
+      public:
+        using Ptr = std::shared_ptr< AgentType >;
+
+        AgentType( const std::shared_ptr< Agent >& kind );
+    };
+
+    class RelationType final : public Type
     {
       public:
         using Ptr = std::shared_ptr< RelationType >;
 
       public:
         RelationType( const Type::Ptr& result, const Types& arguments );
-
-        Type::Ptr result( void ) const;
-
-        Types arguments( void ) const;
-
-      private:
-        Type::Ptr m_result;
-        Types m_arguments;
     };
 }
 

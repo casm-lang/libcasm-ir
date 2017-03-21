@@ -30,6 +30,11 @@ Function::Function( const std::string& name, const Type::Ptr& type )
 {
 }
 
+void Function::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 u1 Function::classof( Value const* obj )
 {
     return obj->id() == classid();

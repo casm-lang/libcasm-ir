@@ -22,7 +22,9 @@
 //
 
 #include "Block.h"
+
 #include "Instruction.h"
+#include "Rule.h"
 #include "Statement.h"
 
 using namespace libcasm_ir;
@@ -36,6 +38,7 @@ Block::Block( const std::string& name, Value::ID id )
 
 void Block::setParent( const Block::Ptr& parent )
 {
+    assert( parent );
     m_parent = parent;
 }
 
@@ -46,6 +49,7 @@ Block::Ptr Block::parent( void ) const
 
 void Block::setScope( const ExecutionSemanticsBlock::Ptr& scope )
 {
+    assert( scope );
     m_scope = scope;
 }
 
@@ -60,23 +64,33 @@ u1 Block::classof( Value const* obj )
            or Statement::classof( obj );
 }
 
-ExecutionSemanticsBlock::ExecutionSemanticsBlock( const std::string& name,
-    u1 parallel, const ExecutionSemanticsBlock::Ptr& scope, Value::ID id )
+ExecutionSemanticsBlock::ExecutionSemanticsBlock(
+    const std::string& name, u1 parallel, Value::ID id )
 : Block( name, id )
 , m_parallel( parallel )
 , m_pseudostate( 0 )
 {
-    setScope( scope );
-
-    m_entry = libstdhl::make< TrivialStatement >();
-    m_entry->add( libstdhl::make< ForkInstruction >() );
-
-    m_exit = libstdhl::make< TrivialStatement >();
-    m_exit->add( libstdhl::make< MergeInstruction >() );
 }
 
-ExecutionSemanticsBlock::~ExecutionSemanticsBlock( void )
+ExecutionSemanticsBlock::Ptr ExecutionSemanticsBlock::init( void )
 {
+    auto self = ptr_this< ExecutionSemanticsBlock >();
+
+    m_entry = libstdhl::make< TrivialStatement >();
+    m_entry->setScope( self );
+    m_entry->setParent( self );
+
+    auto f = libstdhl::make< ForkInstruction >();
+    m_entry->add( f );
+
+    m_exit = libstdhl::make< TrivialStatement >();
+    m_exit->setScope( self );
+    m_exit->setParent( self );
+
+    auto m = libstdhl::make< MergeInstruction >();
+    m_exit->add( m );
+
+    return self;
 }
 
 u1 ExecutionSemanticsBlock::parallel( void ) const
@@ -106,6 +120,23 @@ Blocks ExecutionSemanticsBlock::blocks( void ) const
 
 void ExecutionSemanticsBlock::add( const Block::Ptr& block )
 {
+    if( not block )
+    {
+        throw std::domain_error( "adding a null pointer block is not allowed" );
+    }
+    if( block->scope() )
+    {
+        throw std::domain_error( "block '" + block->dump()
+                                 + "' is already bound to scope '"
+                                 + block->scope()->dump()
+                                 + "'" );
+    }
+
+    const auto self = ptr_this< ExecutionSemanticsBlock >();
+
+    block->setScope( self );
+    block->setParent( self );
+
     m_blocks.add( block );
 }
 
@@ -120,9 +151,37 @@ u1 ExecutionSemanticsBlock::classof( Value const* obj )
 // ParallelBlock
 //
 
-ParallelBlock::ParallelBlock( void )
-: ExecutionSemanticsBlock( "par", true, 0, classid() )
+ParallelBlock::Ptr ParallelBlock::create( u1 empty )
 {
+    auto block = std::shared_ptr< ParallelBlock >( new ParallelBlock );
+
+    if( not empty )
+    {
+        block->init();
+    }
+
+    return block;
+}
+
+ParallelBlock::ParallelBlock( void )
+: ExecutionSemanticsBlock( "par", true, classid() )
+{
+}
+
+void ParallelBlock::setRule( const Rule::Ptr& rule )
+{
+    assert( rule );
+    m_rule = rule;
+}
+
+Rule::Ptr ParallelBlock::rule( void ) const
+{
+    return m_rule.lock();
+}
+
+void ParallelBlock::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
 }
 
 u1 ParallelBlock::classof( Value const* obj )
@@ -135,9 +194,26 @@ u1 ParallelBlock::classof( Value const* obj )
 // SequentialBlock
 //
 
-SequentialBlock::SequentialBlock( void )
-: ExecutionSemanticsBlock( "seq", false, 0, classid() )
+SequentialBlock::Ptr SequentialBlock::create( u1 empty )
 {
+    auto block = std::shared_ptr< SequentialBlock >( new SequentialBlock );
+
+    if( not empty )
+    {
+        block->init();
+    }
+
+    return block;
+}
+
+SequentialBlock::SequentialBlock( void )
+: ExecutionSemanticsBlock( "seq", false, classid() )
+{
+}
+
+void SequentialBlock::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
 }
 
 u1 SequentialBlock::classof( Value const* obj )

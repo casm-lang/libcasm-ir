@@ -22,6 +22,8 @@
 //
 
 #include "Type.h"
+
+#include "Agent.h"
 #include "Enumeration.h"
 
 using namespace libcasm_ir;
@@ -34,22 +36,12 @@ Type::Type(
 {
 }
 
-const char* Type::name( void ) const
-{
-    return m_name.c_str();
-}
-
-std::string Type::str_name( void ) const
+std::string Type::name( void ) const
 {
     return m_name;
 }
 
-const char* Type::description() const
-{
-    return m_description.c_str();
-}
-
-std::string Type::str_description() const
+std::string Type::description() const
 {
     return m_description;
 }
@@ -63,29 +55,30 @@ const Type& Type::result( void ) const
 {
     if( isRelation() )
     {
-        const RelationType* rt = static_cast< const RelationType* >( this );
-
-        return *rt->result().get();
+        return *m_result.get();
     }
 
     return *this;
 }
 
-Type::Ptr Type::ptr_result( void ) const
+Type::Ptr Type::ptr_result( void )
 {
     if( isRelation() )
     {
-        const RelationType* rt = static_cast< const RelationType* >( this );
-
-        return rt->result();
+        return m_result;
     }
 
-    return libstdhl::get< Type >( *this );
+    return ptr_this< Type >();
+}
+
+Types Type::arguments( void ) const
+{
+    return m_arguments;
 }
 
 std::string Type::make_hash( void ) const
 {
-    return "t:" + std::to_string( id() ) + ":" + str_description();
+    return "t:" + std::to_string( id() ) + ":" + description();
 }
 
 u1 Type::isVoid( void ) const
@@ -192,15 +185,6 @@ LocationType::LocationType()
 }
 
 //
-// Agent Type
-//
-
-AgentType::AgentType()
-: PrimitiveType( "a", "Agent", Type::AGENT )
-{
-}
-
-//
 // Rule Reference Type
 //
 
@@ -274,9 +258,14 @@ RationalType::RationalType()
 // Enumeration Type
 //
 
-EnumerationType::EnumerationType( const Enumeration::Ptr& kind )
-: PrimitiveType( kind->name(), kind->name(), Type::ENUMERATION )
+EnumerationType::EnumerationType( const Enumeration::Ptr& kind, Type::ID id )
+: PrimitiveType( kind->name(), kind->name(), id )
 , m_kind( kind )
+{
+}
+
+EnumerationType::EnumerationType( const Enumeration::Ptr& kind )
+: EnumerationType( kind, Type::ENUMERATION )
 {
 }
 
@@ -291,17 +280,29 @@ Enumeration::Ptr EnumerationType::ptr_kind( void ) const
 }
 
 //
+// Agent Type
+//
+
+AgentType::AgentType( const Agent::Ptr& agent )
+: EnumerationType( agent, Type::AGENT )
+{
+    m_name = "a";
+    m_description = "Agent";
+}
+
+//
 //
 // Relation Type
 //
 
 RelationType::RelationType( const Type::Ptr& result, const Types& arguments )
 : Type( "", "", Type::RELATION )
-, m_result( result )
-, m_arguments( arguments )
 {
-    std::string m_name = "(";
-    std::string m_description = "(";
+    m_result = result;
+    m_arguments = arguments;
+
+    m_name = "(";
+    m_description = "(";
 
     u1 first = true;
     for( auto argument : m_arguments )
@@ -312,24 +313,14 @@ RelationType::RelationType( const Type::Ptr& result, const Types& arguments )
             m_description += " x ";
         }
 
-        m_name += argument->str_name();
-        m_description += argument->str_description();
+        m_name += argument->name();
+        m_description += argument->description();
 
         first = false;
     }
 
-    m_name += " -> " + m_result->str_name() + ")";
-    m_description += " -> " + m_result->str_description() + ")";
-}
-
-Type::Ptr RelationType::result( void ) const
-{
-    return m_result;
-}
-
-Types RelationType::arguments( void ) const
-{
-    return m_arguments;
+    m_name += " -> " + m_result->name() + ")";
+    m_description += " -> " + m_result->description() + ")";
 }
 
 //

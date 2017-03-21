@@ -35,6 +35,8 @@ namespace libcasm_ir
 
         ~Function( void ) = default;
 
+        void accept( Visitor& visitor ) override final;
+
         static inline Value::ID classid( void )
         {
             return Value::FUNCTION;
@@ -42,6 +44,8 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
     };
+
+    using Functions = ValueList< Function >;
 }
 
 #endif // _LIB_CASMIR_FUNCTION_H_

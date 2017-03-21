@@ -28,10 +28,10 @@
 
 namespace libcasm_ir
 {
+    class Rule;
     class Statement;
     class ForkInstruction;
     class MergeInstruction;
-
     class ExecutionSemanticsBlock;
 
     class Block : public Value
@@ -41,9 +41,9 @@ namespace libcasm_ir
 
         Block( const std::string& name, Value::ID id = classid() );
 
-        void setParent( const Ptr& parent );
+        void setParent( const Block::Ptr& parent );
 
-        Ptr parent( void ) const;
+        Block::Ptr parent( void ) const;
 
         void setScope(
             const std::shared_ptr< ExecutionSemanticsBlock >& scope );
@@ -62,19 +62,18 @@ namespace libcasm_ir
         std::weak_ptr< ExecutionSemanticsBlock > m_scope;
     };
 
-    using Blocks = libstdhl::List< Block >;
+    using Blocks = ValueList< Block >;
 
     class ExecutionSemanticsBlock : public Block
     {
       public:
         using Ptr = std::shared_ptr< ExecutionSemanticsBlock >;
 
-        ExecutionSemanticsBlock( const std::string& name, u1 parallel,
-            const ExecutionSemanticsBlock::Ptr& scope,
-            Value::ID id = classid() );
+      protected:
+        ExecutionSemanticsBlock(
+            const std::string& name, u1 parallel, Value::ID id = classid() );
 
-        ~ExecutionSemanticsBlock( void );
-
+      public:
         u1 parallel( void ) const;
 
         u64 pseudostate( void ) const;
@@ -94,6 +93,9 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
+      protected:
+        ExecutionSemanticsBlock::Ptr init( void );
+
       private:
         const u1 m_parallel;
         u64 m_pseudostate;
@@ -104,12 +106,28 @@ namespace libcasm_ir
         Blocks m_blocks;
     };
 
-    using ExecutionSemanticsBlocks = libstdhl::List< ExecutionSemanticsBlock >;
+    using ExecutionSemanticsBlocks = ValueList< ExecutionSemanticsBlock >;
 
-    class ParallelBlock : public ExecutionSemanticsBlock
+    class ParallelBlock final : public ExecutionSemanticsBlock
     {
       public:
+        using Ptr = std::shared_ptr< ParallelBlock >;
+
+        static ParallelBlock::Ptr create( u1 empty = false );
+
+      private:
         ParallelBlock( void );
+
+      public:
+        void setRule( const std::shared_ptr< Rule >& rule );
+
+        /**
+           @return rule pointer if this parallel block is the context of a rule,
+                   otherwise nullptr
+         */
+        std::shared_ptr< Rule > rule( void ) const;
+
+        void accept( Visitor& visitor ) override;
 
         static inline Value::ID classid( void )
         {
@@ -117,12 +135,23 @@ namespace libcasm_ir
         }
 
         static u1 classof( Value const* obj );
+
+      private:
+        std::weak_ptr< Rule > m_rule;
     };
 
-    class SequentialBlock : public ExecutionSemanticsBlock
+    class SequentialBlock final : public ExecutionSemanticsBlock
     {
       public:
+        using Ptr = std::shared_ptr< SequentialBlock >;
+
+        static SequentialBlock::Ptr create( u1 empty = false );
+
+      private:
         SequentialBlock( void );
+
+      public:
+        void accept( Visitor& visitor ) override;
 
         static inline Value::ID classid( void )
         {

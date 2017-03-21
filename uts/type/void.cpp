@@ -21,54 +21,14 @@
 //  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "Rule.h"
-
-#include "Block.h"
-#include "Constant.h"
+#include "uts/main.h"
 
 using namespace libcasm_ir;
 
-Rule::Rule( const std::string& name, const Type::Ptr& type )
-: User( "@" + name, type, classid() )
-, m_context( 0 )
+TEST( libcasm_ir__type_void, make_valid )
 {
-}
-
-void Rule::setContext( const ParallelBlock::Ptr& context )
-{
-    if( not context )
-    {
-        throw std::domain_error(
-            "adding a null pointer context is not allowed" );
-    }
-    if( context->rule() )
-    {
-        throw std::domain_error( "block '" + context->dump()
-                                 + "' is already bound to rule '"
-                                 + context->rule()->dump()
-                                 + "'" );
-    }
-
-    const auto self = ptr_this< Rule >();
-
-    context->setRule( self );
-
-    m_context = context;
-}
-
-ParallelBlock::Ptr Rule::context( void ) const
-{
-    return m_context;
-}
-
-void Rule::accept( Visitor& visitor )
-{
-    visitor.visit( *this );
-}
-
-u1 Rule::classof( Value const* obj )
-{
-    return obj->id() == classid();
+    auto v = libstdhl::make< VoidType >();
+    ASSERT_TRUE( v != nullptr );
 }
 
 //

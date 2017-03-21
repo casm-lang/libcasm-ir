@@ -23,22 +23,38 @@
 
 #include "Enumeration.h"
 
+#include "Agent.h"
+
 using namespace libcasm_ir;
 
-Enumeration::Enumeration( const std::string& name, const Type::Ptr& type,
-    const std::vector< std::string >& values )
-: Value( "@" + name, type, classid() )
+Enumeration::Enumeration( const std::string& name,
+    const std::vector< std::string >& values,
+    Value::ID id )
+: Value( "@" + name, libstdhl::get< VoidType >(), id )
 , m_values( values )
 {
     if( m_values.size() == 0 )
     {
-        throw std::domain_error( "enumeration '" + name + "' has no values!" );
+        throw std::invalid_argument(
+            "enumeration '" + name + "' has no values!" );
     }
 
     for( u64 c = 0; c < m_values.size(); c++ )
     {
-        m_value2uid[ m_values[ c ] ] = c;
+        auto value = m_values[ c ];
+
+        if( not m_value2uid.emplace( value, c ).second )
+        {
+            throw std::domain_error(
+                "enumeration '" + name + "' already has an value '" + value
+                + "'" );
+        }
     }
+}
+
+const std::vector< std::string >& Enumeration::elements( void ) const
+{
+    return m_values;
 }
 
 u64 Enumeration::encode( const std::string& value ) const
@@ -56,15 +72,27 @@ u64 Enumeration::encode( const std::string& value ) const
 
 std::string Enumeration::decode( const u64 value ) const
 {
-    if( value < m_values.size() )
+    if( value >= m_values.size() )
     {
         throw std::domain_error( "invalid value '" + std::to_string( value )
                                  + "' to decode for enumeration '"
                                  + name()
-                                 + "'!" );
+                                 + "'" );
     }
 
     return m_values[ value ];
+}
+
+void Enumeration::accept( Visitor& visitor )
+{
+    if( isa< Agent >( this ) )
+    {
+        visitor.visit( *static_cast< Agent* >( this ) );
+    }
+    else
+    {
+        visitor.visit( *this );
+    }
 }
 
 u1 Enumeration::classof( Value const* obj )

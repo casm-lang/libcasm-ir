@@ -47,11 +47,15 @@ namespace libcasm_ir
 
         Values operands( void ) const;
 
-        void replace( const Value::Ptr& from, const Value::Ptr& to );
+        void replace( Value& from, const Value::Ptr& to );
 
         void setStatement( const std::shared_ptr< Statement >& statement );
 
         std::shared_ptr< Statement > statement( void ) const;
+
+        void setNext( const Instruction::Ptr& instruction );
+
+        Instruction::Ptr next( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -64,9 +68,11 @@ namespace libcasm_ir
         Values m_operands;
 
         std::weak_ptr< Statement > m_statement;
+
+        std::weak_ptr< Instruction > m_next;
     };
 
-    using Instructions = libstdhl::List< Instruction >;
+    using Instructions = ValueList< Instruction >;
 
     class UnaryInstruction
     {
@@ -112,6 +118,8 @@ namespace libcasm_ir
 
         SkipInstruction( void );
 
+        void accept( Visitor& visitor ) override final;
+
         static inline Value::ID classid( void )
         {
             return Value::SKIP_INSTRUCTION;
@@ -126,6 +134,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< ForkInstruction >;
 
         ForkInstruction( void );
+
+        void accept( Visitor& visitor ) override final;
 
         static inline Value::ID classid( void )
         {
@@ -142,6 +152,8 @@ namespace libcasm_ir
 
         MergeInstruction( void );
 
+        void accept( Visitor& visitor ) override final;
+
         static inline Value::ID classid( void )
         {
             return Value::MERGE_INSTRUCTION;
@@ -156,6 +168,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< LookupInstruction >;
 
         LookupInstruction( const Value::Ptr& location );
+
+        void accept( Visitor& visitor ) override final;
 
         static inline Value::ID classid( void )
         {
@@ -172,6 +186,8 @@ namespace libcasm_ir
 
         UpdateInstruction( const Value::Ptr& location, const Value::Ptr& expr );
 
+        void accept( Visitor& visitor ) override final;
+
         static inline Value::ID classid( void )
         {
             return Value::UPDATE_INSTRUCTION;
@@ -187,6 +203,8 @@ namespace libcasm_ir
 
         LocalInstruction( const Value::Ptr& ident, const Value::Ptr& expr );
 
+        void accept( Visitor& visitor ) override final;
+
         static inline Value::ID classid( void )
         {
             return Value::LOCAL_INSTRUCTION;
@@ -201,6 +219,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< LocationInstruction >;
 
         LocationInstruction( const Value::Ptr& function );
+
+        void accept( Visitor& visitor ) override final;
 
         static inline Value::ID classid( void )
         {
@@ -220,24 +240,11 @@ namespace libcasm_ir
 
         Value::Ptr callee( void ) const;
 
+        void accept( Visitor& visitor ) override final;
+
         static inline Value::ID classid( void )
         {
             return Value::CALL_INSTRUCTION;
-        }
-
-        static u1 classof( Value const* obj );
-    };
-
-    class PrintInstruction : public Instruction
-    {
-      public:
-        using Ptr = std::shared_ptr< PrintInstruction >;
-
-        PrintInstruction( const Value::Ptr& channel = 0 );
-
-        static inline Value::ID classid( void )
-        {
-            return Value::PRINT_INSTRUCTION;
         }
 
         static u1 classof( Value const* obj );
@@ -249,6 +256,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< AssertInstruction >;
 
         AssertInstruction( const Value::Ptr& condition );
+
+        void accept( Visitor& visitor ) override final;
 
         static inline Value::ID classid( void )
         {
@@ -265,9 +274,28 @@ namespace libcasm_ir
 
         SelectInstruction( const Value::Ptr& expression );
 
+        void accept( Visitor& visitor ) override final;
+
         static inline Value::ID classid( void )
         {
             return Value::SELECT_INSTRUCTION;
+        }
+
+        static u1 classof( Value const* obj );
+    };
+
+    class SymbolicInstruction : public Instruction
+    {
+      public:
+        using Ptr = std::shared_ptr< SymbolicInstruction >;
+
+        SymbolicInstruction( const Value::Ptr& symbol );
+
+        void accept( Visitor& visitor ) override final;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::SYMBOLIC_INSTRUCTION;
         }
 
         static u1 classof( Value const* obj );
@@ -358,6 +386,8 @@ namespace libcasm_ir
 
         AddInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
+        void accept( Visitor& visitor ) override final;
+
         static inline Value::ID classid( void )
         {
             return Value::ADD_INSTRUCTION;
@@ -375,6 +405,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< SubInstruction >;
 
         SubInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
+
+        void accept( Visitor& visitor ) override final;
 
         static inline Value::ID classid( void )
         {
@@ -394,27 +426,11 @@ namespace libcasm_ir
 
         MulInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
+        void accept( Visitor& visitor ) override final;
+
         static inline Value::ID classid( void )
         {
             return Value::MUL_INSTRUCTION;
-        }
-
-        static u1 classof( Value const* obj );
-
-        static const TypeAnnotation info;
-    };
-
-    class DivInstruction : public ArithmeticInstruction,
-                           public BinaryInstruction
-    {
-      public:
-        using Ptr = std::shared_ptr< DivInstruction >;
-
-        DivInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
-
-        static inline Value::ID classid( void )
-        {
-            return Value::DIV_INSTRUCTION;
         }
 
         static u1 classof( Value const* obj );
@@ -430,9 +446,111 @@ namespace libcasm_ir
 
         ModInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
+        void accept( Visitor& visitor ) override final;
+
         static inline Value::ID classid( void )
         {
             return Value::MOD_INSTRUCTION;
+        }
+
+        static u1 classof( Value const* obj );
+
+        static const TypeAnnotation info;
+    };
+
+    class DivInstruction : public ArithmeticInstruction,
+                           public BinaryInstruction
+    {
+      public:
+        using Ptr = std::shared_ptr< DivInstruction >;
+
+        DivInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
+
+        void accept( Visitor& visitor ) override final;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::DIV_INSTRUCTION;
+        }
+
+        static u1 classof( Value const* obj );
+
+        static const TypeAnnotation info;
+    };
+
+    //
+    // Logical Instructions
+    //
+
+    class AndInstruction : public LogicalInstruction, public BinaryInstruction
+    {
+      public:
+        using Ptr = std::shared_ptr< AndInstruction >;
+
+        AndInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
+
+        void accept( Visitor& visitor ) override final;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::AND_INSTRUCTION;
+        }
+
+        static u1 classof( Value const* obj );
+
+        static const TypeAnnotation info;
+    };
+
+    class XorInstruction : public LogicalInstruction, public BinaryInstruction
+    {
+      public:
+        using Ptr = std::shared_ptr< XorInstruction >;
+
+        XorInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
+
+        void accept( Visitor& visitor ) override final;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::XOR_INSTRUCTION;
+        }
+
+        static u1 classof( Value const* obj );
+
+        static const TypeAnnotation info;
+    };
+
+    class OrInstruction : public LogicalInstruction, public BinaryInstruction
+    {
+      public:
+        using Ptr = std::shared_ptr< OrInstruction >;
+
+        OrInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
+
+        void accept( Visitor& visitor ) override final;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::OR_INSTRUCTION;
+        }
+
+        static u1 classof( Value const* obj );
+
+        static const TypeAnnotation info;
+    };
+
+    class NotInstruction : public LogicalInstruction, public UnaryInstruction
+    {
+      public:
+        using Ptr = std::shared_ptr< NotInstruction >;
+
+        NotInstruction( const Value::Ptr& lhs );
+
+        void accept( Visitor& visitor ) override final;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::NOT_INSTRUCTION;
         }
 
         static u1 classof( Value const* obj );
@@ -451,6 +569,8 @@ namespace libcasm_ir
 
         EquInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
+        void accept( Visitor& visitor ) override final;
+
         static inline Value::ID classid( void )
         {
             return Value::EQU_INSTRUCTION;
@@ -467,6 +587,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< NeqInstruction >;
 
         NeqInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
+
+        void accept( Visitor& visitor ) override final;
 
         static inline Value::ID classid( void )
         {
@@ -485,6 +607,8 @@ namespace libcasm_ir
 
         LthInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
+        void accept( Visitor& visitor ) override final;
+
         static inline Value::ID classid( void )
         {
             return Value::LTH_INSTRUCTION;
@@ -501,6 +625,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< LeqInstruction >;
 
         LeqInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
+
+        void accept( Visitor& visitor ) override final;
 
         static inline Value::ID classid( void )
         {
@@ -519,6 +645,8 @@ namespace libcasm_ir
 
         GthInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
+        void accept( Visitor& visitor ) override final;
+
         static inline Value::ID classid( void )
         {
             return Value::GTH_INSTRUCTION;
@@ -536,81 +664,11 @@ namespace libcasm_ir
 
         GeqInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
+        void accept( Visitor& visitor ) override final;
+
         static inline Value::ID classid( void )
         {
             return Value::GEQ_INSTRUCTION;
-        }
-
-        static u1 classof( Value const* obj );
-
-        static const TypeAnnotation info;
-    };
-
-    //
-    // Logical Instructions
-    //
-
-    class OrInstruction : public LogicalInstruction, public BinaryInstruction
-    {
-      public:
-        using Ptr = std::shared_ptr< OrInstruction >;
-
-        OrInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
-
-        static inline Value::ID classid( void )
-        {
-            return Value::OR_INSTRUCTION;
-        }
-
-        static u1 classof( Value const* obj );
-
-        static const TypeAnnotation info;
-    };
-
-    class XorInstruction : public LogicalInstruction, public BinaryInstruction
-    {
-      public:
-        using Ptr = std::shared_ptr< XorInstruction >;
-
-        XorInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
-
-        static inline Value::ID classid( void )
-        {
-            return Value::XOR_INSTRUCTION;
-        }
-
-        static u1 classof( Value const* obj );
-
-        static const TypeAnnotation info;
-    };
-
-    class AndInstruction : public LogicalInstruction, public BinaryInstruction
-    {
-      public:
-        using Ptr = std::shared_ptr< AndInstruction >;
-
-        AndInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
-
-        static inline Value::ID classid( void )
-        {
-            return Value::AND_INSTRUCTION;
-        }
-
-        static u1 classof( Value const* obj );
-
-        static const TypeAnnotation info;
-    };
-
-    class NotInstruction : public LogicalInstruction, public UnaryInstruction
-    {
-      public:
-        using Ptr = std::shared_ptr< NotInstruction >;
-
-        NotInstruction( const Value::Ptr& lhs );
-
-        static inline Value::ID classid( void )
-        {
-            return Value::NOT_INSTRUCTION;
         }
 
         static u1 classof( Value const* obj );

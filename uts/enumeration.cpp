@@ -21,55 +21,40 @@
 //  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef _LIB_CASMIR_CASM_IR_DUMP_PASS_H_
-#define _LIB_CASMIR_CASM_IR_DUMP_PASS_H_
+#include "uts/main.h"
 
-#include "libpass.h"
+using namespace libcasm_ir;
 
-#include "../Specification.h"
-#include "../Visitor.h"
-
-/**
-   @brief    TODO
-
-   TODO
-*/
-
-namespace libcasm_ir
+TEST( libcasm_ir__enumeration, example )
 {
-    class CasmIRDumpPass final : public libpass::Pass, public Visitor
+    const std::vector< std::string > elements = { "foo", "bar", "baz" };
+    const auto e = libstdhl::make< Enumeration >( "example", elements );
+
+    ASSERT_TRUE( e != nullptr );
+
+    for( std::size_t c = 0; c < elements.size(); c++ )
     {
-      public:
-        static char id;
+        EXPECT_EQ( e->encode( elements[ c ] ), c );
 
-        u1 run( libpass::PassResult& pr ) override;
+        EXPECT_STREQ( e->decode( c ).c_str(), elements[ c ].c_str() );
+    }
 
-        std::string indention( Value& value ) const;
+    EXPECT_THROW( { e->encode( "enum" ); }, std::domain_error );
 
-        LIB_CASMIR_VISITOR_INTERFACE;
-
-        class Data : public libpass::PassData
-        {
-          public:
-            using Ptr = std::shared_ptr< Data >;
-
-            Data( const Specification::Ptr& specification )
-            : m_specification( specification )
-            {
-            }
-
-            Specification::Ptr specification( void ) const
-            {
-                return m_specification;
-            }
-
-          private:
-            Specification::Ptr m_specification;
-        };
-    };
+    EXPECT_THROW( { e->decode( 123 ); }, std::domain_error );
 }
 
-#endif // _LIB_CASMIR_CASM_IR_DUMP_PASS_H_
+TEST( libcasm_ir__enumeration, invalid_same_values_are_not_allowed )
+{
+    const std::vector< std::string > elements
+        = { "foo", "bar", "baz", "bar", "foo" };
+
+    EXPECT_THROW(
+        {
+            const auto e = libstdhl::make< Enumeration >( "example", elements );
+        },
+        std::domain_error );
+}
 
 //
 //  Local variables:
