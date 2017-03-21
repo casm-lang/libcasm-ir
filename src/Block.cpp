@@ -151,6 +151,18 @@ u1 ExecutionSemanticsBlock::classof( Value const* obj )
 // ParallelBlock
 //
 
+ParallelBlock::Ptr ParallelBlock::create( u1 empty )
+{
+    auto block = std::shared_ptr< ParallelBlock >( new ParallelBlock );
+
+    if( not empty )
+    {
+        block->init();
+    }
+
+    return block;
+}
+
 ParallelBlock::ParallelBlock( void )
 : ExecutionSemanticsBlock( "par", true, classid() )
 {
@@ -181,6 +193,18 @@ u1 ParallelBlock::classof( Value const* obj )
 //
 // SequentialBlock
 //
+
+SequentialBlock::Ptr SequentialBlock::create( u1 empty )
+{
+    auto block = std::shared_ptr< SequentialBlock >( new SequentialBlock );
+
+    if( not empty )
+    {
+        block->init();
+    }
+
+    return block;
+}
 
 SequentialBlock::SequentialBlock( void )
 : ExecutionSemanticsBlock( "seq", false, classid() )

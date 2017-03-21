@@ -69,9 +69,11 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< ExecutionSemanticsBlock >;
 
+      protected:
         ExecutionSemanticsBlock(
             const std::string& name, u1 parallel, Value::ID id = classid() );
 
+      public:
         u1 parallel( void ) const;
 
         u64 pseudostate( void ) const;
@@ -111,14 +113,12 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< ParallelBlock >;
 
+        static ParallelBlock::Ptr create( u1 empty = false );
+
+      private:
         ParallelBlock( void );
 
-        ParallelBlock::Ptr init( void )
-        {
-            return std::static_pointer_cast< ParallelBlock >(
-                ExecutionSemanticsBlock::init() );
-        }
-
+      public:
         void setRule( const std::shared_ptr< Rule >& rule );
 
         /**
@@ -145,14 +145,12 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< SequentialBlock >;
 
+        static SequentialBlock::Ptr create( u1 empty = false );
+
+      private:
         SequentialBlock( void );
 
-        SequentialBlock::Ptr init( void )
-        {
-            return std::static_pointer_cast< SequentialBlock >(
-                ExecutionSemanticsBlock::init() );
-        }
-
+      public:
         void accept( Visitor& visitor ) override;
 
         static inline Value::ID classid( void )
