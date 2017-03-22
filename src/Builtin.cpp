@@ -228,17 +228,28 @@ u1 GeneralBuiltin::classof( Value const* obj )
 }
 
 //
-// PrintBuiltin
+// OutputBuiltin
 //
 
-PrintBuiltin::PrintBuiltin( const std::string& channel )
-: GeneralBuiltin( "print",
+OutputBuiltin::OutputBuiltin( const std::string& name, const Type::Ptr& type,
+    const std::string& channel, u1 newline, Value::ID id )
+: GeneralBuiltin( name,
       libstdhl::get< RelationType >( libstdhl::get< VoidType >(),
           Types( { libstdhl::get< StringType >() } ) ),
       info, classid() )
+, m_channel( channel )
+, m_newline( newline )
 {
 }
-const TypeAnnotation PrintBuiltin::info( TypeAnnotation::Data{
+std::string OutputBuiltin::channel( void ) const
+{
+    return m_channel;
+}
+u1 OutputBuiltin::newline( void ) const
+{
+    return m_newline;
+}
+const TypeAnnotation OutputBuiltin::info( TypeAnnotation::Data{
 
     { Type::VOID,
         {
@@ -246,7 +257,39 @@ const TypeAnnotation PrintBuiltin::info( TypeAnnotation::Data{
         } }
 
 } );
+u1 OutputBuiltin::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
+
+//
+// PrintBuiltin
+//
+
+PrintBuiltin::PrintBuiltin( void )
+: OutputBuiltin( "print",
+      libstdhl::get< RelationType >( libstdhl::get< VoidType >(),
+          Types( { libstdhl::get< StringType >() } ) ),
+      "$stdout$", false, classid() )
+{
+}
 u1 PrintBuiltin::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
+
+//
+// PrintLnBuiltin
+//
+
+PrintLnBuiltin::PrintLnBuiltin( void )
+: OutputBuiltin( "println",
+      libstdhl::get< RelationType >( libstdhl::get< VoidType >(),
+          Types( { libstdhl::get< StringType >() } ) ),
+      "$stdout$", true, classid() )
+{
+}
+u1 PrintLnBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
 }

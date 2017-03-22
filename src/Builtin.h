@@ -77,21 +77,63 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class PrintBuiltin : public GeneralBuiltin
+    class OutputBuiltin : public GeneralBuiltin
+    {
+      public:
+        using Ptr = std::shared_ptr< OutputBuiltin >;
+
+        OutputBuiltin( const std::string& name, const Type::Ptr& type,
+            const std::string& channel, u1 newline, Value::ID id = classid() );
+
+        std::string channel( void ) const;
+
+        u1 newline( void ) const;
+
+      private:
+        std::string m_channel;
+
+        u1 m_newline;
+
+      public:
+        static inline Value::ID classid( void )
+        {
+            return Value::OUTPUT_BUILTIN;
+        }
+
+        static u1 classof( Value const* obj );
+
+        static const TypeAnnotation info;
+    };
+
+    class PrintBuiltin : public OutputBuiltin
     {
       public:
         using Ptr = std::shared_ptr< PrintBuiltin >;
 
-        PrintBuiltin( const std::string& channel );
+        PrintBuiltin( void );
 
+      public:
         static inline Value::ID classid( void )
         {
             return Value::PRINT_BUILTIN;
         }
 
         static u1 classof( Value const* obj );
+    };
 
-        static const TypeAnnotation info;
+    class PrintLnBuiltin : public OutputBuiltin
+    {
+      public:
+        using Ptr = std::shared_ptr< PrintLnBuiltin >;
+
+        PrintLnBuiltin( void );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::PRINTLN_BUILTIN;
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     class CastingBuiltin : public Builtin
