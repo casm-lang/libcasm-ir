@@ -61,6 +61,7 @@ namespace libcasm_ir
 
     class CallInstruction;
 
+    class InvInstruction;
     class AddInstruction;
     class SubInstruction;
     class MulInstruction;
@@ -142,6 +143,7 @@ namespace libcasm_ir
         virtual void visit( SelectInstruction& value ) = 0;
         virtual void visit( SymbolicInstruction& value ) = 0;
 
+        virtual void visit( InvInstruction& value ) = 0;
         virtual void visit( AddInstruction& value ) = 0;
         virtual void visit( SubInstruction& value ) = 0;
         virtual void visit( MulInstruction& value ) = 0;
@@ -220,6 +222,7 @@ namespace libcasm_ir
         virtual void visit( SelectInstruction& value ) override = 0;
         virtual void visit( SymbolicInstruction& value ) override = 0;
 
+        virtual void visit( InvInstruction& value ) override = 0;
         virtual void visit( AddInstruction& value ) override = 0;
         virtual void visit( SubInstruction& value ) override = 0;
         virtual void visit( MulInstruction& value ) override = 0;
@@ -311,6 +314,7 @@ namespace libcasm_ir
         void visit( SelectInstruction& value ) override;
         void visit( SymbolicInstruction& value ) override;
 
+        void visit( InvInstruction& value ) override;
         void visit( AddInstruction& value ) override;
         void visit( SubInstruction& value ) override;
         void visit( MulInstruction& value ) override;

@@ -322,6 +322,10 @@ void ConsistencyCheckVisitor::visit( SymbolicInstruction& value )
     verify< SymbolicInstruction >( value );
 }
 
+void ConsistencyCheckVisitor::visit( InvInstruction& value )
+{
+    verify< InvInstruction >( value );
+}
 void ConsistencyCheckVisitor::visit( AddInstruction& value )
 {
     verify< AddInstruction >( value );

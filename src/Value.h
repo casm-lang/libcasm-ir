@@ -101,6 +101,7 @@ namespace libcasm_ir
             ,
             OPERATOR_INSTRUCTION,
             ARITHMETIC_INSTRUCTION,
+            INV_INSTRUCTION,
             ADD_INSTRUCTION,
             SUB_INSTRUCTION,
             MUL_INSTRUCTION,

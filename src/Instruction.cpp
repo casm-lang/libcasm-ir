@@ -183,7 +183,7 @@ u1 UnaryInstruction::classof( Value const* obj )
            or MergeInstruction::classof( obj )
            or LookupInstruction::classof( obj )
            or AssertInstruction::classof( obj )
-           or NotInstruction::classof( obj );
+           or InvInstruction::classof( obj ) or NotInstruction::classof( obj );
 }
 
 //
@@ -503,22 +503,26 @@ ArithmeticInstruction::ArithmeticInstruction( const std::string& name,
       operands[ 0 ] ? operands[ 0 ]->ptr_type() : libstdhl::get< VoidType >(),
       operands, info, id )
 {
-    assert( operands.size() == 2 );
+    assert( operands.size() <= 2 );
 
     auto lhs_ty = operand( 0 )->type();
-    auto rhs_ty = operand( 1 )->type();
+    if( operands.size() > 1 )
+    {
+        auto rhs_ty = operand( 1 )->type();
+        assert( lhs_ty == rhs_ty );
+    }
 
-    assert( lhs_ty == rhs_ty );
     assert( lhs_ty.id() == resolved() );
 }
 
 u1 ArithmeticInstruction::classof( Value const* obj )
 {
-    return obj->id() == classid() or AddInstruction::classof( obj )
-           or SubInstruction::classof( obj ) or MulInstruction::classof( obj )
-           or DivInstruction::classof( obj ) or ModInstruction::classof( obj )
-           or OrInstruction::classof( obj ) or XorInstruction::classof( obj )
-           or AndInstruction::classof( obj ) or NotInstruction::classof( obj );
+    return obj->id() == classid() or InvInstruction::classof( obj )
+           or AddInstruction::classof( obj ) or SubInstruction::classof( obj )
+           or MulInstruction::classof( obj ) or DivInstruction::classof( obj )
+           or ModInstruction::classof( obj ) or OrInstruction::classof( obj )
+           or XorInstruction::classof( obj ) or AndInstruction::classof( obj )
+           or NotInstruction::classof( obj );
 }
 
 //
@@ -575,6 +579,43 @@ u1 LogicalInstruction::classof( Value const* obj )
     return obj->id() == classid() or OrInstruction::classof( obj )
            or XorInstruction::classof( obj ) or AndInstruction::classof( obj )
            or NotInstruction::classof( obj );
+}
+
+//
+// Inv Instruction
+//
+
+InvInstruction::InvInstruction( const Value::Ptr& lhs )
+: ArithmeticInstruction( "inv", { lhs }, info, classid() )
+, UnaryInstruction( this )
+{
+}
+
+const TypeAnnotation InvInstruction::info( TypeAnnotation::Data{
+
+    { Type::INTEGER,
+        {
+            Type::INTEGER,
+        } },
+    { Type::FLOATING,
+        {
+            Type::FLOATING,
+        } },
+    { Type::RATIONAL,
+        {
+            Type::RATIONAL,
+        } }
+
+} );
+
+void InvInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
+u1 InvInstruction::classof( Value const* obj )
+{
+    return obj->id() == classid();
 }
 
 //

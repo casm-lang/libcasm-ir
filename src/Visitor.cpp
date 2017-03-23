@@ -283,6 +283,10 @@ void TraversalVisitor::visit( SymbolicInstruction& value )
     callback()( value );
 }
 
+void TraversalVisitor::visit( InvInstruction& value )
+{
+    callback()( value );
+}
 void TraversalVisitor::visit( AddInstruction& value )
 {
     callback()( value );

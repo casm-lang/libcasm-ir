@@ -325,6 +325,10 @@ void IRDumpSourceVisitor::visit( SymbolicInstruction& value )
     dump( value );
 }
 
+void IRDumpSourceVisitor::visit( InvInstruction& value )
+{
+    dump( value );
+}
 void IRDumpSourceVisitor::visit( AddInstruction& value )
 {
     dump( value );

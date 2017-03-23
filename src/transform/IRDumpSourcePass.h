@@ -100,6 +100,7 @@ namespace libcasm_ir
         void visit( SelectInstruction& value ) override;
         void visit( SymbolicInstruction& value ) override;
 
+        void visit( InvInstruction& value ) override;
         void visit( AddInstruction& value ) override;
         void visit( SubInstruction& value ) override;
         void visit( MulInstruction& value ) override;

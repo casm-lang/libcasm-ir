@@ -378,6 +378,25 @@ namespace libcasm_ir
     // Arithmetic Instructions
     //
 
+    class InvInstruction : public ArithmeticInstruction, public UnaryInstruction
+    {
+      public:
+        using Ptr = std::shared_ptr< InvInstruction >;
+
+        InvInstruction( const Value::Ptr& lhs );
+
+        void accept( Visitor& visitor ) override final;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::INV_INSTRUCTION;
+        }
+
+        static u1 classof( Value const* obj );
+
+        static const TypeAnnotation info;
+    };
+
     class AddInstruction : public ArithmeticInstruction,
                            public BinaryInstruction
     {
