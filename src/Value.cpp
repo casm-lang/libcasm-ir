@@ -208,6 +208,476 @@ void Value::iterate(
     accept( visitor );
 }
 
+std::string Value::token( const Value::ID id )
+{
+    switch( id )
+    {
+        case Value::VALUE:
+        {
+            return "Value";
+        }
+        case Value::VALUE_LIST:
+        {
+            return "ValueList";
+        }
+        case Value::USER:
+        {
+            return "User";
+        }
+
+        case Value::SPECIFICATION:
+        {
+            return "Specification";
+        }
+        case Value::AGENT:
+        {
+            return "Agent";
+        }
+        case Value::RULE:
+        {
+            return "Rule";
+        }
+        case Value::DERIVED:
+        {
+            return "Derived";
+        }
+        case Value::FUNCTION:
+        {
+            return "Function";
+        }
+        case Value::ENUMERATION:
+        {
+            return "Enumeration";
+        }
+
+        case Value::BLOCK:
+        {
+            return "Block";
+        }
+        case Value::EXECUTION_SEMANTICS_BLOCK:
+        {
+            return "ExecutionSemanticsBlock";
+        }
+        case Value::PARALLEL_BLOCK:
+        {
+            return "ParallelBlock";
+        }
+        case Value::SEQUENTIAL_BLOCK:
+        {
+            return "SequentialBlock";
+        }
+        case Value::STATEMENT:
+        {
+            return "Statement";
+        }
+        case Value::TRIVIAL_STATEMENT:
+        {
+            return "TrivialStatement";
+        }
+        case Value::BRANCH_STATEMENT:
+        {
+            return "BranchStatement";
+        }
+
+        case Value::CONSTANT:
+        {
+            return "Constant";
+        }
+        case Value::VOID_CONSTANT:
+        {
+            return "VoidConstant";
+        }
+        case Value::AGENT_CONSTANT:
+        {
+            return "AgentConstant";
+        }
+        case Value::RULE_REFERENCE_CONSTANT:
+        {
+            return "RuleReferenceConstant";
+        }
+        case Value::BOOLEAN_CONSTANT:
+        {
+            return "BooleanConstant";
+        }
+        case Value::INTEGER_CONSTANT:
+        {
+            return "IntegerConstant";
+        }
+        case Value::BIT_CONSTANT:
+        {
+            return "BitConstant";
+        }
+        case Value::STRING_CONSTANT:
+        {
+            return "StringConstant";
+        }
+        case Value::FLOATING_CONSTANT:
+        {
+            return "FloatingConstant";
+        }
+        case Value::RATIONAL_CONSTANT:
+        {
+            return "RationalConstant";
+        }
+        case Value::ENUMERATION_CONSTANT:
+        {
+            return "EnumerationConstant";
+        }
+        case Value::IDENTIFIER:
+        {
+            return "Identifier";
+        }
+
+        case Value::INSTRUCTION:
+        {
+            return "Instruction";
+        }
+        case Value::UNARY_INSTRUCTION:
+        {
+            return "UnaryInstruction";
+        }
+        case Value::BINARY_INSTRUCTION:
+        {
+            return "BinaryInstruction";
+        }
+
+        case Value::ASSERT_INSTRUCTION:
+        {
+            return "assert";
+        }
+
+        case Value::SELECT_INSTRUCTION:
+        {
+            return "select";
+        }
+        case Value::SYMBOLIC_INSTRUCTION:
+        {
+            return "symbolic";
+        }
+        case Value::SKIP_INSTRUCTION:
+        {
+            return "skip";
+        }
+        case Value::FORK_INSTRUCTION:
+        {
+            return "fork";
+        }
+        case Value::MERGE_INSTRUCTION:
+        {
+            return "merge";
+        }
+        case Value::LOOKUP_INSTRUCTION:
+        {
+            return "lookup";
+        }
+        case Value::UPDATE_INSTRUCTION:
+        {
+            return "update";
+        }
+        case Value::LOCATION_INSTRUCTION:
+        {
+            return "location";
+        }
+        case Value::CALL_INSTRUCTION:
+        {
+            return "call";
+        }
+        case Value::LOCAL_INSTRUCTION:
+        {
+            return "local";
+        }
+
+        case Value::OPERATOR_INSTRUCTION:
+        {
+            return "OperatorInstruction";
+        }
+
+        case Value::ARITHMETIC_INSTRUCTION:
+        {
+            return "ArithmethicInstruction";
+        }
+        case Value::INV_INSTRUCTION:
+        {
+            return "-";
+        }
+        case Value::ADD_INSTRUCTION:
+        {
+            return "+";
+        }
+        case Value::SUB_INSTRUCTION:
+        {
+            return "-";
+        }
+        case Value::MUL_INSTRUCTION:
+        {
+            return "*";
+        }
+        case Value::DIV_INSTRUCTION:
+        {
+            return "/";
+        }
+        case Value::MOD_INSTRUCTION:
+        {
+            return "%";
+        }
+
+        case Value::COMPARE_INSTRUCTION:
+        {
+            return "CompareInstruction";
+        }
+        case Value::EQU_INSTRUCTION:
+        {
+            return "=";
+        }
+        case Value::NEQ_INSTRUCTION:
+        {
+            return "!=";
+        }
+        case Value::LTH_INSTRUCTION:
+        {
+            return "<";
+        }
+        case Value::LEQ_INSTRUCTION:
+        {
+            return "<=";
+        }
+        case Value::GTH_INSTRUCTION:
+        {
+            return ">";
+        }
+        case Value::GEQ_INSTRUCTION:
+        {
+            return ">=";
+        }
+
+        case Value::LOGICAL_INSTRUCTION:
+        {
+            return "LogicalInstruction";
+        }
+        case Value::OR_INSTRUCTION:
+        {
+            return "or";
+        }
+        case Value::XOR_INSTRUCTION:
+        {
+            return "xor";
+        }
+        case Value::AND_INSTRUCTION:
+        {
+            return "and";
+        }
+        case Value::NOT_INSTRUCTION:
+        {
+            return "not";
+        }
+
+        case Value::BUILTIN:
+        {
+            return "Builtin";
+        }
+        case Value::GENERAL_BUILTIN:
+        {
+            return "GeneralBuiltin";
+        }
+
+        case Value::OUTPUT_BUILTIN:
+        {
+            return "OutputBuiltin";
+        }
+        case Value::PRINT_BUILTIN:
+        {
+            return "print";
+        }
+        case Value::PRINTLN_BUILTIN:
+        {
+            return "println";
+        }
+
+        case Value::CASTING_BUILTIN:
+        {
+            return "CastingBuiltin";
+        }
+        case Value::AS_BOOLEAN_BUILTIN:
+        {
+            return "asBoolean";
+        }
+        case Value::AS_INTEGER_BUILTIN:
+        {
+            return "asInteger";
+        }
+        case Value::AS_BIT_BUILTIN:
+        {
+            return "asBit";
+        }
+        case Value::AS_STRING_BUILTIN:
+        {
+            return "asString";
+        }
+        case Value::AS_FLOATING_BUILTIN:
+        {
+            return "asFloating";
+        }
+        case Value::AS_RATIONAL_BUILTIN:
+        {
+            return "asRational";
+        }
+        case Value::AS_ENUMERATION_BUILTIN:
+        {
+            return "asEnumeration";
+        }
+
+        case Value::STRINGIFY_BUILTIN:
+        {
+            return "StringifyBuiltin";
+        }
+        case Value::DEC_BUILTIN:
+        {
+            return "dec";
+        }
+        case Value::HEX_BUILTIN:
+        {
+            return "hex";
+        }
+        case Value::OCT_BUILTIN:
+        {
+            return "oct";
+        }
+        case Value::BIN_BUILTIN:
+        {
+            return "bin";
+        }
+
+        case Value::MATH_BUILTIN:
+        {
+            return "MathBuiltin";
+        }
+        case Value::POW_BUILTIN:
+        {
+            return "pow";
+        }
+        case Value::RAND_BUILTIN:
+        {
+            return "rand";
+        }
+
+        case Value::OPERATOR_BUILTIN:
+        {
+            return "OperatorBuiltin";
+        }
+        case Value::ARITHMETIC_BUILTIN:
+        {
+            return "ArithmethicBuiltin";
+        }
+        case Value::ADDU_BUILTIN:
+        {
+            return "addu";
+        }
+        case Value::ADDS_BUILTIN:
+        {
+            return "adds";
+        }
+        case Value::SUBU_BUILTIN:
+        {
+            return "subu";
+        }
+        case Value::SUBS_BUILTIN:
+        {
+            return "subs";
+        }
+        case Value::MULU_BUILTIN:
+        {
+            return "mulu";
+        }
+        case Value::MULS_BUILTIN:
+        {
+            return "muls";
+        }
+
+        case Value::COMPARE_BUILTIN:
+        {
+            return "CompareBuiltin";
+        }
+        case Value::LESU_BUILTIN:
+        {
+            return "lesu";
+        }
+        case Value::LESS_BUILTIN:
+        {
+            return "less";
+        }
+        case Value::LEQU_BUILTIN:
+        {
+            return "lequ";
+        }
+        case Value::LEQS_BUILTIN:
+        {
+            return "leqs";
+        }
+        case Value::GREU_BUILTIN:
+        {
+            return "greu";
+        }
+        case Value::GRES_BUILTIN:
+        {
+            return "gres";
+        }
+        case Value::GEQU_BUILTIN:
+        {
+            return "gequ";
+        }
+        case Value::GEQS_BUILTIN:
+        {
+            return "geqs";
+        }
+
+        case Value::BIT_BUILTIN:
+        {
+            return "BitBuiltin";
+        }
+        case Value::ZEXT_BUILTIN:
+        {
+            return "zext";
+        }
+        case Value::SEXT_BUILTIN:
+        {
+            return "sext";
+        }
+        case Value::TRUNC_BUILTIN:
+        {
+            return "trunc";
+        }
+        case Value::SHL_BUILTIN:
+        {
+            return "shl";
+        }
+        case Value::SHR_BUILTIN:
+        {
+            return "shr";
+        }
+        case Value::ASHR_BUILTIN:
+        {
+            return "ashr";
+        }
+        case Value::CLZ_BUILTIN:
+        {
+            return "clz";
+        }
+        case Value::CLO_BUILTIN:
+        {
+            return "clo";
+        }
+        case Value::CLS_BUILTIN:
+        {
+            return "cls";
+        }
+
+        case Value::_SIZE_:
+        {
+            return "_SIZE_ = " + std::to_string( Value::_SIZE_ );
+        }
+    }
+}
+
 //
 //  Local variables:
 //  mode: c++

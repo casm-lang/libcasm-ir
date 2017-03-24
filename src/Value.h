@@ -106,7 +106,6 @@ namespace libcasm_ir
             SUB_INSTRUCTION,
             MUL_INSTRUCTION,
             DIV_INSTRUCTION,
-            RIV_INSTRUCTION,
             MOD_INSTRUCTION,
 
             COMPARE_INSTRUCTION,
@@ -186,6 +185,8 @@ namespace libcasm_ir
             // LEN_BUILTIN,
             // TAIL_BUILTIN,
             // PEEK_BUILTIN,
+
+            _SIZE_
         };
 
         Value( const std::string& name, const Type::Ptr& type, ID id );
@@ -247,6 +248,13 @@ namespace libcasm_ir
         ID m_id;
 
       public:
+        /**
+           encodes the Value::ID to a human readable std::string
+           this function can be used by front-ends to display the
+           e.g. instruction as a operator symbol
+         */
+        static std::string token( const Value::ID id );
+
         static inline ID classid( void )
         {
             return Value::VALUE;
