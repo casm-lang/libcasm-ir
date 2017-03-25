@@ -294,6 +294,34 @@ u1 PrintLnBuiltin::classof( Value const* obj )
     return obj->id() == classid();
 }
 
+//
+// AssertBuiltin
+//
+
+AssertBuiltin::AssertBuiltin( const Type::Ptr& type )
+: GeneralBuiltin( Value::token( classid() ), type, info, classid() )
+{
+}
+u1 AssertBuiltin::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
+const TypeAnnotation AssertBuiltin::info( TypeAnnotation::Data{
+
+    {
+        Type::VOID,
+        {
+            Type::BOOLEAN,
+        },
+    },
+    {
+        Type::VOID,
+        {
+            Type::BOOLEAN, Type::STRING,
+        },
+    },
+} );
+
 //------------------------------------------------------------------------------
 
 //

@@ -479,6 +479,10 @@ std::string Value::token( const Value::ID id )
         {
             return "GeneralBuiltin";
         }
+        case Value::ASSERT_BUILTIN:
+        {
+            return "assert";
+        }
 
         case Value::OUTPUT_BUILTIN:
         {

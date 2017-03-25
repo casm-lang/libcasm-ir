@@ -371,6 +371,11 @@ TEST( libcasm_ir_value, id_to_token_string )
                 EXPECT_STREQ( Value::token( id ).c_str(), "GeneralBuiltin" );
                 break;
             }
+            case Value::ASSERT_BUILTIN:
+            {
+                EXPECT_STREQ( Value::token( id ).c_str(), "assert" );
+                break;
+            }
 
             case Value::OUTPUT_BUILTIN:
             {

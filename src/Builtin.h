@@ -77,6 +77,24 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
+    class AssertBuiltin : public GeneralBuiltin
+    {
+      public:
+        using Ptr = std::shared_ptr< AssertBuiltin >;
+
+        AssertBuiltin( const Type::Ptr& type );
+
+      public:
+        static inline Value::ID classid( void )
+        {
+            return Value::ASSERT_BUILTIN;
+        }
+
+        static u1 classof( Value const* obj );
+
+        static const TypeAnnotation info;
+    };
+
     class OutputBuiltin : public GeneralBuiltin
     {
       public:

@@ -125,6 +125,8 @@ namespace libcasm_ir
             BUILTIN,
 
             GENERAL_BUILTIN,
+            ASSERT_BUILTIN,
+
             OUTPUT_BUILTIN,
             PRINT_BUILTIN,
             PRINTLN_BUILTIN,
