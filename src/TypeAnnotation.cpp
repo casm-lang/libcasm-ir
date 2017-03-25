@@ -30,18 +30,12 @@ TypeAnnotation::TypeAnnotation( const Data& info )
 {
     assert( m_info.size() > 0 );
 
-    m_type_set.push_back( Set() );
-
-    for( u32 i = 0; i < m_info[ 0 ].argument.size(); i++ )
-    {
-        m_type_set.push_back( Set() );
-    }
-
     for( auto relation : m_info )
     {
         Type::ID rt = relation.result;
 
-        m_type_set[ 0 ].insert( rt );
+        m_type_set.emplace_back( Set() );
+        m_type_set.back().insert( rt );
 
         std::string key;
 
@@ -50,7 +44,8 @@ TypeAnnotation::TypeAnnotation( const Data& info )
             Type::ID at = relation.argument[ i ];
             assert( at != libcasm_ir::Type::RELATION );
 
-            m_type_set[ ( i + 1 ) ].insert( at );
+            m_type_set.emplace_back( Set() );
+            m_type_set.back().insert( at );
             key += std::to_string( at ) + ";";
         }
 
