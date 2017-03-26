@@ -25,8 +25,9 @@
 
 using namespace libcasm_ir;
 
-TypeAnnotation::TypeAnnotation( const Data& info )
-: m_info( info )
+TypeAnnotation::TypeAnnotation( const Value::ID id, const Data& info )
+: m_id( id )
+, m_info( info )
 {
     assert( m_info.size() > 0 );
 

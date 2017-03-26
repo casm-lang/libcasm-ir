@@ -31,7 +31,9 @@
 #define _LIB_CASMIR_TYPEANNOTATION_H_
 
 #include "CasmIR.h"
+
 #include "Type.h"
+#include "Value.h"
 
 namespace libcasm_ir
 {
@@ -49,15 +51,8 @@ namespace libcasm_ir
         using Data = std::vector< Relation >;
         using Set = std::set< Type::ID >;
 
-      private:
-        const Data m_info;
-
-        std::vector< Set > m_type_set;
-
-        std::unordered_map< std::string, Type::ID > m_relation_to_type;
-
       public:
-        TypeAnnotation( const Data& info );
+        TypeAnnotation( const Value::ID id, const Data& info );
 
         Type::ID resultTypeForRelation(
             const std::vector< const Type* > arguments ) const;
@@ -65,6 +60,16 @@ namespace libcasm_ir
         const Set& resultTypes( void ) const;
         const Set& argumentTypes( u8 pos ) const;
 
+      private:
+        Value::ID m_id;
+
+        const Data m_info;
+
+        std::vector< Set > m_type_set;
+
+        std::unordered_map< std::string, Type::ID > m_relation_to_type;
+
+      public:
         template < class T >
         static const Set& ResultTypes( void )
         {

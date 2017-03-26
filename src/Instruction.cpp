@@ -591,22 +591,23 @@ InvInstruction::InvInstruction( const Value::Ptr& lhs )
 {
 }
 
-const TypeAnnotation InvInstruction::info( TypeAnnotation::Data{
+const TypeAnnotation InvInstruction::info( classid(),
+    TypeAnnotation::Data{
 
-    { Type::INTEGER,
-        {
-            Type::INTEGER,
-        } },
-    { Type::FLOATING,
-        {
-            Type::FLOATING,
-        } },
-    { Type::RATIONAL,
-        {
-            Type::RATIONAL,
-        } }
+        { Type::INTEGER,
+            {
+                Type::INTEGER,
+            } },
+        { Type::FLOATING,
+            {
+                Type::FLOATING,
+            } },
+        { Type::RATIONAL,
+            {
+                Type::RATIONAL,
+            } }
 
-} );
+    } );
 
 void InvInstruction::accept( Visitor& visitor )
 {
@@ -628,22 +629,23 @@ AddInstruction::AddInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const TypeAnnotation AddInstruction::info( TypeAnnotation::Data{
+const TypeAnnotation AddInstruction::info( classid(),
+    TypeAnnotation::Data{
 
-    { Type::INTEGER,
-        {
-            Type::INTEGER, Type::INTEGER,
-        } },
-    { Type::BIT,
-        {
-            Type::BIT, Type::BIT,
-        } },
-    { Type::STRING,
-        {
-            Type::STRING, Type::STRING,
-        } }
+        { Type::INTEGER,
+            {
+                Type::INTEGER, Type::INTEGER,
+            } },
+        { Type::BIT,
+            {
+                Type::BIT, Type::BIT,
+            } },
+        { Type::STRING,
+            {
+                Type::STRING, Type::STRING,
+            } }
 
-} );
+    } );
 
 void AddInstruction::accept( Visitor& visitor )
 {
@@ -665,18 +667,19 @@ SubInstruction::SubInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const TypeAnnotation SubInstruction::info( TypeAnnotation::Data{
+const TypeAnnotation SubInstruction::info( classid(),
+    TypeAnnotation::Data{
 
-    { Type::INTEGER,
-        {
-            Type::INTEGER, Type::INTEGER,
-        } },
-    { Type::BIT,
-        {
-            Type::BIT, Type::BIT,
-        } }
+        { Type::INTEGER,
+            {
+                Type::INTEGER, Type::INTEGER,
+            } },
+        { Type::BIT,
+            {
+                Type::BIT, Type::BIT,
+            } }
 
-} );
+    } );
 
 void SubInstruction::accept( Visitor& visitor )
 {
@@ -698,18 +701,19 @@ MulInstruction::MulInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const TypeAnnotation MulInstruction::info( TypeAnnotation::Data{
+const TypeAnnotation MulInstruction::info( classid(),
+    TypeAnnotation::Data{
 
-    { Type::INTEGER,
-        {
-            Type::INTEGER, Type::INTEGER,
-        } },
-    { Type::BIT,
-        {
-            Type::BIT, Type::BIT,
-        } }
+        { Type::INTEGER,
+            {
+                Type::INTEGER, Type::INTEGER,
+            } },
+        { Type::BIT,
+            {
+                Type::BIT, Type::BIT,
+            } }
 
-} );
+    } );
 
 void MulInstruction::accept( Visitor& visitor )
 {
@@ -731,14 +735,15 @@ ModInstruction::ModInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const TypeAnnotation ModInstruction::info( TypeAnnotation::Data{
+const TypeAnnotation ModInstruction::info( classid(),
+    TypeAnnotation::Data{
 
-    { Type::INTEGER,
-        {
-            Type::INTEGER, Type::INTEGER,
-        } }
+        { Type::INTEGER,
+            {
+                Type::INTEGER, Type::INTEGER,
+            } }
 
-} );
+    } );
 
 void ModInstruction::accept( Visitor& visitor )
 {
@@ -760,18 +765,19 @@ DivInstruction::DivInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const TypeAnnotation DivInstruction::info( TypeAnnotation::Data{
+const TypeAnnotation DivInstruction::info( classid(),
+    TypeAnnotation::Data{
 
-    { Type::INTEGER,
-        {
-            Type::INTEGER, Type::INTEGER,
-        } },
-    { Type::RATIONAL,
-        {
-            Type::RATIONAL, Type::RATIONAL,
-        } }
+        { Type::INTEGER,
+            {
+                Type::INTEGER, Type::INTEGER,
+            } },
+        { Type::RATIONAL,
+            {
+                Type::RATIONAL, Type::RATIONAL,
+            } }
 
-} );
+    } );
 
 void DivInstruction::accept( Visitor& visitor )
 {
@@ -793,18 +799,19 @@ AndInstruction::AndInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const TypeAnnotation AndInstruction::info( TypeAnnotation::Data{
+const TypeAnnotation AndInstruction::info( classid(),
+    TypeAnnotation::Data{
 
-    { Type::BOOLEAN,
-        {
-            Type::BOOLEAN, Type::BOOLEAN,
-        } },
-    { Type::BIT,
-        {
-            Type::BIT, Type::BIT,
-        } }
+        { Type::BOOLEAN,
+            {
+                Type::BOOLEAN, Type::BOOLEAN,
+            } },
+        { Type::BIT,
+            {
+                Type::BIT, Type::BIT,
+            } }
 
-} );
+    } );
 
 void AndInstruction::accept( Visitor& visitor )
 {
@@ -826,18 +833,19 @@ XorInstruction::XorInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const TypeAnnotation XorInstruction::info( TypeAnnotation::Data{
+const TypeAnnotation XorInstruction::info( classid(),
+    TypeAnnotation::Data{
 
-    { Type::BOOLEAN,
-        {
-            Type::BOOLEAN, Type::BOOLEAN,
-        } },
-    { Type::BIT,
-        {
-            Type::BIT, Type::BIT,
-        } }
+        { Type::BOOLEAN,
+            {
+                Type::BOOLEAN, Type::BOOLEAN,
+            } },
+        { Type::BIT,
+            {
+                Type::BIT, Type::BIT,
+            } }
 
-} );
+    } );
 
 void XorInstruction::accept( Visitor& visitor )
 {
@@ -859,18 +867,19 @@ OrInstruction::OrInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const TypeAnnotation OrInstruction::info( TypeAnnotation::Data{
+const TypeAnnotation OrInstruction::info( classid(),
+    TypeAnnotation::Data{
 
-    { Type::BOOLEAN,
-        {
-            Type::BOOLEAN, Type::BOOLEAN,
-        } },
-    { Type::BIT,
-        {
-            Type::BIT, Type::BIT,
-        } }
+        { Type::BOOLEAN,
+            {
+                Type::BOOLEAN, Type::BOOLEAN,
+            } },
+        { Type::BIT,
+            {
+                Type::BIT, Type::BIT,
+            } }
 
-} );
+    } );
 
 void OrInstruction::accept( Visitor& visitor )
 {
@@ -892,22 +901,23 @@ NotInstruction::NotInstruction( const Value::Ptr& lhs )
 {
 }
 
-const TypeAnnotation NotInstruction::info( TypeAnnotation::Data{
+const TypeAnnotation NotInstruction::info( classid(),
+    TypeAnnotation::Data{
 
-    { Type::BOOLEAN,
-        {
-            Type::BOOLEAN,
-        } },
-    { Type::BOOLEAN,
-        {
-            Type::INTEGER,
-        } },
-    { Type::BIT,
-        {
-            Type::BIT,
-        } }
+        { Type::BOOLEAN,
+            {
+                Type::BOOLEAN,
+            } },
+        { Type::BOOLEAN,
+            {
+                Type::INTEGER,
+            } },
+        { Type::BIT,
+            {
+                Type::BIT,
+            } }
 
-} );
+    } );
 
 void NotInstruction::accept( Visitor& visitor )
 {
@@ -929,38 +939,39 @@ EquInstruction::EquInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const TypeAnnotation EquInstruction::info( TypeAnnotation::Data{
+const TypeAnnotation EquInstruction::info( classid(),
+    TypeAnnotation::Data{
 
-    { Type::BOOLEAN,
-        {
-            Type::RULE_REFERENCE, Type::RULE_REFERENCE,
-        } },
-    { Type::BOOLEAN,
-        {
-            Type::BOOLEAN, Type::BOOLEAN,
-        } },
-    { Type::BOOLEAN,
-        {
-            Type::INTEGER, Type::INTEGER,
-        } },
-    { Type::BOOLEAN,
-        {
-            Type::BIT, Type::BIT,
-        } },
-    { Type::BOOLEAN,
-        {
-            Type::STRING, Type::STRING,
-        } },
-    { Type::BOOLEAN,
-        {
-            Type::RATIONAL, Type::RATIONAL,
-        } },
-    { Type::BOOLEAN,
-        {
-            Type::ENUMERATION, Type::ENUMERATION,
-        } }
+        { Type::BOOLEAN,
+            {
+                Type::RULE_REFERENCE, Type::RULE_REFERENCE,
+            } },
+        { Type::BOOLEAN,
+            {
+                Type::BOOLEAN, Type::BOOLEAN,
+            } },
+        { Type::BOOLEAN,
+            {
+                Type::INTEGER, Type::INTEGER,
+            } },
+        { Type::BOOLEAN,
+            {
+                Type::BIT, Type::BIT,
+            } },
+        { Type::BOOLEAN,
+            {
+                Type::STRING, Type::STRING,
+            } },
+        { Type::BOOLEAN,
+            {
+                Type::RATIONAL, Type::RATIONAL,
+            } },
+        { Type::BOOLEAN,
+            {
+                Type::ENUMERATION, Type::ENUMERATION,
+            } }
 
-} );
+    } );
 
 void EquInstruction::accept( Visitor& visitor )
 {
@@ -982,38 +993,39 @@ NeqInstruction::NeqInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const TypeAnnotation NeqInstruction::info( TypeAnnotation::Data{
+const TypeAnnotation NeqInstruction::info( classid(),
+    TypeAnnotation::Data{
 
-    { Type::BOOLEAN,
-        {
-            Type::RULE_REFERENCE, Type::RULE_REFERENCE,
-        } },
-    { Type::BOOLEAN,
-        {
-            Type::BOOLEAN, Type::BOOLEAN,
-        } },
-    { Type::BOOLEAN,
-        {
-            Type::INTEGER, Type::INTEGER,
-        } },
-    { Type::BOOLEAN,
-        {
-            Type::BIT, Type::BIT,
-        } },
-    { Type::BOOLEAN,
-        {
-            Type::STRING, Type::STRING,
-        } },
-    { Type::BOOLEAN,
-        {
-            Type::RATIONAL, Type::RATIONAL,
-        } },
-    { Type::BOOLEAN,
-        {
-            Type::ENUMERATION, Type::ENUMERATION,
-        } }
+        { Type::BOOLEAN,
+            {
+                Type::RULE_REFERENCE, Type::RULE_REFERENCE,
+            } },
+        { Type::BOOLEAN,
+            {
+                Type::BOOLEAN, Type::BOOLEAN,
+            } },
+        { Type::BOOLEAN,
+            {
+                Type::INTEGER, Type::INTEGER,
+            } },
+        { Type::BOOLEAN,
+            {
+                Type::BIT, Type::BIT,
+            } },
+        { Type::BOOLEAN,
+            {
+                Type::STRING, Type::STRING,
+            } },
+        { Type::BOOLEAN,
+            {
+                Type::RATIONAL, Type::RATIONAL,
+            } },
+        { Type::BOOLEAN,
+            {
+                Type::ENUMERATION, Type::ENUMERATION,
+            } }
 
-} );
+    } );
 
 void NeqInstruction::accept( Visitor& visitor )
 {
@@ -1035,14 +1047,15 @@ LthInstruction::LthInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const TypeAnnotation LthInstruction::info( TypeAnnotation::Data{
+const TypeAnnotation LthInstruction::info( classid(),
+    TypeAnnotation::Data{
 
-    { Type::BOOLEAN,
-        {
-            Type::INTEGER, Type::INTEGER,
-        } }
+        { Type::BOOLEAN,
+            {
+                Type::INTEGER, Type::INTEGER,
+            } }
 
-} );
+    } );
 
 void LthInstruction::accept( Visitor& visitor )
 {
@@ -1064,14 +1077,15 @@ LeqInstruction::LeqInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const TypeAnnotation LeqInstruction::info( TypeAnnotation::Data{
+const TypeAnnotation LeqInstruction::info( classid(),
+    TypeAnnotation::Data{
 
-    { Type::BOOLEAN,
-        {
-            Type::INTEGER, Type::INTEGER,
-        } }
+        { Type::BOOLEAN,
+            {
+                Type::INTEGER, Type::INTEGER,
+            } }
 
-} );
+    } );
 
 void LeqInstruction::accept( Visitor& visitor )
 {
@@ -1093,14 +1107,15 @@ GthInstruction::GthInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const TypeAnnotation GthInstruction::info( TypeAnnotation::Data{
+const TypeAnnotation GthInstruction::info( classid(),
+    TypeAnnotation::Data{
 
-    { Type::BOOLEAN,
-        {
-            Type::INTEGER, Type::INTEGER,
-        } }
+        { Type::BOOLEAN,
+            {
+                Type::INTEGER, Type::INTEGER,
+            } }
 
-} );
+    } );
 
 void GthInstruction::accept( Visitor& visitor )
 {
@@ -1122,11 +1137,12 @@ GeqInstruction::GeqInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const TypeAnnotation GeqInstruction::info( TypeAnnotation::Data{
+const TypeAnnotation GeqInstruction::info( classid(),
+    TypeAnnotation::Data{
 
-    { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } }
+        { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } }
 
-} );
+    } );
 
 void GeqInstruction::accept( Visitor& visitor )
 {
