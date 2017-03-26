@@ -46,15 +46,23 @@ void Statement::add( const Instruction::Ptr& instruction )
         return;
     }
 
+    const auto self = ptr_this< Statement >();
+
     for( auto operand : instruction->operands() )
     {
         if( isa< Instruction >( operand ) )
         {
             add( std::static_pointer_cast< Instruction >( operand ) );
         }
-    }
+        else if( isa< ExecutionSemanticsBlock >( operand ) )
+        {
+            auto esb = std::static_pointer_cast< ExecutionSemanticsBlock >(
+                operand );
 
-    const auto self = ptr_this< Statement >();
+            esb->setParent( self );
+            esb->setScope( self->scope() );
+        }
+    }
 
     instruction->setStatement( self );
 
