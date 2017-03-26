@@ -21,8 +21,6 @@
 //  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "IRDumpDotPass.h"
-
 #include "libcasm-ir.h"
 
 using namespace libcasm_ir;
