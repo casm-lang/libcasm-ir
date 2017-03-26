@@ -21,11 +21,11 @@
 //  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "TypeAnnotation.h"
+#include "Annotation.h"
 
 using namespace libcasm_ir;
 
-TypeAnnotation::TypeAnnotation( const Value::ID id, const Data& info )
+Annotation::Annotation( const Value::ID id, const Data& info )
 : m_id( id )
 , m_info( info )
 {
@@ -56,19 +56,19 @@ TypeAnnotation::TypeAnnotation( const Value::ID id, const Data& info )
     }
 }
 
-const TypeAnnotation::Set& TypeAnnotation::resultTypes( void ) const
+const Annotation::Set& Annotation::resultTypes( void ) const
 {
     return m_type_set[ 0 ];
 }
 
-const TypeAnnotation::Set& TypeAnnotation::argumentTypes( u8 pos ) const
+const Annotation::Set& Annotation::argumentTypes( u8 pos ) const
 {
     assert( pos < ( m_type_set.size() - 1 ) );
 
     return m_type_set[ pos + 1 ];
 }
 
-Type::ID TypeAnnotation::resultTypeForRelation(
+Type::ID Annotation::resultTypeForRelation(
     const std::vector< const Type* > arguments ) const
 {
     std::string key;

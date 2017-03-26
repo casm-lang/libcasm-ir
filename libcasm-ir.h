@@ -25,6 +25,7 @@
 #define _LIB_CASMIR_H_
 
 #include "src/Agent.h"
+#include "src/Annotation.h"
 #include "src/Block.h"
 #include "src/Builtin.h"
 #include "src/CasmIR.h"
@@ -37,7 +38,6 @@
 #include "src/Specification.h"
 #include "src/Statement.h"
 #include "src/Type.h"
-#include "src/TypeAnnotation.h"
 #include "src/User.h"
 #include "src/Value.h"
 #include "src/Visitor.h"

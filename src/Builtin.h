@@ -26,17 +26,17 @@
 
 #include "User.h"
 
-#include "TypeAnnotation.h"
+#include "Annotation.h"
 
 namespace libcasm_ir
 {
-    class Builtin : public User, public TypeAnnotation
+    class Builtin : public User, public Annotation
     {
       public:
         using Ptr = std::shared_ptr< Builtin >;
 
         Builtin( const std::string& name, const Type::Ptr& type,
-            const TypeAnnotation& info, Value::ID id = classid() );
+            const Annotation& info, Value::ID id = classid() );
 
         void accept( Visitor& visitor ) override final;
 
@@ -67,7 +67,7 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< GeneralBuiltin >;
 
         GeneralBuiltin( const std::string& name, const Type::Ptr& type,
-            const TypeAnnotation& info, Value::ID id = classid() );
+            const Annotation& info, Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {
@@ -92,7 +92,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class OutputBuiltin : public GeneralBuiltin
@@ -120,7 +120,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class PrintBuiltin : public OutputBuiltin
@@ -160,7 +160,7 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< CastingBuiltin >;
 
         CastingBuiltin( const std::string& name, const Type::Ptr& type,
-            const TypeAnnotation& info, Value::ID id = classid() );
+            const Annotation& info, Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {
@@ -184,7 +184,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class AsIntegerBuiltin : public CastingBuiltin
@@ -201,7 +201,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class AsBitBuiltin : public CastingBuiltin
@@ -218,7 +218,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class AsStringBuiltin : public CastingBuiltin
@@ -235,7 +235,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class AsFloatingBuiltin : public CastingBuiltin
@@ -252,7 +252,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class AsRationalBuiltin : public CastingBuiltin
@@ -269,7 +269,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class AsEnumerationBuiltin : public CastingBuiltin
@@ -286,7 +286,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     //
@@ -308,7 +308,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class DecBuiltin : public StringifyBuiltin
@@ -390,7 +390,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     //
@@ -653,7 +653,7 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< BitBuiltin >;
 
         BitBuiltin( const std::string& name, const Type::Ptr& type,
-            const TypeAnnotation& info, Value::ID id = classid() );
+            const Annotation& info, Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {
@@ -677,7 +677,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class SextBuiltin : public BitBuiltin
@@ -694,7 +694,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class TruncBuiltin : public BitBuiltin
@@ -711,7 +711,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class ShlBuiltin : public BitBuiltin
@@ -728,7 +728,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class ShrBuiltin : public BitBuiltin
@@ -745,7 +745,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class AshrBuiltin : public BitBuiltin
@@ -762,7 +762,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class ClzBuiltin : public BitBuiltin
@@ -779,7 +779,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class CloBuiltin : public BitBuiltin
@@ -796,7 +796,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class ClsBuiltin : public BitBuiltin
@@ -813,7 +813,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     //

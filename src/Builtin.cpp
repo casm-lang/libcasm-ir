@@ -26,9 +26,9 @@
 using namespace libcasm_ir;
 
 Builtin::Builtin( const std::string& name, const Type::Ptr& type,
-    const TypeAnnotation& info, Value::ID id )
+    const Annotation& info, Value::ID id )
 : User( name, type, id )
-, TypeAnnotation( info )
+, Annotation( info )
 {
 }
 
@@ -217,7 +217,7 @@ Builtin::Ptr Builtin::asBuiltin( const Type::Ptr& type )
 //
 
 GeneralBuiltin::GeneralBuiltin( const std::string& name, const Type::Ptr& type,
-    const TypeAnnotation& info, Value::ID id )
+    const Annotation& info, Value::ID id )
 : Builtin( name, type, info, id )
 {
 }
@@ -240,8 +240,8 @@ u1 AssertBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
 }
-const TypeAnnotation AssertBuiltin::info( classid(),
-    TypeAnnotation::Data{
+const Annotation AssertBuiltin::info( classid(),
+    Annotation::Data{
         { Type::VOID,
             {
                 Type::BOOLEAN,
@@ -274,8 +274,8 @@ u1 OutputBuiltin::newline( void ) const
 {
     return m_newline;
 }
-const TypeAnnotation OutputBuiltin::info( classid(),
-    TypeAnnotation::Data{
+const Annotation OutputBuiltin::info( classid(),
+    Annotation::Data{
 
         { Type::VOID,
             {
@@ -328,7 +328,7 @@ u1 PrintLnBuiltin::classof( Value const* obj )
 //
 
 CastingBuiltin::CastingBuiltin( const std::string& name, const Type::Ptr& type,
-    const TypeAnnotation& info, Value::ID id )
+    const Annotation& info, Value::ID id )
 : Builtin( name, type, info, id )
 {
 }
@@ -350,8 +350,8 @@ AsBooleanBuiltin::AsBooleanBuiltin( const Type::Ptr& type )
 : CastingBuiltin( "asBoolean", type, info, classid() )
 {
 }
-const TypeAnnotation AsBooleanBuiltin::info( classid(),
-    TypeAnnotation::Data{
+const Annotation AsBooleanBuiltin::info( classid(),
+    Annotation::Data{
 
         { Type::BOOLEAN,
             {
@@ -388,8 +388,8 @@ AsIntegerBuiltin::AsIntegerBuiltin( const Type::Ptr& type )
 : CastingBuiltin( "asInteger", type, info, classid() )
 {
 }
-const TypeAnnotation AsIntegerBuiltin::info( classid(),
-    TypeAnnotation::Data{
+const Annotation AsIntegerBuiltin::info( classid(),
+    Annotation::Data{
 
         { Type::INTEGER,
             {
@@ -426,8 +426,8 @@ AsBitBuiltin::AsBitBuiltin( const Type::Ptr& type )
 : CastingBuiltin( "asBit", type, info, classid() )
 {
 }
-const TypeAnnotation AsBitBuiltin::info( classid(),
-    TypeAnnotation::Data{
+const Annotation AsBitBuiltin::info( classid(),
+    Annotation::Data{
 
         { Type::BIT,
             {
@@ -464,8 +464,8 @@ AsStringBuiltin::AsStringBuiltin( const Type::Ptr& type )
 : CastingBuiltin( "asString", type, info, classid() )
 {
 }
-const TypeAnnotation AsStringBuiltin::info( classid(),
-    TypeAnnotation::Data{
+const Annotation AsStringBuiltin::info( classid(),
+    Annotation::Data{
 
         { Type::STRING,
             {
@@ -506,8 +506,8 @@ AsFloatingBuiltin::AsFloatingBuiltin( const Type::Ptr& type )
 : CastingBuiltin( "asFloating", type, info, classid() )
 {
 }
-const TypeAnnotation AsFloatingBuiltin::info( classid(),
-    TypeAnnotation::Data{
+const Annotation AsFloatingBuiltin::info( classid(),
+    Annotation::Data{
 
         { Type::FLOATING,
             {
@@ -544,8 +544,8 @@ AsRationalBuiltin::AsRationalBuiltin( const Type::Ptr& type )
 : CastingBuiltin( "asRational", type, info, classid() )
 {
 }
-const TypeAnnotation AsRationalBuiltin::info( classid(),
-    TypeAnnotation::Data{
+const Annotation AsRationalBuiltin::info( classid(),
+    Annotation::Data{
 
         { Type::RATIONAL, { Type::RATIONAL } }
 
@@ -564,8 +564,8 @@ AsEnumerationBuiltin::AsEnumerationBuiltin( const Type::Ptr& type )
 : CastingBuiltin( "as" + type->name(), type, info, classid() )
 {
 }
-const TypeAnnotation AsEnumerationBuiltin::info( classid(),
-    TypeAnnotation::Data{
+const Annotation AsEnumerationBuiltin::info( classid(),
+    Annotation::Data{
 
         { Type::ENUMERATION,
             {
@@ -591,8 +591,8 @@ StringifyBuiltin::StringifyBuiltin(
 : Builtin( name, type, info, id )
 {
 }
-const TypeAnnotation StringifyBuiltin::info( classid(),
-    TypeAnnotation::Data{
+const Annotation StringifyBuiltin::info( classid(),
+    Annotation::Data{
 
         { Type::STRING,
             {
@@ -695,8 +695,8 @@ OperatorBuiltin::OperatorBuiltin(
 : Builtin( name, type, info, id )
 {
 }
-const TypeAnnotation OperatorBuiltin::info( classid(),
-    TypeAnnotation::Data{
+const Annotation OperatorBuiltin::info( classid(),
+    Annotation::Data{
 
         { Type::INTEGER,
             {
@@ -936,7 +936,7 @@ u1 GeqsBuiltin::classof( Value const* obj )
 //
 
 BitBuiltin::BitBuiltin( const std::string& name, const Type::Ptr& type,
-    const TypeAnnotation& info, Value::ID id )
+    const Annotation& info, Value::ID id )
 : Builtin( name, type, info, id )
 {
 }
@@ -958,8 +958,8 @@ ZextBuiltin::ZextBuiltin( const Type::Ptr& type )
 : BitBuiltin( "zext", type, info, classid() )
 {
 }
-const TypeAnnotation ZextBuiltin::info( classid(),
-    TypeAnnotation::Data{
+const Annotation ZextBuiltin::info( classid(),
+    Annotation::Data{
 
         { Type::BIT,
             {
@@ -980,8 +980,8 @@ SextBuiltin::SextBuiltin( const Type::Ptr& type )
 : BitBuiltin( "sext", type, info, classid() )
 {
 }
-const TypeAnnotation SextBuiltin::info( classid(),
-    TypeAnnotation::Data{
+const Annotation SextBuiltin::info( classid(),
+    Annotation::Data{
 
         { Type::BIT,
             {
@@ -1002,8 +1002,8 @@ TruncBuiltin::TruncBuiltin( const Type::Ptr& type )
 : BitBuiltin( "trunc", type, info, classid() )
 {
 }
-const TypeAnnotation TruncBuiltin::info( classid(),
-    TypeAnnotation::Data{
+const Annotation TruncBuiltin::info( classid(),
+    Annotation::Data{
 
         { Type::BIT,
             {
@@ -1024,8 +1024,8 @@ ShlBuiltin::ShlBuiltin( const Type::Ptr& type )
 : BitBuiltin( "shl", type, info, classid() )
 {
 }
-const TypeAnnotation ShlBuiltin::info( classid(),
-    TypeAnnotation::Data{
+const Annotation ShlBuiltin::info( classid(),
+    Annotation::Data{
 
         { Type::BIT,
             {
@@ -1050,8 +1050,8 @@ ShrBuiltin::ShrBuiltin( const Type::Ptr& type )
 : BitBuiltin( "shr", type, info, classid() )
 {
 }
-const TypeAnnotation ShrBuiltin::info( classid(),
-    TypeAnnotation::Data{
+const Annotation ShrBuiltin::info( classid(),
+    Annotation::Data{
 
         { Type::BIT,
             {
@@ -1076,8 +1076,8 @@ AshrBuiltin::AshrBuiltin( const Type::Ptr& type )
 : BitBuiltin( "ashr", type, info, classid() )
 {
 }
-const TypeAnnotation AshrBuiltin::info( classid(),
-    TypeAnnotation::Data{
+const Annotation AshrBuiltin::info( classid(),
+    Annotation::Data{
 
         { Type::BIT,
             {
@@ -1102,8 +1102,8 @@ ClzBuiltin::ClzBuiltin( const Type::Ptr& type )
 : BitBuiltin( "clz", type, info, classid() )
 {
 }
-const TypeAnnotation ClzBuiltin::info( classid(),
-    TypeAnnotation::Data{
+const Annotation ClzBuiltin::info( classid(),
+    Annotation::Data{
 
         { Type::INTEGER,
             {
@@ -1124,8 +1124,8 @@ CloBuiltin::CloBuiltin( const Type::Ptr& type )
 : BitBuiltin( "clo", type, info, classid() )
 {
 }
-const TypeAnnotation CloBuiltin::info( classid(),
-    TypeAnnotation::Data{
+const Annotation CloBuiltin::info( classid(),
+    Annotation::Data{
 
         { Type::INTEGER,
             {
@@ -1146,8 +1146,8 @@ ClsBuiltin::ClsBuiltin( const Type::Ptr& type )
 : BitBuiltin( "cls", type, info, classid() )
 {
 }
-const TypeAnnotation ClsBuiltin::info( classid(),
-    TypeAnnotation::Data{
+const Annotation ClsBuiltin::info( classid(),
+    Annotation::Data{
 
         { Type::INTEGER,
             {

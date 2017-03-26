@@ -27,8 +27,8 @@
    TODO
 */
 
-#ifndef _LIB_CASMIR_TYPEANNOTATION_H_
-#define _LIB_CASMIR_TYPEANNOTATION_H_
+#ifndef _LIB_CASMIR_ANNOTATION_H_
+#define _LIB_CASMIR_ANNOTATION_H_
 
 #include "CasmIR.h"
 
@@ -37,7 +37,7 @@
 
 namespace libcasm_ir
 {
-    class TypeAnnotation : public CasmIR
+    class Annotation : public CasmIR
     {
       public:
         // stores a list of type relations for possible type unification etc.
@@ -52,7 +52,7 @@ namespace libcasm_ir
         using Set = std::set< Type::ID >;
 
       public:
-        TypeAnnotation( const Value::ID id, const Data& info );
+        Annotation( const Value::ID id, const Data& info );
 
         Type::ID resultTypeForRelation(
             const std::vector< const Type* > arguments ) const;
@@ -84,7 +84,7 @@ namespace libcasm_ir
     };
 }
 
-#endif // _LIB_CASMIR_TYPEANNOTATION_H_
+#endif // _LIB_CASMIR_ANNOTATION_H_
 
 //
 //  Local variables:

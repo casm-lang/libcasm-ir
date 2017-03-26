@@ -466,9 +466,9 @@ u1 SymbolicInstruction::classof( Value const* obj )
 
 OperatorInstruction::OperatorInstruction( const std::string& name,
     const Type::Ptr& type, const std::vector< Value::Ptr >& operands,
-    const TypeAnnotation& info, Value::ID id )
+    const Annotation& info, Value::ID id )
 : Instruction( name, type, operands, id )
-, TypeAnnotation( info )
+, Annotation( info )
 {
     std::vector< const Type* > arguments;
 
@@ -497,7 +497,7 @@ u1 OperatorInstruction::classof( Value const* obj )
 //
 
 ArithmeticInstruction::ArithmeticInstruction( const std::string& name,
-    const std::vector< Value::Ptr >& operands, const TypeAnnotation& info,
+    const std::vector< Value::Ptr >& operands, const Annotation& info,
     Value::ID id )
 : OperatorInstruction( name,
       operands[ 0 ] ? operands[ 0 ]->ptr_type() : libstdhl::get< VoidType >(),
@@ -530,7 +530,7 @@ u1 ArithmeticInstruction::classof( Value const* obj )
 //
 
 CompareInstruction::CompareInstruction( const std::string& name,
-    const std::vector< Value::Ptr >& operands, const TypeAnnotation& info,
+    const std::vector< Value::Ptr >& operands, const Annotation& info,
     Value::ID id )
 : OperatorInstruction(
       name, libstdhl::get< BooleanType >(), operands, info, id )
@@ -550,7 +550,7 @@ u1 CompareInstruction::classof( Value const* obj )
 //
 
 LogicalInstruction::LogicalInstruction( const std::string& name,
-    const std::vector< Value::Ptr >& operands, const TypeAnnotation& info,
+    const std::vector< Value::Ptr >& operands, const Annotation& info,
     Value::ID id )
 : OperatorInstruction( name,
       operands[ 0 ]
@@ -591,8 +591,8 @@ InvInstruction::InvInstruction( const Value::Ptr& lhs )
 {
 }
 
-const TypeAnnotation InvInstruction::info( classid(),
-    TypeAnnotation::Data{
+const Annotation InvInstruction::info( classid(),
+    Annotation::Data{
 
         { Type::INTEGER,
             {
@@ -629,8 +629,8 @@ AddInstruction::AddInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const TypeAnnotation AddInstruction::info( classid(),
-    TypeAnnotation::Data{
+const Annotation AddInstruction::info( classid(),
+    Annotation::Data{
 
         { Type::INTEGER,
             {
@@ -667,8 +667,8 @@ SubInstruction::SubInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const TypeAnnotation SubInstruction::info( classid(),
-    TypeAnnotation::Data{
+const Annotation SubInstruction::info( classid(),
+    Annotation::Data{
 
         { Type::INTEGER,
             {
@@ -701,8 +701,8 @@ MulInstruction::MulInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const TypeAnnotation MulInstruction::info( classid(),
-    TypeAnnotation::Data{
+const Annotation MulInstruction::info( classid(),
+    Annotation::Data{
 
         { Type::INTEGER,
             {
@@ -735,8 +735,8 @@ ModInstruction::ModInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const TypeAnnotation ModInstruction::info( classid(),
-    TypeAnnotation::Data{
+const Annotation ModInstruction::info( classid(),
+    Annotation::Data{
 
         { Type::INTEGER,
             {
@@ -765,8 +765,8 @@ DivInstruction::DivInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const TypeAnnotation DivInstruction::info( classid(),
-    TypeAnnotation::Data{
+const Annotation DivInstruction::info( classid(),
+    Annotation::Data{
 
         { Type::INTEGER,
             {
@@ -799,8 +799,8 @@ AndInstruction::AndInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const TypeAnnotation AndInstruction::info( classid(),
-    TypeAnnotation::Data{
+const Annotation AndInstruction::info( classid(),
+    Annotation::Data{
 
         { Type::BOOLEAN,
             {
@@ -833,8 +833,8 @@ XorInstruction::XorInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const TypeAnnotation XorInstruction::info( classid(),
-    TypeAnnotation::Data{
+const Annotation XorInstruction::info( classid(),
+    Annotation::Data{
 
         { Type::BOOLEAN,
             {
@@ -867,8 +867,8 @@ OrInstruction::OrInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const TypeAnnotation OrInstruction::info( classid(),
-    TypeAnnotation::Data{
+const Annotation OrInstruction::info( classid(),
+    Annotation::Data{
 
         { Type::BOOLEAN,
             {
@@ -901,8 +901,8 @@ NotInstruction::NotInstruction( const Value::Ptr& lhs )
 {
 }
 
-const TypeAnnotation NotInstruction::info( classid(),
-    TypeAnnotation::Data{
+const Annotation NotInstruction::info( classid(),
+    Annotation::Data{
 
         { Type::BOOLEAN,
             {
@@ -939,8 +939,8 @@ EquInstruction::EquInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const TypeAnnotation EquInstruction::info( classid(),
-    TypeAnnotation::Data{
+const Annotation EquInstruction::info( classid(),
+    Annotation::Data{
 
         { Type::BOOLEAN,
             {
@@ -993,8 +993,8 @@ NeqInstruction::NeqInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const TypeAnnotation NeqInstruction::info( classid(),
-    TypeAnnotation::Data{
+const Annotation NeqInstruction::info( classid(),
+    Annotation::Data{
 
         { Type::BOOLEAN,
             {
@@ -1047,8 +1047,8 @@ LthInstruction::LthInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const TypeAnnotation LthInstruction::info( classid(),
-    TypeAnnotation::Data{
+const Annotation LthInstruction::info( classid(),
+    Annotation::Data{
 
         { Type::BOOLEAN,
             {
@@ -1077,8 +1077,8 @@ LeqInstruction::LeqInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const TypeAnnotation LeqInstruction::info( classid(),
-    TypeAnnotation::Data{
+const Annotation LeqInstruction::info( classid(),
+    Annotation::Data{
 
         { Type::BOOLEAN,
             {
@@ -1107,8 +1107,8 @@ GthInstruction::GthInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const TypeAnnotation GthInstruction::info( classid(),
-    TypeAnnotation::Data{
+const Annotation GthInstruction::info( classid(),
+    Annotation::Data{
 
         { Type::BOOLEAN,
             {
@@ -1137,8 +1137,8 @@ GeqInstruction::GeqInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const TypeAnnotation GeqInstruction::info( classid(),
-    TypeAnnotation::Data{
+const Annotation GeqInstruction::info( classid(),
+    Annotation::Data{
 
         { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } }
 

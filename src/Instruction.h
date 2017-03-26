@@ -26,7 +26,7 @@
 
 #include "User.h"
 
-#include "TypeAnnotation.h"
+#include "Annotation.h"
 
 namespace libcasm_ir
 {
@@ -301,14 +301,14 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class OperatorInstruction : public Instruction, public TypeAnnotation
+    class OperatorInstruction : public Instruction, public Annotation
     {
       public:
         using Ptr = std::shared_ptr< OperatorInstruction >;
 
         OperatorInstruction( const std::string& name, const Type::Ptr& type,
-            const std::vector< Value::Ptr >& operands,
-            const TypeAnnotation& info, Value::ID id = classid() );
+            const std::vector< Value::Ptr >& operands, const Annotation& info,
+            Value::ID id = classid() );
 
         const Type::ID resolved( void ) const;
 
@@ -329,8 +329,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< ArithmeticInstruction >;
 
         ArithmeticInstruction( const std::string& name,
-            const std::vector< Value::Ptr >& operands,
-            const TypeAnnotation& info, Value::ID id = classid() );
+            const std::vector< Value::Ptr >& operands, const Annotation& info,
+            Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {
@@ -346,8 +346,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< CompareInstruction >;
 
         CompareInstruction( const std::string& name,
-            const std::vector< Value::Ptr >& operands,
-            const TypeAnnotation& info, Value::ID id = classid() );
+            const std::vector< Value::Ptr >& operands, const Annotation& info,
+            Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {
@@ -363,8 +363,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< LogicalInstruction >;
 
         LogicalInstruction( const std::string& name,
-            const std::vector< Value::Ptr >& operands,
-            const TypeAnnotation& info, Value::ID id = classid() );
+            const std::vector< Value::Ptr >& operands, const Annotation& info,
+            Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {
@@ -394,7 +394,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class AddInstruction : public ArithmeticInstruction,
@@ -414,7 +414,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class SubInstruction : public ArithmeticInstruction,
@@ -434,7 +434,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class MulInstruction : public ArithmeticInstruction,
@@ -454,7 +454,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class ModInstruction : public ArithmeticInstruction,
@@ -474,7 +474,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class DivInstruction : public ArithmeticInstruction,
@@ -494,7 +494,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     //
@@ -517,7 +517,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class XorInstruction : public LogicalInstruction, public BinaryInstruction
@@ -536,7 +536,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class OrInstruction : public LogicalInstruction, public BinaryInstruction
@@ -555,7 +555,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class NotInstruction : public LogicalInstruction, public UnaryInstruction
@@ -574,7 +574,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     //
@@ -597,7 +597,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class NeqInstruction : public CompareInstruction, public BinaryInstruction
@@ -616,7 +616,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class LthInstruction : public CompareInstruction, public BinaryInstruction
@@ -635,7 +635,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class LeqInstruction : public CompareInstruction, public BinaryInstruction
@@ -654,7 +654,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class GthInstruction : public CompareInstruction, public BinaryInstruction
@@ -673,7 +673,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 
     class GeqInstruction : public CompareInstruction, public BinaryInstruction
@@ -692,7 +692,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static const TypeAnnotation info;
+        static const Annotation info;
     };
 }
 
