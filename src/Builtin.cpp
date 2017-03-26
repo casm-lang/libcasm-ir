@@ -39,8 +39,8 @@ void Builtin::accept( Visitor& visitor )
 
 u1 Builtin::classof( Value const* obj )
 {
-    return obj->id() == classid() or CastingBuiltin::classof( obj )
-           or StringifyBuiltin::classof( obj )
+    return obj->id() == classid() or GeneralBuiltin::classof( obj )
+           or CastingBuiltin::classof( obj ) or StringifyBuiltin::classof( obj )
            // or MathBuiltin::classof( obj )
            or OperatorBuiltin::classof( obj ) or BitBuiltin::classof( obj );
 }
@@ -224,8 +224,37 @@ GeneralBuiltin::GeneralBuiltin( const std::string& name, const Type::Ptr& type,
 
 u1 GeneralBuiltin::classof( Value const* obj )
 {
-    return obj->id() == classid() or PrintBuiltin::classof( obj );
+    return obj->id() == classid() or AssertBuiltin::classof( obj )
+           or OutputBuiltin::classof( obj );
 }
+
+//
+// AssertBuiltin
+//
+
+AssertBuiltin::AssertBuiltin( const Type::Ptr& type )
+: GeneralBuiltin( Value::token( classid() ), type, info, classid() )
+{
+}
+u1 AssertBuiltin::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
+const TypeAnnotation AssertBuiltin::info( TypeAnnotation::Data{
+
+    {
+        Type::VOID,
+        {
+            Type::BOOLEAN,
+        },
+    },
+    {
+        Type::VOID,
+        {
+            Type::BOOLEAN, Type::STRING,
+        },
+    },
+} );
 
 //
 // OutputBuiltin
@@ -259,7 +288,8 @@ const TypeAnnotation OutputBuiltin::info( TypeAnnotation::Data{
 } );
 u1 OutputBuiltin::classof( Value const* obj )
 {
-    return obj->id() == classid();
+    return obj->id() == classid() or PrintBuiltin::classof( obj )
+           or PrintLnBuiltin::classof( obj );
 }
 
 //
@@ -293,34 +323,6 @@ u1 PrintLnBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
 }
-
-//
-// AssertBuiltin
-//
-
-AssertBuiltin::AssertBuiltin( const Type::Ptr& type )
-: GeneralBuiltin( Value::token( classid() ), type, info, classid() )
-{
-}
-u1 AssertBuiltin::classof( Value const* obj )
-{
-    return obj->id() == classid();
-}
-const TypeAnnotation AssertBuiltin::info( TypeAnnotation::Data{
-
-    {
-        Type::VOID,
-        {
-            Type::BOOLEAN,
-        },
-    },
-    {
-        Type::VOID,
-        {
-            Type::BOOLEAN, Type::STRING,
-        },
-    },
-} );
 
 //------------------------------------------------------------------------------
 
