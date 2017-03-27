@@ -263,6 +263,25 @@ void ConsistencyCheckVisitor::visit( BranchStatement& value )
 {
     verify< BranchStatement >( value );
 
+    u1 found = false;
+    for( auto instr : value.instructions() )
+    {
+        if( isa< SelectInstruction >( instr ) )
+        {
+            if( not found )
+            {
+                found = true;
+            }
+            else
+            {
+                libstdhl::Log::error(
+                    "invalid 'BranchStatement' found, only one select "
+                    "instruction is allowed, invalid '%s'",
+                    instr->dump().c_str() );
+            }
+        }
+    }
+
     RecursiveVisitor::visit( value );
 }
 
@@ -313,6 +332,21 @@ void ConsistencyCheckVisitor::visit( AssertInstruction& value )
 void ConsistencyCheckVisitor::visit( SelectInstruction& value )
 {
     verify< SelectInstruction >( value );
+
+    const auto size = value.operands().size();
+
+    if( size < 3 or ( size % 2 ) != 1 )
+    {
+        libstdhl::Log::error(
+            "select statement has invalid operand size of '%u'", size );
+    }
+
+    if( not isa< BranchStatement >( value.statement() ) )
+    {
+        libstdhl::Log::error(
+            "select statement is only allowed to reside in 'BranchStatement' "
+            "blocks" );
+    }
 }
 void ConsistencyCheckVisitor::visit( SymbolicInstruction& value )
 {
