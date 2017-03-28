@@ -102,6 +102,17 @@ ExecutionSemanticsBlocks Statement::blocks( void ) const
     return m_blocks;
 }
 
+void Statement::replaceWith( const Block::Ptr block )
+{
+    assert( parent() );
+    assert( isa< ExecutionSemanticsBlock >( parent() ) );
+
+    const auto blk
+        = std::static_pointer_cast< ExecutionSemanticsBlock >( parent() );
+
+    blk->replace( *this, block );
+}
+
 u1 Statement::classof( Value const* obj )
 {
     return obj->id() == classid() or TrivialStatement::classof( obj )

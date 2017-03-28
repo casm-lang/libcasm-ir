@@ -36,6 +36,12 @@ Block::Block( const std::string& name, Value::ID id )
 {
 }
 
+void Block::clear( void )
+{
+    m_parent.reset();
+    m_scope.reset();
+}
+
 void Block::setParent( const Block::Ptr& parent )
 {
     assert( parent );
@@ -140,6 +146,19 @@ void ExecutionSemanticsBlock::add( const Block::Ptr& block )
     m_blocks.add( block );
 }
 
+void ExecutionSemanticsBlock::replace( Block& from, const Block::Ptr to )
+{
+    std::replace_if( m_blocks.begin(), m_blocks.end(),
+        [&]( const Block::Ptr& v ) { return *v.get() == from; }, to );
+
+    from.clear();
+
+    const auto self = ptr_this< ExecutionSemanticsBlock >();
+
+    to->setScope( self );
+    to->setParent( self );
+}
+
 u1 ExecutionSemanticsBlock::classof( Value const* obj )
 {
     return obj->id() == classid() or ParallelBlock::classof( obj )
@@ -179,6 +198,34 @@ Rule::Ptr ParallelBlock::rule( void ) const
     return m_rule.lock();
 }
 
+void ParallelBlock::replaceWith( const Block::Ptr block )
+{
+    if( auto r = rule() )
+    {
+        if( isa< ParallelBlock >( block ) )
+        {
+            r->setContext( std::static_pointer_cast< ParallelBlock >( block ) );
+        }
+        else
+        {
+            auto cxt = ParallelBlock::create();
+            cxt->add( block );
+
+            r->setContext( cxt );
+        }
+    }
+    else
+    {
+        assert( parent() );
+        assert( isa< ExecutionSemanticsBlock >( parent() ) );
+
+        const auto blk
+            = std::static_pointer_cast< ExecutionSemanticsBlock >( parent() );
+
+        blk->replace( *this, block );
+    }
+}
+
 void ParallelBlock::accept( Visitor& visitor )
 {
     visitor.visit( *this );
@@ -209,6 +256,17 @@ SequentialBlock::Ptr SequentialBlock::create( u1 empty )
 SequentialBlock::SequentialBlock( void )
 : ExecutionSemanticsBlock( "seq", false, classid() )
 {
+}
+
+void SequentialBlock::replaceWith( const Block::Ptr block )
+{
+    assert( parent() );
+    assert( isa< ExecutionSemanticsBlock >( parent() ) );
+
+    const auto blk
+        = std::static_pointer_cast< ExecutionSemanticsBlock >( parent() );
+
+    blk->replace( *this, block );
 }
 
 void SequentialBlock::accept( Visitor& visitor )

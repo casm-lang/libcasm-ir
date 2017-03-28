@@ -41,6 +41,8 @@ namespace libcasm_ir
 
         Block( const std::string& name, Value::ID id = classid() );
 
+        void clear( void );
+
         void setParent( const Block::Ptr& parent );
 
         Block::Ptr parent( void ) const;
@@ -49,6 +51,8 @@ namespace libcasm_ir
             const std::shared_ptr< ExecutionSemanticsBlock >& scope );
 
         std::shared_ptr< ExecutionSemanticsBlock > scope( void ) const;
+
+        virtual void replaceWith( const Block::Ptr block ) = 0;
 
         static inline Value::ID classid( void )
         {
@@ -85,6 +89,8 @@ namespace libcasm_ir
         Blocks blocks( void ) const;
 
         void add( const Block::Ptr& block );
+
+        void replace( Block& from, const Block::Ptr to );
 
         static inline Value::ID classid( void )
         {
@@ -127,6 +133,8 @@ namespace libcasm_ir
          */
         std::shared_ptr< Rule > rule( void ) const;
 
+        void replaceWith( const Block::Ptr block ) override;
+
         void accept( Visitor& visitor ) override;
 
         static inline Value::ID classid( void )
@@ -151,6 +159,8 @@ namespace libcasm_ir
         SequentialBlock( void );
 
       public:
+        void replaceWith( const Block::Ptr block ) override;
+
         void accept( Visitor& visitor ) override;
 
         static inline Value::ID classid( void )

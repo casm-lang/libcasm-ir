@@ -45,6 +45,8 @@ namespace libcasm_ir
 
         ExecutionSemanticsBlocks blocks( void ) const;
 
+        void replaceWith( const Block::Ptr block ) override final;
+
         static inline Value::ID classid( void )
         {
             return Value::STATEMENT;
@@ -57,14 +59,14 @@ namespace libcasm_ir
         ExecutionSemanticsBlocks m_blocks;
     };
 
-    class TrivialStatement : public Statement
+    class TrivialStatement final : public Statement
     {
       public:
         using Ptr = std::shared_ptr< TrivialStatement >;
 
         TrivialStatement( void );
 
-        void accept( Visitor& visitor ) override final;
+        void accept( Visitor& visitor ) override;
 
         static inline Value::ID classid( void )
         {
@@ -74,14 +76,14 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class BranchStatement : public Statement
+    class BranchStatement final : public Statement
     {
       public:
         using Ptr = std::shared_ptr< BranchStatement >;
 
         BranchStatement( void );
 
-        void accept( Visitor& visitor ) override final;
+        void accept( Visitor& visitor ) override;
 
         static inline Value::ID classid( void )
         {
