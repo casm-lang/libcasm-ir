@@ -41,13 +41,13 @@ TEST( libcasm_ir, example2 )
 
 TEST( libcasm_ir, example3 )
 {
-    TypeAnnotation::ResultTypes< AddInstruction >();
-    TypeAnnotation::ResultTypes< SubInstruction >();
-    TypeAnnotation::ResultTypes< DivInstruction >();
+    Annotation::ResultTypes< AddInstruction >();
+    Annotation::ResultTypes< SubInstruction >();
+    Annotation::ResultTypes< DivInstruction >();
 }
 
 TEST( libcasm_ir, example4 )
 {
-    TypeAnnotation::ResultTypes< AsIntegerBuiltin >();
-    TypeAnnotation::ResultTypes< AsEnumerationBuiltin >();
+    Annotation::ResultTypes< AsIntegerBuiltin >();
+    Annotation::ResultTypes< AsEnumerationBuiltin >();
 }
