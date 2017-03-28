@@ -31,13 +31,11 @@ static libpass::PassRegistration< ConsistencyCheckPass > PASS(
     "CASM IR Consistency Check",
     "checks the constructed IR in-memory representation", "ir-check", 0 );
 
-static const char* name = 0;
-
 u1 ConsistencyCheckPass::run( libpass::PassResult& pr )
 {
-    name = libpass::PassRegistry::passInfo< ConsistencyCheckPass >().name();
+    libpass::PassLogger log( &id, stream() );
 
-    libstdhl::Log::info( "%s: starting", name );
+    log.debug( "starting" );
 
     auto data = pr.result< ConsistencyCheckPass >();
     assert( data );
@@ -49,13 +47,13 @@ u1 ConsistencyCheckPass::run( libpass::PassResult& pr )
     }
     catch( ... )
     {
-        libstdhl::Log::error( "inconsistent specification" );
+        log.error( "inconsistent specification" );
         return false;
     }
 
     pr.setResult< ConsistencyCheckPass >( data );
 
-    libstdhl::Log::info( "%s: stopping", name );
+    log.debug( "stopping" );
 
     return true;
 }

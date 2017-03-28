@@ -35,20 +35,22 @@ static libpass::PassRegistration< IRDumpDebugPass > PASS( "CASM IR Dump Debug",
 
 u1 IRDumpDebugPass::run( libpass::PassResult& pr )
 {
+    libpass::PassLogger log( &id, stream() );
+
     auto data = pr.result< ConsistencyCheckPass >();
     assert( data );
 
     try
     {
         data->specification()->iterate(
-            Traversal::PREORDER, [this]( Value& value ) {
-                libstdhl::Log::info( "%p: %s%s", &value,
-                    this->indention( value ).c_str(), value.dump().c_str() );
+            Traversal::PREORDER, [this, &log]( Value& value ) {
+                log.info( "%p: %s%s", &value, this->indention( value ).c_str(),
+                    value.dump().c_str() );
             } );
     }
     catch( ... )
     {
-        libstdhl::Log::error( "unsuccessful dump of specification" );
+        log.error( "unsuccessful dump of specification" );
         return false;
     }
 

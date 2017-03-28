@@ -32,13 +32,12 @@ static libpass::PassRegistration< IRDumpSourcePass > PASS(
     "translates the CASM IR to the ASCII source code representation", "ir-dump",
     0 );
 
-static const char* name = 0;
-
 u1 IRDumpSourcePass::run( libpass::PassResult& pr )
 {
-    name = libpass::PassRegistry::passInfo< IRDumpSourcePass >().name();
+    libpass::PassLogger log(
+        libpass::PassRegistry::passInfo< IRDumpSourcePass >(), stream() );
 
-    libstdhl::Log::info( "%s: starting", name );
+    log.debug( "starting" );
 
     try
     {
@@ -50,11 +49,15 @@ u1 IRDumpSourcePass::run( libpass::PassResult& pr )
     }
     catch( ... )
     {
-        libstdhl::Log::error( "unsuccessful dump of specification" );
+        log.error( "unsuccessful dump of specification" );
         return false;
     }
 
-    libstdhl::Log::info( "%s: stopping", name );
+    log.debug( "stopping" );
+
+    libstdhl::Log::StringFormatter f;
+    libstdhl::Log::OutputStreamSink c( std::cerr, f );
+    stream().flush( c );
 
     return true;
 }
