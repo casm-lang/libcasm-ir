@@ -24,7 +24,7 @@
 #ifndef _LIB_CASMIR_IR_DUMP_SOURCE_PASS_H_
 #define _LIB_CASMIR_IR_DUMP_SOURCE_PASS_H_
 
-#include "libpass.h"
+#include "../analyze/ConsistencyCheckPass.h"
 
 #include "../Specification.h"
 
@@ -44,6 +44,8 @@ namespace libcasm_ir
     {
       public:
         static char id;
+
+        void usage( libpass::PassUsage& pu ) override;
 
         u1 run( libpass::PassResult& pr ) override;
     };

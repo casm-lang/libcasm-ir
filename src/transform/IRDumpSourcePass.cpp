@@ -21,21 +21,24 @@
 //  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "libcasm-ir.h"
+#include "IRDumpSourcePass.h"
 
 using namespace libcasm_ir;
 
 char IRDumpSourcePass::id = 0;
 
-static libpass::PassRegistration< IRDumpSourcePass > PASS(
-    "CASM IR to Source Code Pass",
+static libpass::PassRegistration< IRDumpSourcePass > PASS( "IRDumpSourcePass",
     "translates the CASM IR to the ASCII source code representation", "ir-dump",
     0 );
 
+void IRDumpSourcePass::usage( libpass::PassUsage& pu )
+{
+    pu.require< ConsistencyCheckPass >();
+}
+
 u1 IRDumpSourcePass::run( libpass::PassResult& pr )
 {
-    libpass::PassLogger log(
-        libpass::PassRegistry::passInfo< IRDumpSourcePass >(), stream() );
+    libpass::PassLogger log( &id, stream() );
 
     log.debug( "starting" );
 

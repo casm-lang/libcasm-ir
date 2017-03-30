@@ -21,16 +21,20 @@
 //  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "libcasm-ir.h"
+#include "IRDumpDotPass.h"
 
 using namespace libcasm_ir;
 
 char IRDumpDotPass::id = 0;
 
-static libpass::PassRegistration< IRDumpDotPass > PASS(
-    "CASM IR to Dot Code Pass",
+static libpass::PassRegistration< IRDumpDotPass > PASS( "IRDumpDotPass",
     "translates the CASM IR to the ASCII source code representation",
     "ir-dump-dot", 0 );
+
+void IRDumpDotPass::usage( libpass::PassUsage& pu )
+{
+    pu.require< ConsistencyCheckPass >();
+}
 
 u1 IRDumpDotPass::run( libpass::PassResult& pr )
 {

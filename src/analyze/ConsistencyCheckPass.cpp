@@ -28,7 +28,7 @@ using namespace libcasm_ir;
 char ConsistencyCheckPass::id = 0;
 
 static libpass::PassRegistration< ConsistencyCheckPass > PASS(
-    "CASM IR Consistency Check",
+    "IRConsistencyCheckPass",
     "checks the constructed IR in-memory representation", "ir-check", 0 );
 
 u1 ConsistencyCheckPass::run( libpass::PassResult& pr )

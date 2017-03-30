@@ -24,7 +24,7 @@
 #ifndef _LIB_CASMIR_CONSISTENCY_CHECK_PASS_H_
 #define _LIB_CASMIR_CONSISTENCY_CHECK_PASS_H_
 
-#include "libpass.h"
+#include "../pass/src/analyze/LoadFilePass.h"
 
 #include "../Specification.h"
 

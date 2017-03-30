@@ -28,8 +28,13 @@ using namespace libcasm_ir;
 char NumericExecutionPass::id = 0;
 
 static libpass::PassRegistration< NumericExecutionPass > PASS(
-    "Numeric Execution Pass", "execute numerically over the CASM IR",
+    "IRNumericExecutionPass", "execute numerically over the CASM IR",
     "ir-exec-num", 0 );
+
+void NumericExecutionPass::usage( libpass::PassUsage& pu )
+{
+    pu.require< ConsistencyCheckPass >();
+}
 
 u1 NumericExecutionPass::run( libpass::PassResult& pr )
 {

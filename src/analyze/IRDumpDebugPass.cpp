@@ -23,15 +23,18 @@
 
 #include "IRDumpDebugPass.h"
 
-#include "Specification.h"
-
 using namespace libcasm_ir;
 
 char IRDumpDebugPass::id = 0;
 
-static libpass::PassRegistration< IRDumpDebugPass > PASS( "CASM IR Dump Debug",
+static libpass::PassRegistration< IRDumpDebugPass > PASS( "IRDumpDebugPass",
     "outputs from the CASM IR an ASCII representation for debugging",
     "ir-dump-debug", 0 );
+
+void IRDumpDebugPass::usage( libpass::PassUsage& pu )
+{
+    pu.require< ConsistencyCheckPass >();
+}
 
 u1 IRDumpDebugPass::run( libpass::PassResult& pr )
 {

@@ -24,10 +24,9 @@
 #ifndef _LIB_CASMIR_IR_DUMP_DEBUG_PASS_H_
 #define _LIB_CASMIR_IR_DUMP_DEBUG_PASS_H_
 
-#include "libpass.h"
+#include "../analyze/ConsistencyCheckPass.h"
 
 #include "../Specification.h"
-#include "../analyze/ConsistencyCheckPass.h"
 
 /**
    @brief    TODO
@@ -43,6 +42,8 @@ namespace libcasm_ir
         using Data = ConsistencyCheckPass::Data;
 
         static char id;
+
+        void usage( libpass::PassUsage& pu ) override;
 
         u1 run( libpass::PassResult& pr ) override;
 
