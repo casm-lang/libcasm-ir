@@ -90,6 +90,14 @@ namespace libcasm_ir
 
         void add( const Block::Ptr& block );
 
+        template < typename T, typename... Args >
+        typename T::Ptr add( Args&&... args )
+        {
+            auto obj = libstdhl::make< T >( std::forward< Args >( args )... );
+            add( obj );
+            return obj;
+        }
+
         void replace( Block& from, const Block::Ptr to );
 
         static inline Value::ID classid( void )

@@ -61,6 +61,22 @@ namespace libcasm_ir
         Deriveds& deriveds( void );
         Rules& rules( void );
 
+        template < typename T, typename... Args >
+        typename T::Ptr set( Args&&... args )
+        {
+            auto obj = libstdhl::make< T >( std::forward< Args >( args )... );
+            setAgent( obj );
+            return obj;
+        }
+
+        template < typename T, typename... Args >
+        typename T::Ptr add( Args&&... args )
+        {
+            auto obj = libstdhl::make< T >( std::forward< Args >( args )... );
+            add( obj );
+            return obj;
+        }
+
         void accept( Visitor& visitor ) override final;
 
         static inline Value::ID classid( void )

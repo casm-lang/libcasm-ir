@@ -45,6 +45,14 @@ namespace libcasm_ir
 
         ExecutionSemanticsBlocks blocks( void ) const;
 
+        template < typename T, typename... Args >
+        typename T::Ptr add( Args&&... args )
+        {
+            auto obj = libstdhl::make< T >( std::forward< Args >( args )... );
+            add( obj );
+            return obj;
+        }
+
         void replaceWith( const Block::Ptr block ) override final;
 
         static inline Value::ID classid( void )
