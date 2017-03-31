@@ -26,8 +26,6 @@
 
 #include "../analyze/ConsistencyCheckPass.h"
 
-#include "../Specification.h"
-
 /**
    @brief    TODO
 
@@ -46,8 +44,6 @@ namespace libcasm_ir
         void usage( libpass::PassUsage& pu ) override;
 
         u1 run( libpass::PassResult& pr ) override;
-
-        std::string indention( Value& value ) const;
     };
 }
 
