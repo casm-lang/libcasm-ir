@@ -31,6 +31,24 @@ static libpass::PassRegistration< IRDumpSourcePass > PASS( "IRDumpSourcePass",
     "translates the CASM IR to the ASCII source code representation", "ir-dump",
     0 );
 
+void IRDumpSourcePass::usage( libpass::PassUsage& pu )
+{
+    pu.require< ConsistencyCheckPass >();
+}
+
+u1 IRDumpSourcePass::run( libpass::PassResult& pr )
+{
+    libpass::PassLogger log( &id, stream() );
+
+    const auto data = pr.result< ConsistencyCheckPass >();
+    const auto specification = data->specification();
+
+    IRDumpSourceVisitor visitor{ std::cout };
+    data->specification()->accept( visitor );
+
+    return true;
+}
+
 static inline std::string indention( Value& value );
 
 IRDumpSourceVisitor::IRDumpSourceVisitor( std::ostream& stream )
@@ -412,24 +430,6 @@ static inline std::string indention( Value& value )
     {
         return "";
     }
-}
-
-void IRDumpSourcePass::usage( libpass::PassUsage& pu )
-{
-    pu.require< ConsistencyCheckPass >();
-}
-
-u1 IRDumpSourcePass::run( libpass::PassResult& pr )
-{
-    libpass::PassLogger log( &id, stream() );
-
-    const auto data = pr.result< ConsistencyCheckPass >();
-    const auto specification = data->specification();
-
-    IRDumpSourceVisitor visitor{ std::cout };
-    data->specification()->accept( visitor );
-
-    return true;
 }
 
 //
