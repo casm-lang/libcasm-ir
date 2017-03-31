@@ -29,6 +29,14 @@
 #include "libcasm-ir.h"
 #include "libstdhl.h"
 
+#define TEST_NAME                                                              \
+    ( std::string(::testing::UnitTest::GetInstance()                           \
+                      ->current_test_info()                                    \
+                      ->test_case_name() )                                     \
+        + "." + std::string(::testing::UnitTest::GetInstance()                 \
+                                ->current_test_info()                          \
+                                ->name() ) )
+
 #endif // _LIB_CASMIR_UTS_MAIN_H_
 
 //
