@@ -31,156 +31,11 @@ static libpass::PassRegistration< IRDumpSourcePass > PASS( "IRDumpSourcePass",
     "translates the CASM IR to the ASCII source code representation", "ir-dump",
     0 );
 
-void IRDumpSourcePass::usage( libpass::PassUsage& pu )
-{
-    pu.require< ConsistencyCheckPass >();
-}
-
-u1 IRDumpSourcePass::run( libpass::PassResult& pr )
-{
-    libpass::PassLogger log( &id, stream() );
-
-    log.debug( "starting" );
-
-    try
-    {
-        const auto data = pr.result< ConsistencyCheckPass >();
-
-        IRDumpSourceVisitor visitor{ std::cout };
-
-        data->specification()->accept( visitor );
-    }
-    catch( ... )
-    {
-        log.error( "unsuccessful dump of specification" );
-        return false;
-    }
-
-    log.debug( "stopping" );
-
-    libstdhl::Log::StringFormatter f;
-    libstdhl::Log::OutputStreamSink c( std::cerr, f );
-    stream().flush( c );
-
-    return true;
-}
+static inline std::string indention( Value& value );
 
 IRDumpSourceVisitor::IRDumpSourceVisitor( std::ostream& stream )
 : m_stream( stream )
 {
-}
-
-std::string IRDumpSourceVisitor::indention( Value& value ) const
-{
-#define INDENT "  "
-
-    if( isa< Statement >( value ) )
-    {
-        return INDENT;
-    }
-    else if( isa< Instruction >( value ) )
-    {
-        return INDENT INDENT;
-    }
-    else
-    {
-        return "";
-    }
-}
-
-void IRDumpSourceVisitor::dump( Statement& value ) const
-{
-    const char* nline = "\n";
-    const char* label = &value.label().c_str()[ 1 ];
-    const char* scope = value.scope()->label().c_str();
-
-    if( value.scope()->entry().get() == &value )
-    {
-        label = &value.scope()->label().c_str()[ 1 ];
-
-        if( not value.scope()->scope() )
-        {
-            scope = "entry";
-            nline = "";
-        }
-        else
-        {
-            scope = value.scope()->scope()->label().c_str();
-        }
-    }
-    else if( value.scope()->exit().get() == &value )
-    {
-        scope = value.scope()->label().c_str();
-
-        if( not value.scope()->scope() )
-        {
-            label = "exit";
-        }
-        else
-        {
-            label = &value.scope()->scope()->label().c_str()[ 1 ];
-        }
-    }
-
-    m_stream << nline << indention( value ) << label << ": " << scope << "\n";
-}
-
-void IRDumpSourceVisitor::dump( Instruction& value ) const
-{
-    if( isa< ForkInstruction >( value ) or isa< MergeInstruction >( value ) )
-    {
-        m_stream << indention( value ) << value.name() << " "
-                 << value.statement()->scope()->name() << "\n";
-    }
-    else
-    {
-        std::string tmp = "";
-        u1 first = true;
-
-        for( auto operand : value.operands() )
-        {
-            if( not first )
-            {
-                tmp += ", ";
-            }
-            else
-            {
-                first = false;
-            }
-
-            tmp += operand->type().name();
-            tmp += " ";
-            tmp += operand->label();
-        }
-
-        std::string uses = "{";
-        for( auto u : value.uses() )
-        {
-            uses += u->use().label();
-            uses += " : ";
-            uses += u->use().name();
-            uses += ", ";
-        }
-        uses += "}";
-
-        m_stream << indention( value ) << value.label() << " = " << value.name()
-                 << " " << tmp << "                 ;; uses = " << uses << "\n";
-    }
-}
-
-void IRDumpSourceVisitor::dump( Constant& value ) const
-{
-    static u1 first = true;
-
-    if( first )
-    {
-        first = false;
-
-        m_stream << "\n";
-    }
-
-    m_stream << value.label() << " = " << value.type().name() << " "
-             << value.name() << "\n";
 }
 
 //
@@ -444,6 +299,137 @@ void IRDumpSourceVisitor::visit( AgentConstant& value )
 void IRDumpSourceVisitor::visit( Identifier& value )
 {
     dump( value );
+}
+
+void IRDumpSourceVisitor::dump( Statement& value ) const
+{
+    const char* nline = "\n";
+    const char* label = &value.label().c_str()[ 1 ];
+    const char* scope = value.scope()->label().c_str();
+
+    if( value.scope()->entry().get() == &value )
+    {
+        label = &value.scope()->label().c_str()[ 1 ];
+
+        if( not value.scope()->scope() )
+        {
+            scope = "entry";
+            nline = "";
+        }
+        else
+        {
+            scope = value.scope()->scope()->label().c_str();
+        }
+    }
+    else if( value.scope()->exit().get() == &value )
+    {
+        scope = value.scope()->label().c_str();
+
+        if( not value.scope()->scope() )
+        {
+            label = "exit";
+        }
+        else
+        {
+            label = &value.scope()->scope()->label().c_str()[ 1 ];
+        }
+    }
+
+    m_stream << nline << indention( value ) << label << ": " << scope << "\n";
+}
+
+void IRDumpSourceVisitor::dump( Instruction& value ) const
+{
+    if( isa< ForkInstruction >( value ) or isa< MergeInstruction >( value ) )
+    {
+        m_stream << indention( value ) << value.name() << " "
+                 << value.statement()->scope()->name() << "\n";
+    }
+    else
+    {
+        std::string tmp = "";
+        u1 first = true;
+
+        for( auto operand : value.operands() )
+        {
+            if( not first )
+            {
+                tmp += ", ";
+            }
+            else
+            {
+                first = false;
+            }
+
+            tmp += operand->type().name();
+            tmp += " ";
+            tmp += operand->label();
+        }
+
+        std::string uses = "{";
+        for( auto u : value.uses() )
+        {
+            uses += u->use().label();
+            uses += " : ";
+            uses += u->use().name();
+            uses += ", ";
+        }
+        uses += "}";
+
+        m_stream << indention( value ) << value.label() << " = " << value.name()
+                 << " " << tmp << "                 ;; uses = " << uses << "\n";
+    }
+}
+
+void IRDumpSourceVisitor::dump( Constant& value ) const
+{
+    static u1 first = true;
+
+    if( first )
+    {
+        first = false;
+
+        m_stream << "\n";
+    }
+
+    m_stream << value.label() << " = " << value.type().name() << " "
+             << value.name() << "\n";
+}
+
+static inline std::string indention( Value& value )
+{
+#define INDENT "  "
+
+    if( isa< Statement >( value ) )
+    {
+        return INDENT;
+    }
+    else if( isa< Instruction >( value ) )
+    {
+        return INDENT INDENT;
+    }
+    else
+    {
+        return "";
+    }
+}
+
+void IRDumpSourcePass::usage( libpass::PassUsage& pu )
+{
+    pu.require< ConsistencyCheckPass >();
+}
+
+u1 IRDumpSourcePass::run( libpass::PassResult& pr )
+{
+    libpass::PassLogger log( &id, stream() );
+
+    const auto data = pr.result< ConsistencyCheckPass >();
+    const auto specification = data->specification();
+
+    IRDumpSourceVisitor visitor{ std::cout };
+    data->specification()->accept( visitor );
+
+    return true;
 }
 
 //
