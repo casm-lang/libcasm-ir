@@ -79,7 +79,8 @@ Instructions Statement::instructions( void ) const
     return m_instructions;
 }
 
-void Statement::add( const ExecutionSemanticsBlock::Ptr& block )
+ExecutionSemanticsBlock::Ptr Statement::add(
+    const ExecutionSemanticsBlock::Ptr& block )
 {
     assert( block );
 
@@ -89,7 +90,14 @@ void Statement::add( const ExecutionSemanticsBlock::Ptr& block )
             !" trivial statements are not allowed to have inside blocks! " );
     }
 
+    const auto self = ptr_this< Statement >();
+
+    block->setParent( self );
+    block->setScope( self->scope() );
+
     m_blocks.add( block );
+
+    return block;
 }
 
 ExecutionSemanticsBlocks Statement::blocks( void ) const

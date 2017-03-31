@@ -41,7 +41,8 @@ namespace libcasm_ir
 
         Instructions instructions( void ) const;
 
-        void add( const ExecutionSemanticsBlock::Ptr& block );
+        ExecutionSemanticsBlock::Ptr add(
+            const ExecutionSemanticsBlock::Ptr& block );
 
         ExecutionSemanticsBlocks blocks( void ) const;
 
