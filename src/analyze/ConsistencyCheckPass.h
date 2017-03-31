@@ -65,11 +65,9 @@ namespace libcasm_ir
 
     class ConsistencyCheckVisitor final : public RecursiveVisitor
     {
-      private:
-        template < typename T >
-        void verify( Value& value );
-
       public:
+        ConsistencyCheckVisitor( libstdhl::Logger log );
+
         //
         // General
         //
@@ -144,6 +142,15 @@ namespace libcasm_ir
         void visit( AgentConstant& value ) override;
 
         void visit( Identifier& value ) override;
+
+        u64 errors( void ) const;
+
+      private:
+        template < typename T >
+        void verify( Value& value );
+
+        libstdhl::Logger m_log;
+        u64 m_err;
     };
 }
 

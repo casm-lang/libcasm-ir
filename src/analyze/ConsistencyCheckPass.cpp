@@ -40,14 +40,13 @@ u1 ConsistencyCheckPass::run( libpass::PassResult& pr )
     auto data = pr.result< ConsistencyCheckPass >();
     assert( data );
 
-    try
+    ConsistencyCheckVisitor visitor( log );
+    data->specification()->accept( visitor );
+
+    if( visitor.errors() )
     {
-        ConsistencyCheckVisitor visitor;
-        data->specification()->accept( visitor );
-    }
-    catch( ... )
-    {
-        log.error( "inconsistent specification" );
+        log.error( "inconsistent specification, found '%lu' error(s)",
+            visitor.errors() );
         return false;
     }
 
@@ -58,108 +57,10 @@ u1 ConsistencyCheckPass::run( libpass::PassResult& pr )
     return true;
 }
 
-template < typename T >
-void ConsistencyCheckVisitor::verify( Value& value )
+ConsistencyCheckVisitor::ConsistencyCheckVisitor( libstdhl::Logger log )
+: m_log( log )
+, m_err( 0 )
 {
-    if( not value.ptr_type() )
-    {
-        libstdhl::Log::error( "value with no type found" );
-    }
-
-    if( not isa< T >( value ) )
-    {
-        libstdhl::Log::error(
-            "inconsistent class value '%u' found", value.id() );
-
-        // PPA: if the 'is-a' relation does not work, we cannot rely on this
-        //      function to check the following IR properties, so we have to
-        //      abort and return this function!
-        return;
-    }
-
-    if( value.label().empty() )
-    {
-        libstdhl::Log::error(
-            "value '%p' %s: has no label", &value, value.dump().c_str() );
-    }
-
-    if( const auto v = cast< Instruction >( value ) )
-    {
-        if( not v->statement() )
-        {
-            libstdhl::Log::error(
-                "inst '%p' %s: has no statement", v, v->dump().c_str() );
-        }
-    }
-    else if( const auto v = cast< Statement >( value ) )
-    {
-        if( not v->parent() )
-        {
-            libstdhl::Log::error(
-                "stmt '%p' %s: has no parent", v, v->dump().c_str() );
-        }
-
-        if( not v->scope() )
-        {
-            libstdhl::Log::error(
-                "stmt '%p' %s: has no scope", v, v->dump().c_str() );
-        }
-
-        if( v->instructions().size() < 1 )
-        {
-            libstdhl::Log::error(
-                "stmt '%p' %s: shall contain at least 1 instruction", v,
-                v->dump().c_str() );
-        }
-    }
-    else if( const auto v = cast< ExecutionSemanticsBlock >( value ) )
-    {
-        u1 block_is_context_of_rule = false;
-
-        if( const auto p = cast< ParallelBlock >( value ) )
-        {
-            if( p->rule() )
-            {
-                block_is_context_of_rule = true;
-            }
-        }
-
-        if( not v->parent() and not block_is_context_of_rule )
-        {
-            libstdhl::Log::error(
-                "eblk '%p' %s: has no parent", v, v->dump().c_str() );
-        }
-
-        if( not v->scope() and not block_is_context_of_rule )
-        {
-            libstdhl::Log::error(
-                "eblk '%p' %s: has no scope", v, v->dump().c_str() );
-        }
-
-        if( v->blocks().size() < 1 )
-        {
-            libstdhl::Log::error(
-                "eblk '%p' %s: shall contain at least 1 block", v,
-                v->dump().c_str() );
-        }
-
-        if( ( not v->entry() ) and ( not v->exit() )
-            and ( v->blocks().size() != 1 ) )
-        {
-            libstdhl::Log::error(
-                "eblk '%p' %s: if empty entry and exit section, inner "
-                "blocks size shall be 1",
-                v, v->dump().c_str() );
-        }
-
-        if( ( ( not v->entry() ) and ( v->exit() ) )
-            or ( ( v->entry() ) and ( not v->exit() ) ) )
-        {
-            libstdhl::Log::error(
-                "eblk '%p' %s: empty entry or empty exit found", v,
-                v->dump().c_str() );
-        }
-    }
 }
 
 //
@@ -172,14 +73,21 @@ void ConsistencyCheckVisitor::visit( Specification& value )
 
     if( not( value.rules().size() > 0 ) )
     {
-        libstdhl::Log::error( "specification '%p' %s: has no rules", &value,
+        m_log.error( "specification '%p' %s: has no rules", &value,
             value.dump().c_str() );
+        m_err++;
     }
 
     if( not value.agent() )
     {
-        libstdhl::Log::error( "specification '%p' %s: has no agent", &value,
+        m_log.error( "specification '%p' %s: has no agent", &value,
             value.dump().c_str() );
+        m_err++;
+    }
+
+    if( errors() > 0 )
+    {
+        return;
     }
 
     RecursiveVisitor::visit( value );
@@ -196,6 +104,11 @@ void ConsistencyCheckVisitor::visit( Derived& value )
 {
     verify< Derived >( value );
 
+    if( errors() > 0 )
+    {
+        return;
+    }
+
     RecursiveVisitor::visit( value );
 }
 void ConsistencyCheckVisitor::visit( Rule& value )
@@ -204,26 +117,32 @@ void ConsistencyCheckVisitor::visit( Rule& value )
 
     if( not value.context() )
     {
-        libstdhl::Log::error(
+        m_log.error(
             "rule '%p' %s: has no context", &value, value.dump().c_str() );
+        m_err++;
     }
 
     if( const auto p = cast< ParallelBlock >( value.context() ) )
     {
         if( *p->rule() != value )
         {
-            libstdhl::Log::error(
-                "rule '%p' %s: context does not point to this rule",
+            m_log.error( "rule '%p' %s: context does not point to this rule",
                 &value,
                 value.dump().c_str() );
+            m_err++;
         }
     }
     else
     {
-        libstdhl::Log::error(
-            "rule '%p' %s: does not start with a parallel block",
+        m_log.error( "rule '%p' %s: does not start with a parallel block",
             &value,
             value.dump().c_str() );
+        m_err++;
+    }
+
+    if( errors() > 0 )
+    {
+        return;
     }
 
     RecursiveVisitor::visit( value );
@@ -242,11 +161,21 @@ void ConsistencyCheckVisitor::visit( ParallelBlock& value )
 {
     verify< ParallelBlock >( value );
 
+    if( errors() > 0 )
+    {
+        return;
+    }
+
     RecursiveVisitor::visit( value );
 }
 void ConsistencyCheckVisitor::visit( SequentialBlock& value )
 {
     verify< SequentialBlock >( value );
+
+    if( errors() > 0 )
+    {
+        return;
+    }
 
     RecursiveVisitor::visit( value );
 }
@@ -254,6 +183,11 @@ void ConsistencyCheckVisitor::visit( SequentialBlock& value )
 void ConsistencyCheckVisitor::visit( TrivialStatement& value )
 {
     verify< TrivialStatement >( value );
+
+    if( errors() > 0 )
+    {
+        return;
+    }
 
     RecursiveVisitor::visit( value );
 }
@@ -272,12 +206,17 @@ void ConsistencyCheckVisitor::visit( BranchStatement& value )
             }
             else
             {
-                libstdhl::Log::error(
+                m_log.error(
                     "invalid 'BranchStatement' found, only one select "
                     "instruction is allowed, invalid '%s'",
                     instr->dump().c_str() );
             }
         }
+    }
+
+    if( errors() > 0 )
+    {
+        return;
     }
 
     RecursiveVisitor::visit( value );
@@ -335,13 +274,13 @@ void ConsistencyCheckVisitor::visit( SelectInstruction& value )
 
     if( size < 3 or ( size % 2 ) != 1 )
     {
-        libstdhl::Log::error(
+        m_log.error(
             "select statement has invalid operand size of '%u'", size );
     }
 
     if( not isa< BranchStatement >( value.statement() ) )
     {
-        libstdhl::Log::error(
+        m_log.error(
             "select statement is only allowed to reside in 'BranchStatement' "
             "blocks" );
     }
@@ -465,6 +404,119 @@ void ConsistencyCheckVisitor::visit( AgentConstant& value )
 void ConsistencyCheckVisitor::visit( Identifier& value )
 {
     verify< Identifier >( value );
+}
+
+u64 ConsistencyCheckVisitor::errors( void ) const
+{
+    return m_err;
+}
+
+template < typename T >
+void ConsistencyCheckVisitor::verify( Value& value )
+{
+    if( not value.ptr_type() )
+    {
+        m_log.error( "value with no type found" );
+        m_err++;
+    }
+
+    if( not isa< T >( value ) )
+    {
+        m_log.error( "inconsistent class value '%u' found", value.id() );
+        m_err++;
+
+        // PPA: if the 'is-a' relation does not work, we cannot rely on this
+        //      function to check the following IR properties, so we have to
+        //      abort and return this function!
+        return;
+    }
+
+    if( value.label().empty() )
+    {
+        m_log.error(
+            "value '%p' %s: has no label", &value, value.dump().c_str() );
+        m_err++;
+    }
+
+    if( const auto v = cast< Instruction >( value ) )
+    {
+        if( not v->statement() )
+        {
+            m_log.error(
+                "inst '%p' %s: has no statement", v, v->dump().c_str() );
+            m_err++;
+        }
+    }
+    else if( const auto v = cast< Statement >( value ) )
+    {
+        if( not v->parent() )
+        {
+            m_log.error( "stmt '%p' %s: has no parent", v, v->dump().c_str() );
+            m_err++;
+        }
+
+        if( not v->scope() )
+        {
+            m_log.error( "stmt '%p' %s: has no scope", v, v->dump().c_str() );
+            m_err++;
+        }
+
+        if( v->instructions().size() < 1 )
+        {
+            m_log.error( "stmt '%p' %s: shall contain at least 1 instruction",
+                v, v->dump().c_str() );
+            m_err++;
+        }
+    }
+    else if( const auto v = cast< ExecutionSemanticsBlock >( value ) )
+    {
+        u1 block_is_context_of_rule = false;
+
+        if( const auto p = cast< ParallelBlock >( value ) )
+        {
+            if( p->rule() )
+            {
+                block_is_context_of_rule = true;
+            }
+        }
+
+        if( not v->parent() and not block_is_context_of_rule )
+        {
+            m_log.error( "eblk '%p' %s: has no parent", v, v->dump().c_str() );
+            m_err++;
+        }
+
+        if( not v->scope() and not block_is_context_of_rule )
+        {
+            m_log.error( "eblk '%p' %s: has no scope", v, v->dump().c_str() );
+            m_err++;
+        }
+
+        if( v->blocks().size() < 1 )
+        {
+            m_log.error( "eblk '%p' %s: shall contain at least 1 block", v,
+                v->dump().c_str() );
+            m_err++;
+        }
+
+        if( ( not v->entry() ) and ( not v->exit() )
+            and ( v->blocks().size() != 1 ) )
+        {
+            m_log.error(
+                "eblk '%p' %s: if empty entry and exit section, inner "
+                "blocks size shall be 1",
+                v, v->dump().c_str() );
+            m_err++;
+        }
+
+        if( ( ( not v->entry() ) and ( v->exit() ) )
+            or ( ( v->entry() ) and ( not v->exit() ) ) )
+        {
+            m_log.error( "eblk '%p' %s: empty entry or empty exit found", v,
+                v->dump().c_str() );
+            m_err++;
+        }
+    }
 }
 
 //
