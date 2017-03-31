@@ -68,233 +68,11 @@ u1 IRDumpDotPass::run( libpass::PassResult& pr )
     return true;
 }
 
+static inline std::string indention( Value& value );
+
 IRDumpDotVisitor::IRDumpDotVisitor( std::ostream& stream )
 : m_stream( stream )
 {
-}
-
-std::string IRDumpDotVisitor::indention( Value& value ) const
-{
-#define INDENT "  "
-
-    if( isa< Statement >( value ) )
-    {
-        return INDENT;
-    }
-    else if( isa< Instruction >( value ) )
-    {
-        return INDENT INDENT;
-    }
-    else
-    {
-        return "";
-    }
-}
-
-void IRDumpDotVisitor::dump( ExecutionSemanticsBlock& value ) const
-{
-    m_stream << "  # " << value.dump() << "\n";
-
-    m_stream << "  subgraph \"" << &value << "\" {\n"
-             << "    label=\"" << value.dump() << "\"\n";
-
-    // begin (B) and end (E) connection points of the sub-graph
-
-    m_stream << "  \"" << &value << "_B\" [label=\"B: " << value.dump()
-             << "\"]\n"; // TODO: , style=invis
-
-    m_stream << "  \"" << &value << "_E\"   [label=\"E: " << value.dump()
-             << "\"]\n";
-
-    m_stream << "  \"" << &value << "_B\" -> \"" << &value
-             << "_E\" [style=dashed, color=gray];\n";
-
-    // up references
-
-    if( value.scope() )
-    {
-        m_stream << "  \"" << &value << "_B\" -> \"" << value.scope().get()
-                 << "_B\" [style=dashed, color=green];\n";
-    }
-
-    if( value.parent() )
-    {
-        m_stream << "  \"" << &value << "_B\" -> \"" << value.parent().get()
-                 << "_B\" [style=dashed, color=blue];\n";
-    }
-
-    // inner connection
-
-    if( value.entry() )
-    {
-        m_stream << "  \"" << &value << "_B\" -> \"" << value.entry().get()
-                 << "_B\"\n";
-    }
-
-    const Block* connection_point = &value;
-
-    if( value.entry() )
-    {
-        connection_point = value.entry().get();
-    }
-
-    for( auto block : value.blocks() )
-    {
-        m_stream << "  \"" << connection_point << "_E\" -> \"" << block.get()
-                 << "_B\"\n";
-
-        if( value.parallel() )
-        {
-            if( value.exit() )
-            {
-                m_stream << "  \"" << block.get() << "_E\" -> \""
-                         << value.exit().get() << "_B\"\n";
-            }
-        }
-        else
-        {
-            connection_point = block.get();
-        }
-    }
-
-    if( value.exit() )
-    {
-        if( not value.parallel() )
-        {
-            m_stream << "  \"" << value.blocks().back().get() << "_E\" -> \""
-                     << value.exit().get() << "_B\"\n";
-        }
-
-        m_stream << "  \"" << value.exit().get() << "_E\" -> \"" << &value
-                 << "_E\"\n";
-    }
-}
-
-void IRDumpDotVisitor::dump( Statement& value ) const
-{
-    const char* label = &value.label().c_str()[ 1 ];
-    const char* scope = value.scope()->label().c_str();
-
-    if( value.scope()->entry().get() == &value )
-    {
-        label = &value.scope()->label().c_str()[ 1 ];
-
-        if( not value.scope()->scope() )
-        {
-            scope = "entry";
-        }
-        else
-        {
-            scope = value.scope()->scope()->label().c_str();
-        }
-    }
-    else if( value.scope()->exit().get() == &value )
-    {
-        scope = value.scope()->label().c_str();
-
-        if( not value.scope()->scope() )
-        {
-            label = "exit";
-        }
-        else
-        {
-            label = &value.scope()->scope()->label().c_str()[ 1 ];
-        }
-    }
-
-    m_stream << "  # " << value.dump() << "\n";
-
-    m_stream << "  subgraph \"" << &value << "\" {\n"
-             << "    label=\"" << label << ": " << scope << "\"\n";
-
-    // begin (B) and end (E) connection points of the sub-graph
-
-    m_stream << "  \"" << &value << "_B\" [label=\"B: " << value.dump()
-             << "\"]\n"; // TODO: , style=invis
-
-    m_stream << "  \"" << &value << "_E\"   [label=\"E: " << value.dump()
-             << "\"]\n";
-
-    if( value.scope() )
-    {
-        m_stream << "  \"" << &value << "_B\" -> \"" << value.scope().get()
-                 << "_B\" [style=dashed, color=green];\n";
-    }
-
-    if( value.parent() )
-    {
-        m_stream << "  \"" << &value << "_B\" -> \"" << value.parent().get()
-                 << "_B\" [style=dashed, color=blue];\n";
-    }
-
-    m_stream << "  \"" << &value << "_B\" -> \""
-             << value.instructions().front().get() << "\"\n";
-
-    for( auto instr : value.instructions() )
-    {
-        const auto next = instr->next();
-        if( next )
-        {
-            m_stream << "  \"" << instr.get() << "\" ->  \"" << next.get()
-                     << "\";\n";
-        }
-    }
-}
-
-void IRDumpDotVisitor::dump( Instruction& value ) const
-{
-    m_stream << "  # " << value.dump() << "\n";
-
-    m_stream << "  \"" << &value << "\" [shape=box, color=red, label=\""
-             << value.dump() << "\"];\n";
-
-    if( isa< ForkInstruction >( value ) or isa< MergeInstruction >( value ) )
-    {
-        m_stream << "  #" << indention( value ) << value.name() << " "
-                 << value.statement()->scope()->name() << "\n";
-    }
-    else
-    {
-        std::string tmp = "";
-        u1 first = true;
-
-        for( auto operand : value.operands() )
-        {
-            if( not first )
-            {
-                tmp += ", ";
-            }
-            else
-            {
-                first = false;
-            }
-
-            tmp += operand->type().name();
-            tmp += " ";
-            tmp += operand->label();
-        }
-
-        std::string uses = "{";
-        for( auto u : value.uses() )
-        {
-            uses += u->use().label();
-            uses += " : ";
-            uses += u->use().name();
-            uses += ", ";
-        }
-        uses += "}";
-
-        m_stream << "  #" << indention( value ) << value.label() << " = "
-                 << value.name() << " " << tmp
-                 << "                 ;; uses = " << uses << "\n";
-    }
-}
-
-void IRDumpDotVisitor::dump( Constant& value ) const
-{
-    m_stream << "  # " << value.dump() << "\n";
-
-    m_stream << "  \"" << &value << "\" [label=\"" << value.dump() << "\"];\n";
 }
 
 //
@@ -637,6 +415,230 @@ void IRDumpDotVisitor::visit( AgentConstant& value )
 void IRDumpDotVisitor::visit( Identifier& value )
 {
     dump( value );
+}
+
+void IRDumpDotVisitor::dump( ExecutionSemanticsBlock& value ) const
+{
+    m_stream << "  # " << value.dump() << "\n";
+
+    m_stream << "  subgraph \"" << &value << "\" {\n"
+             << "    label=\"" << value.dump() << "\"\n";
+
+    // begin (B) and end (E) connection points of the sub-graph
+
+    m_stream << "  \"" << &value << "_B\" [label=\"B: " << value.dump()
+             << "\"]\n"; // TODO: , style=invis
+
+    m_stream << "  \"" << &value << "_E\"   [label=\"E: " << value.dump()
+             << "\"]\n";
+
+    m_stream << "  \"" << &value << "_B\" -> \"" << &value
+             << "_E\" [style=dashed, color=gray];\n";
+
+    // up references
+
+    if( value.scope() )
+    {
+        m_stream << "  \"" << &value << "_B\" -> \"" << value.scope().get()
+                 << "_B\" [style=dashed, color=green];\n";
+    }
+
+    if( value.parent() )
+    {
+        m_stream << "  \"" << &value << "_B\" -> \"" << value.parent().get()
+                 << "_B\" [style=dashed, color=blue];\n";
+    }
+
+    // inner connection
+
+    if( value.entry() )
+    {
+        m_stream << "  \"" << &value << "_B\" -> \"" << value.entry().get()
+                 << "_B\"\n";
+    }
+
+    const Block* connection_point = &value;
+
+    if( value.entry() )
+    {
+        connection_point = value.entry().get();
+    }
+
+    for( auto block : value.blocks() )
+    {
+        m_stream << "  \"" << connection_point << "_E\" -> \"" << block.get()
+                 << "_B\"\n";
+
+        if( value.parallel() )
+        {
+            if( value.exit() )
+            {
+                m_stream << "  \"" << block.get() << "_E\" -> \""
+                         << value.exit().get() << "_B\"\n";
+            }
+        }
+        else
+        {
+            connection_point = block.get();
+        }
+    }
+
+    if( value.exit() )
+    {
+        if( not value.parallel() )
+        {
+            m_stream << "  \"" << value.blocks().back().get() << "_E\" -> \""
+                     << value.exit().get() << "_B\"\n";
+        }
+
+        m_stream << "  \"" << value.exit().get() << "_E\" -> \"" << &value
+                 << "_E\"\n";
+    }
+}
+
+void IRDumpDotVisitor::dump( Statement& value ) const
+{
+    const char* label = &value.label().c_str()[ 1 ];
+    const char* scope = value.scope()->label().c_str();
+
+    if( value.scope()->entry().get() == &value )
+    {
+        label = &value.scope()->label().c_str()[ 1 ];
+
+        if( not value.scope()->scope() )
+        {
+            scope = "entry";
+        }
+        else
+        {
+            scope = value.scope()->scope()->label().c_str();
+        }
+    }
+    else if( value.scope()->exit().get() == &value )
+    {
+        scope = value.scope()->label().c_str();
+
+        if( not value.scope()->scope() )
+        {
+            label = "exit";
+        }
+        else
+        {
+            label = &value.scope()->scope()->label().c_str()[ 1 ];
+        }
+    }
+
+    m_stream << "  # " << value.dump() << "\n";
+
+    m_stream << "  subgraph \"" << &value << "\" {\n"
+             << "    label=\"" << label << ": " << scope << "\"\n";
+
+    // begin (B) and end (E) connection points of the sub-graph
+
+    m_stream << "  \"" << &value << "_B\" [label=\"B: " << value.dump()
+             << "\"]\n"; // TODO: , style=invis
+
+    m_stream << "  \"" << &value << "_E\"   [label=\"E: " << value.dump()
+             << "\"]\n";
+
+    if( value.scope() )
+    {
+        m_stream << "  \"" << &value << "_B\" -> \"" << value.scope().get()
+                 << "_B\" [style=dashed, color=green];\n";
+    }
+
+    if( value.parent() )
+    {
+        m_stream << "  \"" << &value << "_B\" -> \"" << value.parent().get()
+                 << "_B\" [style=dashed, color=blue];\n";
+    }
+
+    m_stream << "  \"" << &value << "_B\" -> \""
+             << value.instructions().front().get() << "\"\n";
+
+    for( auto instr : value.instructions() )
+    {
+        const auto next = instr->next();
+        if( next )
+        {
+            m_stream << "  \"" << instr.get() << "\" ->  \"" << next.get()
+                     << "\";\n";
+        }
+    }
+}
+
+void IRDumpDotVisitor::dump( Instruction& value ) const
+{
+    m_stream << "  # " << value.dump() << "\n";
+
+    m_stream << "  \"" << &value << "\" [shape=box, color=red, label=\""
+             << value.dump() << "\"];\n";
+
+    if( isa< ForkInstruction >( value ) or isa< MergeInstruction >( value ) )
+    {
+        m_stream << "  #" << indention( value ) << value.name() << " "
+                 << value.statement()->scope()->name() << "\n";
+    }
+    else
+    {
+        std::string tmp = "";
+        u1 first = true;
+
+        for( auto operand : value.operands() )
+        {
+            if( not first )
+            {
+                tmp += ", ";
+            }
+            else
+            {
+                first = false;
+            }
+
+            tmp += operand->type().name();
+            tmp += " ";
+            tmp += operand->label();
+        }
+
+        std::string uses = "{";
+        for( auto u : value.uses() )
+        {
+            uses += u->use().label();
+            uses += " : ";
+            uses += u->use().name();
+            uses += ", ";
+        }
+        uses += "}";
+
+        m_stream << "  #" << indention( value ) << value.label() << " = "
+                 << value.name() << " " << tmp
+                 << "                 ;; uses = " << uses << "\n";
+    }
+}
+
+void IRDumpDotVisitor::dump( Constant& value ) const
+{
+    m_stream << "  # " << value.dump() << "\n";
+
+    m_stream << "  \"" << &value << "\" [label=\"" << value.dump() << "\"];\n";
+}
+
+static inline std::string indention( Value& value )
+{
+#define INDENT "  "
+
+    if( isa< Statement >( value ) )
+    {
+        return INDENT;
+    }
+    else if( isa< Instruction >( value ) )
+    {
+        return INDENT INDENT;
+    }
+    else
+    {
+        return "";
+    }
 }
 
 //

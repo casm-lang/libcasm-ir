@@ -55,19 +55,6 @@ namespace libcasm_ir
       public:
         IRDumpDotVisitor( std::ostream& stream );
 
-      private:
-        std::ostream& m_stream;
-        std::unordered_set< u8 > m_first;
-
-        std::string indention( Value& value ) const;
-
-        void dump( Block& value ) const;
-        void dump( ExecutionSemanticsBlock& value ) const;
-        void dump( Statement& value ) const;
-        void dump( Instruction& value ) const;
-        void dump( Constant& value ) const;
-
-      public:
         //
         // General
         //
@@ -142,6 +129,16 @@ namespace libcasm_ir
         void visit( AgentConstant& value ) override;
 
         void visit( Identifier& value ) override;
+
+      private:
+        void dump( Block& value ) const;
+        void dump( ExecutionSemanticsBlock& value ) const;
+        void dump( Statement& value ) const;
+        void dump( Instruction& value ) const;
+        void dump( Constant& value ) const;
+
+        std::ostream& m_stream;
+        std::unordered_set< u8 > m_first;
     };
 }
 
