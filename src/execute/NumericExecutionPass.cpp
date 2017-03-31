@@ -38,8 +38,11 @@ void NumericExecutionPass::usage( libpass::PassUsage& pu )
 
 u1 NumericExecutionPass::run( libpass::PassResult& pr )
 {
-    assert( !" unimplemented !!! " );
-    return true;
+    libpass::PassLogger log( &id, stream() );
+
+    log.error( "unimplemented" );
+
+    return false;
 }
 
 //
