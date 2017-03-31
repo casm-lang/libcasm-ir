@@ -21,39 +21,39 @@
 //  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef _LIB_CASMIR_H_
-#define _LIB_CASMIR_H_
+#ifndef _LIB_CASMIR_BRANCH_ELIMINATION_PASS_H_
+#define _LIB_CASMIR_BRANCH_ELIMINATION_PASS_H_
 
-#include "src/Agent.h"
-#include "src/Annotation.h"
-#include "src/Block.h"
-#include "src/Builtin.h"
-#include "src/CasmIR.h"
-#include "src/Constant.h"
-#include "src/Derived.h"
-#include "src/Enumeration.h"
-#include "src/Function.h"
-#include "src/Instruction.h"
-#include "src/Rule.h"
-#include "src/Specification.h"
-#include "src/Statement.h"
-#include "src/Type.h"
-#include "src/User.h"
-#include "src/Value.h"
-#include "src/Visitor.h"
+#include "../analyze/ConsistencyCheckPass.h"
 
-#include "src/analyze/ConsistencyCheckPass.h"
-#include "src/analyze/IRDumpDebugPass.h"
+/**
+   @brief    TODO
 
-#include "src/transform/BranchEliminationPass.h"
-#include "src/transform/IRDumpDotPass.h"
-#include "src/transform/IRDumpSourcePass.h"
+   TODO
+*/
 
 namespace libcasm_ir
 {
+    class Value;
+    class Constant;
+    class Instruction;
+
+    class BranchEliminationPass final : public libpass::Pass
+    {
+      public:
+        using Data = ConsistencyCheckPass::Data;
+
+        static char id;
+
+        void usage( libpass::PassUsage& pu ) override;
+
+        u1 run( libpass::PassResult& pr ) override;
+
+        u64 optimize( Rule::Ptr& rule );
+    };
 }
 
-#endif // _LIB_CASMIR_H_
+#endif // _LIB_CASMIR_BRANCH_ELIMINATION_PASS_H_
 
 //
 //  Local variables:
