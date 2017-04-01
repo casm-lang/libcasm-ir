@@ -253,8 +253,29 @@ GeneralBuiltin::GeneralBuiltin(
 
 u1 GeneralBuiltin::classof( Value const* obj )
 {
-    return obj->id() == classid() or AssertBuiltin::classof( obj )
-           or OutputBuiltin::classof( obj );
+    return obj->id() == classid() or SelfBuiltin::classof( obj )
+           or AssertBuiltin::classof( obj ) or OutputBuiltin::classof( obj );
+}
+
+//
+// SelfBuiltin
+//
+
+SelfBuiltin::SelfBuiltin( const Type::Ptr& type )
+: GeneralBuiltin( type, info, classid() )
+{
+}
+
+const Annotation SelfBuiltin::info( classid(),
+    Annotation::Data{
+
+        { Type::RULE_REFERENCE, {} },
+
+    } );
+
+u1 SelfBuiltin::classof( Value const* obj )
+{
+    return obj->id() == classid();
 }
 
 //
