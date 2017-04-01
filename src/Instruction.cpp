@@ -591,28 +591,31 @@ InvInstruction::InvInstruction( const Value::Ptr& lhs )
 {
 }
 
+void InvInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 const Annotation InvInstruction::info( classid(),
+
     Annotation::Data{
 
         { Type::INTEGER,
             {
                 Type::INTEGER,
             } },
+
         { Type::FLOATING,
             {
                 Type::FLOATING,
             } },
+
         { Type::RATIONAL,
             {
                 Type::RATIONAL,
-            } }
+            } },
 
     } );
-
-void InvInstruction::accept( Visitor& visitor )
-{
-    visitor.visit( *this );
-}
 
 u1 InvInstruction::classof( Value const* obj )
 {
@@ -629,6 +632,11 @@ AddInstruction::AddInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
+void AddInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 const Annotation AddInstruction::info( classid(),
     Annotation::Data{
 
@@ -636,21 +644,18 @@ const Annotation AddInstruction::info( classid(),
             {
                 Type::INTEGER, Type::INTEGER,
             } },
+
         { Type::BIT,
             {
                 Type::BIT, Type::BIT,
             } },
+
         { Type::STRING,
             {
                 Type::STRING, Type::STRING,
-            } }
+            } },
 
     } );
-
-void AddInstruction::accept( Visitor& visitor )
-{
-    visitor.visit( *this );
-}
 
 u1 AddInstruction::classof( Value const* obj )
 {
@@ -667,6 +672,11 @@ SubInstruction::SubInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
+void SubInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 const Annotation SubInstruction::info( classid(),
     Annotation::Data{
 
@@ -674,17 +684,13 @@ const Annotation SubInstruction::info( classid(),
             {
                 Type::INTEGER, Type::INTEGER,
             } },
+
         { Type::BIT,
             {
                 Type::BIT, Type::BIT,
-            } }
+            } },
 
     } );
-
-void SubInstruction::accept( Visitor& visitor )
-{
-    visitor.visit( *this );
-}
 
 u1 SubInstruction::classof( Value const* obj )
 {
@@ -701,6 +707,11 @@ MulInstruction::MulInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
+void MulInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 const Annotation MulInstruction::info( classid(),
     Annotation::Data{
 
@@ -708,17 +719,13 @@ const Annotation MulInstruction::info( classid(),
             {
                 Type::INTEGER, Type::INTEGER,
             } },
+
         { Type::BIT,
             {
                 Type::BIT, Type::BIT,
-            } }
+            } },
 
     } );
-
-void MulInstruction::accept( Visitor& visitor )
-{
-    visitor.visit( *this );
-}
 
 u1 MulInstruction::classof( Value const* obj )
 {
@@ -735,20 +742,20 @@ ModInstruction::ModInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
+void ModInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 const Annotation ModInstruction::info( classid(),
     Annotation::Data{
 
         { Type::INTEGER,
             {
                 Type::INTEGER, Type::INTEGER,
-            } }
+            } },
 
     } );
-
-void ModInstruction::accept( Visitor& visitor )
-{
-    visitor.visit( *this );
-}
 
 u1 ModInstruction::classof( Value const* obj )
 {
@@ -765,6 +772,11 @@ DivInstruction::DivInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
+void DivInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 const Annotation DivInstruction::info( classid(),
     Annotation::Data{
 
@@ -772,17 +784,13 @@ const Annotation DivInstruction::info( classid(),
             {
                 Type::INTEGER, Type::INTEGER,
             } },
+
         { Type::RATIONAL,
             {
                 Type::RATIONAL, Type::RATIONAL,
-            } }
+            } },
 
     } );
-
-void DivInstruction::accept( Visitor& visitor )
-{
-    visitor.visit( *this );
-}
 
 u1 DivInstruction::classof( Value const* obj )
 {
@@ -799,6 +807,11 @@ AndInstruction::AndInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
+void AndInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 const Annotation AndInstruction::info( classid(),
     Annotation::Data{
 
@@ -806,17 +819,13 @@ const Annotation AndInstruction::info( classid(),
             {
                 Type::BOOLEAN, Type::BOOLEAN,
             } },
+
         { Type::BIT,
             {
                 Type::BIT, Type::BIT,
-            } }
+            } },
 
     } );
-
-void AndInstruction::accept( Visitor& visitor )
-{
-    visitor.visit( *this );
-}
 
 u1 AndInstruction::classof( Value const* obj )
 {
@@ -833,6 +842,11 @@ XorInstruction::XorInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
+void XorInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 const Annotation XorInstruction::info( classid(),
     Annotation::Data{
 
@@ -840,17 +854,13 @@ const Annotation XorInstruction::info( classid(),
             {
                 Type::BOOLEAN, Type::BOOLEAN,
             } },
+
         { Type::BIT,
             {
                 Type::BIT, Type::BIT,
-            } }
+            } },
 
     } );
-
-void XorInstruction::accept( Visitor& visitor )
-{
-    visitor.visit( *this );
-}
 
 u1 XorInstruction::classof( Value const* obj )
 {
@@ -867,6 +877,11 @@ OrInstruction::OrInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
+void OrInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 const Annotation OrInstruction::info( classid(),
     Annotation::Data{
 
@@ -874,17 +889,13 @@ const Annotation OrInstruction::info( classid(),
             {
                 Type::BOOLEAN, Type::BOOLEAN,
             } },
+
         { Type::BIT,
             {
                 Type::BIT, Type::BIT,
-            } }
+            } },
 
     } );
-
-void OrInstruction::accept( Visitor& visitor )
-{
-    visitor.visit( *this );
-}
 
 u1 OrInstruction::classof( Value const* obj )
 {
@@ -901,6 +912,11 @@ NotInstruction::NotInstruction( const Value::Ptr& lhs )
 {
 }
 
+void NotInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 const Annotation NotInstruction::info( classid(),
     Annotation::Data{
 
@@ -908,21 +924,18 @@ const Annotation NotInstruction::info( classid(),
             {
                 Type::BOOLEAN,
             } },
+
         { Type::BOOLEAN,
             {
                 Type::INTEGER,
             } },
+
         { Type::BIT,
             {
                 Type::BIT,
-            } }
+            } },
 
     } );
-
-void NotInstruction::accept( Visitor& visitor )
-{
-    visitor.visit( *this );
-}
 
 u1 NotInstruction::classof( Value const* obj )
 {
@@ -939,6 +952,11 @@ EquInstruction::EquInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
+void EquInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 const Annotation EquInstruction::info( classid(),
     Annotation::Data{
 
@@ -946,37 +964,38 @@ const Annotation EquInstruction::info( classid(),
             {
                 Type::RULE_REFERENCE, Type::RULE_REFERENCE,
             } },
+
         { Type::BOOLEAN,
             {
                 Type::BOOLEAN, Type::BOOLEAN,
             } },
+
         { Type::BOOLEAN,
             {
                 Type::INTEGER, Type::INTEGER,
             } },
+
         { Type::BOOLEAN,
             {
                 Type::BIT, Type::BIT,
             } },
+
         { Type::BOOLEAN,
             {
                 Type::STRING, Type::STRING,
             } },
+
         { Type::BOOLEAN,
             {
                 Type::RATIONAL, Type::RATIONAL,
             } },
+
         { Type::BOOLEAN,
             {
                 Type::ENUMERATION, Type::ENUMERATION,
-            } }
+            } },
 
     } );
-
-void EquInstruction::accept( Visitor& visitor )
-{
-    visitor.visit( *this );
-}
 
 u1 EquInstruction::classof( Value const* obj )
 {
@@ -993,6 +1012,11 @@ NeqInstruction::NeqInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
+void NeqInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 const Annotation NeqInstruction::info( classid(),
     Annotation::Data{
 
@@ -1000,37 +1024,38 @@ const Annotation NeqInstruction::info( classid(),
             {
                 Type::RULE_REFERENCE, Type::RULE_REFERENCE,
             } },
+
         { Type::BOOLEAN,
             {
                 Type::BOOLEAN, Type::BOOLEAN,
             } },
+
         { Type::BOOLEAN,
             {
                 Type::INTEGER, Type::INTEGER,
             } },
+
         { Type::BOOLEAN,
             {
                 Type::BIT, Type::BIT,
             } },
+
         { Type::BOOLEAN,
             {
                 Type::STRING, Type::STRING,
             } },
+
         { Type::BOOLEAN,
             {
                 Type::RATIONAL, Type::RATIONAL,
             } },
+
         { Type::BOOLEAN,
             {
                 Type::ENUMERATION, Type::ENUMERATION,
-            } }
+            } },
 
     } );
-
-void NeqInstruction::accept( Visitor& visitor )
-{
-    visitor.visit( *this );
-}
 
 u1 NeqInstruction::classof( Value const* obj )
 {
@@ -1047,20 +1072,20 @@ LthInstruction::LthInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
+void LthInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 const Annotation LthInstruction::info( classid(),
     Annotation::Data{
 
         { Type::BOOLEAN,
             {
                 Type::INTEGER, Type::INTEGER,
-            } }
+            } },
 
     } );
-
-void LthInstruction::accept( Visitor& visitor )
-{
-    visitor.visit( *this );
-}
 
 u1 LthInstruction::classof( Value const* obj )
 {
@@ -1077,20 +1102,20 @@ LeqInstruction::LeqInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
+void LeqInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 const Annotation LeqInstruction::info( classid(),
     Annotation::Data{
 
         { Type::BOOLEAN,
             {
                 Type::INTEGER, Type::INTEGER,
-            } }
+            } },
 
     } );
-
-void LeqInstruction::accept( Visitor& visitor )
-{
-    visitor.visit( *this );
-}
 
 u1 LeqInstruction::classof( Value const* obj )
 {
@@ -1107,20 +1132,20 @@ GthInstruction::GthInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
+void GthInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
 const Annotation GthInstruction::info( classid(),
     Annotation::Data{
 
         { Type::BOOLEAN,
             {
                 Type::INTEGER, Type::INTEGER,
-            } }
+            } },
 
     } );
-
-void GthInstruction::accept( Visitor& visitor )
-{
-    visitor.visit( *this );
-}
 
 u1 GthInstruction::classof( Value const* obj )
 {
@@ -1137,17 +1162,20 @@ GeqInstruction::GeqInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
-const Annotation GeqInstruction::info( classid(),
-    Annotation::Data{
-
-        { Type::BOOLEAN, { Type::INTEGER, Type::INTEGER } }
-
-    } );
-
 void GeqInstruction::accept( Visitor& visitor )
 {
     visitor.visit( *this );
 }
+
+const Annotation GeqInstruction::info( classid(),
+    Annotation::Data{
+
+        { Type::BOOLEAN,
+            {
+                Type::INTEGER, Type::INTEGER,
+            } },
+
+    } );
 
 u1 GeqInstruction::classof( Value const* obj )
 {
