@@ -30,13 +30,15 @@
 
 namespace libcasm_ir
 {
-    class Builtin : public User, public Annotation
+    class Builtin : public User
     {
       public:
         using Ptr = std::shared_ptr< Builtin >;
 
-        Builtin( const std::string& name, const Type::Ptr& type,
-            const Annotation& info, Value::ID id = classid() );
+        Builtin( const Type::Ptr& type, const Annotation& info,
+            Value::ID id = classid() );
+
+        const Annotation& annotation( void ) const;
 
         void accept( Visitor& visitor ) override final;
 
@@ -46,6 +48,9 @@ namespace libcasm_ir
         }
 
         static u1 classof( Value const* obj );
+
+        static u1 available(
+            const std::string& token, std::size_t argumentSize );
 
         static Builtin::Ptr find(
             const std::string& name, const Type::Ptr& type );
@@ -57,6 +62,9 @@ namespace libcasm_ir
             static std::unordered_map< std::string, Builtin::Ptr > cache;
             return cache;
         }
+
+      private:
+        const Annotation& m_annotation;
     };
 
     using Builtins = ValueList< Builtin >;
@@ -66,8 +74,8 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< GeneralBuiltin >;
 
-        GeneralBuiltin( const std::string& name, const Type::Ptr& type,
-            const Annotation& info, Value::ID id = classid() );
+        GeneralBuiltin( const Type::Ptr& type, const Annotation& info,
+            Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {
@@ -84,15 +92,14 @@ namespace libcasm_ir
 
         AssertBuiltin( const Type::Ptr& type );
 
-      public:
+        static const Annotation info;
+
         static inline Value::ID classid( void )
         {
             return Value::ASSERT_BUILTIN;
         }
 
         static u1 classof( Value const* obj );
-
-        static const Annotation info;
     };
 
     class OutputBuiltin : public GeneralBuiltin
@@ -100,7 +107,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< OutputBuiltin >;
 
-        OutputBuiltin( const std::string& name, const Type::Ptr& type,
+        OutputBuiltin( const Type::Ptr& type, const Annotation& info,
             const std::string& channel, u1 newline, Value::ID id = classid() );
 
         std::string channel( void ) const;
@@ -119,8 +126,6 @@ namespace libcasm_ir
         }
 
         static u1 classof( Value const* obj );
-
-        static const Annotation info;
     };
 
     class PrintBuiltin : public OutputBuiltin
@@ -130,7 +135,8 @@ namespace libcasm_ir
 
         PrintBuiltin( void );
 
-      public:
+        static const Annotation info;
+
         static inline Value::ID classid( void )
         {
             return Value::PRINT_BUILTIN;
@@ -146,6 +152,8 @@ namespace libcasm_ir
 
         PrintLnBuiltin( void );
 
+        static const Annotation info;
+
         static inline Value::ID classid( void )
         {
             return Value::PRINTLN_BUILTIN;
@@ -159,8 +167,8 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< CastingBuiltin >;
 
-        CastingBuiltin( const std::string& name, const Type::Ptr& type,
-            const Annotation& info, Value::ID id = classid() );
+        CastingBuiltin( const Type::Ptr& type, const Annotation& info,
+            Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {
@@ -177,14 +185,14 @@ namespace libcasm_ir
 
         AsBooleanBuiltin( const Type::Ptr& type );
 
+        static const Annotation info;
+
         static inline Value::ID classid( void )
         {
             return Value::AS_BOOLEAN_BUILTIN;
         }
 
         static u1 classof( Value const* obj );
-
-        static const Annotation info;
     };
 
     class AsIntegerBuiltin : public CastingBuiltin
@@ -194,14 +202,14 @@ namespace libcasm_ir
 
         AsIntegerBuiltin( const Type::Ptr& type );
 
+        static const Annotation info;
+
         static inline Value::ID classid( void )
         {
             return Value::AS_INTEGER_BUILTIN;
         }
 
         static u1 classof( Value const* obj );
-
-        static const Annotation info;
     };
 
     class AsBitBuiltin : public CastingBuiltin
@@ -211,14 +219,14 @@ namespace libcasm_ir
 
         AsBitBuiltin( const Type::Ptr& type );
 
+        static const Annotation info;
+
         static inline Value::ID classid( void )
         {
             return Value::AS_BIT_BUILTIN;
         }
 
         static u1 classof( Value const* obj );
-
-        static const Annotation info;
     };
 
     class AsStringBuiltin : public CastingBuiltin
@@ -228,14 +236,14 @@ namespace libcasm_ir
 
         AsStringBuiltin( const Type::Ptr& type );
 
+        static const Annotation info;
+
         static inline Value::ID classid( void )
         {
             return Value::AS_STRING_BUILTIN;
         }
 
         static u1 classof( Value const* obj );
-
-        static const Annotation info;
     };
 
     class AsFloatingBuiltin : public CastingBuiltin
@@ -245,14 +253,14 @@ namespace libcasm_ir
 
         AsFloatingBuiltin( const Type::Ptr& type );
 
+        static const Annotation info;
+
         static inline Value::ID classid( void )
         {
             return Value::AS_FLOATING_BUILTIN;
         }
 
         static u1 classof( Value const* obj );
-
-        static const Annotation info;
     };
 
     class AsRationalBuiltin : public CastingBuiltin
@@ -262,14 +270,14 @@ namespace libcasm_ir
 
         AsRationalBuiltin( const Type::Ptr& type );
 
+        static const Annotation info;
+
         static inline Value::ID classid( void )
         {
             return Value::AS_RATIONAL_BUILTIN;
         }
 
         static u1 classof( Value const* obj );
-
-        static const Annotation info;
     };
 
     class AsEnumerationBuiltin : public CastingBuiltin
@@ -279,14 +287,14 @@ namespace libcasm_ir
 
         AsEnumerationBuiltin( const Type::Ptr& type );
 
+        static const Annotation info;
+
         static inline Value::ID classid( void )
         {
             return Value::AS_ENUMERATION_BUILTIN;
         }
 
         static u1 classof( Value const* obj );
-
-        static const Annotation info;
     };
 
     //
@@ -298,7 +306,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< StringifyBuiltin >;
 
-        StringifyBuiltin( const std::string& name, const Type::Ptr& type,
+        StringifyBuiltin( const Type::Ptr& type, const Annotation& info,
             Value::ID id = classid() );
 
         static inline Value::ID classid( void )
@@ -307,8 +315,6 @@ namespace libcasm_ir
         }
 
         static u1 classof( Value const* obj );
-
-        static const Annotation info;
     };
 
     class DecBuiltin : public StringifyBuiltin
@@ -317,6 +323,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< DecBuiltin >;
 
         DecBuiltin( const Type::Ptr& type );
+
+        static const Annotation info;
 
         static inline Value::ID classid( void )
         {
@@ -333,6 +341,8 @@ namespace libcasm_ir
 
         HexBuiltin( const Type::Ptr& type );
 
+        static const Annotation info;
+
         static inline Value::ID classid( void )
         {
             return Value::HEX_BUILTIN;
@@ -348,6 +358,8 @@ namespace libcasm_ir
 
         OctBuiltin( const Type::Ptr& type );
 
+        static const Annotation info;
+
         static inline Value::ID classid( void )
         {
             return Value::OCT_BUILTIN;
@@ -362,6 +374,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< BinBuiltin >;
 
         BinBuiltin( const Type::Ptr& type );
+
+        static const Annotation info;
 
         static inline Value::ID classid( void )
         {
@@ -380,7 +394,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< OperatorBuiltin >;
 
-        OperatorBuiltin( const std::string& name, const Type::Ptr& type,
+        OperatorBuiltin( const Type::Ptr& type, const Annotation& info,
             Value::ID id = classid() );
 
         static inline Value::ID classid( void )
@@ -389,8 +403,6 @@ namespace libcasm_ir
         }
 
         static u1 classof( Value const* obj );
-
-        static const Annotation info;
     };
 
     //
@@ -402,7 +414,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< ArithmeticBuiltin >;
 
-        ArithmeticBuiltin( const std::string& name, const Type::Ptr& type,
+        ArithmeticBuiltin( const Type::Ptr& type, const Annotation& info,
             Value::ID id = classid() );
 
         static inline Value::ID classid( void )
@@ -420,6 +432,8 @@ namespace libcasm_ir
 
         AdduBuiltin( const Type::Ptr& type );
 
+        static const Annotation info;
+
         static inline Value::ID classid( void )
         {
             return Value::ADDU_BUILTIN;
@@ -434,6 +448,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< AddsBuiltin >;
 
         AddsBuiltin( const Type::Ptr& type );
+
+        static const Annotation info;
 
         static inline Value::ID classid( void )
         {
@@ -450,6 +466,8 @@ namespace libcasm_ir
 
         SubuBuiltin( const Type::Ptr& type );
 
+        static const Annotation info;
+
         static inline Value::ID classid( void )
         {
             return Value::SUBU_BUILTIN;
@@ -464,6 +482,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< SubsBuiltin >;
 
         SubsBuiltin( const Type::Ptr& type );
+
+        static const Annotation info;
 
         static inline Value::ID classid( void )
         {
@@ -480,6 +500,8 @@ namespace libcasm_ir
 
         MuluBuiltin( const Type::Ptr& type );
 
+        static const Annotation info;
+
         static inline Value::ID classid( void )
         {
             return Value::MULU_BUILTIN;
@@ -494,6 +516,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< MulsBuiltin >;
 
         MulsBuiltin( const Type::Ptr& type );
+
+        static const Annotation info;
 
         static inline Value::ID classid( void )
         {
@@ -512,7 +536,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< CompareBuiltin >;
 
-        CompareBuiltin( const std::string& name, const Type::Ptr& type,
+        CompareBuiltin( const Type::Ptr& type, const Annotation& info,
             Value::ID id = classid() );
 
         static inline Value::ID classid( void )
@@ -530,6 +554,8 @@ namespace libcasm_ir
 
         LesuBuiltin( const Type::Ptr& type );
 
+        static const Annotation info;
+
         static inline Value::ID classid( void )
         {
             return Value::LESU_BUILTIN;
@@ -544,6 +570,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< LessBuiltin >;
 
         LessBuiltin( const Type::Ptr& type );
+
+        static const Annotation info;
 
         static inline Value::ID classid( void )
         {
@@ -560,6 +588,8 @@ namespace libcasm_ir
 
         LequBuiltin( const Type::Ptr& type );
 
+        static const Annotation info;
+
         static inline Value::ID classid( void )
         {
             return Value::LEQU_BUILTIN;
@@ -574,6 +604,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< LeqsBuiltin >;
 
         LeqsBuiltin( const Type::Ptr& type );
+
+        static const Annotation info;
 
         static inline Value::ID classid( void )
         {
@@ -590,6 +622,8 @@ namespace libcasm_ir
 
         GreuBuiltin( const Type::Ptr& type );
 
+        static const Annotation info;
+
         static inline Value::ID classid( void )
         {
             return Value::GREU_BUILTIN;
@@ -604,6 +638,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< GresBuiltin >;
 
         GresBuiltin( const Type::Ptr& type );
+
+        static const Annotation info;
 
         static inline Value::ID classid( void )
         {
@@ -620,6 +656,8 @@ namespace libcasm_ir
 
         GequBuiltin( const Type::Ptr& type );
 
+        static const Annotation info;
+
         static inline Value::ID classid( void )
         {
             return Value::GEQU_BUILTIN;
@@ -634,6 +672,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< GeqsBuiltin >;
 
         GeqsBuiltin( const Type::Ptr& type );
+
+        static const Annotation info;
 
         static inline Value::ID classid( void )
         {
@@ -652,8 +692,8 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< BitBuiltin >;
 
-        BitBuiltin( const std::string& name, const Type::Ptr& type,
-            const Annotation& info, Value::ID id = classid() );
+        BitBuiltin( const Type::Ptr& type, const Annotation& info,
+            Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {
@@ -670,14 +710,14 @@ namespace libcasm_ir
 
         ZextBuiltin( const Type::Ptr& type );
 
+        static const Annotation info;
+
         static inline Value::ID classid( void )
         {
             return Value::ZEXT_BUILTIN;
         }
 
         static u1 classof( Value const* obj );
-
-        static const Annotation info;
     };
 
     class SextBuiltin : public BitBuiltin
@@ -687,14 +727,14 @@ namespace libcasm_ir
 
         SextBuiltin( const Type::Ptr& type );
 
+        static const Annotation info;
+
         static inline Value::ID classid( void )
         {
             return Value::SEXT_BUILTIN;
         }
 
         static u1 classof( Value const* obj );
-
-        static const Annotation info;
     };
 
     class TruncBuiltin : public BitBuiltin
@@ -704,14 +744,14 @@ namespace libcasm_ir
 
         TruncBuiltin( const Type::Ptr& type );
 
+        static const Annotation info;
+
         static inline Value::ID classid( void )
         {
             return Value::TRUNC_BUILTIN;
         }
 
         static u1 classof( Value const* obj );
-
-        static const Annotation info;
     };
 
     class ShlBuiltin : public BitBuiltin
@@ -721,14 +761,14 @@ namespace libcasm_ir
 
         ShlBuiltin( const Type::Ptr& type );
 
+        static const Annotation info;
+
         static inline Value::ID classid( void )
         {
             return Value::SHL_BUILTIN;
         }
 
         static u1 classof( Value const* obj );
-
-        static const Annotation info;
     };
 
     class ShrBuiltin : public BitBuiltin
@@ -738,14 +778,14 @@ namespace libcasm_ir
 
         ShrBuiltin( const Type::Ptr& type );
 
+        static const Annotation info;
+
         static inline Value::ID classid( void )
         {
             return Value::SHR_BUILTIN;
         }
 
         static u1 classof( Value const* obj );
-
-        static const Annotation info;
     };
 
     class AshrBuiltin : public BitBuiltin
@@ -755,14 +795,14 @@ namespace libcasm_ir
 
         AshrBuiltin( const Type::Ptr& type );
 
+        static const Annotation info;
+
         static inline Value::ID classid( void )
         {
             return Value::ASHR_BUILTIN;
         }
 
         static u1 classof( Value const* obj );
-
-        static const Annotation info;
     };
 
     class ClzBuiltin : public BitBuiltin
@@ -772,14 +812,14 @@ namespace libcasm_ir
 
         ClzBuiltin( const Type::Ptr& type );
 
+        static const Annotation info;
+
         static inline Value::ID classid( void )
         {
             return Value::CLZ_BUILTIN;
         }
 
         static u1 classof( Value const* obj );
-
-        static const Annotation info;
     };
 
     class CloBuiltin : public BitBuiltin
@@ -789,14 +829,14 @@ namespace libcasm_ir
 
         CloBuiltin( const Type::Ptr& type );
 
+        static const Annotation info;
+
         static inline Value::ID classid( void )
         {
             return Value::CLO_BUILTIN;
         }
 
         static u1 classof( Value const* obj );
-
-        static const Annotation info;
     };
 
     class ClsBuiltin : public BitBuiltin
@@ -806,14 +846,14 @@ namespace libcasm_ir
 
         ClsBuiltin( const Type::Ptr& type );
 
+        static const Annotation info;
+
         static inline Value::ID classid( void )
         {
             return Value::CLS_BUILTIN;
         }
 
         static u1 classof( Value const* obj );
-
-        static const Annotation info;
     };
 
     //

@@ -25,11 +25,16 @@
 
 using namespace libcasm_ir;
 
-Builtin::Builtin( const std::string& name, const Type::Ptr& type,
-    const Annotation& info, Value::ID id )
-: User( name, type, id )
-, Annotation( info )
+Builtin::Builtin( const Type::Ptr& type, const Annotation& info, Value::ID id )
+: User( Value::token( id ), type, id )
+, m_annotation( info )
 {
+    // TODO: if its an as<Enumeration> .. .do -> "as" + type->name()
+}
+
+const Annotation& Builtin::annotation( void ) const
+{
+    return m_annotation;
 }
 
 void Builtin::accept( Visitor& visitor )
@@ -43,6 +48,30 @@ u1 Builtin::classof( Value const* obj )
            or CastingBuiltin::classof( obj ) or StringifyBuiltin::classof( obj )
            // or MathBuiltin::classof( obj )
            or OperatorBuiltin::classof( obj ) or BitBuiltin::classof( obj );
+}
+
+u1 Builtin::available( const std::string& token, std::size_t argumentSize )
+{
+    try
+    {
+        const auto& annotation = Annotation::find( token );
+
+        auto result = annotation.argumentSizes().find( argumentSize );
+        if( result == annotation.argumentSizes().end() )
+        {
+            return false;
+        }
+    }
+    catch( const std::domain_error& e )
+    {
+        return false;
+    }
+    catch( const std::exception& e )
+    {
+        throw e;
+    }
+
+    return true;
 }
 
 Builtin::Ptr Builtin::find( const std::string& name, const Type::Ptr& type )
@@ -216,9 +245,9 @@ Builtin::Ptr Builtin::asBuiltin( const Type::Ptr& type )
 // GeneralBuiltin
 //
 
-GeneralBuiltin::GeneralBuiltin( const std::string& name, const Type::Ptr& type,
-    const Annotation& info, Value::ID id )
-: Builtin( name, type, info, id )
+GeneralBuiltin::GeneralBuiltin(
+    const Type::Ptr& type, const Annotation& info, Value::ID id )
+: Builtin( type, info, id )
 {
 }
 
@@ -233,56 +262,51 @@ u1 GeneralBuiltin::classof( Value const* obj )
 //
 
 AssertBuiltin::AssertBuiltin( const Type::Ptr& type )
-: GeneralBuiltin( Value::token( classid() ), type, info, classid() )
+: GeneralBuiltin( type, info, classid() )
 {
 }
-u1 AssertBuiltin::classof( Value const* obj )
-{
-    return obj->id() == classid();
-}
+
 const Annotation AssertBuiltin::info( classid(),
     Annotation::Data{
+
         { Type::VOID,
             {
                 Type::BOOLEAN,
             } },
+
         { Type::VOID,
             {
                 Type::BOOLEAN, Type::STRING,
             } },
     } );
 
+u1 AssertBuiltin::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
+
 //
 // OutputBuiltin
 //
 
-OutputBuiltin::OutputBuiltin( const std::string& name, const Type::Ptr& type,
+OutputBuiltin::OutputBuiltin( const Type::Ptr& type, const Annotation& info,
     const std::string& channel, u1 newline, Value::ID id )
-: GeneralBuiltin( name,
-      libstdhl::get< RelationType >( libstdhl::get< VoidType >(),
-          Types( { libstdhl::get< StringType >() } ) ),
-      info, classid() )
+: GeneralBuiltin( type, info, classid() )
 , m_channel( channel )
 , m_newline( newline )
 {
 }
+
 std::string OutputBuiltin::channel( void ) const
 {
     return m_channel;
 }
+
 u1 OutputBuiltin::newline( void ) const
 {
     return m_newline;
 }
-const Annotation OutputBuiltin::info( classid(),
-    Annotation::Data{
 
-        { Type::VOID,
-            {
-                Type::STRING,
-            } }
-
-    } );
 u1 OutputBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid() or PrintBuiltin::classof( obj )
@@ -294,12 +318,22 @@ u1 OutputBuiltin::classof( Value const* obj )
 //
 
 PrintBuiltin::PrintBuiltin( void )
-: OutputBuiltin( "print",
-      libstdhl::get< RelationType >( libstdhl::get< VoidType >(),
-          Types( { libstdhl::get< StringType >() } ) ),
-      "$stdout$", false, classid() )
+: OutputBuiltin( libstdhl::get< RelationType >( libstdhl::get< VoidType >(),
+                     Types( { libstdhl::get< StringType >() } ) ),
+      info, "$stdout$", false, classid() )
 {
 }
+
+const Annotation PrintBuiltin::info( classid(),
+    Annotation::Data{
+
+        { Type::VOID,
+            {
+                Type::STRING,
+            } }
+
+    } );
+
 u1 PrintBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -310,12 +344,22 @@ u1 PrintBuiltin::classof( Value const* obj )
 //
 
 PrintLnBuiltin::PrintLnBuiltin( void )
-: OutputBuiltin( "println",
-      libstdhl::get< RelationType >( libstdhl::get< VoidType >(),
-          Types( { libstdhl::get< StringType >() } ) ),
-      "$stdout$", true, classid() )
+: OutputBuiltin( libstdhl::get< RelationType >( libstdhl::get< VoidType >(),
+                     Types( { libstdhl::get< StringType >() } ) ),
+      info, "$stdout$", true, classid() )
 {
 }
+
+const Annotation PrintLnBuiltin::info( classid(),
+    Annotation::Data{
+
+        { Type::VOID,
+            {
+                Type::STRING,
+            } }
+
+    } );
+
 u1 PrintLnBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -327,9 +371,9 @@ u1 PrintLnBuiltin::classof( Value const* obj )
 // CastingBuiltin
 //
 
-CastingBuiltin::CastingBuiltin( const std::string& name, const Type::Ptr& type,
-    const Annotation& info, Value::ID id )
-: Builtin( name, type, info, id )
+CastingBuiltin::CastingBuiltin(
+    const Type::Ptr& type, const Annotation& info, Value::ID id )
+: Builtin( type, info, id )
 {
 }
 
@@ -347,9 +391,10 @@ u1 CastingBuiltin::classof( Value const* obj )
 //
 
 AsBooleanBuiltin::AsBooleanBuiltin( const Type::Ptr& type )
-: CastingBuiltin( "asBoolean", type, info, classid() )
+: CastingBuiltin( type, info, classid() )
 {
 }
+
 const Annotation AsBooleanBuiltin::info( classid(),
     Annotation::Data{
 
@@ -357,24 +402,29 @@ const Annotation AsBooleanBuiltin::info( classid(),
             {
                 Type::BOOLEAN,
             } },
+
         { Type::BOOLEAN,
             {
                 Type::INTEGER,
             } },
+
         { Type::BOOLEAN, // PPA: I think this should not be allowed
             {
                 Type::FLOATING,
             } },
+
         { Type::BOOLEAN,
             {
                 Type::BIT,
             } },
+
         { Type::BOOLEAN,
             {
                 Type::ENUMERATION,
             } }
 
     } );
+
 u1 AsBooleanBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -385,9 +435,10 @@ u1 AsBooleanBuiltin::classof( Value const* obj )
 //
 
 AsIntegerBuiltin::AsIntegerBuiltin( const Type::Ptr& type )
-: CastingBuiltin( "asInteger", type, info, classid() )
+: CastingBuiltin( type, info, classid() )
 {
 }
+
 const Annotation AsIntegerBuiltin::info( classid(),
     Annotation::Data{
 
@@ -395,24 +446,29 @@ const Annotation AsIntegerBuiltin::info( classid(),
             {
                 Type::INTEGER,
             } },
+
         { Type::INTEGER,
             {
                 Type::BOOLEAN,
             } },
+
         { Type::INTEGER,
             {
                 Type::FLOATING,
             } },
+
         { Type::INTEGER,
             {
                 Type::BIT,
             } },
+
         { Type::INTEGER,
             {
                 Type::ENUMERATION,
             } }
 
     } );
+
 u1 AsIntegerBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -423,9 +479,10 @@ u1 AsIntegerBuiltin::classof( Value const* obj )
 //
 
 AsBitBuiltin::AsBitBuiltin( const Type::Ptr& type )
-: CastingBuiltin( "asBit", type, info, classid() )
+: CastingBuiltin( type, info, classid() )
 {
 }
+
 const Annotation AsBitBuiltin::info( classid(),
     Annotation::Data{
 
@@ -433,24 +490,29 @@ const Annotation AsBitBuiltin::info( classid(),
             {
                 Type::BIT, Type::INTEGER,
             } },
+
         { Type::BIT,
             {
                 Type::INTEGER, Type::INTEGER,
             } },
+
         { Type::BIT,
             {
                 Type::BOOLEAN, Type::INTEGER,
             } },
+
         { Type::BIT,
             {
                 Type::FLOATING, Type::INTEGER,
             } },
+
         { Type::BIT,
             {
                 Type::ENUMERATION, Type::INTEGER,
             } }
 
     } );
+
 u1 AsBitBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -461,9 +523,10 @@ u1 AsBitBuiltin::classof( Value const* obj )
 //
 
 AsStringBuiltin::AsStringBuiltin( const Type::Ptr& type )
-: CastingBuiltin( "asString", type, info, classid() )
+: CastingBuiltin( type, info, classid() )
 {
 }
+
 const Annotation AsStringBuiltin::info( classid(),
     Annotation::Data{
 
@@ -471,28 +534,34 @@ const Annotation AsStringBuiltin::info( classid(),
             {
                 Type::STRING,
             } },
+
         { Type::STRING,
             {
                 Type::INTEGER,
             } },
+
         { Type::STRING,
             {
                 Type::BOOLEAN,
             } },
+
         { Type::STRING,
             {
                 Type::FLOATING,
             } },
+
         { Type::STRING,
             {
                 Type::BIT,
             } },
+
         { Type::STRING,
             {
                 Type::ENUMERATION,
             } }
 
     } );
+
 u1 AsStringBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -503,9 +572,10 @@ u1 AsStringBuiltin::classof( Value const* obj )
 //
 
 AsFloatingBuiltin::AsFloatingBuiltin( const Type::Ptr& type )
-: CastingBuiltin( "asFloating", type, info, classid() )
+: CastingBuiltin( type, info, classid() )
 {
 }
+
 const Annotation AsFloatingBuiltin::info( classid(),
     Annotation::Data{
 
@@ -513,24 +583,29 @@ const Annotation AsFloatingBuiltin::info( classid(),
             {
                 Type::FLOATING,
             } },
+
         { Type::FLOATING,
             {
                 Type::INTEGER,
             } },
+
         { Type::FLOATING,
             {
                 Type::BOOLEAN,
             } },
+
         { Type::FLOATING,
             {
                 Type::BIT,
             } },
+
         { Type::FLOATING,
             {
                 Type::ENUMERATION,
             } }
 
     } );
+
 u1 AsFloatingBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -541,16 +616,21 @@ u1 AsFloatingBuiltin::classof( Value const* obj )
 //
 
 AsRationalBuiltin::AsRationalBuiltin( const Type::Ptr& type )
-: CastingBuiltin( "asRational", type, info, classid() )
+: CastingBuiltin( type, info, classid() )
 {
 }
+
 const Annotation AsRationalBuiltin::info( classid(),
     Annotation::Data{
 
-        { Type::RATIONAL, { Type::RATIONAL } }
+        { Type::RATIONAL,
+            {
+                Type::RATIONAL,
+            } }
 
         // TODO: PPA: add more relations for possible input types!
     } );
+
 u1 AsRationalBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -561,9 +641,10 @@ u1 AsRationalBuiltin::classof( Value const* obj )
 //
 
 AsEnumerationBuiltin::AsEnumerationBuiltin( const Type::Ptr& type )
-: CastingBuiltin( "as" + type->name(), type, info, classid() )
+: CastingBuiltin( type, info, classid() )
 {
 }
+
 const Annotation AsEnumerationBuiltin::info( classid(),
     Annotation::Data{
 
@@ -571,12 +652,14 @@ const Annotation AsEnumerationBuiltin::info( classid(),
             {
                 Type::INTEGER,
             } },
+
         { Type::ENUMERATION,
             {
                 Type::BIT,
             } }
 
     } );
+
 u1 AsEnumerationBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -587,39 +670,11 @@ u1 AsEnumerationBuiltin::classof( Value const* obj )
 //
 
 StringifyBuiltin::StringifyBuiltin(
-    const std::string& name, const Type::Ptr& type, Value::ID id )
-: Builtin( name, type, info, id )
+    const Type::Ptr& type, const Annotation& info, Value::ID id )
+: Builtin( type, info, id )
 {
 }
-const Annotation StringifyBuiltin::info( classid(),
-    Annotation::Data{
 
-        { Type::STRING,
-            {
-                Type::BOOLEAN,
-            } },
-        { Type::STRING,
-            {
-                Type::INTEGER,
-            } },
-        { Type::STRING,
-            {
-                Type::BIT,
-            } },
-        { Type::STRING,
-            {
-                Type::FLOATING,
-            } },
-        { Type::STRING,
-            {
-                Type::RATIONAL,
-            } },
-        { Type::STRING,
-            {
-                Type::ENUMERATION,
-            } }
-
-    } );
 u1 StringifyBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid() or DecBuiltin::classof( obj )
@@ -627,14 +682,51 @@ u1 StringifyBuiltin::classof( Value const* obj )
            or BinBuiltin::classof( obj );
 }
 
+static const Annotation::Data stringify_builtin_data = {
+
+    { Type::STRING,
+        {
+            Type::BOOLEAN,
+        } },
+
+    { Type::STRING,
+        {
+            Type::INTEGER,
+        } },
+
+    { Type::STRING,
+        {
+            Type::BIT,
+        } },
+
+    { Type::STRING,
+        {
+            Type::FLOATING,
+        } },
+
+    { Type::STRING,
+        {
+            Type::RATIONAL,
+        } },
+
+    { Type::STRING,
+        {
+            Type::ENUMERATION,
+        } }
+
+};
+
 //
 // DecBuiltin
 //
 
 DecBuiltin::DecBuiltin( const Type::Ptr& type )
-: StringifyBuiltin( "dec", type, classid() )
+: StringifyBuiltin( type, info, classid() )
 {
 }
+
+const Annotation DecBuiltin::info( classid(), stringify_builtin_data );
+
 u1 DecBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -645,9 +737,12 @@ u1 DecBuiltin::classof( Value const* obj )
 //
 
 HexBuiltin::HexBuiltin( const Type::Ptr& type )
-: StringifyBuiltin( "hex", type, classid() )
+: StringifyBuiltin( type, info, classid() )
 {
 }
+
+const Annotation HexBuiltin::info( classid(), stringify_builtin_data );
+
 u1 HexBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -658,9 +753,12 @@ u1 HexBuiltin::classof( Value const* obj )
 //
 
 OctBuiltin::OctBuiltin( const Type::Ptr& type )
-: StringifyBuiltin( "oct", type, classid() )
+: StringifyBuiltin( type, info, classid() )
 {
 }
+
+const Annotation OctBuiltin::info( classid(), stringify_builtin_data );
+
 u1 OctBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -671,9 +769,12 @@ u1 OctBuiltin::classof( Value const* obj )
 //
 
 BinBuiltin::BinBuiltin( const Type::Ptr& type )
-: StringifyBuiltin( "bin", type, classid() )
+: StringifyBuiltin( type, info, classid() )
 {
 }
+
+const Annotation BinBuiltin::info( classid(), stringify_builtin_data );
+
 u1 BinBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -691,23 +792,11 @@ u1 BinBuiltin::classof( Value const* obj )
 //
 
 OperatorBuiltin::OperatorBuiltin(
-    const std::string& name, const Type::Ptr& type, Value::ID id )
-: Builtin( name, type, info, id )
+    const Type::Ptr& type, const Annotation& info, Value::ID id )
+: Builtin( type, info, id )
 {
 }
-const Annotation OperatorBuiltin::info( classid(),
-    Annotation::Data{
 
-        { Type::INTEGER,
-            {
-                Type::INTEGER, Type::INTEGER,
-            } },
-        { Type::BIT,
-            {
-                Type::BIT, Type::BIT,
-            } }
-
-    } );
 u1 OperatorBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid() or ArithmeticBuiltin::classof( obj )
@@ -719,10 +808,25 @@ u1 OperatorBuiltin::classof( Value const* obj )
 //
 
 ArithmeticBuiltin::ArithmeticBuiltin(
-    const std::string& name, const Type::Ptr& type, Value::ID id )
-: OperatorBuiltin( name, type, id )
+    const Type::Ptr& type, const Annotation& info, Value::ID id )
+: OperatorBuiltin( type, info, id )
 {
 }
+
+static const Annotation::Data arithmetic_builtin_data = {
+
+    { Type::INTEGER,
+        {
+            Type::INTEGER, Type::INTEGER,
+        } },
+
+    { Type::BIT,
+        {
+            Type::BIT, Type::BIT,
+        } }
+
+};
+
 u1 ArithmeticBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid() or AdduBuiltin::classof( obj )
@@ -736,9 +840,12 @@ u1 ArithmeticBuiltin::classof( Value const* obj )
 //
 
 AdduBuiltin::AdduBuiltin( const Type::Ptr& type )
-: ArithmeticBuiltin( "addu", type, classid() )
+: ArithmeticBuiltin( type, info, classid() )
 {
 }
+
+const Annotation AdduBuiltin::info( classid(), arithmetic_builtin_data );
+
 u1 AdduBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -749,9 +856,12 @@ u1 AdduBuiltin::classof( Value const* obj )
 //
 
 AddsBuiltin::AddsBuiltin( const Type::Ptr& type )
-: ArithmeticBuiltin( "adds", type, classid() )
+: ArithmeticBuiltin( type, info, classid() )
 {
 }
+
+const Annotation AddsBuiltin::info( classid(), arithmetic_builtin_data );
+
 u1 AddsBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -762,9 +872,12 @@ u1 AddsBuiltin::classof( Value const* obj )
 //
 
 SubuBuiltin::SubuBuiltin( const Type::Ptr& type )
-: ArithmeticBuiltin( "subu", type, classid() )
+: ArithmeticBuiltin( type, info, classid() )
 {
 }
+
+const Annotation SubuBuiltin::info( classid(), arithmetic_builtin_data );
+
 u1 SubuBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -775,9 +888,12 @@ u1 SubuBuiltin::classof( Value const* obj )
 //
 
 SubsBuiltin::SubsBuiltin( const Type::Ptr& type )
-: ArithmeticBuiltin( "subs", type, classid() )
+: ArithmeticBuiltin( type, info, classid() )
 {
 }
+
+const Annotation SubsBuiltin::info( classid(), arithmetic_builtin_data );
+
 u1 SubsBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -788,9 +904,12 @@ u1 SubsBuiltin::classof( Value const* obj )
 //
 
 MuluBuiltin::MuluBuiltin( const Type::Ptr& type )
-: ArithmeticBuiltin( "mulu", type, classid() )
+: ArithmeticBuiltin( type, info, classid() )
 {
 }
+
+const Annotation MuluBuiltin::info( classid(), arithmetic_builtin_data );
+
 u1 MuluBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -801,9 +920,12 @@ u1 MuluBuiltin::classof( Value const* obj )
 //
 
 MulsBuiltin::MulsBuiltin( const Type::Ptr& type )
-: ArithmeticBuiltin( "muls", type, classid() )
+: ArithmeticBuiltin( type, info, classid() )
 {
 }
+
+const Annotation MulsBuiltin::info( classid(), arithmetic_builtin_data );
+
 u1 MulsBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -814,10 +936,36 @@ u1 MulsBuiltin::classof( Value const* obj )
 //
 
 CompareBuiltin::CompareBuiltin(
-    const std::string& name, const Type::Ptr& type, Value::ID id )
-: OperatorBuiltin( name, type, id )
+    const Type::Ptr& type, const Annotation& info, Value::ID id )
+: OperatorBuiltin( type, info, id )
 {
 }
+
+const Annotation::Data compare_builtin_data = {
+
+    { Type::BOOLEAN,
+        {
+            Type::INTEGER, Type::INTEGER,
+        } },
+
+    { Type::BOOLEAN,
+        {
+            Type::BIT, Type::BIT,
+        } },
+
+    { Type::BOOLEAN,
+        {
+            Type::RATIONAL, Type::RATIONAL,
+        } },
+
+    { Type::BOOLEAN,
+        {
+            Type::STRING, Type::STRING,
+        } },
+
+    // TODO: PPA: add more?
+};
+
 u1 CompareBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid() or LesuBuiltin::classof( obj )
@@ -832,9 +980,12 @@ u1 CompareBuiltin::classof( Value const* obj )
 //
 
 LesuBuiltin::LesuBuiltin( const Type::Ptr& type )
-: CompareBuiltin( "lesu", type, classid() )
+: CompareBuiltin( type, info, classid() )
 {
 }
+
+const Annotation LesuBuiltin::info( classid(), compare_builtin_data );
+
 u1 LesuBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -845,9 +996,12 @@ u1 LesuBuiltin::classof( Value const* obj )
 //
 
 LessBuiltin::LessBuiltin( const Type::Ptr& type )
-: CompareBuiltin( "less", type, classid() )
+: CompareBuiltin( type, info, classid() )
 {
 }
+
+const Annotation LessBuiltin::info( classid(), compare_builtin_data );
+
 u1 LessBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -858,9 +1012,12 @@ u1 LessBuiltin::classof( Value const* obj )
 //
 
 LequBuiltin::LequBuiltin( const Type::Ptr& type )
-: CompareBuiltin( "lequ", type, classid() )
+: CompareBuiltin( type, info, classid() )
 {
 }
+
+const Annotation LequBuiltin::info( classid(), compare_builtin_data );
+
 u1 LequBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -871,9 +1028,12 @@ u1 LequBuiltin::classof( Value const* obj )
 //
 
 LeqsBuiltin::LeqsBuiltin( const Type::Ptr& type )
-: CompareBuiltin( "leqs", type, classid() )
+: CompareBuiltin( type, info, classid() )
 {
 }
+
+const Annotation LeqsBuiltin::info( classid(), compare_builtin_data );
+
 u1 LeqsBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -884,9 +1044,12 @@ u1 LeqsBuiltin::classof( Value const* obj )
 //
 
 GreuBuiltin::GreuBuiltin( const Type::Ptr& type )
-: CompareBuiltin( "greu", type, classid() )
+: CompareBuiltin( type, info, classid() )
 {
 }
+
+const Annotation GreuBuiltin::info( classid(), compare_builtin_data );
+
 u1 GreuBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -897,9 +1060,12 @@ u1 GreuBuiltin::classof( Value const* obj )
 //
 
 GresBuiltin::GresBuiltin( const Type::Ptr& type )
-: CompareBuiltin( "gres", type, classid() )
+: CompareBuiltin( type, info, classid() )
 {
 }
+
+const Annotation GresBuiltin::info( classid(), compare_builtin_data );
+
 u1 GresBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -910,9 +1076,12 @@ u1 GresBuiltin::classof( Value const* obj )
 //
 
 GequBuiltin::GequBuiltin( const Type::Ptr& type )
-: CompareBuiltin( "gequ", type, classid() )
+: CompareBuiltin( type, info, classid() )
 {
 }
+
+const Annotation GequBuiltin::info( classid(), compare_builtin_data );
+
 u1 GequBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -923,9 +1092,12 @@ u1 GequBuiltin::classof( Value const* obj )
 //
 
 GeqsBuiltin::GeqsBuiltin( const Type::Ptr& type )
-: CompareBuiltin( "geqs", type, classid() )
+: CompareBuiltin( type, info, classid() )
 {
 }
+
+const Annotation GeqsBuiltin::info( classid(), compare_builtin_data );
+
 u1 GeqsBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -935,9 +1107,9 @@ u1 GeqsBuiltin::classof( Value const* obj )
 // BitBuiltin
 //
 
-BitBuiltin::BitBuiltin( const std::string& name, const Type::Ptr& type,
-    const Annotation& info, Value::ID id )
-: Builtin( name, type, info, id )
+BitBuiltin::BitBuiltin(
+    const Type::Ptr& type, const Annotation& info, Value::ID id )
+: Builtin( type, info, id )
 {
 }
 
@@ -955,10 +1127,12 @@ u1 BitBuiltin::classof( Value const* obj )
 //
 
 ZextBuiltin::ZextBuiltin( const Type::Ptr& type )
-: BitBuiltin( "zext", type, info, classid() )
+: BitBuiltin( type, info, classid() )
 {
 }
+
 const Annotation ZextBuiltin::info( classid(),
+
     Annotation::Data{
 
         { Type::BIT,
@@ -967,6 +1141,7 @@ const Annotation ZextBuiltin::info( classid(),
             } }
 
     } );
+
 u1 ZextBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -977,9 +1152,10 @@ u1 ZextBuiltin::classof( Value const* obj )
 //
 
 SextBuiltin::SextBuiltin( const Type::Ptr& type )
-: BitBuiltin( "sext", type, info, classid() )
+: BitBuiltin( type, info, classid() )
 {
 }
+
 const Annotation SextBuiltin::info( classid(),
     Annotation::Data{
 
@@ -989,6 +1165,7 @@ const Annotation SextBuiltin::info( classid(),
             } }
 
     } );
+
 u1 SextBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -999,9 +1176,10 @@ u1 SextBuiltin::classof( Value const* obj )
 //
 
 TruncBuiltin::TruncBuiltin( const Type::Ptr& type )
-: BitBuiltin( "trunc", type, info, classid() )
+: BitBuiltin( type, info, classid() )
 {
 }
+
 const Annotation TruncBuiltin::info( classid(),
     Annotation::Data{
 
@@ -1011,6 +1189,7 @@ const Annotation TruncBuiltin::info( classid(),
             } }
 
     } );
+
 u1 TruncBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -1021,9 +1200,10 @@ u1 TruncBuiltin::classof( Value const* obj )
 //
 
 ShlBuiltin::ShlBuiltin( const Type::Ptr& type )
-: BitBuiltin( "shl", type, info, classid() )
+: BitBuiltin( type, info, classid() )
 {
 }
+
 const Annotation ShlBuiltin::info( classid(),
     Annotation::Data{
 
@@ -1037,6 +1217,7 @@ const Annotation ShlBuiltin::info( classid(),
             } }
 
     } );
+
 u1 ShlBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -1047,9 +1228,10 @@ u1 ShlBuiltin::classof( Value const* obj )
 //
 
 ShrBuiltin::ShrBuiltin( const Type::Ptr& type )
-: BitBuiltin( "shr", type, info, classid() )
+: BitBuiltin( type, info, classid() )
 {
 }
+
 const Annotation ShrBuiltin::info( classid(),
     Annotation::Data{
 
@@ -1057,12 +1239,14 @@ const Annotation ShrBuiltin::info( classid(),
             {
                 Type::BIT, Type::INTEGER,
             } },
+
         { Type::BIT,
             {
                 Type::BIT, Type::BIT,
             } }
 
     } );
+
 u1 ShrBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -1073,9 +1257,10 @@ u1 ShrBuiltin::classof( Value const* obj )
 //
 
 AshrBuiltin::AshrBuiltin( const Type::Ptr& type )
-: BitBuiltin( "ashr", type, info, classid() )
+: BitBuiltin( type, info, classid() )
 {
 }
+
 const Annotation AshrBuiltin::info( classid(),
     Annotation::Data{
 
@@ -1083,12 +1268,14 @@ const Annotation AshrBuiltin::info( classid(),
             {
                 Type::BIT, Type::INTEGER,
             } },
+
         { Type::BIT,
             {
                 Type::BIT, Type::BIT,
             } }
 
     } );
+
 u1 AshrBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -1099,9 +1286,10 @@ u1 AshrBuiltin::classof( Value const* obj )
 //
 
 ClzBuiltin::ClzBuiltin( const Type::Ptr& type )
-: BitBuiltin( "clz", type, info, classid() )
+: BitBuiltin( type, info, classid() )
 {
 }
+
 const Annotation ClzBuiltin::info( classid(),
     Annotation::Data{
 
@@ -1111,6 +1299,7 @@ const Annotation ClzBuiltin::info( classid(),
             } }
 
     } );
+
 u1 ClzBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -1121,9 +1310,10 @@ u1 ClzBuiltin::classof( Value const* obj )
 //
 
 CloBuiltin::CloBuiltin( const Type::Ptr& type )
-: BitBuiltin( "clo", type, info, classid() )
+: BitBuiltin( type, info, classid() )
 {
 }
+
 const Annotation CloBuiltin::info( classid(),
     Annotation::Data{
 
@@ -1133,6 +1323,7 @@ const Annotation CloBuiltin::info( classid(),
             } }
 
     } );
+
 u1 CloBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -1143,9 +1334,10 @@ u1 CloBuiltin::classof( Value const* obj )
 //
 
 ClsBuiltin::ClsBuiltin( const Type::Ptr& type )
-: BitBuiltin( "cls", type, info, classid() )
+: BitBuiltin( type, info, classid() )
 {
 }
+
 const Annotation ClsBuiltin::info( classid(),
     Annotation::Data{
 
@@ -1155,6 +1347,7 @@ const Annotation ClsBuiltin::info( classid(),
             } }
 
     } );
+
 u1 ClsBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
