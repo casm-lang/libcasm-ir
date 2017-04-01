@@ -25,7 +25,7 @@
 
 using namespace libcasm_ir;
 
-TEST( libcasm_ir_value, id_to_token_string )
+TEST( libcasm_ir_Value, id_to_token_string )
 {
     for( u64 c = 0; c < Value::_SIZE_; c++ )
     {
@@ -268,7 +268,7 @@ TEST( libcasm_ir_value, id_to_token_string )
             }
             case Value::INV_INSTRUCTION:
             {
-                EXPECT_STREQ( Value::token( id ).c_str(), "-" );
+                EXPECT_STREQ( Value::token( id ).c_str(), " -" );
                 break;
             }
             case Value::ADD_INSTRUCTION:
@@ -430,7 +430,7 @@ TEST( libcasm_ir_value, id_to_token_string )
             }
             case Value::AS_ENUMERATION_BUILTIN:
             {
-                EXPECT_STREQ( Value::token( id ).c_str(), "asEnumeration" );
+                EXPECT_STREQ( Value::token( id ).c_str(), "as<Enumeration>" );
                 break;
             }
 

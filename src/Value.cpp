@@ -398,7 +398,7 @@ std::string Value::token( const Value::ID id )
         }
         case Value::INV_INSTRUCTION:
         {
-            return "-";
+            return " -";
         }
         case Value::ADD_INSTRUCTION:
         {
@@ -527,7 +527,7 @@ std::string Value::token( const Value::ID id )
         }
         case Value::AS_ENUMERATION_BUILTIN:
         {
-            return "asEnumeration";
+            return "as<Enumeration>";
         }
 
         case Value::STRINGIFY_BUILTIN:
