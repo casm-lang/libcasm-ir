@@ -37,7 +37,10 @@
 
 namespace libcasm_ir
 {
-    class Annotation : public CasmIR
+    /**
+       @extends CasmIR
+     */
+    class Annotation
     {
       public:
         // stores a list of type relations for possible type unification etc.
@@ -51,14 +54,18 @@ namespace libcasm_ir
         using Data = std::vector< Relation >;
         using Set = std::set< Type::ID >;
 
-      public:
         Annotation( const Value::ID id, const Data& info );
+
+        Value::ID id( void ) const;
 
         Type::ID resultTypeForRelation(
             const std::vector< const Type* > arguments ) const;
 
         const Set& resultTypes( void ) const;
+
         const Set& argumentTypes( u8 pos ) const;
+
+        const std::set< std::size_t >& argumentSizes( void ) const;
 
       private:
         Value::ID m_id;
@@ -67,19 +74,32 @@ namespace libcasm_ir
 
         std::vector< Set > m_type_set;
 
+        std::set< std::size_t > m_argument_sizes;
+
         std::unordered_map< std::string, Type::ID > m_relation_to_type;
 
-      public:
-        template < class T >
-        static const Set& ResultTypes( void )
+        static std::unordered_map< std::string, const Annotation* >& str2obj(
+            void )
         {
-            return T::info.resultTypes();
+            static std::unordered_map< std::string, const Annotation* > cache;
+            return cache;
         }
 
-        template < class T >
-        static const Set& ArgumentTypes( u8 pos )
+        static std::unordered_map< u8, const Annotation* >& id2obj( void )
         {
-            return T::info.argumentTypes( pos );
+            static std::unordered_map< u8, const Annotation* > cache;
+            return cache;
+        }
+
+      public:
+        static const Annotation& find( const std::string& token );
+
+        static const Annotation& find( const Value::ID id );
+
+        template < class T >
+        static const Annotation& find( void )
+        {
+            return T::info;
         }
     };
 }

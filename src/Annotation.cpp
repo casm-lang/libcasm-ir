@@ -25,6 +25,9 @@
 
 using namespace libcasm_ir;
 
+// static std::unordered_map< std::string, Annotation* > str2obj = {};
+// static std::unordered_map< u8, Annotation* > id2obj = {};
+
 Annotation::Annotation( const Value::ID id, const Data& info )
 : m_id( id )
 , m_info( info )
@@ -36,9 +39,11 @@ Annotation::Annotation( const Value::ID id, const Data& info )
         Type::ID rt = relation.result;
 
         m_type_set.emplace_back( Set() );
-        m_type_set.back().insert( rt );
+        m_type_set.back().emplace( rt );
 
         std::string key;
+
+        m_argument_sizes.emplace( relation.argument.size() );
 
         for( u32 i = 0; i < relation.argument.size(); i++ )
         {
@@ -46,7 +51,7 @@ Annotation::Annotation( const Value::ID id, const Data& info )
             assert( at != libcasm_ir::Type::RELATION );
 
             m_type_set.emplace_back( Set() );
-            m_type_set.back().insert( at );
+            m_type_set.back().emplace( at );
             key += std::to_string( at ) + ";";
         }
 
@@ -54,6 +59,17 @@ Annotation::Annotation( const Value::ID id, const Data& info )
                 and " result type of relation already exists!" );
         m_relation_to_type[ key ] = rt;
     }
+
+    auto result_str = str2obj().emplace( Value::token( id ), this );
+    assert( result_str.second );
+
+    auto result_id = id2obj().emplace( id, this );
+    assert( result_id.second );
+}
+
+Value::ID Annotation::id( void ) const
+{
+    return m_id;
 }
 
 const Annotation::Set& Annotation::resultTypes( void ) const
@@ -66,6 +82,11 @@ const Annotation::Set& Annotation::argumentTypes( u8 pos ) const
     assert( pos < ( m_type_set.size() - 1 ) );
 
     return m_type_set[ pos + 1 ];
+}
+
+const std::set< std::size_t >& Annotation::argumentSizes( void ) const
+{
+    return m_argument_sizes;
 }
 
 Type::ID Annotation::resultTypeForRelation(
@@ -89,6 +110,32 @@ Type::ID Annotation::resultTypeForRelation(
 
     assert( !" no result type found for requested relation! " );
     return Type::_BOTTOM_;
+}
+
+const Annotation& Annotation::find( const std::string& token )
+{
+    const auto& mapping = str2obj();
+    auto result = mapping.find( token );
+    if( result == mapping.end() )
+    {
+        throw std::domain_error( "no annotation defined for '" + token + "'" );
+    }
+    return *result->second;
+}
+
+const Annotation& Annotation::find( const Value::ID id )
+{
+    const auto& mapping = id2obj();
+    auto result = mapping.find( id );
+    if( result == mapping.end() )
+    {
+        throw std::domain_error( "no annotation defined for Value::ID '"
+                                 + std::to_string( id )
+                                 + "' (aka. '"
+                                 + Value::token( id )
+                                 + "')" );
+    }
+    return *result->second;
 }
 
 //

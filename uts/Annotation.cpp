@@ -25,29 +25,15 @@
 
 using namespace libcasm_ir;
 
-TEST( libcasm_ir, example )
+TEST( libcasm_ir_Annotation, instructions )
 {
-    EXPECT_THROW( { AddInstruction i( 0, 0 ); }, std::domain_error );
+    Annotation::find< AddInstruction >().resultTypes();
+    Annotation::find< SubInstruction >().resultTypes();
+    Annotation::find< MulInstruction >().resultTypes();
 }
 
-TEST( libcasm_ir, example2 )
+TEST( libcasm_ir_Annotation, builtin_as )
 {
-    auto a = IntegerConstant( 5 );
-    auto i = AddInstruction(
-        libstdhl::wrap< Value >( a ), libstdhl::wrap< Value >( a ) );
-
-    ASSERT_EQ( i.type().id(), a.type().id() );
-}
-
-TEST( libcasm_ir, example3 )
-{
-    Annotation::ResultTypes< AddInstruction >();
-    Annotation::ResultTypes< SubInstruction >();
-    Annotation::ResultTypes< DivInstruction >();
-}
-
-TEST( libcasm_ir, example4 )
-{
-    Annotation::ResultTypes< AsIntegerBuiltin >();
-    Annotation::ResultTypes< AsEnumerationBuiltin >();
+    Annotation::find< AsIntegerBuiltin >().resultTypes();
+    Annotation::find< AsEnumerationBuiltin >().resultTypes();
 }
