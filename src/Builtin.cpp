@@ -254,7 +254,8 @@ GeneralBuiltin::GeneralBuiltin(
 u1 GeneralBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid() or SelfBuiltin::classof( obj )
-           or AssertBuiltin::classof( obj ) or OutputBuiltin::classof( obj );
+           or AbortBuiltin::classof( obj ) or AssertBuiltin::classof( obj )
+           or OutputBuiltin::classof( obj );
 }
 
 //
@@ -274,6 +275,27 @@ const Annotation SelfBuiltin::info( classid(),
     } );
 
 u1 SelfBuiltin::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
+
+//
+// AbortBuiltin
+//
+
+AbortBuiltin::AbortBuiltin( const Type::Ptr& type )
+: GeneralBuiltin( type, info, classid() )
+{
+}
+
+const Annotation AbortBuiltin::info( classid(),
+    Annotation::Data{
+
+        { Type::VOID, {} },
+
+    } );
+
+u1 AbortBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
 }

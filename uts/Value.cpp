@@ -376,6 +376,11 @@ TEST( libcasm_ir_Value, id_to_token_string )
                 EXPECT_STREQ( Value::token( id ).c_str(), "self" );
                 break;
             }
+            case Value::ABORT_BUILTIN:
+            {
+                EXPECT_STREQ( Value::token( id ).c_str(), "abort" );
+                break;
+            }
             case Value::ASSERT_BUILTIN:
             {
                 EXPECT_STREQ( Value::token( id ).c_str(), "assert" );

@@ -102,6 +102,23 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
+    class AbortBuiltin : public GeneralBuiltin
+    {
+      public:
+        using Ptr = std::shared_ptr< AbortBuiltin >;
+
+        AbortBuiltin( const Type::Ptr& type );
+
+        static const Annotation info;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::ABORT_BUILTIN;
+        }
+
+        static u1 classof( Value const* obj );
+    };
+
     class AssertBuiltin : public GeneralBuiltin
     {
       public:

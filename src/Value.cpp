@@ -483,6 +483,10 @@ std::string Value::token( const Value::ID id )
         {
             return "self";
         }
+        case Value::ABORT_BUILTIN:
+        {
+            return "abort";
+        }
         case Value::ASSERT_BUILTIN:
         {
             return "assert";
