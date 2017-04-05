@@ -42,7 +42,10 @@ namespace libcasm_ir
     class Type;
     using Types = libstdhl::List< Type >;
 
-    class Type : public CasmIR, public std::enable_shared_from_this< Type >
+    /**
+       @extends CasmIR
+     */
+    class Type : public std::enable_shared_from_this< Type >
     {
       public:
         using Ptr = std::shared_ptr< Type >;
@@ -66,7 +69,7 @@ namespace libcasm_ir
             _TOP_
         };
 
-        Type( const std::string& name, const std::string& description, ID id );
+        Type( ID id );
 
         ~Type( void ) = default;
 
@@ -148,8 +151,7 @@ namespace libcasm_ir
     class PrimitiveType : public Type
     {
       public:
-        PrimitiveType( const std::string& name, const std::string& description,
-            Type::ID id );
+        PrimitiveType( Type::ID id );
     };
 
     class VoidType final : public PrimitiveType
@@ -211,6 +213,10 @@ namespace libcasm_ir
 
         u16 bitsize( void ) const;
 
+        std::string name( void ) const;
+
+        std::string description( void ) const;
+
       private:
         u16 m_bitsize;
     };
@@ -250,6 +256,10 @@ namespace libcasm_ir
 
         std::shared_ptr< Enumeration > ptr_kind( void ) const;
 
+        std::string name( void ) const;
+
+        std::string description( void ) const;
+
       private:
         std::shared_ptr< Enumeration > m_kind;
     };
@@ -259,8 +269,11 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< RelationType >;
 
-      public:
         RelationType( const Type::Ptr& result, const Types& arguments );
+
+        std::string name( void ) const;
+
+        std::string description( void ) const;
     };
 }
 

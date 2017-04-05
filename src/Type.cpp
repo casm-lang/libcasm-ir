@@ -27,22 +27,135 @@
 
 using namespace libcasm_ir;
 
-Type::Type(
-    const std::string& name, const std::string& description, Type::ID id )
-: m_name( name )
-, m_description( description )
-, m_id( id )
+Type::Type( Type::ID id )
+: m_id( id )
 {
 }
 
 std::string Type::name( void ) const
 {
-    return m_name;
+    switch( m_id )
+    {
+        case _BOTTOM_:
+        {
+            return "_BOTTOM_";
+        }
+        case VOID:
+        {
+            return "v";
+        }
+        case LABEL:
+        {
+            return "label";
+        }
+        case LOCATION:
+        {
+            return "l";
+        }
+        case RULE_REFERENCE:
+        {
+            return "r";
+        }
+        case BOOLEAN:
+        {
+            return "b";
+        }
+        case INTEGER:
+        {
+            return "i";
+        }
+        case BIT:
+        {
+            return static_cast< const BitType* >( this )->name();
+        }
+        case STRING:
+        {
+            return "s";
+        }
+        case FLOATING:
+        {
+            return "f";
+        }
+        case RATIONAL:
+        {
+            return "q";
+        }
+        case ENUMERATION:
+        {
+            return static_cast< const EnumerationType* >( this )->name();
+        }
+        case RELATION:
+        {
+            return static_cast< const RelationType* >( this )->name();
+        }
+        case _TOP_:
+        {
+            return "";
+        }
+    }
 }
 
-std::string Type::description() const
+std::string Type::description( void ) const
 {
-    return m_description;
+    switch( m_id )
+    {
+        case _BOTTOM_:
+        {
+            return "_BOTTOM_";
+        }
+        case VOID:
+        {
+            return "Void";
+        }
+        case LABEL:
+        {
+            return "Label";
+        }
+        case LOCATION:
+        {
+            return "Location";
+        }
+        case RULE_REFERENCE:
+        {
+            return "RuleRef";
+        }
+        case BOOLEAN:
+        {
+            return "Boolean";
+        }
+        case INTEGER:
+        {
+            return "Integer";
+        }
+        case BIT:
+        {
+            return static_cast< const BitType* >( this )->description();
+        }
+        case STRING:
+        {
+            return "String";
+        }
+        case FLOATING:
+        {
+            return "Floating";
+        }
+        case RATIONAL:
+        {
+            return "Rational";
+        }
+        case ENUMERATION:
+        {
+            return static_cast< const EnumerationType* >( this )->description();
+        }
+        case RELATION:
+        {
+            return static_cast< const RelationType* >( this )->description();
+        }
+        case _TOP_:
+        {
+            return "";
+        }
+    }
 }
 
 Type::ID Type::id( void ) const
@@ -145,9 +258,8 @@ u1 Type::isRelation( void ) const
 // Primitive Type
 //
 
-PrimitiveType::PrimitiveType(
-    const std::string& name, const std::string& description, Type::ID id )
-: Type( name, description, id )
+PrimitiveType::PrimitiveType( Type::ID id )
+: Type( id )
 {
 }
 
@@ -156,7 +268,7 @@ PrimitiveType::PrimitiveType(
 //
 
 VoidType::VoidType()
-: PrimitiveType( "v", "Void", Type::VOID )
+: PrimitiveType( Type::VOID )
 {
 }
 
@@ -165,7 +277,7 @@ VoidType::VoidType()
 //
 
 LabelType::LabelType()
-: PrimitiveType( "label", "Label", Type::LABEL )
+: PrimitiveType( Type::LABEL )
 {
 }
 
@@ -174,7 +286,7 @@ LabelType::LabelType()
 //
 
 LocationType::LocationType()
-: PrimitiveType( "l", "Location", Type::LOCATION )
+: PrimitiveType( Type::LOCATION )
 {
 }
 
@@ -183,7 +295,7 @@ LocationType::LocationType()
 //
 
 RuleReferenceType::RuleReferenceType()
-: PrimitiveType( "r", "RuleRef", Type::RULE_REFERENCE )
+: PrimitiveType( Type::RULE_REFERENCE )
 {
 }
 
@@ -192,7 +304,7 @@ RuleReferenceType::RuleReferenceType()
 //
 
 BooleanType::BooleanType()
-: PrimitiveType( "b", "Boolean", Type::BOOLEAN )
+: PrimitiveType( Type::BOOLEAN )
 {
 }
 
@@ -201,7 +313,7 @@ BooleanType::BooleanType()
 //
 
 IntegerType::IntegerType()
-: PrimitiveType( "i", "Integer", Type::INTEGER )
+: PrimitiveType( Type::INTEGER )
 {
 }
 
@@ -210,8 +322,7 @@ IntegerType::IntegerType()
 //
 
 BitType::BitType( u16 bitsize )
-: PrimitiveType( "u" + std::to_string( bitsize ),
-      "Bit(" + std::to_string( bitsize ) + ")", Type::BIT )
+: PrimitiveType( Type::BIT )
 , m_bitsize( bitsize )
 {
 }
@@ -221,12 +332,22 @@ u16 BitType::bitsize( void ) const
     return m_bitsize;
 }
 
+std::string BitType::name( void ) const
+{
+    return "u" + std::to_string( m_bitsize );
+}
+
+std::string BitType::description( void ) const
+{
+    return "Bit'" + std::to_string( m_bitsize );
+}
+
 //
 // String Type
 //
 
 StringType::StringType()
-: PrimitiveType( "s", "String", Type::STRING )
+: PrimitiveType( Type::STRING )
 {
 }
 
@@ -235,7 +356,7 @@ StringType::StringType()
 //
 
 FloatingType::FloatingType()
-: PrimitiveType( "f", "Floating", Type::FLOATING )
+: PrimitiveType( Type::FLOATING )
 {
 }
 
@@ -244,7 +365,7 @@ FloatingType::FloatingType()
 //
 
 RationalType::RationalType()
-: PrimitiveType( "q", "Rational", Type::RATIONAL )
+: PrimitiveType( Type::RATIONAL )
 {
 }
 
@@ -253,7 +374,7 @@ RationalType::RationalType()
 //
 
 EnumerationType::EnumerationType( const Enumeration::Ptr& kind )
-: PrimitiveType( kind->name(), kind->name(), Type::ENUMERATION )
+: PrimitiveType( Type::ENUMERATION )
 , m_kind( kind )
 {
 }
@@ -268,37 +389,70 @@ Enumeration::Ptr EnumerationType::ptr_kind( void ) const
     return m_kind;
 }
 
+std::string EnumerationType::name( void ) const
+{
+    return m_kind->name();
+}
+
+std::string EnumerationType::description( void ) const
+{
+    return m_kind->name();
+}
+
 //
 //
 // Relation Type
 //
 
 RelationType::RelationType( const Type::Ptr& result, const Types& arguments )
-: Type( "", "", Type::RELATION )
+: Type( Type::RELATION )
 {
     m_result = result;
     m_arguments = arguments;
+}
 
-    m_name = "(";
-    m_description = "(";
+std::string RelationType::name( void ) const
+{
+    std::string tmp = "(";
 
     u1 first = true;
     for( auto argument : m_arguments )
     {
         if( not first )
         {
-            m_name += ", ";
-            m_description += " x ";
+            tmp += ", ";
         }
 
-        m_name += argument->name();
-        m_description += argument->description();
+        tmp += argument->name();
 
         first = false;
     }
 
-    m_name += " -> " + m_result->name() + ")";
-    m_description += " -> " + m_result->description() + ")";
+    tmp += " -> " + m_result->name() + ")";
+
+    return tmp;
+}
+
+std::string RelationType::description( void ) const
+{
+    std::string tmp = "(";
+
+    u1 first = true;
+    for( auto argument : m_arguments )
+    {
+        if( not first )
+        {
+            tmp += " x ";
+        }
+
+        tmp += argument->description();
+
+        first = false;
+    }
+
+    tmp += " -> " + m_result->description() + ")";
+
+    return tmp;
 }
 
 //
