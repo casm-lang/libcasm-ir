@@ -54,6 +54,8 @@ namespace libcasm_ir
 
         virtual void replaceWith( const Block::Ptr block ) = 0;
 
+        std::string name( void ) const override;
+
         static inline Value::ID classid( void )
         {
             return Value::BLOCK;

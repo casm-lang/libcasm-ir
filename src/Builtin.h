@@ -40,6 +40,8 @@ namespace libcasm_ir
 
         const Annotation& annotation( void ) const;
 
+        std::string name( void ) const override final;
+
         void accept( Visitor& visitor ) override final;
 
         static inline Value::ID classid( void )
@@ -85,7 +87,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class SelfBuiltin : public GeneralBuiltin
+    class SelfBuiltin final : public GeneralBuiltin
     {
       public:
         using Ptr = std::shared_ptr< SelfBuiltin >;
@@ -102,7 +104,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class AbortBuiltin : public GeneralBuiltin
+    class AbortBuiltin final : public GeneralBuiltin
     {
       public:
         using Ptr = std::shared_ptr< AbortBuiltin >;
@@ -119,7 +121,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class AssertBuiltin : public GeneralBuiltin
+    class AssertBuiltin final : public GeneralBuiltin
     {
       public:
         using Ptr = std::shared_ptr< AssertBuiltin >;
@@ -162,7 +164,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class PrintBuiltin : public OutputBuiltin
+    class PrintBuiltin final : public OutputBuiltin
     {
       public:
         using Ptr = std::shared_ptr< PrintBuiltin >;
@@ -179,7 +181,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class PrintLnBuiltin : public OutputBuiltin
+    class PrintLnBuiltin final : public OutputBuiltin
     {
       public:
         using Ptr = std::shared_ptr< PrintLnBuiltin >;
@@ -212,7 +214,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class AsBooleanBuiltin : public CastingBuiltin
+    class AsBooleanBuiltin final : public CastingBuiltin
     {
       public:
         using Ptr = std::shared_ptr< AsBooleanBuiltin >;
@@ -229,7 +231,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class AsIntegerBuiltin : public CastingBuiltin
+    class AsIntegerBuiltin final : public CastingBuiltin
     {
       public:
         using Ptr = std::shared_ptr< AsIntegerBuiltin >;
@@ -246,7 +248,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class AsBitBuiltin : public CastingBuiltin
+    class AsBitBuiltin final : public CastingBuiltin
     {
       public:
         using Ptr = std::shared_ptr< AsBitBuiltin >;
@@ -263,7 +265,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class AsStringBuiltin : public CastingBuiltin
+    class AsStringBuiltin final : public CastingBuiltin
     {
       public:
         using Ptr = std::shared_ptr< AsStringBuiltin >;
@@ -280,7 +282,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class AsFloatingBuiltin : public CastingBuiltin
+    class AsFloatingBuiltin final : public CastingBuiltin
     {
       public:
         using Ptr = std::shared_ptr< AsFloatingBuiltin >;
@@ -297,7 +299,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class AsRationalBuiltin : public CastingBuiltin
+    class AsRationalBuiltin final : public CastingBuiltin
     {
       public:
         using Ptr = std::shared_ptr< AsRationalBuiltin >;
@@ -314,7 +316,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class AsEnumerationBuiltin : public CastingBuiltin
+    class AsEnumerationBuiltin final : public CastingBuiltin
     {
       public:
         using Ptr = std::shared_ptr< AsEnumerationBuiltin >;
@@ -351,7 +353,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class DecBuiltin : public StringifyBuiltin
+    class DecBuiltin final : public StringifyBuiltin
     {
       public:
         using Ptr = std::shared_ptr< DecBuiltin >;
@@ -368,7 +370,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class HexBuiltin : public StringifyBuiltin
+    class HexBuiltin final : public StringifyBuiltin
     {
       public:
         using Ptr = std::shared_ptr< HexBuiltin >;
@@ -385,7 +387,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class OctBuiltin : public StringifyBuiltin
+    class OctBuiltin final : public StringifyBuiltin
     {
       public:
         using Ptr = std::shared_ptr< OctBuiltin >;
@@ -402,7 +404,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class BinBuiltin : public StringifyBuiltin
+    class BinBuiltin final : public StringifyBuiltin
     {
       public:
         using Ptr = std::shared_ptr< BinBuiltin >;
@@ -459,7 +461,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class AdduBuiltin : public ArithmeticBuiltin
+    class AdduBuiltin final : public ArithmeticBuiltin
     {
       public:
         using Ptr = std::shared_ptr< AdduBuiltin >;
@@ -476,7 +478,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class AddsBuiltin : public ArithmeticBuiltin
+    class AddsBuiltin final : public ArithmeticBuiltin
     {
       public:
         using Ptr = std::shared_ptr< AddsBuiltin >;
@@ -493,7 +495,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class SubuBuiltin : public ArithmeticBuiltin
+    class SubuBuiltin final : public ArithmeticBuiltin
     {
       public:
         using Ptr = std::shared_ptr< SubuBuiltin >;
@@ -510,7 +512,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class SubsBuiltin : public ArithmeticBuiltin
+    class SubsBuiltin final : public ArithmeticBuiltin
     {
       public:
         using Ptr = std::shared_ptr< SubsBuiltin >;
@@ -527,7 +529,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class MuluBuiltin : public ArithmeticBuiltin
+    class MuluBuiltin final : public ArithmeticBuiltin
     {
       public:
         using Ptr = std::shared_ptr< MuluBuiltin >;
@@ -544,7 +546,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class MulsBuiltin : public ArithmeticBuiltin
+    class MulsBuiltin final : public ArithmeticBuiltin
     {
       public:
         using Ptr = std::shared_ptr< MulsBuiltin >;
@@ -581,7 +583,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class LesuBuiltin : public CompareBuiltin
+    class LesuBuiltin final : public CompareBuiltin
     {
       public:
         using Ptr = std::shared_ptr< LesuBuiltin >;
@@ -598,7 +600,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class LessBuiltin : public CompareBuiltin
+    class LessBuiltin final : public CompareBuiltin
     {
       public:
         using Ptr = std::shared_ptr< LessBuiltin >;
@@ -615,7 +617,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class LequBuiltin : public CompareBuiltin
+    class LequBuiltin final : public CompareBuiltin
     {
       public:
         using Ptr = std::shared_ptr< LequBuiltin >;
@@ -632,7 +634,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class LeqsBuiltin : public CompareBuiltin
+    class LeqsBuiltin final : public CompareBuiltin
     {
       public:
         using Ptr = std::shared_ptr< LeqsBuiltin >;
@@ -649,7 +651,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class GreuBuiltin : public CompareBuiltin
+    class GreuBuiltin final : public CompareBuiltin
     {
       public:
         using Ptr = std::shared_ptr< GreuBuiltin >;
@@ -666,7 +668,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class GresBuiltin : public CompareBuiltin
+    class GresBuiltin final : public CompareBuiltin
     {
       public:
         using Ptr = std::shared_ptr< GresBuiltin >;
@@ -683,7 +685,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class GequBuiltin : public CompareBuiltin
+    class GequBuiltin final : public CompareBuiltin
     {
       public:
         using Ptr = std::shared_ptr< GequBuiltin >;
@@ -700,7 +702,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class GeqsBuiltin : public CompareBuiltin
+    class GeqsBuiltin final : public CompareBuiltin
     {
       public:
         using Ptr = std::shared_ptr< GeqsBuiltin >;
@@ -737,7 +739,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class ZextBuiltin : public BitBuiltin
+    class ZextBuiltin final : public BitBuiltin
     {
       public:
         using Ptr = std::shared_ptr< ZextBuiltin >;
@@ -754,7 +756,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class SextBuiltin : public BitBuiltin
+    class SextBuiltin final : public BitBuiltin
     {
       public:
         using Ptr = std::shared_ptr< SextBuiltin >;
@@ -771,7 +773,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class TruncBuiltin : public BitBuiltin
+    class TruncBuiltin final : public BitBuiltin
     {
       public:
         using Ptr = std::shared_ptr< TruncBuiltin >;
@@ -788,7 +790,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class ShlBuiltin : public BitBuiltin
+    class ShlBuiltin final : public BitBuiltin
     {
       public:
         using Ptr = std::shared_ptr< ShlBuiltin >;
@@ -805,7 +807,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class ShrBuiltin : public BitBuiltin
+    class ShrBuiltin final : public BitBuiltin
     {
       public:
         using Ptr = std::shared_ptr< ShrBuiltin >;
@@ -822,7 +824,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class AshrBuiltin : public BitBuiltin
+    class AshrBuiltin final : public BitBuiltin
     {
       public:
         using Ptr = std::shared_ptr< AshrBuiltin >;
@@ -839,7 +841,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class ClzBuiltin : public BitBuiltin
+    class ClzBuiltin final : public BitBuiltin
     {
       public:
         using Ptr = std::shared_ptr< ClzBuiltin >;
@@ -856,7 +858,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class CloBuiltin : public BitBuiltin
+    class CloBuiltin final : public BitBuiltin
     {
       public:
         using Ptr = std::shared_ptr< CloBuiltin >;
@@ -873,7 +875,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class ClsBuiltin : public BitBuiltin
+    class ClsBuiltin final : public BitBuiltin
     {
       public:
         using Ptr = std::shared_ptr< ClsBuiltin >;

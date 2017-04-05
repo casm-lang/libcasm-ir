@@ -39,6 +39,8 @@ namespace libcasm_ir
 
         ~Agent( void ) = default;
 
+        std::string name( void ) const override;
+
         void accept( Visitor& visitor ) override;
 
         static inline Value::ID classid( void )

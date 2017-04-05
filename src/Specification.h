@@ -77,7 +77,9 @@ namespace libcasm_ir
             return obj;
         }
 
-        void accept( Visitor& visitor ) override final;
+        std::string name( void ) const override;
+
+        void accept( Visitor& visitor ) override;
 
         static inline Value::ID classid( void )
         {

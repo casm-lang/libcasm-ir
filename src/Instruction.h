@@ -37,7 +37,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< Instruction >;
 
-        Instruction( const std::string& name, const Type::Ptr& type,
+        Instruction( const Type::Ptr& type,
             const std::vector< Value::Ptr >& operands,
             Value::ID id = classid() );
 
@@ -56,6 +56,8 @@ namespace libcasm_ir
         void setNext( const Instruction::Ptr& instruction );
 
         Instruction::Ptr next( void ) const;
+
+        std::string name( void ) const override;
 
         static inline Value::ID classid( void )
         {
@@ -111,7 +113,7 @@ namespace libcasm_ir
         Instruction& m_self;
     };
 
-    class SkipInstruction : public Instruction
+    class SkipInstruction final : public Instruction
     {
       public:
         using Ptr = std::shared_ptr< SkipInstruction >;
@@ -128,7 +130,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class ForkInstruction : public Instruction
+    class ForkInstruction final : public Instruction
     {
       public:
         using Ptr = std::shared_ptr< ForkInstruction >;
@@ -145,7 +147,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class MergeInstruction : public Instruction
+    class MergeInstruction final : public Instruction
     {
       public:
         using Ptr = std::shared_ptr< MergeInstruction >;
@@ -162,7 +164,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class LookupInstruction : public Instruction, public UnaryInstruction
+    class LookupInstruction final : public Instruction, public UnaryInstruction
     {
       public:
         using Ptr = std::shared_ptr< LookupInstruction >;
@@ -179,7 +181,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class UpdateInstruction : public Instruction, public BinaryInstruction
+    class UpdateInstruction final : public Instruction, public BinaryInstruction
     {
       public:
         using Ptr = std::shared_ptr< UpdateInstruction >;
@@ -196,7 +198,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class LocalInstruction : public Instruction, public BinaryInstruction
+    class LocalInstruction final : public Instruction, public BinaryInstruction
     {
       public:
         using Ptr = std::shared_ptr< LocalInstruction >;
@@ -213,7 +215,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class LocationInstruction : public Instruction
+    class LocationInstruction final : public Instruction
     {
       public:
         using Ptr = std::shared_ptr< LocationInstruction >;
@@ -230,7 +232,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class CallInstruction : public Instruction
+    class CallInstruction final : public Instruction
     {
       public:
         using Ptr = std::shared_ptr< CallInstruction >;
@@ -250,7 +252,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class AssertInstruction : public Instruction, public UnaryInstruction
+    class AssertInstruction final : public Instruction, public UnaryInstruction
     {
       public:
         using Ptr = std::shared_ptr< AssertInstruction >;
@@ -267,7 +269,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class SelectInstruction : public Instruction
+    class SelectInstruction final : public Instruction
     {
       public:
         using Ptr = std::shared_ptr< SelectInstruction >;
@@ -284,7 +286,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class SymbolicInstruction : public Instruction
+    class SymbolicInstruction final : public Instruction
     {
       public:
         using Ptr = std::shared_ptr< SymbolicInstruction >;
@@ -306,7 +308,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< OperatorInstruction >;
 
-        OperatorInstruction( const std::string& name, const Type::Ptr& type,
+        OperatorInstruction( const Type::Ptr& type,
             const std::vector< Value::Ptr >& operands, const Annotation& info,
             Value::ID id = classid() );
 
@@ -328,9 +330,8 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< ArithmeticInstruction >;
 
-        ArithmeticInstruction( const std::string& name,
-            const std::vector< Value::Ptr >& operands, const Annotation& info,
-            Value::ID id = classid() );
+        ArithmeticInstruction( const std::vector< Value::Ptr >& operands,
+            const Annotation& info, Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {
@@ -345,9 +346,8 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< CompareInstruction >;
 
-        CompareInstruction( const std::string& name,
-            const std::vector< Value::Ptr >& operands, const Annotation& info,
-            Value::ID id = classid() );
+        CompareInstruction( const std::vector< Value::Ptr >& operands,
+            const Annotation& info, Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {
@@ -362,9 +362,8 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< LogicalInstruction >;
 
-        LogicalInstruction( const std::string& name,
-            const std::vector< Value::Ptr >& operands, const Annotation& info,
-            Value::ID id = classid() );
+        LogicalInstruction( const std::vector< Value::Ptr >& operands,
+            const Annotation& info, Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {
@@ -378,7 +377,8 @@ namespace libcasm_ir
     // Arithmetic Instructions
     //
 
-    class InvInstruction : public ArithmeticInstruction, public UnaryInstruction
+    class InvInstruction final : public ArithmeticInstruction,
+                                 public UnaryInstruction
     {
       public:
         using Ptr = std::shared_ptr< InvInstruction >;
@@ -397,8 +397,8 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class AddInstruction : public ArithmeticInstruction,
-                           public BinaryInstruction
+    class AddInstruction final : public ArithmeticInstruction,
+                                 public BinaryInstruction
     {
       public:
         using Ptr = std::shared_ptr< AddInstruction >;
@@ -417,8 +417,8 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class SubInstruction : public ArithmeticInstruction,
-                           public BinaryInstruction
+    class SubInstruction final : public ArithmeticInstruction,
+                                 public BinaryInstruction
     {
       public:
         using Ptr = std::shared_ptr< SubInstruction >;
@@ -437,8 +437,8 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class MulInstruction : public ArithmeticInstruction,
-                           public BinaryInstruction
+    class MulInstruction final : public ArithmeticInstruction,
+                                 public BinaryInstruction
     {
       public:
         using Ptr = std::shared_ptr< MulInstruction >;
@@ -457,8 +457,8 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class ModInstruction : public ArithmeticInstruction,
-                           public BinaryInstruction
+    class ModInstruction final : public ArithmeticInstruction,
+                                 public BinaryInstruction
     {
       public:
         using Ptr = std::shared_ptr< ModInstruction >;
@@ -477,8 +477,8 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class DivInstruction : public ArithmeticInstruction,
-                           public BinaryInstruction
+    class DivInstruction final : public ArithmeticInstruction,
+                                 public BinaryInstruction
     {
       public:
         using Ptr = std::shared_ptr< DivInstruction >;
@@ -501,7 +501,8 @@ namespace libcasm_ir
     // Logical Instructions
     //
 
-    class AndInstruction : public LogicalInstruction, public BinaryInstruction
+    class AndInstruction final : public LogicalInstruction,
+                                 public BinaryInstruction
     {
       public:
         using Ptr = std::shared_ptr< AndInstruction >;
@@ -520,7 +521,8 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class XorInstruction : public LogicalInstruction, public BinaryInstruction
+    class XorInstruction final : public LogicalInstruction,
+                                 public BinaryInstruction
     {
       public:
         using Ptr = std::shared_ptr< XorInstruction >;
@@ -539,7 +541,8 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class OrInstruction : public LogicalInstruction, public BinaryInstruction
+    class OrInstruction final : public LogicalInstruction,
+                                public BinaryInstruction
     {
       public:
         using Ptr = std::shared_ptr< OrInstruction >;
@@ -558,7 +561,8 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class NotInstruction : public LogicalInstruction, public UnaryInstruction
+    class NotInstruction final : public LogicalInstruction,
+                                 public UnaryInstruction
     {
       public:
         using Ptr = std::shared_ptr< NotInstruction >;
@@ -581,7 +585,8 @@ namespace libcasm_ir
     // Compare Instructions
     //
 
-    class EquInstruction : public CompareInstruction, public BinaryInstruction
+    class EquInstruction final : public CompareInstruction,
+                                 public BinaryInstruction
     {
       public:
         using Ptr = std::shared_ptr< EquInstruction >;
@@ -600,7 +605,8 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class NeqInstruction : public CompareInstruction, public BinaryInstruction
+    class NeqInstruction final : public CompareInstruction,
+                                 public BinaryInstruction
     {
       public:
         using Ptr = std::shared_ptr< NeqInstruction >;
@@ -619,7 +625,8 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class LthInstruction : public CompareInstruction, public BinaryInstruction
+    class LthInstruction final : public CompareInstruction,
+                                 public BinaryInstruction
     {
       public:
         using Ptr = std::shared_ptr< LthInstruction >;
@@ -638,7 +645,8 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class LeqInstruction : public CompareInstruction, public BinaryInstruction
+    class LeqInstruction final : public CompareInstruction,
+                                 public BinaryInstruction
     {
       public:
         using Ptr = std::shared_ptr< LeqInstruction >;
@@ -657,7 +665,8 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class GthInstruction : public CompareInstruction, public BinaryInstruction
+    class GthInstruction final : public CompareInstruction,
+                                 public BinaryInstruction
     {
       public:
         using Ptr = std::shared_ptr< GthInstruction >;
@@ -676,7 +685,8 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class GeqInstruction : public CompareInstruction, public BinaryInstruction
+    class GeqInstruction final : public CompareInstruction,
+                                 public BinaryInstruction
     {
       public:
         using Ptr = std::shared_ptr< GeqInstruction >;

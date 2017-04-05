@@ -45,6 +45,8 @@ namespace libcasm_ir
 
         u1 symbolic( void ) const;
 
+        std::string name( void ) const override;
+
         void accept( Visitor& visitor ) override;
 
         static inline Value::ID classid( void )
@@ -74,14 +76,16 @@ namespace libcasm_ir
 
     using Constants = ValueList< Constant >;
 
-    class VoidConstant : public Constant
+    class VoidConstant final : public Constant
     {
       public:
         using Ptr = std::shared_ptr< VoidConstant >;
 
         VoidConstant( void );
 
-        void accept( Visitor& visitor ) override final;
+        std::string name( void ) const override;
+
+        void accept( Visitor& visitor ) override;
 
         static inline Value::ID classid( void )
         {
@@ -91,7 +95,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class RuleReferenceConstant : public Constant
+    class RuleReferenceConstant final : public Constant
     {
       public:
         using Ptr = std::shared_ptr< RuleReferenceConstant >;
@@ -106,7 +110,9 @@ namespace libcasm_ir
 
         Rule::Ptr value( void ) const;
 
-        void accept( Visitor& visitor ) override final;
+        std::string name( void ) const override;
+
+        void accept( Visitor& visitor ) override;
 
         static inline Value::ID classid( void )
         {
@@ -116,7 +122,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class BooleanConstant : public Constant
+    class BooleanConstant final : public Constant
     {
       public:
         using Ptr = std::shared_ptr< BooleanConstant >;
@@ -130,7 +136,9 @@ namespace libcasm_ir
 
         u1 value( void ) const;
 
-        void accept( Visitor& visitor ) override final;
+        std::string name( void ) const override;
+
+        void accept( Visitor& visitor ) override;
 
         static inline Value::ID classid( void )
         {
@@ -140,7 +148,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class IntegerConstant : public Constant
+    class IntegerConstant final : public Constant
     {
       public:
         using Ptr = std::shared_ptr< IntegerConstant >;
@@ -159,7 +167,9 @@ namespace libcasm_ir
 
         i64 value( void ) const;
 
-        void accept( Visitor& visitor ) override final;
+        std::string name( void ) const override;
+
+        void accept( Visitor& visitor ) override;
 
         static inline Value::ID classid( void )
         {
@@ -169,7 +179,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class BitConstant : public Constant
+    class BitConstant final : public Constant
     {
       public:
         using Ptr = std::shared_ptr< BitConstant >;
@@ -198,7 +208,9 @@ namespace libcasm_ir
 
         u64 value( void ) const;
 
-        void accept( Visitor& visitor ) override final;
+        std::string name( void ) const override;
+
+        void accept( Visitor& visitor ) override;
 
         static inline Value::ID classid( void )
         {
@@ -208,7 +220,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class StringConstant : public Constant
+    class StringConstant final : public Constant
     {
       public:
         using Ptr = std::shared_ptr< StringConstant >;
@@ -222,7 +234,9 @@ namespace libcasm_ir
 
         std::string value( void ) const;
 
-        void accept( Visitor& visitor ) override final;
+        std::string name( void ) const override;
+
+        void accept( Visitor& visitor ) override;
 
         static inline Value::ID classid( void )
         {
@@ -232,7 +246,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class FloatingConstant : public Constant
+    class FloatingConstant final : public Constant
     {
       public:
         using Ptr = std::shared_ptr< FloatingConstant >;
@@ -247,7 +261,9 @@ namespace libcasm_ir
 
         double value( void ) const;
 
-        void accept( Visitor& visitor ) override final;
+        std::string name( void ) const override;
+
+        void accept( Visitor& visitor ) override;
 
         static inline Value::ID classid( void )
         {
@@ -257,7 +273,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class RationalConstant : public Constant
+    class RationalConstant final : public Constant
     {
       public:
         using Ptr = std::shared_ptr< RationalConstant >;
@@ -271,7 +287,9 @@ namespace libcasm_ir
 
         std::string value( void ) const;
 
-        void accept( Visitor& visitor ) override final;
+        std::string name( void ) const override;
+
+        void accept( Visitor& visitor ) override;
 
         static inline Value::ID classid( void )
         {
@@ -304,7 +322,9 @@ namespace libcasm_ir
 
         u64 value( void ) const;
 
-        void accept( Visitor& visitor ) override final;
+        std::string name( void ) const override;
+
+        void accept( Visitor& visitor ) override;
 
         static inline Value::ID classid( void )
         {
@@ -321,7 +341,9 @@ namespace libcasm_ir
 
         Identifier( const std::string& value, const Type::Ptr& type );
 
-        void accept( Visitor& visitor ) override final;
+        std::string name( void ) const override;
+
+        void accept( Visitor& visitor ) override;
 
         static inline Value::ID classid( void )
         {

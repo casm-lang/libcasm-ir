@@ -88,6 +88,11 @@ std::string Enumeration::decode( const u64 value ) const
     return m_values[ value ];
 }
 
+std::string Enumeration::name( void ) const
+{
+    return _name();
+}
+
 void Enumeration::accept( Visitor& visitor )
 {
     visitor.visit( *this );

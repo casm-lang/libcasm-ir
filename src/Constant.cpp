@@ -53,6 +53,54 @@ u1 Constant::symbolic( void ) const
     return m_symbolic;
 }
 
+std::string Constant::name( void ) const
+{
+    switch( id() )
+    {
+        case Value::VOID_CONSTANT:
+        {
+            return static_cast< const VoidConstant* >( this )->name();
+        }
+        case Value::RULE_REFERENCE_CONSTANT:
+        {
+            return static_cast< const RuleReferenceConstant* >( this )->name();
+        }
+        case Value::BOOLEAN_CONSTANT:
+        {
+            return static_cast< const BooleanConstant* >( this )->name();
+        }
+        case Value::INTEGER_CONSTANT:
+        {
+            return static_cast< const IntegerConstant* >( this )->name();
+        }
+        case Value::BIT_CONSTANT:
+        {
+            return static_cast< const BitConstant* >( this )->name();
+        }
+        case Value::STRING_CONSTANT:
+        {
+            return static_cast< const StringConstant* >( this )->name();
+        }
+        case Value::FLOATING_CONSTANT:
+        {
+            return static_cast< const FloatingConstant* >( this )->name();
+        }
+        case Value::RATIONAL_CONSTANT:
+        {
+            return static_cast< const RationalConstant* >( this )->name();
+        }
+        case Value::ENUMERATION_CONSTANT:
+        {
+            return static_cast< const EnumerationConstant* >( this )->name();
+        }
+        default:
+        {
+            assert( !" invalid constant to dispatch found! " );
+            return "";
+        }
+    }
+}
+
 void Constant::accept( Visitor& visitor )
 {
     switch( id() )
@@ -117,9 +165,14 @@ u1 Constant::classof( Value const* obj )
 //
 
 VoidConstant::VoidConstant( void )
-: Constant( "void", libstdhl::get< VoidType >(), libstdhl::Type(), nullptr,
-      true, false, classid() )
+: Constant( "", libstdhl::get< VoidType >(), libstdhl::Type(), nullptr, true,
+      false, classid() )
 {
+}
+
+std::string VoidConstant::name( void ) const
+{
+    return ( defined() ? "void" : undef_str );
 }
 
 void VoidConstant::accept( Visitor& visitor )
@@ -138,9 +191,8 @@ u1 VoidConstant::classof( Value const* obj )
 
 RuleReferenceConstant::RuleReferenceConstant(
     const Rule::Ptr& value, u1 defined, u1 symbolic )
-: Constant( ( defined ? value->name() : undef_str ),
-      libstdhl::get< RuleReferenceType >(), libstdhl::Type(), value, defined,
-      symbolic, classid() )
+: Constant( "", libstdhl::get< RuleReferenceType >(), libstdhl::Type(), value,
+      defined, symbolic, classid() )
 {
 }
 
@@ -159,6 +211,11 @@ Rule::Ptr RuleReferenceConstant::value( void ) const
     return std::static_pointer_cast< Rule >( m_value );
 }
 
+std::string RuleReferenceConstant::name( void ) const
+{
+    return ( defined() ? value()->name() : undef_str );
+}
+
 void RuleReferenceConstant::accept( Visitor& visitor )
 {
     visitor.visit( *this );
@@ -174,9 +231,8 @@ u1 RuleReferenceConstant::classof( Value const* obj )
 //
 
 BooleanConstant::BooleanConstant( u1 value, u1 defined, u1 symbolic )
-: Constant( ( defined ? ( value ? "true" : "false" ) : undef_str ),
-      libstdhl::get< BooleanType >(), libstdhl::Type( value, 1 ), nullptr,
-      defined, symbolic, classid() )
+: Constant( "", libstdhl::get< BooleanType >(), libstdhl::Type( value, 1 ),
+      nullptr, defined, symbolic, classid() )
 {
 }
 
@@ -195,6 +251,11 @@ u1 BooleanConstant::value( void ) const
     return static_cast< u1 >( m_data.word( 0 ) );
 }
 
+std::string BooleanConstant::name( void ) const
+{
+    return ( defined() ? ( value() ? "true" : "false" ) : undef_str );
+}
+
 void BooleanConstant::accept( Visitor& visitor )
 {
     visitor.visit( *this );
@@ -210,15 +271,14 @@ u1 BooleanConstant::classof( Value const* obj )
 //
 
 IntegerConstant::IntegerConstant( i64 value, u1 defined, u1 symbolic )
-: Constant( ( defined ? std::to_string( value ) : undef_str ),
-      libstdhl::get< IntegerType >(), libstdhl::Integer( value ), nullptr,
-      defined, symbolic, classid() )
+: Constant( "", libstdhl::get< IntegerType >(), libstdhl::Integer( value ),
+      nullptr, defined, symbolic, classid() )
 {
 }
 
 IntegerConstant::IntegerConstant(
     const std::string& value, const libstdhl::Type::Radix radix )
-: Constant( value, libstdhl::get< IntegerType >(),
+: Constant( "", libstdhl::get< IntegerType >(),
       libstdhl::Integer( value, radix ), nullptr, true, false, classid() )
 {
     // TODO: PPA: force CASM integer string digit separator usage as group of
@@ -249,6 +309,12 @@ i64 IntegerConstant::value( void ) const
     }
 }
 
+std::string IntegerConstant::name( void ) const
+{
+    return ( defined() ? ( std::to_string( value() ) ) : undef_str );
+    // TODO: PPA: use literal function from libstdhl::Type
+}
+
 void IntegerConstant::accept( Visitor& visitor )
 {
     visitor.visit( *this );
@@ -265,9 +331,8 @@ u1 IntegerConstant::classof( Value const* obj )
 
 BitConstant::BitConstant(
     const BitType::Ptr& type, u64 value, u1 defined, u1 symbolic )
-: Constant( ( defined ? std::to_string( value ) : undef_str ), type,
-      libstdhl::Type( value, type->bitsize() ), nullptr, defined, symbolic,
-      classid() )
+: Constant( "", type, libstdhl::Type( value, type->bitsize() ), nullptr,
+      defined, symbolic, classid() )
 {
     if( type->bitsize() > BitType::SizeMax )
     {
@@ -279,8 +344,8 @@ BitConstant::BitConstant(
 
 BitConstant::BitConstant( const BitType::Ptr& type, const std::string& value,
     const libstdhl::Type::Radix radix )
-: Constant( value, type, libstdhl::Type( value, type->bitsize() ), nullptr,
-      true, false, classid() )
+: Constant( "", type, libstdhl::Type( value, type->bitsize() ), nullptr, true,
+      false, classid() )
 {
     if( type->bitsize() > BitType::SizeMax )
     {
@@ -323,6 +388,12 @@ u64 BitConstant::value( void ) const
     return m_data.word( 0 );
 }
 
+std::string BitConstant::name( void ) const
+{
+    return ( defined() ? ( std::to_string( value() ) ) : undef_str );
+    // TODO: PPA: use literal function from libstdhl::Type
+}
+
 void BitConstant::accept( Visitor& visitor )
 {
     visitor.visit( *this );
@@ -359,6 +430,11 @@ std::string StringConstant::value( void ) const
     return name();
 }
 
+std::string StringConstant::name( void ) const
+{
+    return _name();
+}
+
 void StringConstant::accept( Visitor& visitor )
 {
     visitor.visit( *this );
@@ -375,14 +451,13 @@ u1 StringConstant::classof( Value const* obj )
 
 FloatingConstant::FloatingConstant(
     const double value, u1 defined, u1 symbolic )
-: Constant( ( defined ? std::to_string( value ) : undef_str ),
-      libstdhl::get< FloatingType >(), libstdhl::FloatingPoint( value ),
-      nullptr, defined, symbolic, classid() )
+: Constant( "", libstdhl::get< FloatingType >(),
+      libstdhl::FloatingPoint( value ), nullptr, defined, symbolic, classid() )
 {
 }
 
 FloatingConstant::FloatingConstant( const std::string& value )
-: Constant( value, libstdhl::get< FloatingType >(),
+: Constant( "", libstdhl::get< FloatingType >(),
       libstdhl::FloatingPoint( value ), nullptr, true, false, classid() )
 {
 }
@@ -399,8 +474,14 @@ FloatingConstant::FloatingConstant( void )
 
 double FloatingConstant::value( void ) const
 {
-    assert( !" TODO! " );
+    std::cerr << __FILE__ << ":" << __LINE__ << ": TODO: FIXME\n";
     return 0.0;
+}
+
+std::string FloatingConstant::name( void ) const
+{
+    return ( defined() ? ( std::to_string( value() ) ) : undef_str );
+    // TODO: PPA: use literal function from libstdhl::Type
 }
 
 void FloatingConstant::accept( Visitor& visitor )
@@ -419,8 +500,8 @@ u1 FloatingConstant::classof( Value const* obj )
 
 RationalConstant::RationalConstant(
     const std::string& value, u1 defined, u1 symbolic )
-: Constant( ( defined ? value : undef_str ), libstdhl::get< RationalType >(),
-      libstdhl::Rational( value ), nullptr, defined, symbolic, classid() )
+: Constant( "", libstdhl::get< RationalType >(), libstdhl::Rational( value ),
+      nullptr, defined, symbolic, classid() )
 {
 }
 
@@ -436,7 +517,14 @@ RationalConstant::RationalConstant( void )
 
 std::string RationalConstant::value( void ) const
 {
-    return name();
+    return "";
+    // TODO: PPA: use literal function from libstdhl::Type
+}
+
+std::string RationalConstant::name( void ) const
+{
+    return ( defined() ? ( value() ) : undef_str );
+    // TODO: PPA: use literal function from libstdhl::Type
 }
 
 void RationalConstant::accept( Visitor& visitor )
@@ -488,6 +576,15 @@ u64 EnumerationConstant::value( void ) const
     return m_data.word( 0 );
 }
 
+std::string EnumerationConstant::name( void ) const
+{
+    return (
+        defined()
+            ? ( static_cast< const EnumerationType& >( type() ).kind().decode(
+                  value() ) )
+            : undef_str );
+}
+
 void EnumerationConstant::accept( Visitor& visitor )
 {
     visitor.visit( *this );
@@ -505,6 +602,11 @@ u1 EnumerationConstant::classof( Value const* obj )
 Identifier::Identifier( const std::string& value, const Type::Ptr& type )
 : Constant( value, type, libstdhl::Type(), nullptr, true, false, classid() )
 {
+}
+
+std::string Identifier::name( void ) const
+{
+    return _name();
 }
 
 void Identifier::accept( Visitor& visitor )

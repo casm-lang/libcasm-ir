@@ -196,7 +196,7 @@ namespace libcasm_ir
 
         ~Value( void );
 
-        std::string name( void ) const;
+        virtual std::string name( void ) const = 0;
 
         std::string description( void ) const;
 
@@ -243,6 +243,8 @@ namespace libcasm_ir
             return std::static_pointer_cast< T >( shared_from_this() );
         }
 
+        std::string _name( void ) const;
+
       private:
         std::string m_name;
 
@@ -288,6 +290,20 @@ namespace libcasm_ir
         ValueList( void )
         : Value( "value_list", libstdhl::get< VoidType >(), Value::VALUE_LIST )
         {
+        }
+
+        std::string name( void ) const override final
+        {
+            std::stringstream s;
+
+            u1 first = true;
+            for( const auto& value : *this )
+            {
+                s << value->name() << ( first ? "" : "," );
+                first = false;
+            }
+
+            return "[" + s.str() + "]";
         }
 
         void accept( Visitor& visitor ) override final

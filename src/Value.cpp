@@ -56,11 +56,6 @@ Value::~Value()
 #endif
 }
 
-std::string Value::name( void ) const
-{
-    return m_name;
-}
-
 std::string Value::description( void ) const
 {
     return type().name() + " " + name();
@@ -206,6 +201,11 @@ void Value::iterate(
     TraversalVisitor visitor( order, action );
 
     accept( visitor );
+}
+
+std::string Value::_name( void ) const
+{
+    return m_name;
 }
 
 std::string Value::token( const Value::ID id )

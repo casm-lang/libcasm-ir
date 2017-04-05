@@ -30,7 +30,7 @@ namespace libcasm_ir
 {
     class ParallelBlock;
 
-    class Rule : public User
+    class Rule final : public User
     {
       public:
         using Ptr = std::shared_ptr< Rule >;
@@ -42,6 +42,8 @@ namespace libcasm_ir
         void setContext( const std::shared_ptr< ParallelBlock >& context );
 
         std::shared_ptr< ParallelBlock > context( void ) const;
+
+        std::string name( void ) const override;
 
         void accept( Visitor& visitor ) override final;
 

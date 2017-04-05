@@ -64,6 +64,11 @@ ExecutionSemanticsBlock::Ptr Block::scope( void ) const
     return m_scope.lock();
 }
 
+std::string Block::name( void ) const
+{
+    return _name();
+}
+
 u1 Block::classof( Value const* obj )
 {
     return obj->id() == classid() or ExecutionSemanticsBlock::classof( obj )

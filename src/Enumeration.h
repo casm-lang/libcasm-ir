@@ -48,6 +48,8 @@ namespace libcasm_ir
 
         std::string decode( const u64 value ) const;
 
+        std::string name( void ) const override;
+
         void accept( Visitor& visitor ) override;
 
         static inline Value::ID classid( void )

@@ -39,14 +39,19 @@ Agent::Agent( const std::vector< std::string >& agents )
 {
 }
 
-u1 Agent::classof( Value const* obj )
+std::string Agent::name( void ) const
 {
-    return obj->id() == classid();
+    return _name();
 }
 
 void Agent::accept( Visitor& visitor )
 {
     visitor.visit( *this );
+}
+
+u1 Agent::classof( Value const* obj )
+{
+    return obj->id() == classid();
 }
 
 //

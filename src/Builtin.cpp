@@ -26,7 +26,7 @@
 using namespace libcasm_ir;
 
 Builtin::Builtin( const Type::Ptr& type, const Annotation& info, Value::ID id )
-: User( Value::token( id ), type, id )
+: User( "", type, id )
 , m_annotation( info )
 {
     // TODO: if its an as<Enumeration> .. .do -> "as" + type->name()
@@ -35,6 +35,11 @@ Builtin::Builtin( const Type::Ptr& type, const Annotation& info, Value::ID id )
 const Annotation& Builtin::annotation( void ) const
 {
     return m_annotation;
+}
+
+std::string Builtin::name( void ) const
+{
+    return Value::token( id() );
 }
 
 void Builtin::accept( Visitor& visitor )

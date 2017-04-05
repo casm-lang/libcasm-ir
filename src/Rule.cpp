@@ -61,6 +61,11 @@ ParallelBlock::Ptr Rule::context( void ) const
     return m_context;
 }
 
+std::string Rule::name( void ) const
+{
+    return _name();
+}
+
 void Rule::accept( Visitor& visitor )
 {
     visitor.visit( *this );

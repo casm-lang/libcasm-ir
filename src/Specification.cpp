@@ -86,6 +86,11 @@ Rules& Specification::rules( void )
     return m_rules;
 }
 
+std::string Specification::name( void ) const
+{
+    return _name();
+}
+
 void Specification::accept( Visitor& visitor )
 {
     visitor.visit( *this );
