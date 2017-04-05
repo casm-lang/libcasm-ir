@@ -77,6 +77,18 @@ TEST( libcasm_ir__constant_bit, create_random )
     }
 }
 
+TEST( libcasm_ir__constant_bit, create_from_string )
+{
+    libstdhl::get< BitConstant >( "011101011", libstdhl::Type::Radix::BINARY );
+    libstdhl::get< BitConstant >(
+        "0111'0'1011", libstdhl::Type::Radix::BINARY );
+
+    libstdhl::get< BitConstant >( "1234", libstdhl::Type::Radix::HEXADECIMAL );
+    libstdhl::get< BitConstant >( "12'34", libstdhl::Type::Radix::HEXADECIMAL );
+
+    libstdhl::get< BitConstant >( "F", libstdhl::Type::Radix::RADIX64 );
+}
+
 //
 //  Local variables:
 //  mode: c++

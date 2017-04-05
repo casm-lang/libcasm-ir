@@ -344,8 +344,8 @@ BitConstant::BitConstant(
 
 BitConstant::BitConstant( const BitType::Ptr& type, const std::string& value,
     const libstdhl::Type::Radix radix )
-: Constant( "", type, libstdhl::Type( value, type->bitsize() ), nullptr, true,
-      false, classid() )
+: Constant( "", type, libstdhl::Type( value, type->bitsize(), false, radix ),
+      nullptr, true, false, classid() )
 {
     if( type->bitsize() > BitType::SizeMax )
     {
@@ -367,9 +367,7 @@ BitConstant::BitConstant( const BitType::Ptr& type )
 
 BitConstant::BitConstant(
     const std::string& value, const libstdhl::Type::Radix radix )
-: BitConstant( libstdhl::get< BitType >(
-                   (u16)value.size() * std::log2( (double)radix ) ),
-      value, radix )
+: BitConstant( libstdhl::get< BitType >( value, radix ), value, radix )
 {
 }
 

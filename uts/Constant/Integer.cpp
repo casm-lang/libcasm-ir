@@ -73,6 +73,29 @@ TEST( libcasm_ir__constant_integer, create_random )
     }
 }
 
+TEST( libcasm_ir__constant_integer, create_from_string )
+{
+    libstdhl::get< IntegerConstant >(
+        "011101011", libstdhl::Type::Radix::BINARY );
+    libstdhl::get< IntegerConstant >(
+        "011'10'1011", libstdhl::Type::Radix::BINARY );
+
+    libstdhl::get< IntegerConstant >( "210210", libstdhl::Type::Radix::OCTAL );
+    libstdhl::get< IntegerConstant >(
+        "21'02'10", libstdhl::Type::Radix::OCTAL );
+
+    libstdhl::get< IntegerConstant >( "12345", libstdhl::Type::Radix::DECIMAL );
+    libstdhl::get< IntegerConstant >(
+        "12'345", libstdhl::Type::Radix::DECIMAL );
+
+    libstdhl::get< IntegerConstant >(
+        "12fa", libstdhl::Type::Radix::HEXADECIMAL );
+    libstdhl::get< IntegerConstant >(
+        "12'fa", libstdhl::Type::Radix::HEXADECIMAL );
+
+    libstdhl::get< IntegerConstant >( "F", libstdhl::Type::Radix::RADIX64 );
+}
+
 //
 //  Local variables:
 //  mode: c++

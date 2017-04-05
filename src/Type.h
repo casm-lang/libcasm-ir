@@ -34,6 +34,7 @@
 
 #include "../stdhl/cpp/List.h"
 #include "../stdhl/cpp/Log.h"
+#include "../stdhl/cpp/Math.h"
 
 namespace libcasm_ir
 {
@@ -210,6 +211,8 @@ namespace libcasm_ir
         static const u16 SizeMax = 64;
 
         BitType( u16 bitsize );
+
+        BitType( const std::string& value, const libstdhl::Type::Radix radix );
 
         u16 bitsize( void ) const;
 

@@ -327,6 +327,15 @@ BitType::BitType( u16 bitsize )
 {
 }
 
+BitType::BitType( const std::string& value, const libstdhl::Type::Radix radix )
+: PrimitiveType( Type::BIT )
+{
+    std::string tmp = value;
+    tmp.erase( std::remove( tmp.begin(), tmp.end(), '\'' ), tmp.end() );
+
+    m_bitsize = (u16)tmp.size() * std::log2( (double)radix );
+}
+
 u16 BitType::bitsize( void ) const
 {
     return m_bitsize;
