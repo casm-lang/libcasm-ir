@@ -29,7 +29,7 @@ using namespace libcasm_ir;
 
 Enumeration::Enumeration(
     const std::string& name, const std::vector< std::string >& values )
-: Value( "@" + name, libstdhl::get< VoidType >(), classid() )
+: Value( name, libstdhl::get< VoidType >(), classid() )
 {
     for( const auto& v : values )
     {

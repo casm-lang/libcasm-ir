@@ -29,7 +29,7 @@
 using namespace libcasm_ir;
 
 Rule::Rule( const std::string& name, const Type::Ptr& type )
-: User( "@" + name, type, classid() )
+: User( name, type, classid() )
 , m_context( 0 )
 {
 }

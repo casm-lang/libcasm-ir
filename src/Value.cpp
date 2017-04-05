@@ -191,7 +191,7 @@ std::string Value::label( void ) const
     }
     else
     {
-        return name();
+        return "@" + name();
     }
 }
 

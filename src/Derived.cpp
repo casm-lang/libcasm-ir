@@ -29,7 +29,7 @@
 using namespace libcasm_ir;
 
 Derived::Derived( const std::string& name, const Type::Ptr& result )
-: User( "@" + name, result, classid() )
+: User( name, result, classid() )
 {
 }
 

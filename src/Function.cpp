@@ -26,7 +26,7 @@
 using namespace libcasm_ir;
 
 Function::Function( const std::string& name, const Type::Ptr& type )
-: User( "@" + name, type, classid() )
+: User( name, type, classid() )
 {
 }
 
