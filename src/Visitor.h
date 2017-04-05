@@ -89,7 +89,6 @@ namespace libcasm_ir
     class RationalConstant;
     class FloatingConstant;
     class EnumerationConstant;
-    class AgentConstant;
 
     class Identifier;
 
@@ -175,7 +174,6 @@ namespace libcasm_ir
         virtual void visit( FloatingConstant& value ) = 0;
         virtual void visit( RationalConstant& value ) = 0;
         virtual void visit( EnumerationConstant& value ) = 0;
-        virtual void visit( AgentConstant& value ) = 0;
 
         virtual void visit( Identifier& value ) = 0;
     };
@@ -254,7 +252,6 @@ namespace libcasm_ir
         virtual void visit( FloatingConstant& value ) override = 0;
         virtual void visit( RationalConstant& value ) override = 0;
         virtual void visit( EnumerationConstant& value ) override = 0;
-        virtual void visit( AgentConstant& value ) override = 0;
 
         virtual void visit( Identifier& value ) override = 0;
     };
@@ -346,7 +343,6 @@ namespace libcasm_ir
         void visit( FloatingConstant& value ) override;
         void visit( RationalConstant& value ) override;
         void visit( EnumerationConstant& value ) override;
-        void visit( AgentConstant& value ) override;
 
         void visit( Identifier& value ) override;
     };

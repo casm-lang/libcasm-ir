@@ -79,14 +79,6 @@ void IRDumpSourceVisitor::visit( Agent& value )
 
     m_stream << value.name() << " = " << value.type().name();
 
-    u1 first = true;
-
-    for( auto element : value.elements() )
-    {
-        m_stream << ( first ? "" : "," ) << " " << element;
-        first = false;
-    }
-
     m_stream << "\n";
 }
 void IRDumpSourceVisitor::visit( Function& value )
@@ -306,10 +298,6 @@ void IRDumpSourceVisitor::visit( RationalConstant& value )
     dump( value );
 }
 void IRDumpSourceVisitor::visit( EnumerationConstant& value )
-{
-    dump( value );
-}
-void IRDumpSourceVisitor::visit( AgentConstant& value )
 {
     dump( value );
 }

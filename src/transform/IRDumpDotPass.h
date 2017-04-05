@@ -126,7 +126,6 @@ namespace libcasm_ir
         void visit( FloatingConstant& value ) override;
         void visit( RationalConstant& value ) override;
         void visit( EnumerationConstant& value ) override;
-        void visit( AgentConstant& value ) override;
 
         void visit( Identifier& value ) override;
 

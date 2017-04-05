@@ -21,32 +21,25 @@
 //  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "Agent.h"
-
-#include "Constant.h"
-#include "Enumeration.h"
+#include "uts/main.h"
 
 using namespace libcasm_ir;
 
-Agent::Agent( const Type::Ptr& type )
-: Value( "agent", type, classid() )
+TEST( libcasm_ir_Agent, agents_with_string )
 {
+    Agent a(
+        std::initializer_list< std::string >{ "alice", "bob", "charlie" } );
+
+    EXPECT_TRUE( a.type().isEnumeration() );
 }
 
-Agent::Agent( const std::vector< std::string >& agents )
-: Agent( libstdhl::make< EnumerationType >(
-      libstdhl::make< Enumeration >( "Agent", agents ) ) )
+TEST( libcasm_ir_Agent, agents_with_type )
 {
-}
+    auto const type = libstdhl::make< IntegerType >();
 
-u1 Agent::classof( Value const* obj )
-{
-    return obj->id() == classid();
-}
+    Agent a( type );
 
-void Agent::accept( Visitor& visitor )
-{
-    visitor.visit( *this );
+    EXPECT_TRUE( a.type().isInteger() );
 }
 
 //

@@ -386,10 +386,6 @@ void TraversalVisitor::visit( EnumerationConstant& value )
 {
     callback()( value );
 }
-void TraversalVisitor::visit( AgentConstant& value )
-{
-    callback()( value );
-}
 
 void TraversalVisitor::visit( Identifier& value )
 {

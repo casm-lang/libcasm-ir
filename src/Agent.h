@@ -24,18 +24,22 @@
 #ifndef _LIB_CASMIR_AGENT_H_
 #define _LIB_CASMIR_AGENT_H_
 
-#include "Enumeration.h"
+#include "Value.h"
 
 namespace libcasm_ir
 {
-    class Agent : public Enumeration
+    class Agent final : public Value
     {
       public:
         using Ptr = std::shared_ptr< Agent >;
 
+        Agent( const Type::Ptr& type );
+
         Agent( const std::vector< std::string >& agents );
 
         ~Agent( void ) = default;
+
+        void accept( Visitor& visitor ) override;
 
         static inline Value::ID classid( void )
         {

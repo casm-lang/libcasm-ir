@@ -69,7 +69,6 @@ namespace libcasm_ir
             ,
             CONSTANT,
             VOID_CONSTANT,
-            AGENT_CONSTANT,
             RULE_REFERENCE_CONSTANT,
             BOOLEAN_CONSTANT,
             INTEGER_CONSTANT,

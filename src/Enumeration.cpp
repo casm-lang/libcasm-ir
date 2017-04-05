@@ -27,28 +27,33 @@
 
 using namespace libcasm_ir;
 
-Enumeration::Enumeration( const std::string& name,
-    const std::vector< std::string >& values,
-    Value::ID id )
-: Value( "@" + name, libstdhl::get< VoidType >(), id )
-, m_values( values )
+Enumeration::Enumeration(
+    const std::string& name, const std::vector< std::string >& values )
+: Value( "@" + name, libstdhl::get< VoidType >(), classid() )
 {
-    if( m_values.size() == 0 )
+    for( const auto& v : values )
     {
-        throw std::invalid_argument(
-            "enumeration '" + name + "' has no values!" );
+        add( v );
     }
+}
 
-    for( u64 c = 0; c < m_values.size(); c++ )
+Enumeration::Enumeration( const std::string& name )
+: Enumeration( name, {} )
+{
+}
+
+void Enumeration::add( const std::string& value )
+{
+    const auto pos = m_values.size();
+
+    m_values.emplace_back( value );
+
+    auto result = m_value2uid.emplace( value, pos );
+    if( not result.second )
     {
-        auto value = m_values[ c ];
-
-        if( not m_value2uid.emplace( value, c ).second )
-        {
-            throw std::domain_error(
-                "enumeration '" + name + "' already has an value '" + value
-                + "'" );
-        }
+        throw std::domain_error(
+            "enumeration '" + name() + "' already has a value '" + value
+            + "'" );
     }
 }
 
@@ -85,14 +90,7 @@ std::string Enumeration::decode( const u64 value ) const
 
 void Enumeration::accept( Visitor& visitor )
 {
-    if( isa< Agent >( this ) )
-    {
-        visitor.visit( *static_cast< Agent* >( this ) );
-    }
-    else
-    {
-        visitor.visit( *this );
-    }
+    visitor.visit( *this );
 }
 
 u1 Enumeration::classof( Value const* obj )

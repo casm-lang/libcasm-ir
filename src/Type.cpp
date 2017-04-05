@@ -23,7 +23,6 @@
 
 #include "Type.h"
 
-#include "Agent.h"
 #include "Enumeration.h"
 
 using namespace libcasm_ir;
@@ -94,11 +93,6 @@ u1 Type::isLabel( void ) const
 u1 Type::isLocation( void ) const
 {
     return id() == Type::LOCATION;
-}
-
-u1 Type::isAgent( void ) const
-{
-    return id() == Type::AGENT;
 }
 
 u1 Type::isRuleReference( void ) const
@@ -258,14 +252,9 @@ RationalType::RationalType()
 // Enumeration Type
 //
 
-EnumerationType::EnumerationType( const Enumeration::Ptr& kind, Type::ID id )
-: PrimitiveType( kind->name(), kind->name(), id )
-, m_kind( kind )
-{
-}
-
 EnumerationType::EnumerationType( const Enumeration::Ptr& kind )
-: EnumerationType( kind, Type::ENUMERATION )
+: PrimitiveType( kind->name(), kind->name(), Type::ENUMERATION )
+, m_kind( kind )
 {
 }
 
@@ -277,17 +266,6 @@ Enumeration& EnumerationType::kind( void ) const
 Enumeration::Ptr EnumerationType::ptr_kind( void ) const
 {
     return m_kind;
-}
-
-//
-// Agent Type
-//
-
-AgentType::AgentType( const Agent::Ptr& agent )
-: EnumerationType( agent, Type::AGENT )
-{
-    m_name = "a";
-    m_description = "Agent";
 }
 
 //

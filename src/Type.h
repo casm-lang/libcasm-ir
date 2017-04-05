@@ -37,7 +37,6 @@
 
 namespace libcasm_ir
 {
-    class Agent;
     class Enumeration;
 
     class Type;
@@ -55,7 +54,6 @@ namespace libcasm_ir
             LABEL,
             LOCATION,
 
-            AGENT,
             RULE_REFERENCE,
             BOOLEAN,
             INTEGER,
@@ -115,7 +113,6 @@ namespace libcasm_ir
         u1 isFloating( void ) const;
         u1 isRational( void ) const;
         u1 isEnumeration( void ) const;
-        u1 isAgent( void ) const;
         u1 isRelation( void ) const;
 
       protected:
@@ -242,16 +239,11 @@ namespace libcasm_ir
         RationalType( void );
     };
 
-    class EnumerationType : public PrimitiveType
+    class EnumerationType final : public PrimitiveType
     {
       public:
         using Ptr = std::shared_ptr< EnumerationType >;
 
-      protected:
-        EnumerationType(
-            const std::shared_ptr< Enumeration >& kind, Type::ID id );
-
-      public:
         EnumerationType( const std::shared_ptr< Enumeration >& kind );
 
         Enumeration& kind( void ) const;
@@ -260,14 +252,6 @@ namespace libcasm_ir
 
       private:
         std::shared_ptr< Enumeration > m_kind;
-    };
-
-    class AgentType final : public EnumerationType
-    {
-      public:
-        using Ptr = std::shared_ptr< AgentType >;
-
-        AgentType( const std::shared_ptr< Agent >& kind );
     };
 
     class RelationType final : public Type

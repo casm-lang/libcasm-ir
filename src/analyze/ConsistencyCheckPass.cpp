@@ -397,10 +397,6 @@ void ConsistencyCheckVisitor::visit( EnumerationConstant& value )
 {
     verify< EnumerationConstant >( value );
 }
-void ConsistencyCheckVisitor::visit( AgentConstant& value )
-{
-    verify< AgentConstant >( value );
-}
 void ConsistencyCheckVisitor::visit( Identifier& value )
 {
     verify< Identifier >( value );

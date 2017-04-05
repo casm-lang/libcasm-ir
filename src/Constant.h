@@ -24,7 +24,6 @@
 #ifndef _LIB_CASMIR_CONSTANT_H_
 #define _LIB_CASMIR_CONSTANT_H_
 
-#include "Agent.h"
 #include "Enumeration.h"
 #include "Rule.h"
 #include "Value.h"
@@ -282,7 +281,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class EnumerationConstant : public Constant
+    class EnumerationConstant final : public Constant
     {
       public:
         using Ptr = std::shared_ptr< EnumerationConstant >;
@@ -310,29 +309,6 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::ENUMERATION_CONSTANT;
-        }
-
-        static u1 classof( Value const* obj );
-    };
-
-    class AgentConstant : public EnumerationConstant
-    {
-      public:
-        using Ptr = std::shared_ptr< AgentConstant >;
-
-      private:
-        AgentConstant( const AgentType::Ptr& type, const std::string& value,
-            u1 defined, u1 symbolic );
-
-      public:
-        AgentConstant( const AgentType::Ptr& type, const std::string& value );
-        AgentConstant( const AgentType::Ptr& type );
-
-        Agent::Ptr value( void ) const;
-
-        static inline Value::ID classid( void )
-        {
-            return Value::AGENT_CONSTANT;
         }
 
         static u1 classof( Value const* obj );

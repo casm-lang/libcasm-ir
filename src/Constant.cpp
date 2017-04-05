@@ -103,7 +103,6 @@ void Constant::accept( Visitor& visitor )
 u1 Constant::classof( Value const* obj )
 {
     return obj->id() == classid() or VoidConstant::classof( obj )
-           or AgentConstant::classof( obj )
            or RuleReferenceConstant::classof( obj )
            or BooleanConstant::classof( obj ) or IntegerConstant::classof( obj )
            or BitConstant::classof( obj ) or StringConstant::classof( obj )
@@ -491,43 +490,10 @@ u64 EnumerationConstant::value( void ) const
 
 void EnumerationConstant::accept( Visitor& visitor )
 {
-    if( isa< AgentConstant >( this ) )
-    {
-        visitor.visit( *static_cast< AgentConstant* >( this ) );
-    }
-    else
-    {
-        visitor.visit( *this );
-    }
+    visitor.visit( *this );
 }
 
 u1 EnumerationConstant::classof( Value const* obj )
-{
-    return obj->id() == classid() or AgentConstant::classof( obj );
-}
-
-//
-// AgentConstant
-//
-
-AgentConstant::AgentConstant( const AgentType::Ptr& type,
-    const std::string& value, u1 defined, u1 symbolic )
-: EnumerationConstant( type, value, defined, symbolic, classid() )
-{
-}
-
-AgentConstant::AgentConstant(
-    const AgentType::Ptr& type, const std::string& value )
-: AgentConstant( type, value, true, false )
-{
-}
-
-AgentConstant::AgentConstant( const AgentType::Ptr& type )
-: AgentConstant( type, nullptr, false, false )
-{
-}
-
-u1 AgentConstant::classof( Value const* obj )
 {
     return obj->id() == classid();
 }

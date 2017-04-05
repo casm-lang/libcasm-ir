@@ -287,10 +287,6 @@ std::string Value::token( const Value::ID id )
         {
             return "VoidConstant";
         }
-        case Value::AGENT_CONSTANT:
-        {
-            return "AgentConstant";
-        }
         case Value::RULE_REFERENCE_CONSTANT:
         {
             return "RuleReferenceConstant";

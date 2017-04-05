@@ -147,12 +147,7 @@ void IRDumpDotVisitor::visit( Agent& value )
              << "</TD>"
              << "</TR>\n";
 
-    for( auto element : value.elements() )
-    {
-        m_stream << "<TR>"
-                 << "<TD PORT=\"" << element << "\">" << element << "</TD>"
-                 << "</TR>\n";
-    }
+    // TODO: PPA: dump the current agent domain type and there values!
 
     m_stream << "</TABLE>>];\n";
 }
@@ -404,10 +399,6 @@ void IRDumpDotVisitor::visit( RationalConstant& value )
     dump( value );
 }
 void IRDumpDotVisitor::visit( EnumerationConstant& value )
-{
-    dump( value );
-}
-void IRDumpDotVisitor::visit( AgentConstant& value )
 {
     dump( value );
 }

@@ -127,11 +127,6 @@ TEST( libcasm_ir_Value, id_to_token_string )
                 EXPECT_STREQ( Value::token( id ).c_str(), "VoidConstant" );
                 break;
             }
-            case Value::AGENT_CONSTANT:
-            {
-                EXPECT_STREQ( Value::token( id ).c_str(), "AgentConstant" );
-                break;
-            }
             case Value::RULE_REFERENCE_CONSTANT:
             {
                 EXPECT_STREQ(
