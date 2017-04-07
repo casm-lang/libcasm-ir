@@ -28,14 +28,16 @@
 
 namespace libcasm_ir
 {
-    class Function : public User
+    class Function final : public User
     {
       public:
         Function( const std::string& name, const Type::Ptr& type );
 
         ~Function( void ) = default;
 
-        void accept( Visitor& visitor ) override final;
+        std::string name( void ) const override;
+
+        void accept( Visitor& visitor ) override;
 
         static inline Value::ID classid( void )
         {

@@ -30,7 +30,7 @@ namespace libcasm_ir
 {
     class Statement;
 
-    class Derived : public User
+    class Derived final : public User
     {
       public:
         using Ptr = std::shared_ptr< Derived >;
@@ -43,7 +43,9 @@ namespace libcasm_ir
 
         std::shared_ptr< Statement > context( void ) const;
 
-        void accept( Visitor& visitor ) override final;
+        std::string name( void ) const override;
+
+        void accept( Visitor& visitor ) override;
 
         static inline Value::ID classid( void )
         {

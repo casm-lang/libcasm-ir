@@ -43,6 +43,11 @@ Statement::Ptr Derived::context( void ) const
     return m_context;
 }
 
+std::string Derived::name( void ) const
+{
+    return _name();
+}
+
 void Derived::accept( Visitor& visitor )
 {
     visitor.visit( *this );

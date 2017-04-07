@@ -30,6 +30,11 @@ Function::Function( const std::string& name, const Type::Ptr& type )
 {
 }
 
+std::string Function::name( void ) const
+{
+    return _name();
+}
+
 void Function::accept( Visitor& visitor )
 {
     visitor.visit( *this );
