@@ -451,7 +451,7 @@ std::string RelationType::description( void ) const
     {
         if( not first )
         {
-            tmp += " x ";
+            tmp += " * ";
         }
 
         tmp += argument->description();
