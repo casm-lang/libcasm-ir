@@ -31,11 +31,6 @@ static void libcasm_ir__constant_integer_test( i64 i )
     ASSERT_TRUE( v != nullptr );
 
     EXPECT_STREQ( v->name().c_str(), std::to_string( i ).c_str() );
-    EXPECT_STREQ( v->name().c_str(), std::to_string( v->value() ).c_str() );
-    if( strcmp( v->name().c_str(), std::to_string( v->value() ).c_str() ) )
-    {
-        printf( "%p\n", v.get() );
-    }
 
     EXPECT_EQ( v->defined(), true );
     EXPECT_EQ( v->symbolic(), false );

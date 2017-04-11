@@ -24,7 +24,6 @@
 #include "Constant.h"
 
 #include "../stdhl/cpp/FloatingPoint.h"
-#include "../stdhl/cpp/Integer.h"
 #include "../stdhl/cpp/Math.h"
 #include "../stdhl/cpp/Rational.h"
 
@@ -295,7 +294,7 @@ IntegerConstant::IntegerConstant( void )
 {
 }
 
-i64 IntegerConstant::value( void ) const
+i64 IntegerConstant::value_i64( void ) const
 {
     i64 v = ( i64 )( m_data.word( 0 ) );
 
@@ -309,10 +308,15 @@ i64 IntegerConstant::value( void ) const
     }
 }
 
+const libstdhl::Integer& IntegerConstant::value( void ) const
+{
+    return static_cast< const libstdhl::Integer& >( m_data );
+}
+
 std::string IntegerConstant::name( void ) const
 {
-    return ( defined() ? ( std::to_string( value() ) ) : undef_str );
-    // TODO: PPA: use literal function from libstdhl::Type
+    return (
+        defined() ? ( m_data.to< libstdhl::Type::DECIMAL >() ) : undef_str );
 }
 
 void IntegerConstant::accept( Visitor& visitor )

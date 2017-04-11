@@ -28,6 +28,8 @@
 #include "Rule.h"
 #include "Value.h"
 
+#include "../stdhl/cpp/Integer.h"
+
 namespace libcasm_ir
 {
     class Constant : public Value
@@ -165,7 +167,9 @@ namespace libcasm_ir
         std::string literal(
             libstdhl::Type::Radix radix = libstdhl::Type::DECIMAL ) const;
 
-        i64 value( void ) const;
+        i64 value_i64( void ) const;
+
+        const libstdhl::Integer& value( void ) const;
 
         std::string name( void ) const override;
 
