@@ -49,13 +49,6 @@ Value::Value( const std::string& name, const Type::Ptr& type, Value::ID id )
 #endif
 }
 
-Value::~Value()
-{
-#ifndef NDEBUG
-    m_id2objs()[ m_id ].erase( this );
-#endif
-}
-
 std::string Value::description( void ) const
 {
     return type().name() + " " + name();

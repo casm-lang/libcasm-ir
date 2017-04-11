@@ -194,7 +194,7 @@ namespace libcasm_ir
 
         Value( const std::string& name, const Type::Ptr& type, ID id );
 
-        ~Value( void );
+        ~Value( void ) = default;
 
         virtual std::string name( void ) const = 0;
 
