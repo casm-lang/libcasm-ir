@@ -274,6 +274,8 @@ namespace libcasm_ir
 
         BitType( u16 bitsize );
 
+        BitType( const std::shared_ptr< IntegerConstant >& bitsize );
+
         BitType( const std::string& value, const libstdhl::Type::Radix radix );
 
         u16 bitsize( void ) const;

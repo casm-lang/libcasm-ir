@@ -392,6 +392,32 @@ BitType::BitType( u16 bitsize )
 : PrimitiveType( Type::BIT )
 , m_bitsize( bitsize )
 {
+    if( m_bitsize < 1 or m_bitsize > BitType::SizeMax )
+    {
+        throw std::domain_error( "invalid bit size '"
+                                 + std::to_string( m_bitsize )
+                                 + "' for 'Bit' type" );
+    }
+}
+
+BitType::BitType( const IntegerConstant::Ptr& bitsize )
+: PrimitiveType( Type::BIT )
+{
+    assert( bitsize );
+    if( bitsize->value() > BitType::SizeMax )
+    {
+        throw std::domain_error(
+            "invalid bit size '" + bitsize->name() + "' for 'Bit' type" );
+    }
+
+    m_bitsize = bitsize->value_i64();
+
+    if( m_bitsize < 1 )
+    {
+        throw std::domain_error( "invalid bit size '"
+                                 + std::to_string( m_bitsize )
+                                 + "' for 'Bit' type" );
+    }
 }
 
 BitType::BitType( const std::string& value, const libstdhl::Type::Radix radix )
@@ -401,6 +427,13 @@ BitType::BitType( const std::string& value, const libstdhl::Type::Radix radix )
     tmp.erase( std::remove( tmp.begin(), tmp.end(), '\'' ), tmp.end() );
 
     m_bitsize = (u16)tmp.size() * std::log2( (double)radix );
+
+    if( m_bitsize < 1 or m_bitsize > BitType::SizeMax )
+    {
+        throw std::domain_error( "invalid bit size '"
+                                 + std::to_string( m_bitsize )
+                                 + "' for 'Bit' type" );
+    }
 }
 
 u16 BitType::bitsize( void ) const
@@ -515,6 +548,14 @@ RelationType::RelationType( const Type::Ptr& result, const Types& arguments )
 {
     m_result = result;
     m_arguments = arguments;
+
+#ifndef NDEBUG
+    assert( result );
+    for( auto argument : arguments )
+    {
+        assert( argument );
+    }
+#endif
 }
 
 std::string RelationType::name( void ) const
