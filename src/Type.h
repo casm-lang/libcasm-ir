@@ -39,6 +39,7 @@
 namespace libcasm_ir
 {
     class Enumeration;
+    class IntegerConstant;
 
     class Type;
     using Types = libstdhl::List< Type >;
@@ -54,6 +55,9 @@ namespace libcasm_ir
         enum ID : u8
         {
             _BOTTOM_ = 0,
+
+            RANGE,
+
             VOID,
             LABEL,
             LOCATION,
@@ -66,6 +70,7 @@ namespace libcasm_ir
             FLOATING,
             RATIONAL,
             ENUMERATION,
+
             RELATION,
             _TOP_
         };
@@ -74,9 +79,9 @@ namespace libcasm_ir
 
         ~Type( void ) = default;
 
-        std::string name( void ) const;
+        virtual std::string name( void ) const = 0;
 
-        std::string description( void ) const;
+        virtual std::string description( void ) const = 0;
 
         ID id( void ) const;
 
@@ -106,6 +111,7 @@ namespace libcasm_ir
             return !operator==( rhs );
         }
 
+        u1 isRange( void ) const;
         u1 isVoid( void ) const;
         u1 isLabel( void ) const;
         u1 isLocation( void ) const;
@@ -142,11 +148,34 @@ namespace libcasm_ir
         ID m_id;
 
       public:
+        static std::string token( const Type::ID id );
+
         std::unordered_map< std::string, Type::Ptr >& make_cache( void )
         {
             static std::unordered_map< std::string, Type::Ptr > cache;
             return cache;
         }
+    };
+
+    class RangeType final : public Type
+    {
+      public:
+        using Ptr = std::shared_ptr< RangeType >;
+
+        RangeType( const std::shared_ptr< IntegerConstant >& from,
+            const std::shared_ptr< IntegerConstant >& to );
+
+        u1 increasing( void ) const;
+
+        std::string name( void ) const override;
+
+        std::string description( void ) const override;
+
+      private:
+        std::shared_ptr< IntegerConstant > m_from;
+        std::shared_ptr< IntegerConstant > m_to;
+
+        u1 m_increasing;
     };
 
     class PrimitiveType : public Type
@@ -161,6 +190,10 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< VoidType >;
 
         VoidType( void );
+
+        std::string name( void ) const override;
+
+        std::string description( void ) const override;
     };
 
     class LabelType final : public PrimitiveType
@@ -169,6 +202,10 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< LabelType >;
 
         LabelType( void );
+
+        std::string name( void ) const override;
+
+        std::string description( void ) const override;
     };
 
     class LocationType final : public PrimitiveType
@@ -177,6 +214,10 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< LocationType >;
 
         LocationType( void );
+
+        std::string name( void ) const override;
+
+        std::string description( void ) const override;
     };
 
     class RuleReferenceType final : public PrimitiveType
@@ -185,6 +226,10 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< RuleReferenceType >;
 
         RuleReferenceType( void );
+
+        std::string name( void ) const override;
+
+        std::string description( void ) const override;
     };
 
     class BooleanType final : public PrimitiveType
@@ -193,6 +238,10 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< BooleanType >;
 
         BooleanType( void );
+
+        std::string name( void ) const override;
+
+        std::string description( void ) const override;
     };
 
     class IntegerType final : public PrimitiveType
@@ -201,6 +250,19 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< IntegerType >;
 
         IntegerType( void );
+
+        IntegerType( const RangeType::Ptr& range );
+
+        u1 constrained( void ) const;
+
+        RangeType::Ptr range( void ) const;
+
+        std::string name( void ) const override;
+
+        std::string description( void ) const override;
+
+      private:
+        RangeType::Ptr m_range;
     };
 
     class BitType final : public PrimitiveType
@@ -216,9 +278,9 @@ namespace libcasm_ir
 
         u16 bitsize( void ) const;
 
-        std::string name( void ) const;
+        std::string name( void ) const override;
 
-        std::string description( void ) const;
+        std::string description( void ) const override;
 
       private:
         u16 m_bitsize;
@@ -230,6 +292,10 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< StringType >;
 
         StringType( void );
+
+        std::string name( void ) const override;
+
+        std::string description( void ) const override;
     };
 
     class FloatingType final : public PrimitiveType
@@ -238,6 +304,10 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< FloatingType >;
 
         FloatingType( void );
+
+        std::string name( void ) const override;
+
+        std::string description( void ) const override;
     };
 
     class RationalType final : public PrimitiveType
@@ -246,6 +316,10 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< RationalType >;
 
         RationalType( void );
+
+        std::string name( void ) const override;
+
+        std::string description( void ) const override;
     };
 
     class EnumerationType final : public PrimitiveType
@@ -259,9 +333,9 @@ namespace libcasm_ir
 
         std::shared_ptr< Enumeration > ptr_kind( void ) const;
 
-        std::string name( void ) const;
+        std::string name( void ) const override;
 
-        std::string description( void ) const;
+        std::string description( void ) const override;
 
       private:
         std::shared_ptr< Enumeration > m_kind;
@@ -274,9 +348,9 @@ namespace libcasm_ir
 
         RelationType( const Type::Ptr& result, const Types& arguments );
 
-        std::string name( void ) const;
+        std::string name( void ) const override;
 
-        std::string description( void ) const;
+        std::string description( void ) const override;
     };
 }
 

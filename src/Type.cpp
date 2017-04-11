@@ -23,6 +23,7 @@
 
 #include "Type.h"
 
+#include "Constant.h"
 #include "Enumeration.h"
 
 using namespace libcasm_ir;
@@ -30,132 +31,6 @@ using namespace libcasm_ir;
 Type::Type( Type::ID id )
 : m_id( id )
 {
-}
-
-std::string Type::name( void ) const
-{
-    switch( m_id )
-    {
-        case _BOTTOM_:
-        {
-            return "_BOTTOM_";
-        }
-        case VOID:
-        {
-            return "v";
-        }
-        case LABEL:
-        {
-            return "label";
-        }
-        case LOCATION:
-        {
-            return "l";
-        }
-        case RULE_REFERENCE:
-        {
-            return "r";
-        }
-        case BOOLEAN:
-        {
-            return "b";
-        }
-        case INTEGER:
-        {
-            return "i";
-        }
-        case BIT:
-        {
-            return static_cast< const BitType* >( this )->name();
-        }
-        case STRING:
-        {
-            return "s";
-        }
-        case FLOATING:
-        {
-            return "f";
-        }
-        case RATIONAL:
-        {
-            return "q";
-        }
-        case ENUMERATION:
-        {
-            return static_cast< const EnumerationType* >( this )->name();
-        }
-        case RELATION:
-        {
-            return static_cast< const RelationType* >( this )->name();
-        }
-        case _TOP_:
-        {
-            return "";
-        }
-    }
-}
-
-std::string Type::description( void ) const
-{
-    switch( m_id )
-    {
-        case _BOTTOM_:
-        {
-            return "_BOTTOM_";
-        }
-        case VOID:
-        {
-            return "Void";
-        }
-        case LABEL:
-        {
-            return "Label";
-        }
-        case LOCATION:
-        {
-            return "Location";
-        }
-        case RULE_REFERENCE:
-        {
-            return "RuleRef";
-        }
-        case BOOLEAN:
-        {
-            return "Boolean";
-        }
-        case INTEGER:
-        {
-            return "Integer";
-        }
-        case BIT:
-        {
-            return static_cast< const BitType* >( this )->description();
-        }
-        case STRING:
-        {
-            return "String";
-        }
-        case FLOATING:
-        {
-            return "Floating";
-        }
-        case RATIONAL:
-        {
-            return "Rational";
-        }
-        case ENUMERATION:
-        {
-            return static_cast< const EnumerationType* >( this )->description();
-        }
-        case RELATION:
-        {
-            return static_cast< const RelationType* >( this )->description();
-        }
-        case _TOP_:
-        {
-            return "";
-        }
-    }
 }
 
 Type::ID Type::id( void ) const
@@ -191,6 +66,11 @@ Types Type::arguments( void ) const
 std::string Type::make_hash( void ) const
 {
     return "t:" + std::to_string( id() ) + ":" + description();
+}
+
+u1 Type::isRange( void ) const
+{
+    return id() == Type::RANGE;
 }
 
 u1 Type::isVoid( void ) const
@@ -253,6 +133,102 @@ u1 Type::isRelation( void ) const
     return id() == Type::RELATION;
 }
 
+std::string Type::token( const Type::ID id )
+{
+    switch( id )
+    {
+        case _BOTTOM_:
+        {
+            return "_BOTTOM_";
+        }
+        case RANGE:
+        {
+            return "Range";
+        }
+        case VOID:
+        {
+            return "Void";
+        }
+        case LABEL:
+        {
+            return "Label";
+        }
+        case LOCATION:
+        {
+            return "Location";
+        }
+        case RULE_REFERENCE:
+        {
+            return "RuleRef";
+        }
+        case BOOLEAN:
+        {
+            return "Boolean";
+        }
+        case INTEGER:
+        {
+            return "Integer";
+        }
+        case BIT:
+        {
+            return "Bit";
+        }
+        case STRING:
+        {
+            return "String";
+        }
+        case FLOATING:
+        {
+            return "Floating";
+        }
+        case RATIONAL:
+        {
+            return "Rational";
+        }
+        case ENUMERATION:
+        {
+            return "Enumeration";
+        }
+        case RELATION:
+        {
+            return "Relation";
+        }
+        case _TOP_:
+        {
+            return "_TOP_";
+        }
+    }
+}
+
+//
+//
+// Range Type
+//
+
+RangeType::RangeType(
+    const IntegerConstant::Ptr& from, const IntegerConstant::Ptr& to )
+: Type( Type::RANGE )
+, m_from( from )
+, m_to( to )
+, m_increasing( from->value() <= to->value() )
+{
+}
+
+u1 RangeType::increasing( void ) const
+{
+    return m_increasing;
+}
+
+std::string RangeType::name( void ) const
+{
+    return "[" + m_from->name() + ".." + m_to->name() + "]";
+}
+
+std::string RangeType::description( void ) const
+{
+    return this->name();
+}
+
 //
 //
 // Primitive Type
@@ -272,6 +248,16 @@ VoidType::VoidType()
 {
 }
 
+std::string VoidType::name( void ) const
+{
+    return "v";
+}
+
+std::string VoidType::description( void ) const
+{
+    return token( id() );
+}
+
 //
 // Label Type
 //
@@ -279,6 +265,16 @@ VoidType::VoidType()
 LabelType::LabelType()
 : PrimitiveType( Type::LABEL )
 {
+}
+
+std::string LabelType::name( void ) const
+{
+    return "label";
+}
+
+std::string LabelType::description( void ) const
+{
+    return token( id() );
 }
 
 //
@@ -290,6 +286,16 @@ LocationType::LocationType()
 {
 }
 
+std::string LocationType::name( void ) const
+{
+    return "location";
+}
+
+std::string LocationType::description( void ) const
+{
+    return token( id() );
+}
+
 //
 // Rule Reference Type
 //
@@ -297,6 +303,16 @@ LocationType::LocationType()
 RuleReferenceType::RuleReferenceType()
 : PrimitiveType( Type::RULE_REFERENCE )
 {
+}
+
+std::string RuleReferenceType::name( void ) const
+{
+    return "r";
+}
+
+std::string RuleReferenceType::description( void ) const
+{
+    return token( id() ); // + TODO: PPA: add concrete type relation of ref
 }
 
 //
@@ -308,13 +324,64 @@ BooleanType::BooleanType()
 {
 }
 
+std::string BooleanType::name( void ) const
+{
+    return "r";
+}
+
+std::string BooleanType::description( void ) const
+{
+    return token( id() );
+}
+
 //
 // Integer Type
 //
 
 IntegerType::IntegerType()
 : PrimitiveType( Type::INTEGER )
+, m_range( nullptr )
 {
+}
+
+IntegerType::IntegerType( const RangeType::Ptr& range )
+: PrimitiveType( Type::INTEGER )
+, m_range( range )
+{
+    assert( range );
+
+    if( not range->increasing() )
+    {
+        throw std::domain_error(
+            "range '" + range->name() + "' violates monotonically nondecreasing property of 'Integer' type" );
+    }
+}
+
+u1 IntegerType::constrained( void ) const
+{
+    return m_range ? true : false;
+}
+
+RangeType::Ptr IntegerType::range( void ) const
+{
+    return m_range;
+}
+
+std::string IntegerType::name( void ) const
+{
+    return "i" + ( m_range ? m_range->name() : "" );
+}
+
+std::string IntegerType::description( void ) const
+{
+    if( not m_range )
+    {
+        return token( id() );
+    }
+    else
+    {
+        return token( id() ) + "'" + m_range->name();
+    }
 }
 
 //
@@ -348,7 +415,7 @@ std::string BitType::name( void ) const
 
 std::string BitType::description( void ) const
 {
-    return "Bit'" + std::to_string( m_bitsize );
+    return token( id() ) + "'" + std::to_string( m_bitsize );
 }
 
 //
@@ -360,6 +427,16 @@ StringType::StringType()
 {
 }
 
+std::string StringType::name( void ) const
+{
+    return "s";
+}
+
+std::string StringType::description( void ) const
+{
+    return token( id() );
+}
+
 //
 // Flaoting Type
 //
@@ -369,6 +446,16 @@ FloatingType::FloatingType()
 {
 }
 
+std::string FloatingType::name( void ) const
+{
+    return "f";
+}
+
+std::string FloatingType::description( void ) const
+{
+    return token( id() );
+}
+
 //
 // Rational Type
 //
@@ -376,6 +463,16 @@ FloatingType::FloatingType()
 RationalType::RationalType()
 : PrimitiveType( Type::RATIONAL )
 {
+}
+
+std::string RationalType::name( void ) const
+{
+    return "r";
+}
+
+std::string RationalType::description( void ) const
+{
+    return token( id() );
 }
 
 //

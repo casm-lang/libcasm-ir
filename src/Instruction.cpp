@@ -506,10 +506,10 @@ ArithmeticInstruction::ArithmeticInstruction(
 {
     assert( operands.size() <= 2 );
 
-    auto lhs_ty = operand( 0 )->type();
+    const auto& lhs_ty = operand( 0 )->type();
     if( operands.size() > 1 )
     {
-        auto rhs_ty = operand( 1 )->type();
+        const auto& rhs_ty = operand( 1 )->type();
         assert( lhs_ty == rhs_ty );
     }
 
@@ -561,10 +561,10 @@ LogicalInstruction::LogicalInstruction(
 {
     assert( operands.size() <= 2 );
 
-    auto lhs_ty = operands[ 0 ]->type();
+    const auto& lhs_ty = operands[ 0 ]->type();
     if( operands.size() > 1 )
     {
-        auto rhs_ty = operands[ 1 ]->type();
+        const auto& rhs_ty = operands[ 1 ]->type();
         assert( lhs_ty == rhs_ty );
     }
 
