@@ -561,6 +561,26 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
+    class ImpInstruction final : public LogicalInstruction,
+                                 public BinaryInstruction
+    {
+      public:
+        using Ptr = std::shared_ptr< ImpInstruction >;
+
+        ImpInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
+
+        void accept( Visitor& visitor ) override final;
+
+        static const Annotation info;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::IMP_INSTRUCTION;
+        }
+
+        static u1 classof( Value const* obj );
+    };
+
     class NotInstruction final : public LogicalInstruction,
                                  public UnaryInstruction
     {

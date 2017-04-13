@@ -340,6 +340,11 @@ TEST( libcasm_ir_Value, id_to_token_string )
                 EXPECT_STREQ( Value::token( id ).c_str(), "or" );
                 break;
             }
+            case Value::IMP_INSTRUCTION:
+            {
+                EXPECT_STREQ( Value::token( id ).c_str(), "imp" );
+                break;
+            }
             case Value::XOR_INSTRUCTION:
             {
                 EXPECT_STREQ( Value::token( id ).c_str(), "xor" );

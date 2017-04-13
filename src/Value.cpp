@@ -455,6 +455,10 @@ std::string Value::token( const Value::ID id )
         {
             return "and";
         }
+        case Value::IMP_INSTRUCTION:
+        {
+            return "imp";
+        }
         case Value::NOT_INSTRUCTION:
         {
             return "not";

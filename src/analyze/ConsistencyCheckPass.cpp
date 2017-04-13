@@ -327,6 +327,10 @@ void ConsistencyCheckVisitor::visit( OrInstruction& value )
 {
     verify< OrInstruction >( value );
 }
+void ConsistencyCheckVisitor::visit( ImpInstruction& value )
+{
+    verify< ImpInstruction >( value );
+}
 void ConsistencyCheckVisitor::visit( NotInstruction& value )
 {
     verify< NotInstruction >( value );

@@ -69,8 +69,9 @@ namespace libcasm_ir
     class DivInstruction;
 
     class AndInstruction;
-    class OrInstruction;
     class XorInstruction;
+    class OrInstruction;
+    class ImpInstruction;
     class NotInstruction;
 
     class EquInstruction;
@@ -152,6 +153,7 @@ namespace libcasm_ir
         virtual void visit( AndInstruction& value ) = 0;
         virtual void visit( XorInstruction& value ) = 0;
         virtual void visit( OrInstruction& value ) = 0;
+        virtual void visit( ImpInstruction& value ) = 0;
         virtual void visit( NotInstruction& value ) = 0;
 
         virtual void visit( EquInstruction& value ) = 0;
@@ -230,6 +232,7 @@ namespace libcasm_ir
         virtual void visit( AndInstruction& value ) override = 0;
         virtual void visit( XorInstruction& value ) override = 0;
         virtual void visit( OrInstruction& value ) override = 0;
+        virtual void visit( ImpInstruction& value ) override = 0;
         virtual void visit( NotInstruction& value ) override = 0;
 
         virtual void visit( EquInstruction& value ) override = 0;
@@ -321,6 +324,7 @@ namespace libcasm_ir
         void visit( AndInstruction& value ) override;
         void visit( XorInstruction& value ) override;
         void visit( OrInstruction& value ) override;
+        void visit( ImpInstruction& value ) override;
         void visit( NotInstruction& value ) override;
 
         void visit( EquInstruction& value ) override;

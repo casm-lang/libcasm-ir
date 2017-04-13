@@ -119,6 +119,7 @@ namespace libcasm_ir
             OR_INSTRUCTION,
             XOR_INSTRUCTION,
             AND_INSTRUCTION,
+            IMP_INSTRUCTION,
             NOT_INSTRUCTION,
 
             BUILTIN,

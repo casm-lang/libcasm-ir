@@ -332,6 +332,10 @@ void IRDumpDotVisitor::visit( OrInstruction& value )
 {
     dump( value );
 }
+void IRDumpDotVisitor::visit( ImpInstruction& value )
+{
+    dump( value );
+}
 void IRDumpDotVisitor::visit( NotInstruction& value )
 {
     dump( value );

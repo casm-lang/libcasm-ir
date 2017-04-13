@@ -320,6 +320,10 @@ void TraversalVisitor::visit( OrInstruction& value )
 {
     callback()( value );
 }
+void TraversalVisitor::visit( ImpInstruction& value )
+{
+    callback()( value );
+}
 void TraversalVisitor::visit( NotInstruction& value )
 {
     callback()( value );

@@ -220,7 +220,7 @@ u1 BinaryInstruction::classof( Value const* obj )
            or LthInstruction::classof( obj ) or LeqInstruction::classof( obj )
            or GthInstruction::classof( obj ) or GeqInstruction::classof( obj )
            or OrInstruction::classof( obj ) or XorInstruction::classof( obj )
-           or AndInstruction::classof( obj );
+           or ImpInstruction::classof( obj ) or AndInstruction::classof( obj );
 }
 
 //
@@ -577,8 +577,8 @@ LogicalInstruction::LogicalInstruction(
 u1 LogicalInstruction::classof( Value const* obj )
 {
     return obj->id() == classid() or OrInstruction::classof( obj )
-           or XorInstruction::classof( obj ) or AndInstruction::classof( obj )
-           or NotInstruction::classof( obj );
+           or ImpInstruction::classof( obj ) or XorInstruction::classof( obj )
+           or AndInstruction::classof( obj ) or NotInstruction::classof( obj );
 }
 
 //
@@ -898,6 +898,36 @@ const Annotation OrInstruction::info( classid(),
     } );
 
 u1 OrInstruction::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
+
+//
+// Imp Instruction (Implies)
+//
+
+ImpInstruction::ImpInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
+: LogicalInstruction( { lhs, rhs }, info, classid() )
+, BinaryInstruction( this )
+{
+}
+
+void ImpInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
+const Annotation ImpInstruction::info( classid(),
+    Annotation::Data{
+
+        { Type::BOOLEAN,
+            {
+                Type::BOOLEAN, Type::BOOLEAN,
+            } },
+
+    } );
+
+u1 ImpInstruction::classof( Value const* obj )
 {
     return obj->id() == classid();
 }

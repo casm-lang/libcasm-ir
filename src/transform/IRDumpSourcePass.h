@@ -101,6 +101,7 @@ namespace libcasm_ir
         void visit( AndInstruction& value ) override;
         void visit( XorInstruction& value ) override;
         void visit( OrInstruction& value ) override;
+        void visit( ImpInstruction& value ) override;
         void visit( NotInstruction& value ) override;
 
         void visit( EquInstruction& value ) override;
