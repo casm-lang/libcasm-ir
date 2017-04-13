@@ -34,23 +34,23 @@ TEST( libcasm_ir__instruction_imp, create_invalid )
 TEST( libcasm_ir__instruction_imp, make_and_get )
 {
     {
-        auto a = libstdhl::make< IntegerConstant >( 5 );
-        auto i = InvInstruction( a );
+        auto a = libstdhl::make< BooleanConstant >( true );
+        auto i = ImpInstruction( a, a );
 
         EXPECT_STREQ( i.type().name().c_str(), a->type().name().c_str() );
         EXPECT_TRUE( i.type() == a->type() );
     }
     {
-        auto a = libstdhl::get< IntegerConstant >( 5 );
-        auto i = InvInstruction( a );
+        auto a = libstdhl::get< BooleanConstant >( true );
+        auto i = ImpInstruction( a, a );
 
         EXPECT_STREQ( i.type().name().c_str(), a->type().name().c_str() );
         EXPECT_TRUE( i.type() == a->type() );
     }
     {
-        auto c = IntegerConstant( 5 );
+        auto c = BooleanConstant( true );
         auto a = libstdhl::wrap< Constant >( c );
-        auto i = InvInstruction( a );
+        auto i = ImpInstruction( a, a );
 
         EXPECT_STREQ( i.type().name().c_str(), a->type().name().c_str() );
         EXPECT_TRUE( i.type() == a->type() );
