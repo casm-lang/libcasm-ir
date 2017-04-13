@@ -215,12 +215,13 @@ u1 BinaryInstruction::classof( Value const* obj )
     return obj->id() == classid() or UpdateInstruction::classof( obj )
            or LocalInstruction::classof( obj ) or AddInstruction::classof( obj )
            or SubInstruction::classof( obj ) or MulInstruction::classof( obj )
-           or DivInstruction::classof( obj ) or ModInstruction::classof( obj )
-           or EquInstruction::classof( obj ) or NeqInstruction::classof( obj )
-           or LthInstruction::classof( obj ) or LeqInstruction::classof( obj )
-           or GthInstruction::classof( obj ) or GeqInstruction::classof( obj )
-           or OrInstruction::classof( obj ) or XorInstruction::classof( obj )
-           or ImpInstruction::classof( obj ) or AndInstruction::classof( obj );
+           or DivInstruction::classof( obj ) or PowInstruction::classof( obj )
+           or ModInstruction::classof( obj ) or EquInstruction::classof( obj )
+           or NeqInstruction::classof( obj ) or LthInstruction::classof( obj )
+           or LeqInstruction::classof( obj ) or GthInstruction::classof( obj )
+           or GeqInstruction::classof( obj ) or OrInstruction::classof( obj )
+           or XorInstruction::classof( obj ) or ImpInstruction::classof( obj )
+           or AndInstruction::classof( obj );
 }
 
 //
@@ -521,9 +522,9 @@ u1 ArithmeticInstruction::classof( Value const* obj )
     return obj->id() == classid() or InvInstruction::classof( obj )
            or AddInstruction::classof( obj ) or SubInstruction::classof( obj )
            or MulInstruction::classof( obj ) or DivInstruction::classof( obj )
-           or ModInstruction::classof( obj ) or OrInstruction::classof( obj )
-           or XorInstruction::classof( obj ) or AndInstruction::classof( obj )
-           or NotInstruction::classof( obj );
+           or PowInstruction::classof( obj ) or ModInstruction::classof( obj )
+           or OrInstruction::classof( obj ) or XorInstruction::classof( obj )
+           or AndInstruction::classof( obj ) or NotInstruction::classof( obj );
 }
 
 //
@@ -793,6 +794,46 @@ const Annotation DivInstruction::info( classid(),
     } );
 
 u1 DivInstruction::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
+
+//
+// Pow Instruction
+//
+
+PowInstruction::PowInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
+: ArithmeticInstruction( { lhs, rhs }, info, classid() )
+, BinaryInstruction( this )
+{
+}
+
+void PowInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
+const Annotation PowInstruction::info( classid(),
+    Annotation::Data{
+
+        { Type::INTEGER,
+            {
+                Type::INTEGER, Type::INTEGER,
+            } },
+
+        { Type::FLOATING,
+            {
+                Type::FLOATING, Type::FLOATING,
+            } },
+
+        { Type::RATIONAL,
+            {
+                Type::RATIONAL, Type::RATIONAL,
+            } },
+
+    } );
+
+u1 PowInstruction::classof( Value const* obj )
 {
     return obj->id() == classid();
 }

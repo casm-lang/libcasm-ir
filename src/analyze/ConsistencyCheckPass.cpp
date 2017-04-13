@@ -314,6 +314,10 @@ void ConsistencyCheckVisitor::visit( DivInstruction& value )
 {
     verify< DivInstruction >( value );
 }
+void ConsistencyCheckVisitor::visit( PowInstruction& value )
+{
+    verify< PowInstruction >( value );
+}
 
 void ConsistencyCheckVisitor::visit( AndInstruction& value )
 {

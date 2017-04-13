@@ -286,6 +286,11 @@ TEST( libcasm_ir_Value, id_to_token_string )
                 EXPECT_STREQ( Value::token( id ).c_str(), "/" );
                 break;
             }
+            case Value::POW_INSTRUCTION:
+            {
+                EXPECT_STREQ( Value::token( id ).c_str(), "^" );
+                break;
+            }
             case Value::MOD_INSTRUCTION:
             {
                 EXPECT_STREQ( Value::token( id ).c_str(), "%" );

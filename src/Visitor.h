@@ -67,6 +67,7 @@ namespace libcasm_ir
     class MulInstruction;
     class ModInstruction;
     class DivInstruction;
+    class PowInstruction;
 
     class AndInstruction;
     class XorInstruction;
@@ -149,6 +150,7 @@ namespace libcasm_ir
         virtual void visit( MulInstruction& value ) = 0;
         virtual void visit( ModInstruction& value ) = 0;
         virtual void visit( DivInstruction& value ) = 0;
+        virtual void visit( PowInstruction& value ) = 0;
 
         virtual void visit( AndInstruction& value ) = 0;
         virtual void visit( XorInstruction& value ) = 0;
@@ -228,6 +230,7 @@ namespace libcasm_ir
         virtual void visit( MulInstruction& value ) override = 0;
         virtual void visit( ModInstruction& value ) override = 0;
         virtual void visit( DivInstruction& value ) override = 0;
+        virtual void visit( PowInstruction& value ) override = 0;
 
         virtual void visit( AndInstruction& value ) override = 0;
         virtual void visit( XorInstruction& value ) override = 0;
@@ -320,6 +323,7 @@ namespace libcasm_ir
         void visit( MulInstruction& value ) override;
         void visit( ModInstruction& value ) override;
         void visit( DivInstruction& value ) override;
+        void visit( PowInstruction& value ) override;
 
         void visit( AndInstruction& value ) override;
         void visit( XorInstruction& value ) override;

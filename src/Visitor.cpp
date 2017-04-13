@@ -307,6 +307,10 @@ void TraversalVisitor::visit( DivInstruction& value )
 {
     callback()( value );
 }
+void TraversalVisitor::visit( PowInstruction& value )
+{
+    callback()( value );
+}
 
 void TraversalVisitor::visit( AndInstruction& value )
 {

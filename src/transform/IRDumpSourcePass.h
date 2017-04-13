@@ -97,6 +97,7 @@ namespace libcasm_ir
         void visit( MulInstruction& value ) override;
         void visit( ModInstruction& value ) override;
         void visit( DivInstruction& value ) override;
+        void visit( PowInstruction& value ) override;
 
         void visit( AndInstruction& value ) override;
         void visit( XorInstruction& value ) override;

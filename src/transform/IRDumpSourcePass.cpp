@@ -218,6 +218,10 @@ void IRDumpSourceVisitor::visit( DivInstruction& value )
 {
     dump( value );
 }
+void IRDumpSourceVisitor::visit( PowInstruction& value )
+{
+    dump( value );
+}
 
 void IRDumpSourceVisitor::visit( AndInstruction& value )
 {

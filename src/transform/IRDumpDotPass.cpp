@@ -319,6 +319,10 @@ void IRDumpDotVisitor::visit( DivInstruction& value )
 {
     dump( value );
 }
+void IRDumpDotVisitor::visit( PowInstruction& value )
+{
+    dump( value );
+}
 
 void IRDumpDotVisitor::visit( AndInstruction& value )
 {

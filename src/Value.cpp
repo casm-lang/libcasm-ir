@@ -405,6 +405,10 @@ std::string Value::token( const Value::ID id )
         {
             return "/";
         }
+        case Value::POW_INSTRUCTION:
+        {
+            return "^";
+        }
         case Value::MOD_INSTRUCTION:
         {
             return "%";

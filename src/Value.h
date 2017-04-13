@@ -105,6 +105,7 @@ namespace libcasm_ir
             SUB_INSTRUCTION,
             MUL_INSTRUCTION,
             DIV_INSTRUCTION,
+            POW_INSTRUCTION,
             MOD_INSTRUCTION,
 
             COMPARE_INSTRUCTION,
