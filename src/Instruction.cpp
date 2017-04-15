@@ -821,15 +821,16 @@ const Annotation PowInstruction::info( classid(),
                 Type::INTEGER, Type::INTEGER,
             } },
 
-        { Type::FLOATING,
-            {
-                Type::FLOATING, Type::FLOATING,
-            } },
+        // { Type::RATIONAL, // TODO: PPA: enable this after clear semantics
+        //     {
+        //         Type::RATIONAL, Type::INTEGER,
+        //     } },
 
-        { Type::RATIONAL,
-            {
-                Type::RATIONAL, Type::RATIONAL,
-            } },
+        // { Type::FLOATING, // TODO: PPA: enable this after clear semantics
+        //
+        //     {
+        //         Type::FLOATING, Type::FLOATING,
+        //     } },
 
     } );
 
