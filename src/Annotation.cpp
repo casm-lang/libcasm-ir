@@ -41,6 +41,8 @@ Annotation::Annotation( const Value::ID id, const Data& info )
         m_type_set.emplace_back( Set() );
         m_type_set.back().emplace( rt );
 
+        m_map.emplace( rt, std::initializer_list< Set >{} );
+
         std::string key;
 
         m_argument_sizes.emplace( relation.argument.size() );
@@ -53,6 +55,13 @@ Annotation::Annotation( const Value::ID id, const Data& info )
             m_type_set.emplace_back( Set() );
             m_type_set.back().emplace( at );
             key += std::to_string( at ) + ";";
+
+            if( ( i + 1 ) >= m_map[ rt ].size() )
+            {
+                m_map[ rt ].emplace_back( Set() );
+            }
+
+            m_map[ rt ][ i ].emplace( at );
         }
 
         assert( m_relation_to_type.find( key ) == m_relation_to_type.end()
@@ -87,6 +96,11 @@ const Annotation::Set& Annotation::argumentTypes( u8 pos ) const
 const std::set< std::size_t >& Annotation::argumentSizes( void ) const
 {
     return m_argument_sizes;
+}
+
+const Annotation::Map& Annotation::map( void ) const
+{
+    return m_map;
 }
 
 Type::ID Annotation::resultTypeForRelation(

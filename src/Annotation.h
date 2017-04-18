@@ -53,6 +53,7 @@ namespace libcasm_ir
 
         using Data = std::vector< Relation >;
         using Set = std::set< Type::ID >;
+        using Map = std::unordered_map< Type::ID, std::vector< Set > >;
 
         Annotation( const Value::ID id, const Data& info );
 
@@ -64,6 +65,8 @@ namespace libcasm_ir
         const Set& resultTypes( void ) const;
 
         const Set& argumentTypes( u8 pos ) const;
+
+        const Map& map( void ) const;
 
         const std::set< std::size_t >& argumentSizes( void ) const;
 
@@ -77,6 +80,8 @@ namespace libcasm_ir
         std::set< std::size_t > m_argument_sizes;
 
         std::unordered_map< std::string, Type::ID > m_relation_to_type;
+
+        Map m_map;
 
         static std::unordered_map< std::string, const Annotation* >& str2obj(
             void )
