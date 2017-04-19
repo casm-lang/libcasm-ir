@@ -45,11 +45,6 @@ const Type& Type::result( void ) const
         return *m_result.get();
     }
 
-    if( isReference() )
-    {
-        return m_result->result();
-    }
-
     return *this;
 }
 
@@ -58,11 +53,6 @@ Type::Ptr Type::ptr_result( void )
     if( isRelation() )
     {
         return m_result;
-    }
-
-    if( isReference() )
-    {
-        return m_result->ptr_result();
     }
 
     return ptr_this< Type >();
