@@ -685,6 +685,9 @@ std::string Value::token( const Value::ID id )
             return "_SIZE_ = " + std::to_string( Value::_SIZE_ );
         }
     }
+
+    assert( !" internal error " );
+    return "";
 }
 
 //

@@ -198,6 +198,9 @@ std::string Type::token( const Type::ID id )
             return "_TOP_";
         }
     }
+
+    assert( !" internal error " );
+    return "";
 }
 
 //
