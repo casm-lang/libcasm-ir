@@ -87,23 +87,6 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class SelfBuiltin final : public GeneralBuiltin
-    {
-      public:
-        using Ptr = std::shared_ptr< SelfBuiltin >;
-
-        SelfBuiltin( const Type::Ptr& type );
-
-        static const Annotation info;
-
-        static inline Value::ID classid( void )
-        {
-            return Value::SELF_BUILTIN;
-        }
-
-        static u1 classof( Value const* obj );
-    };
-
     class AbortBuiltin final : public GeneralBuiltin
     {
       public:

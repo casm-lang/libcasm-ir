@@ -126,7 +126,6 @@ namespace libcasm_ir
             BUILTIN,
 
             GENERAL_BUILTIN,
-            SELF_BUILTIN,
             ABORT_BUILTIN,
             ASSERT_BUILTIN,
 

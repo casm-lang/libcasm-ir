@@ -376,11 +376,6 @@ TEST( libcasm_ir_Value, id_to_token_string )
                 EXPECT_STREQ( Value::token( id ).c_str(), "GeneralBuiltin" );
                 break;
             }
-            case Value::SELF_BUILTIN:
-            {
-                EXPECT_STREQ( Value::token( id ).c_str(), "self" );
-                break;
-            }
             case Value::ABORT_BUILTIN:
             {
                 EXPECT_STREQ( Value::token( id ).c_str(), "abort" );

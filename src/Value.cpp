@@ -476,10 +476,6 @@ std::string Value::token( const Value::ID id )
         {
             return "GeneralBuiltin";
         }
-        case Value::SELF_BUILTIN:
-        {
-            return "self";
-        }
         case Value::ABORT_BUILTIN:
         {
             return "abort";
