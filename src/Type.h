@@ -62,7 +62,6 @@ namespace libcasm_ir
             LABEL,
             LOCATION,
 
-            RULE_REFERENCE,
             BOOLEAN,
             INTEGER,
             BIT,
@@ -72,6 +71,10 @@ namespace libcasm_ir
             ENUMERATION,
 
             RELATION,
+
+            RULE_REFERENCE,
+            FUNCTION_REFERENCE,
+
             _TOP_
         };
 
@@ -115,7 +118,6 @@ namespace libcasm_ir
         u1 isVoid( void ) const;
         u1 isLabel( void ) const;
         u1 isLocation( void ) const;
-        u1 isRuleReference( void ) const;
         u1 isBoolean( void ) const;
         u1 isInteger( void ) const;
         u1 isBit( void ) const;
@@ -124,6 +126,9 @@ namespace libcasm_ir
         u1 isRational( void ) const;
         u1 isEnumeration( void ) const;
         u1 isRelation( void ) const;
+        u1 isReference( void ) const;
+        u1 isRuleReference( void ) const;
+        u1 isFunctionReference( void ) const;
 
       protected:
         template < typename T >
@@ -214,18 +219,6 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< LocationType >;
 
         LocationType( void );
-
-        std::string name( void ) const override;
-
-        std::string description( void ) const override;
-    };
-
-    class RuleReferenceType final : public PrimitiveType
-    {
-      public:
-        using Ptr = std::shared_ptr< RuleReferenceType >;
-
-        RuleReferenceType( void );
 
         std::string name( void ) const override;
 
@@ -348,11 +341,46 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< RelationType >;
 
-        RelationType( const Type::Ptr& result, const Types& arguments );
+        RelationType( const Type::Ptr& result, const Types& arguments = {} );
 
         std::string name( void ) const override;
 
         std::string description( void ) const override;
+    };
+
+    class ReferenceType : public Type
+    {
+      public:
+        using Ptr = std::shared_ptr< ReferenceType >;
+
+        ReferenceType( Type::ID id, const RelationType::Ptr& type );
+
+        std::string name( void ) const override;
+
+        std::string description( void ) const override;
+    };
+
+    class RuleReferenceType final : public ReferenceType
+    {
+      public:
+        using Ptr = std::shared_ptr< RuleReferenceType >;
+
+        RuleReferenceType( const RelationType::Ptr& type );
+
+        RuleReferenceType( const Type::Ptr& result, const Types& arguments );
+
+        RuleReferenceType( void );
+    };
+
+    class FunctionReferenceType final : public ReferenceType
+    {
+      public:
+        using Ptr = std::shared_ptr< FunctionReferenceType >;
+
+        FunctionReferenceType( const RelationType::Ptr& type );
+
+        FunctionReferenceType(
+            const Type::Ptr& result, const Types& arguments );
     };
 }
 

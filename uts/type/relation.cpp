@@ -34,9 +34,9 @@ TEST( libcasm_ir__type_relation, make_and_get )
     auto v = libstdhl::make< RelationType >( i, t );
     ASSERT_TRUE( v != nullptr );
 
-    EXPECT_STREQ( v->name().c_str(), "(i, u32, i -> i)" );
+    EXPECT_STREQ( v->name().c_str(), "<i, u32, i -> i>" );
     EXPECT_STREQ(
-        v->description().c_str(), "(Integer * Bit'32 * Integer -> Integer)" );
+        v->description().c_str(), "< Integer * Bit'32 * Integer -> Integer >" );
 
     auto w = libstdhl::make< RelationType >( i, t );
     ASSERT_TRUE( w != nullptr );

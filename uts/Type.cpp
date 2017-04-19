@@ -58,11 +58,6 @@ TEST( libcasm_ir__Type, id_to_token_string )
                 EXPECT_STREQ( Type::token( id ).c_str(), "Location" );
                 break;
             }
-            case Type::RULE_REFERENCE:
-            {
-                EXPECT_STREQ( Type::token( id ).c_str(), "RuleRef" );
-                break;
-            }
             case Type::BOOLEAN:
             {
                 EXPECT_STREQ( Type::token( id ).c_str(), "Boolean" );
@@ -101,6 +96,16 @@ TEST( libcasm_ir__Type, id_to_token_string )
             case Type::RELATION:
             {
                 EXPECT_STREQ( Type::token( id ).c_str(), "Relation" );
+                break;
+            }
+            case Type::RULE_REFERENCE:
+            {
+                EXPECT_STREQ( Type::token( id ).c_str(), "RuleRef" );
+                break;
+            }
+            case Type::FUNCTION_REFERENCE:
+            {
+                EXPECT_STREQ( Type::token( id ).c_str(), "FuncRef" );
                 break;
             }
             case Type::_TOP_:

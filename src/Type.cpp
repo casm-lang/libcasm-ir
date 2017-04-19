@@ -45,6 +45,11 @@ const Type& Type::result( void ) const
         return *m_result.get();
     }
 
+    if( isReference() )
+    {
+        return m_result->result();
+    }
+
     return *this;
 }
 
@@ -53,6 +58,11 @@ Type::Ptr Type::ptr_result( void )
     if( isRelation() )
     {
         return m_result;
+    }
+
+    if( isReference() )
+    {
+        return m_result->ptr_result();
     }
 
     return ptr_this< Type >();
@@ -86,11 +96,6 @@ u1 Type::isLabel( void ) const
 u1 Type::isLocation( void ) const
 {
     return id() == Type::LOCATION;
-}
-
-u1 Type::isRuleReference( void ) const
-{
-    return id() == Type::RULE_REFERENCE;
 }
 
 u1 Type::isBoolean( void ) const
@@ -133,6 +138,21 @@ u1 Type::isRelation( void ) const
     return id() == Type::RELATION;
 }
 
+u1 Type::isReference( void ) const
+{
+    return isRuleReference() or isFunctionReference();
+}
+
+u1 Type::isRuleReference( void ) const
+{
+    return id() == Type::RULE_REFERENCE;
+}
+
+u1 Type::isFunctionReference( void ) const
+{
+    return id() == Type::FUNCTION_REFERENCE;
+}
+
 std::string Type::token( const Type::ID id )
 {
     switch( id )
@@ -156,10 +176,6 @@ std::string Type::token( const Type::ID id )
         case LOCATION:
         {
             return "Location";
-        }
-        case RULE_REFERENCE:
-        {
-            return "RuleRef";
         }
         case BOOLEAN:
         {
@@ -192,6 +208,14 @@ std::string Type::token( const Type::ID id )
         case RELATION:
         {
             return "Relation";
+        }
+        case RULE_REFERENCE:
+        {
+            return "RuleRef";
+        }
+        case FUNCTION_REFERENCE:
+        {
+            return "FuncRef";
         }
         case _TOP_:
         {
@@ -297,25 +321,6 @@ std::string LocationType::name( void ) const
 std::string LocationType::description( void ) const
 {
     return token( id() );
-}
-
-//
-// Rule Reference Type
-//
-
-RuleReferenceType::RuleReferenceType()
-: PrimitiveType( Type::RULE_REFERENCE )
-{
-}
-
-std::string RuleReferenceType::name( void ) const
-{
-    return "r";
-}
-
-std::string RuleReferenceType::description( void ) const
-{
-    return token( id() ); // + TODO: PPA: add concrete type relation of ref
 }
 
 //
@@ -563,7 +568,7 @@ RelationType::RelationType( const Type::Ptr& result, const Types& arguments )
 
 std::string RelationType::name( void ) const
 {
-    std::string tmp = "(";
+    std::string tmp = "<";
 
     u1 first = true;
     for( auto argument : m_arguments )
@@ -578,14 +583,14 @@ std::string RelationType::name( void ) const
         first = false;
     }
 
-    tmp += " -> " + m_result->name() + ")";
+    tmp += " -> " + m_result->name() + ">";
 
     return tmp;
 }
 
 std::string RelationType::description( void ) const
 {
-    std::string tmp = "(";
+    std::string tmp = "< ";
 
     u1 first = true;
     for( auto argument : m_arguments )
@@ -600,9 +605,65 @@ std::string RelationType::description( void ) const
         first = false;
     }
 
-    tmp += " -> " + m_result->description() + ")";
+    tmp += " -> " + m_result->description() + " >";
 
     return tmp;
+}
+
+//
+// Reference Type
+//
+
+ReferenceType::ReferenceType( const Type::ID id, const RelationType::Ptr& type )
+: Type( id )
+{
+    m_result = type;
+}
+
+std::string ReferenceType::name( void ) const
+{
+    return token( id() ) + m_result->name();
+}
+
+std::string ReferenceType::description( void ) const
+{
+    return token( id() ) + m_result->description();
+}
+
+//
+// Rule Reference Type
+//
+
+RuleReferenceType::RuleReferenceType( const RelationType::Ptr& type )
+: ReferenceType( Type::RULE_REFERENCE, type )
+{
+}
+
+RuleReferenceType::RuleReferenceType(
+    const Type::Ptr& result, const Types& arguments )
+: RuleReferenceType( libstdhl::make< RelationType >( result, arguments ) )
+{
+}
+
+RuleReferenceType::RuleReferenceType( void )
+: RuleReferenceType(
+      libstdhl::make< RelationType >( libstdhl::get< VoidType >() ) )
+{
+}
+
+//
+// Function Reference Type
+//
+
+FunctionReferenceType::FunctionReferenceType( const RelationType::Ptr& type )
+: ReferenceType( Type::FUNCTION_REFERENCE, type )
+{
+}
+
+FunctionReferenceType::FunctionReferenceType(
+    const Type::Ptr& result, const Types& arguments )
+: FunctionReferenceType( libstdhl::make< RelationType >( result, arguments ) )
+{
 }
 
 //
