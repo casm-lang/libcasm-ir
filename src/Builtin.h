@@ -152,7 +152,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< PrintBuiltin >;
 
-        PrintBuiltin( void );
+        PrintBuiltin( const Type::Ptr& type );
 
         static const Annotation info;
 
@@ -169,7 +169,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< PrintLnBuiltin >;
 
-        PrintLnBuiltin( void );
+        PrintLnBuiltin( const Type::Ptr& type );
 
         static const Annotation info;
 

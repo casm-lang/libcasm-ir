@@ -343,7 +343,7 @@ u1 OutputBuiltin::classof( Value const* obj )
 // PrintBuiltin
 //
 
-PrintBuiltin::PrintBuiltin( void )
+PrintBuiltin::PrintBuiltin( const Type::Ptr& type )
 : OutputBuiltin( libstdhl::get< RelationType >( libstdhl::get< VoidType >(),
                      Types( { libstdhl::get< StringType >() } ) ),
       info, "$stdout$", false, classid() )
@@ -369,7 +369,7 @@ u1 PrintBuiltin::classof( Value const* obj )
 // PrintLnBuiltin
 //
 
-PrintLnBuiltin::PrintLnBuiltin( void )
+PrintLnBuiltin::PrintLnBuiltin( const Type::Ptr& type )
 : OutputBuiltin( libstdhl::get< RelationType >( libstdhl::get< VoidType >(),
                      Types( { libstdhl::get< StringType >() } ) ),
       info, "$stdout$", true, classid() )
