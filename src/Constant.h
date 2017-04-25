@@ -74,6 +74,8 @@ namespace libcasm_ir
             static std::unordered_map< std::string, Constant::Ptr > cache;
             return cache;
         }
+
+        static Constant undef( const Type::Ptr& type );
     };
 
     using Constants = ValueList< Constant >;
@@ -103,12 +105,12 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< RuleReferenceConstant >;
 
       private:
-        RuleReferenceConstant(
-            const Rule::Ptr& value, u1 defined, u1 symbolic );
+        RuleReferenceConstant( const Type::Ptr& type, const Rule::Ptr& value,
+            u1 defined, u1 symbolic );
 
       public:
         RuleReferenceConstant( const Rule::Ptr& value );
-        RuleReferenceConstant( void );
+        RuleReferenceConstant( const Type::Ptr& type );
 
         Rule::Ptr value( void ) const;
 

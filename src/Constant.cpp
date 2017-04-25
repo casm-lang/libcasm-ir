@@ -158,6 +158,66 @@ u1 Constant::classof( Value const* obj )
            or EnumerationConstant::classof( obj ) or Identifier::classof( obj );
 }
 
+Constant Constant::undef( const Type::Ptr& type )
+{
+    switch( type->id() )
+    {
+        case Type::ID::VOID:
+        {
+            return VoidConstant();
+        }
+        case Type::ID::RULE_REFERENCE:
+        {
+            return RuleReferenceConstant( type );
+        }
+        case Type::ID::BOOLEAN:
+        {
+            return BooleanConstant();
+        }
+        case Type::ID::INTEGER:
+        {
+            return IntegerConstant();
+        }
+        case Type::ID::BIT:
+        {
+            return BitConstant( std::static_pointer_cast< BitType >( type ) );
+        }
+        case Type::ID::STRING:
+        {
+            return StringConstant();
+        }
+        case Type::ID::FLOATING:
+        {
+            return FloatingConstant();
+        }
+        case Type::ID::RATIONAL:
+        {
+            return RationalConstant();
+        }
+        case Type::ID::ENUMERATION:
+        {
+            return EnumerationConstant(
+                std::static_pointer_cast< EnumerationType >( type ) );
+        }
+
+        case Type::ID::_BOTTOM_:
+        case Type::ID::_TOP_:
+        case Type::ID::RANGE:
+        case Type::ID::LABEL:
+        case Type::ID::LOCATION:
+        case Type::ID::RELATION:
+        case Type::ID::FUNCTION_REFERENCE:
+        {
+            throw std::domain_error( "unimplemented type '"
+                                     + type->description()
+                                     + "' to create a 'undef' constant" );
+            break;
+        }
+    }
+
+    return VoidConstant();
+}
+
 //
 //
 // Constants
@@ -189,19 +249,18 @@ u1 VoidConstant::classof( Value const* obj )
 //
 
 RuleReferenceConstant::RuleReferenceConstant(
-    const Rule::Ptr& value, u1 defined, u1 symbolic )
-: Constant( "", libstdhl::get< RuleReferenceType >(), libstdhl::Type(), value,
-      defined, symbolic, classid() )
+    const Type::Ptr& type, const Rule::Ptr& value, u1 defined, u1 symbolic )
+: Constant( "", type, libstdhl::Type(), value, defined, symbolic, classid() )
 {
 }
 
 RuleReferenceConstant::RuleReferenceConstant( const Rule::Ptr& value )
-: RuleReferenceConstant( value, true, false )
+: RuleReferenceConstant( value->ptr_type(), value, true, false )
 {
 }
 
-RuleReferenceConstant::RuleReferenceConstant( void )
-: RuleReferenceConstant( nullptr, false, false )
+RuleReferenceConstant::RuleReferenceConstant( const Type::Ptr& type )
+: RuleReferenceConstant( type, nullptr, false, false )
 {
 }
 
@@ -280,7 +339,8 @@ IntegerConstant::IntegerConstant(
 : Constant( "", libstdhl::get< IntegerType >(),
       libstdhl::Integer( value, radix ), nullptr, true, false, classid() )
 {
-    // TODO: PPA: force CASM integer string digit separator usage as group of
+    // TODO: PPA: force CASM integer string digit separator usage as
+    // group of
     // three
 }
 
@@ -412,8 +472,8 @@ u1 BitConstant::classof( Value const* obj )
 
 StringConstant::StringConstant(
     const std::string& value, u1 defined, u1 symbolic )
-: Constant( ( defined ? value : undef_str ), libstdhl::get< StringType >(),
-      libstdhl::Type(), nullptr, defined, symbolic, classid() )
+: Constant( value, libstdhl::get< StringType >(), libstdhl::Type(), nullptr,
+      defined, symbolic, classid() )
 {
 }
 
@@ -423,7 +483,7 @@ StringConstant::StringConstant( const std::string& value )
 }
 
 StringConstant::StringConstant( void )
-: StringConstant( nullptr, false, false )
+: StringConstant( undef_str, false, false )
 {
 }
 
