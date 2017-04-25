@@ -552,19 +552,6 @@ std::string Value::token( const Value::ID id )
             return "bin";
         }
 
-        case Value::MATH_BUILTIN:
-        {
-            return "MathBuiltin";
-        }
-        case Value::POW_BUILTIN:
-        {
-            return "pow";
-        }
-        case Value::RAND_BUILTIN:
-        {
-            return "rand";
-        }
-
         case Value::OPERATOR_BUILTIN:
         {
             return "OperatorBuiltin";
@@ -675,6 +662,19 @@ std::string Value::token( const Value::ID id )
         {
             return "cls";
         }
+
+        // case Value::MATH_BUILTIN:
+        // {
+        //     return "MathBuiltin";
+        // }
+        // case Value::POW_BUILTIN:
+        // {
+        //     return "pow";
+        // }
+        // case Value::RAND_BUILTIN:
+        // {
+        //     return "rand";
+        // }
 
         case Value::_SIZE_:
         {

@@ -470,22 +470,6 @@ TEST( libcasm_ir_Value, id_to_token_string )
                 break;
             }
 
-            case Value::MATH_BUILTIN:
-            {
-                EXPECT_STREQ( Value::token( id ).c_str(), "MathBuiltin" );
-                break;
-            }
-            case Value::POW_BUILTIN:
-            {
-                EXPECT_STREQ( Value::token( id ).c_str(), "pow" );
-                break;
-            }
-            case Value::RAND_BUILTIN:
-            {
-                EXPECT_STREQ( Value::token( id ).c_str(), "rand" );
-                break;
-            }
-
             case Value::OPERATOR_BUILTIN:
             {
                 EXPECT_STREQ( Value::token( id ).c_str(), "OperatorBuiltin" );
@@ -624,6 +608,22 @@ TEST( libcasm_ir_Value, id_to_token_string )
                 EXPECT_STREQ( Value::token( id ).c_str(), "cls" );
                 break;
             }
+
+            // case Value::MATH_BUILTIN:
+            // {
+            //     EXPECT_STREQ( Value::token( id ).c_str(), "MathBuiltin" );
+            //     break;
+            // }
+            // case Value::POW_BUILTIN:
+            // {
+            //     EXPECT_STREQ( Value::token( id ).c_str(), "pow" );
+            //     break;
+            // }
+            // case Value::RAND_BUILTIN:
+            // {
+            //     EXPECT_STREQ( Value::token( id ).c_str(), "rand" );
+            //     break;
+            // }
 
             case Value::_SIZE_:
             {

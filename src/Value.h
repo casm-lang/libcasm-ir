@@ -148,10 +148,6 @@ namespace libcasm_ir
             OCT_BUILTIN,
             BIN_BUILTIN,
 
-            MATH_BUILTIN,
-            POW_BUILTIN,
-            RAND_BUILTIN,
-
             OPERATOR_BUILTIN,
             ARITHMETIC_BUILTIN,
             ADDU_BUILTIN,
@@ -181,6 +177,10 @@ namespace libcasm_ir
             CLZ_BUILTIN,
             CLO_BUILTIN,
             CLS_BUILTIN,
+
+            // MATH_BUILTIN,
+            // POW_BUILTIN,
+            // RAND_BUILTIN,
 
             // LIST_BUILTIN, // TODO: PPA: when List (type)domain is ready
             // NTH_BUILTIN,
