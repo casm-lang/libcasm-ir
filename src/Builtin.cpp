@@ -434,20 +434,10 @@ const Annotation AsBooleanBuiltin::info( classid(),
                 Type::INTEGER,
             } },
 
-        { Type::BOOLEAN, // PPA: I think this should not be allowed
-            {
-                Type::FLOATING,
-            } },
-
         { Type::BOOLEAN,
             {
                 Type::BIT,
             } },
-
-        { Type::BOOLEAN,
-            {
-                Type::ENUMERATION,
-            } }
 
     } );
 
