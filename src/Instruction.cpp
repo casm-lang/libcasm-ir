@@ -93,7 +93,7 @@ Value::Ptr Instruction::operand( u8 position ) const
     }
 }
 
-Values Instruction::operands( void ) const
+const Values& Instruction::operands( void ) const
 {
     return m_operands;
 }

@@ -45,7 +45,7 @@ namespace libcasm_ir
 
         Value::Ptr operand( u8 position ) const;
 
-        Values operands( void ) const;
+        const Values& operands( void ) const;
 
         void replace( Value& from, const Value::Ptr& to );
 
