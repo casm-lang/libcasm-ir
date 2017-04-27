@@ -324,7 +324,7 @@ BooleanType::BooleanType()
 
 std::string BooleanType::name( void ) const
 {
-    return "r";
+    return "b";
 }
 
 std::string BooleanType::description( void ) const
