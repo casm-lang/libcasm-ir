@@ -43,6 +43,8 @@ namespace libcasm_ir
             u1 symbolic, Value::ID id );
 
       public:
+        explicit Constant( void );
+
         u1 defined( void ) const;
 
         u1 symbolic( void ) const;

@@ -42,6 +42,12 @@ Constant::Constant( const std::string& name, const Type::Ptr& type,
 {
 }
 
+Constant::Constant( void )
+: Constant( "", libstdhl::get< VoidType >(), libstdhl::Type(), nullptr, false,
+            false, classid() )
+{
+}
+
 u1 Constant::defined( void ) const
 {
     return m_defined;
