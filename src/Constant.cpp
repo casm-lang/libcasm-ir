@@ -344,6 +344,12 @@ IntegerConstant::IntegerConstant(
     // three
 }
 
+IntegerConstant::IntegerConstant( const BitConstant& value )
+: Constant( "", libstdhl::get< IntegerType >(), value.value(), nullptr, true,
+      false, classid() )
+{
+}
+
 IntegerConstant::IntegerConstant( i64 value )
 : IntegerConstant( value, true, false )
 {
@@ -445,15 +451,20 @@ BitConstant::BitConstant( u16 bitsize )
 {
 }
 
-u64 BitConstant::value( void ) const
+u64 BitConstant::value_u64( void ) const
 {
     return m_data.word( 0 );
 }
 
+const libstdhl::Type& BitConstant::value( void ) const
+{
+    return m_data;
+}
+
 std::string BitConstant::name( void ) const
 {
-    return ( defined() ? ( std::to_string( value() ) ) : undef_str );
-    // TODO: PPA: use literal function from libstdhl::Type
+    return (
+        defined() ? ( m_data.to< libstdhl::Type::DECIMAL >() ) : undef_str );
 }
 
 void BitConstant::accept( Visitor& visitor )
@@ -605,9 +616,10 @@ u1 RationalConstant::classof( Value const* obj )
 
 EnumerationConstant::EnumerationConstant( const EnumerationType::Ptr& type,
     const std::string& value, u1 defined, u1 symbolic, Value::ID id )
-: Constant( ( defined ? value : undef_str ), type,
-      libstdhl::Type( type->kind().encode( value ), 64 ), nullptr, defined,
-      symbolic, id )
+: Constant( value, type,
+      defined ? libstdhl::Type( type->kind().encode( value ), 64 )
+              : libstdhl::Type(),
+      nullptr, defined, symbolic, id )
 {
 }
 
@@ -618,7 +630,7 @@ EnumerationConstant::EnumerationConstant(
 }
 
 EnumerationConstant::EnumerationConstant( const EnumerationType::Ptr& type )
-: EnumerationConstant( type, nullptr, false, false )
+: EnumerationConstant( type, "undef", false, false )
 {
 }
 
@@ -629,7 +641,7 @@ EnumerationConstant::EnumerationConstant(
 }
 
 EnumerationConstant::EnumerationConstant( const Enumeration::Ptr& kind )
-: EnumerationConstant( libstdhl::get< EnumerationType >( kind ), nullptr )
+: EnumerationConstant( libstdhl::get< EnumerationType >( kind ) )
 {
 }
 

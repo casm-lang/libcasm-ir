@@ -163,6 +163,7 @@ namespace libcasm_ir
       public:
         IntegerConstant( const std::string& value,
             const libstdhl::Type::Radix radix = libstdhl::Type::DECIMAL );
+        IntegerConstant( const BitConstant& value );
         IntegerConstant( i64 value );
         IntegerConstant( void );
 
@@ -212,7 +213,9 @@ namespace libcasm_ir
         std::string literal(
             libstdhl::Type::Radix radix = libstdhl::Type::HEXADECIMAL ) const;
 
-        u64 value( void ) const;
+        u64 value_u64( void ) const;
+
+        const libstdhl::Type& value( void ) const;
 
         std::string name( void ) const override;
 
