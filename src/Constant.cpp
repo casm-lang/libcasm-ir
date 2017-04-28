@@ -44,7 +44,7 @@ Constant::Constant( const std::string& name, const Type::Ptr& type,
 
 Constant::Constant( void )
 : Constant( "", libstdhl::get< VoidType >(), libstdhl::Type(), nullptr, false,
-            false, classid() )
+      false, classid() )
 {
 }
 
@@ -65,10 +65,6 @@ std::string Constant::name( void ) const
         case Value::VOID_CONSTANT:
         {
             return static_cast< const VoidConstant* >( this )->name();
-        }
-        case Value::RULE_REFERENCE_CONSTANT:
-        {
-            return static_cast< const RuleReferenceConstant* >( this )->name();
         }
         case Value::BOOLEAN_CONSTANT:
         {
@@ -98,6 +94,10 @@ std::string Constant::name( void ) const
         {
             return static_cast< const EnumerationConstant* >( this )->name();
         }
+        case Value::RULE_REFERENCE_CONSTANT:
+        {
+            return static_cast< const RuleReferenceConstant* >( this )->name();
+        }
         default:
         {
             assert( !" invalid constant to dispatch found! " );
@@ -113,10 +113,6 @@ void Constant::accept( Visitor& visitor )
         case Value::VOID_CONSTANT:
         {
             static_cast< VoidConstant* >( this )->accept( visitor );
-        }
-        case Value::RULE_REFERENCE_CONSTANT:
-        {
-            static_cast< RuleReferenceConstant* >( this )->accept( visitor );
         }
         case Value::BOOLEAN_CONSTANT:
         {
@@ -146,6 +142,10 @@ void Constant::accept( Visitor& visitor )
         {
             static_cast< EnumerationConstant* >( this )->accept( visitor );
         }
+        case Value::RULE_REFERENCE_CONSTANT:
+        {
+            static_cast< RuleReferenceConstant* >( this )->accept( visitor );
+        }
         default:
         {
             assert( !" invalid constant to dispatch found! " );
@@ -156,12 +156,14 @@ void Constant::accept( Visitor& visitor )
 u1 Constant::classof( Value const* obj )
 {
     return obj->id() == classid() or VoidConstant::classof( obj )
-           or RuleReferenceConstant::classof( obj )
+
            or BooleanConstant::classof( obj ) or IntegerConstant::classof( obj )
            or BitConstant::classof( obj ) or StringConstant::classof( obj )
            or FloatingConstant::classof( obj )
            or RationalConstant::classof( obj )
-           or EnumerationConstant::classof( obj ) or Identifier::classof( obj );
+           or EnumerationConstant::classof( obj )
+           or RuleReferenceConstant::classof( obj )
+           or Identifier::classof( obj );
 }
 
 Constant Constant::undef( const Type::Ptr& type )
@@ -171,10 +173,6 @@ Constant Constant::undef( const Type::Ptr& type )
         case Type::ID::VOID:
         {
             return VoidConstant();
-        }
-        case Type::ID::RULE_REFERENCE:
-        {
-            return RuleReferenceConstant( type );
         }
         case Type::ID::BOOLEAN:
         {
@@ -205,13 +203,17 @@ Constant Constant::undef( const Type::Ptr& type )
             return EnumerationConstant(
                 std::static_pointer_cast< EnumerationType >( type ) );
         }
+        case Type::ID::RULE_REFERENCE:
+        {
+            return RuleReferenceConstant( type );
+        }
 
-        case Type::ID::_BOTTOM_:
-        case Type::ID::_TOP_:
-        case Type::ID::RANGE:
-        case Type::ID::LABEL:
-        case Type::ID::LOCATION:
-        case Type::ID::RELATION:
+        case Type::ID::_BOTTOM_: // [[fallthrough]]
+        case Type::ID::_TOP_:    // [[fallthrough]]
+        case Type::ID::RANGE:    // [[fallthrough]]
+        case Type::ID::LABEL:    // [[fallthrough]]
+        case Type::ID::LOCATION: // [[fallthrough]]
+        case Type::ID::RELATION: // [[fallthrough]]
         case Type::ID::FUNCTION_REFERENCE:
         {
             throw std::domain_error( "unimplemented type '"
@@ -246,46 +248,6 @@ void VoidConstant::accept( Visitor& visitor )
 }
 
 u1 VoidConstant::classof( Value const* obj )
-{
-    return obj->id() == classid();
-}
-
-//
-// Rule Reference Constant
-//
-
-RuleReferenceConstant::RuleReferenceConstant(
-    const Type::Ptr& type, const Rule::Ptr& value, u1 defined, u1 symbolic )
-: Constant( "", type, libstdhl::Type(), value, defined, symbolic, classid() )
-{
-}
-
-RuleReferenceConstant::RuleReferenceConstant( const Rule::Ptr& value )
-: RuleReferenceConstant( value->ptr_type(), value, true, false )
-{
-}
-
-RuleReferenceConstant::RuleReferenceConstant( const Type::Ptr& type )
-: RuleReferenceConstant( type, nullptr, false, false )
-{
-}
-
-Rule::Ptr RuleReferenceConstant::value( void ) const
-{
-    return std::static_pointer_cast< Rule >( m_value );
-}
-
-std::string RuleReferenceConstant::name( void ) const
-{
-    return ( defined() ? value()->name() : undef_str );
-}
-
-void RuleReferenceConstant::accept( Visitor& visitor )
-{
-    visitor.visit( *this );
-}
-
-u1 RuleReferenceConstant::classof( Value const* obj )
 {
     return obj->id() == classid();
 }
@@ -671,6 +633,41 @@ void EnumerationConstant::accept( Visitor& visitor )
 }
 
 u1 EnumerationConstant::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
+
+//
+// Rule Reference Constant
+//
+
+RuleReferenceConstant::RuleReferenceConstant(
+    const Type::Ptr& type, const Rule::Ptr& value, u1 defined, u1 symbolic )
+: ReferenceConstant< Rule >( "", type, value, defined, symbolic, classid() )
+{
+}
+
+RuleReferenceConstant::RuleReferenceConstant( const Rule::Ptr& value )
+: RuleReferenceConstant( value->ptr_type(), value, true, false )
+{
+}
+
+RuleReferenceConstant::RuleReferenceConstant( const Type::Ptr& type )
+: RuleReferenceConstant( type, nullptr, false, false )
+{
+}
+
+std::string RuleReferenceConstant::name( void ) const
+{
+    return ( defined() ? value()->name() : undef_str );
+}
+
+void RuleReferenceConstant::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
+u1 RuleReferenceConstant::classof( Value const* obj )
 {
     return obj->id() == classid();
 }

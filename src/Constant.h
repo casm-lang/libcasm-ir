@@ -101,33 +101,6 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class RuleReferenceConstant final : public Constant
-    {
-      public:
-        using Ptr = std::shared_ptr< RuleReferenceConstant >;
-
-      private:
-        RuleReferenceConstant( const Type::Ptr& type, const Rule::Ptr& value,
-            u1 defined, u1 symbolic );
-
-      public:
-        RuleReferenceConstant( const Rule::Ptr& value );
-        RuleReferenceConstant( const Type::Ptr& type );
-
-        Rule::Ptr value( void ) const;
-
-        std::string name( void ) const override;
-
-        void accept( Visitor& visitor ) override;
-
-        static inline Value::ID classid( void )
-        {
-            return Value::RULE_REFERENCE_CONSTANT;
-        }
-
-        static u1 classof( Value const* obj );
-    };
-
     class BooleanConstant final : public Constant
     {
       public:
@@ -344,6 +317,83 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
     };
+
+    /**
+       @class ReferenceConstant
+     */
+    template < typename T >
+    class ReferenceConstant : public Constant
+    {
+      public:
+        using Ptr = std::shared_ptr< ReferenceConstant >;
+
+      protected:
+        ReferenceConstant( const std::string& name, const Type::Ptr& type,
+            const typename T::Ptr& value, u1 defined, u1 symbolic,
+            Value::ID id )
+        : Constant( name, type, libstdhl::Type(), value, defined, symbolic, id )
+        {
+        }
+
+      public:
+        typename T::Ptr value( void ) const
+        {
+            return std::static_pointer_cast< T >( m_value );
+        }
+    };
+
+    class RuleReferenceConstant final : public ReferenceConstant< Rule >
+    {
+      public:
+        using Ptr = std::shared_ptr< RuleReferenceConstant >;
+
+      private:
+        RuleReferenceConstant( const Type::Ptr& type, const Rule::Ptr& value,
+            u1 defined, u1 symbolic );
+
+      public:
+        RuleReferenceConstant( const Rule::Ptr& value );
+        RuleReferenceConstant( const Type::Ptr& type );
+
+        std::string name( void ) const override;
+
+        void accept( Visitor& visitor ) override;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::RULE_REFERENCE_CONSTANT;
+        }
+
+        static u1 classof( Value const* obj );
+    };
+
+    // class FunctionReferenceConstant final : public ReferenceConstant<
+    // Function >
+    // {
+    //   public:
+    //     using Ptr = std::shared_ptr< FunctionReferenceConstant >;
+
+    //   private:
+    //     FunctionReferenceConstant( const Type::Ptr& type,
+    //         const Rule::Ptr& value, u1 defined, u1 symbolic );
+
+    //   public:
+    //     FunctionReferenceConstant( const Rule::Ptr& value );
+    //     FunctionReferenceConstant( const Type::Ptr& type );
+
+    //     Rule::Ptr value( void ) const;
+
+    //     std::string name( void ) const override;
+
+    //     void accept( Visitor& visitor ) override;
+
+    //     static inline Value::ID classid( void )
+    //     {
+    //         return Value::FUNCTION_REFERENCE_CONSTANT;
+    //     }
+
+    //     static u1 classof( Value const* obj );
+    // };
 
     class Identifier : public Constant
     {
