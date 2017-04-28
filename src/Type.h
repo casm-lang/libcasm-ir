@@ -92,7 +92,7 @@ namespace libcasm_ir
 
         Type::Ptr ptr_result( void );
 
-        Types arguments( void ) const;
+        const Types& arguments( void ) const;
 
         std::string make_hash( void ) const;
 

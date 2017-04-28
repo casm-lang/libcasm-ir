@@ -58,7 +58,7 @@ Type::Ptr Type::ptr_result( void )
     return ptr_this< Type >();
 }
 
-Types Type::arguments( void ) const
+const Types& Type::arguments( void ) const
 {
     return m_arguments;
 }
