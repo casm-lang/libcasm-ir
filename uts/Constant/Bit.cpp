@@ -31,11 +31,6 @@ static void libcasm_ir__constant_bit_test( u16 bitsize, u64 c )
     ASSERT_TRUE( v != nullptr );
 
     EXPECT_STREQ( v->name().c_str(), std::to_string( c ).c_str() );
-    EXPECT_STREQ( v->name().c_str(), std::to_string( v->value() ).c_str() );
-    if( strcmp( v->name().c_str(), std::to_string( v->value() ).c_str() ) )
-    {
-        printf( "%u, %lu\n", bitsize, c );
-    }
 
     EXPECT_EQ( v->defined(), true );
     EXPECT_EQ( v->symbolic(), false );
