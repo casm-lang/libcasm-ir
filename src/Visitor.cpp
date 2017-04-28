@@ -270,15 +270,7 @@ void TraversalVisitor::visit( CallInstruction& value )
     callback()( value );
 }
 
-void TraversalVisitor::visit( AssertInstruction& value )
-{
-    callback()( value );
-}
 void TraversalVisitor::visit( SelectInstruction& value )
-{
-    callback()( value );
-}
-void TraversalVisitor::visit( SymbolicInstruction& value )
 {
     callback()( value );
 }

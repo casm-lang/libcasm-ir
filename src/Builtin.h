@@ -87,6 +87,23 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
+    class IsSymbolicBuiltin final : public GeneralBuiltin
+    {
+      public:
+        using Ptr = std::shared_ptr< IsSymbolicBuiltin >;
+
+        IsSymbolicBuiltin( const Type::Ptr& type );
+
+        static const Annotation info;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::IS_SYMBOLIC_BUILTIN;
+        }
+
+        static u1 classof( Value const* obj );
+    };
+
     class AbortBuiltin final : public GeneralBuiltin
     {
       public:

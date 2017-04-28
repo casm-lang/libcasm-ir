@@ -191,20 +191,9 @@ TEST( libcasm_ir_Value, id_to_token_string )
                 break;
             }
 
-            case Value::ASSERT_INSTRUCTION:
-            {
-                EXPECT_STREQ( Value::token( id ).c_str(), "assert" );
-                break;
-            }
-
             case Value::SELECT_INSTRUCTION:
             {
                 EXPECT_STREQ( Value::token( id ).c_str(), "select" );
-                break;
-            }
-            case Value::SYMBOLIC_INSTRUCTION:
-            {
-                EXPECT_STREQ( Value::token( id ).c_str(), "symbolic" );
                 break;
             }
             case Value::SKIP_INSTRUCTION:
@@ -376,9 +365,9 @@ TEST( libcasm_ir_Value, id_to_token_string )
                 EXPECT_STREQ( Value::token( id ).c_str(), "GeneralBuiltin" );
                 break;
             }
-            case Value::ABORT_BUILTIN:
+            case Value::IS_SYMBOLIC_BUILTIN:
             {
-                EXPECT_STREQ( Value::token( id ).c_str(), "abort" );
+                EXPECT_STREQ( Value::token( id ).c_str(), "isSymbolic" );
                 break;
             }
             case Value::ASSERT_BUILTIN:

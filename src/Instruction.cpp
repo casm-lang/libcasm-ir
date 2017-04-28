@@ -162,9 +162,7 @@ u1 Instruction::classof( Value const* obj )
            or LocalInstruction::classof( obj )
            or LocationInstruction::classof( obj )
            or CallInstruction::classof( obj )
-           or AssertInstruction::classof( obj )
            or SelectInstruction::classof( obj )
-           or SymbolicInstruction::classof( obj )
            or OperatorInstruction::classof( obj );
 }
 
@@ -187,7 +185,6 @@ u1 UnaryInstruction::classof( Value const* obj )
     return obj->id() == classid() or ForkInstruction::classof( obj )
            or MergeInstruction::classof( obj )
            or LookupInstruction::classof( obj )
-           or AssertInstruction::classof( obj )
            or InvInstruction::classof( obj ) or NotInstruction::classof( obj );
 }
 
@@ -400,26 +397,6 @@ u1 CallInstruction::classof( Value const* obj )
 }
 
 //
-// Assert Instruction
-//
-
-AssertInstruction::AssertInstruction( const Value::Ptr& condition )
-: Instruction( condition->ptr_type()->ptr_result(), { condition }, classid() )
-, UnaryInstruction( this )
-{
-}
-
-void AssertInstruction::accept( Visitor& visitor )
-{
-    visitor.visit( *this );
-}
-
-u1 AssertInstruction::classof( Value const* obj )
-{
-    return obj->id() == classid();
-}
-
-//
 // Select Instruction
 //
 
@@ -434,30 +411,6 @@ void SelectInstruction::accept( Visitor& visitor )
 }
 
 u1 SelectInstruction::classof( Value const* obj )
-{
-    return obj->id() == classid();
-}
-
-//
-// Symbolic Instruction
-//
-
-SymbolicInstruction::SymbolicInstruction( const Value::Ptr& symbol )
-: Instruction( libstdhl::get< BooleanType >(), { symbol }, classid() )
-{
-    if( not isa< Function >( symbol ) )
-    {
-        throw std::domain_error(
-            "symbol '" + symbol->name() + "' is not a Function" );
-    }
-}
-
-void SymbolicInstruction::accept( Visitor& visitor )
-{
-    visitor.visit( *this );
-}
-
-u1 SymbolicInstruction::classof( Value const* obj )
 {
     return obj->id() == classid();
 }

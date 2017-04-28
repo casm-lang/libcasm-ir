@@ -55,9 +55,7 @@ namespace libcasm_ir
     class LocalInstruction;
     class LocationInstruction;
 
-    class AssertInstruction;
     class SelectInstruction;
-    class SymbolicInstruction;
 
     class CallInstruction;
 
@@ -140,9 +138,7 @@ namespace libcasm_ir
         virtual void visit( LocationInstruction& value ) = 0;
         virtual void visit( CallInstruction& value ) = 0;
 
-        virtual void visit( AssertInstruction& value ) = 0;
         virtual void visit( SelectInstruction& value ) = 0;
-        virtual void visit( SymbolicInstruction& value ) = 0;
 
         virtual void visit( InvInstruction& value ) = 0;
         virtual void visit( AddInstruction& value ) = 0;
@@ -220,9 +216,7 @@ namespace libcasm_ir
         virtual void visit( LocationInstruction& value ) override = 0;
         virtual void visit( CallInstruction& value ) override = 0;
 
-        virtual void visit( AssertInstruction& value ) override = 0;
         virtual void visit( SelectInstruction& value ) override = 0;
-        virtual void visit( SymbolicInstruction& value ) override = 0;
 
         virtual void visit( InvInstruction& value ) override = 0;
         virtual void visit( AddInstruction& value ) override = 0;
@@ -313,9 +307,7 @@ namespace libcasm_ir
         void visit( LocationInstruction& value ) override;
         void visit( CallInstruction& value ) override;
 
-        void visit( AssertInstruction& value ) override;
         void visit( SelectInstruction& value ) override;
-        void visit( SymbolicInstruction& value ) override;
 
         void visit( InvInstruction& value ) override;
         void visit( AddInstruction& value ) override;

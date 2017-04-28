@@ -252,23 +252,6 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class AssertInstruction final : public Instruction, public UnaryInstruction
-    {
-      public:
-        using Ptr = std::shared_ptr< AssertInstruction >;
-
-        AssertInstruction( const Value::Ptr& condition );
-
-        void accept( Visitor& visitor ) override final;
-
-        static inline Value::ID classid( void )
-        {
-            return Value::ASSERT_INSTRUCTION;
-        }
-
-        static u1 classof( Value const* obj );
-    };
-
     class SelectInstruction final : public Instruction
     {
       public:
@@ -281,23 +264,6 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::SELECT_INSTRUCTION;
-        }
-
-        static u1 classof( Value const* obj );
-    };
-
-    class SymbolicInstruction final : public Instruction
-    {
-      public:
-        using Ptr = std::shared_ptr< SymbolicInstruction >;
-
-        SymbolicInstruction( const Value::Ptr& symbol );
-
-        void accept( Visitor& visitor ) override final;
-
-        static inline Value::ID classid( void )
-        {
-            return Value::SYMBOLIC_INSTRUCTION;
         }
 
         static u1 classof( Value const* obj );

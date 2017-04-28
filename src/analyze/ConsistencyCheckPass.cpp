@@ -262,10 +262,6 @@ void ConsistencyCheckVisitor::visit( CallInstruction& value )
     verify< CallInstruction >( value );
 }
 
-void ConsistencyCheckVisitor::visit( AssertInstruction& value )
-{
-    verify< AssertInstruction >( value );
-}
 void ConsistencyCheckVisitor::visit( SelectInstruction& value )
 {
     verify< SelectInstruction >( value );
@@ -284,10 +280,6 @@ void ConsistencyCheckVisitor::visit( SelectInstruction& value )
             "select statement is only allowed to reside in 'BranchStatement' "
             "blocks" );
     }
-}
-void ConsistencyCheckVisitor::visit( SymbolicInstruction& value )
-{
-    verify< SymbolicInstruction >( value );
 }
 
 void ConsistencyCheckVisitor::visit( InvInstruction& value )

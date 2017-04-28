@@ -282,15 +282,7 @@ void IRDumpDotVisitor::visit( CallInstruction& value )
     dump( value );
 }
 
-void IRDumpDotVisitor::visit( AssertInstruction& value )
-{
-    dump( value );
-}
 void IRDumpDotVisitor::visit( SelectInstruction& value )
-{
-    dump( value );
-}
-void IRDumpDotVisitor::visit( SymbolicInstruction& value )
 {
     dump( value );
 }

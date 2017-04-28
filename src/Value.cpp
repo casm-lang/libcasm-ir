@@ -330,18 +330,9 @@ std::string Value::token( const Value::ID id )
             return "BinaryInstruction";
         }
 
-        case Value::ASSERT_INSTRUCTION:
-        {
-            return "assert";
-        }
-
         case Value::SELECT_INSTRUCTION:
         {
             return "select";
-        }
-        case Value::SYMBOLIC_INSTRUCTION:
-        {
-            return "symbolic";
         }
         case Value::SKIP_INSTRUCTION:
         {
@@ -475,6 +466,10 @@ std::string Value::token( const Value::ID id )
         case Value::GENERAL_BUILTIN:
         {
             return "GeneralBuiltin";
+        }
+        case Value::IS_SYMBOLIC_BUILTIN:
+        {
+            return "isSymbolic";
         }
         case Value::ABORT_BUILTIN:
         {

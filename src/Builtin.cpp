@@ -258,8 +258,63 @@ GeneralBuiltin::GeneralBuiltin(
 
 u1 GeneralBuiltin::classof( Value const* obj )
 {
-    return obj->id() == classid() or AbortBuiltin::classof( obj )
-           or AssertBuiltin::classof( obj ) or OutputBuiltin::classof( obj );
+    return obj->id() == classid() or IsSymbolicBuiltin::classof( obj )
+           or AbortBuiltin::classof( obj ) or AssertBuiltin::classof( obj )
+           or OutputBuiltin::classof( obj );
+}
+
+//
+// IsSymbolicBuiltin
+//
+
+IsSymbolicBuiltin::IsSymbolicBuiltin( const Type::Ptr& type )
+: GeneralBuiltin( type, info, classid() )
+{
+}
+
+const Annotation IsSymbolicBuiltin::info( classid(),
+    Annotation::Data{
+
+        { Type::BOOLEAN,
+            {
+                Type::BOOLEAN,
+            } },
+
+        { Type::BOOLEAN,
+            {
+                Type::INTEGER,
+            } },
+
+        { Type::BOOLEAN,
+            {
+                Type::BIT,
+            } },
+
+        { Type::BOOLEAN,
+            {
+                Type::FLOATING,
+            } },
+
+        { Type::BOOLEAN,
+            {
+                Type::STRING,
+            } },
+
+        { Type::BOOLEAN,
+            {
+                Type::RATIONAL,
+            } },
+
+        { Type::BOOLEAN,
+            {
+                Type::ENUMERATION,
+            } },
+
+    } );
+
+u1 IsSymbolicBuiltin::classof( Value const* obj )
+{
+    return obj->id() == classid();
 }
 
 //
@@ -563,12 +618,17 @@ const Annotation AsStringBuiltin::info( classid(),
 
         { Type::STRING,
             {
+                Type::BIT,
+            } },
+
+        { Type::STRING,
+            {
                 Type::FLOATING,
             } },
 
         { Type::STRING,
             {
-                Type::BIT,
+                Type::RATIONAL,
             } },
 
         { Type::STRING,
@@ -1368,11 +1428,6 @@ u1 ClsBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
 }
-
-// Generic built-ins
-
-// isSymbolic : [TYPE*]  -> Boolean // if symbol of type TYPE is symbolic ->
-// true, else -> false
 
 // List built-ins:
 

@@ -84,9 +84,7 @@ namespace libcasm_ir
             UNARY_INSTRUCTION,
             BINARY_INSTRUCTION,
 
-            ASSERT_INSTRUCTION,
             SELECT_INSTRUCTION,
-            SYMBOLIC_INSTRUCTION,
 
             SKIP_INSTRUCTION,
             FORK_INSTRUCTION,
@@ -126,6 +124,7 @@ namespace libcasm_ir
             BUILTIN,
 
             GENERAL_BUILTIN,
+            IS_SYMBOLIC_BUILTIN,
             ABORT_BUILTIN,
             ASSERT_BUILTIN,
 
