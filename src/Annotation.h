@@ -35,6 +35,8 @@
 #include "Type.h"
 #include "Value.h"
 
+#include "../stdhl/cpp/Json.h"
+
 namespace libcasm_ir
 {
     /**
@@ -62,13 +64,20 @@ namespace libcasm_ir
         Type::ID resultTypeForRelation(
             const std::vector< const Type* > arguments ) const;
 
+        Type::ID resultTypeForRelation(
+            const std::vector< Type::ID > arguments ) const;
+
         const Set& resultTypes( void ) const;
 
         const Set& argumentTypes( u8 pos ) const;
 
+        const std::set< std::size_t >& argumentSizes( void ) const;
+
         const Map& map( void ) const;
 
-        const std::set< std::size_t >& argumentSizes( void ) const;
+        libstdhl::Json::Object json( void ) const;
+
+        std::string dump( void ) const;
 
       private:
         Value::ID m_id;

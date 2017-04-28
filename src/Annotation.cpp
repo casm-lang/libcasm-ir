@@ -25,21 +25,19 @@
 
 using namespace libcasm_ir;
 
-// static std::unordered_map< std::string, Annotation* > str2obj = {};
-// static std::unordered_map< u8, Annotation* > id2obj = {};
-
 Annotation::Annotation( const Value::ID id, const Data& info )
 : m_id( id )
 , m_info( info )
 {
     assert( m_info.size() > 0 );
 
+    m_type_set.emplace_back( Set() );
+
     for( auto relation : m_info )
     {
         Type::ID rt = relation.result;
 
-        m_type_set.emplace_back( Set() );
-        m_type_set.back().emplace( rt );
+        m_type_set.front().emplace( rt );
 
         m_map.emplace( rt, std::initializer_list< Set >{} );
 
@@ -49,11 +47,16 @@ Annotation::Annotation( const Value::ID id, const Data& info )
 
         for( u32 i = 0; i < relation.argument.size(); i++ )
         {
+            if( m_type_set.size() <= ( i + 1 ) )
+            {
+                m_type_set.emplace_back( Set() );
+            }
+
             Type::ID at = relation.argument[ i ];
             assert( at != libcasm_ir::Type::RELATION );
 
-            m_type_set.emplace_back( Set() );
-            m_type_set.back().emplace( at );
+            m_type_set[ i + 1 ].emplace( at );
+
             key += std::to_string( at ) + ";";
 
             if( ( i + 1 ) >= m_map[ rt ].size() )
@@ -103,6 +106,38 @@ const Annotation::Map& Annotation::map( void ) const
     return m_map;
 }
 
+libstdhl::Json::Object Annotation::json( void ) const
+{
+    libstdhl::Json::Object json = {};
+    // = { "signature", { "result", { "arguments" } } };
+
+    std::size_t cnt = 0;
+    for( auto relation : m_info )
+    {
+        const auto rt = relation.result;
+        const auto rs = Type::token( rt );
+        const auto key = std::to_string( cnt );
+
+        json.push_back( { { rs, {} } } );
+
+        for( u32 i = 0; i < relation.argument.size(); i++ )
+        {
+            const auto at = relation.argument[ i ];
+            const auto as = Type::token( at );
+            json[ cnt ][ rs ].push_back( as );
+        }
+
+        cnt++;
+    }
+
+    return json;
+}
+
+std::string Annotation::dump( void ) const
+{
+    return json().dump( 2 );
+}
+
 Type::ID Annotation::resultTypeForRelation(
     const std::vector< const Type* > arguments ) const
 {
@@ -124,6 +159,26 @@ Type::ID Annotation::resultTypeForRelation(
 
     assert( !" no result type found for requested relation! " );
     return Type::_BOTTOM_;
+}
+
+Type::ID Annotation::resultTypeForRelation(
+    const std::vector< Type::ID > arguments ) const
+{
+    std::string key;
+
+    for( auto arg : arguments )
+    {
+        assert( arg != libcasm_ir::Type::RELATION );
+        key += std::to_string( arg ) + ";";
+    }
+
+    auto result = m_relation_to_type.find( key );
+    if( result == m_relation_to_type.end() )
+    {
+        throw std::domain_error( "no relation defined" );
+    }
+
+    return result->second;
 }
 
 const Annotation& Annotation::find( const std::string& token )
