@@ -39,7 +39,7 @@ namespace libcasm_ir
 
         Instruction( const Type::Ptr& type,
             const std::vector< Value::Ptr >& operands,
-            Value::ID id = classid() );
+            const Value::ID id = classid() );
 
         void add( const Value::Ptr& operand );
 
@@ -269,14 +269,14 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class OperatorInstruction : public Instruction, public Annotation
+    class OperatorInstruction : public Instruction
     {
       public:
         using Ptr = std::shared_ptr< OperatorInstruction >;
 
         OperatorInstruction( const Type::Ptr& type,
             const std::vector< Value::Ptr >& operands, const Annotation& info,
-            Value::ID id = classid() );
+            const Value::ID id = classid() );
 
         const Type::ID resolved( void ) const;
 
@@ -297,7 +297,7 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< ArithmeticInstruction >;
 
         ArithmeticInstruction( const std::vector< Value::Ptr >& operands,
-            const Annotation& info, Value::ID id = classid() );
+            const Annotation& info, const Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {
@@ -313,7 +313,7 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< CompareInstruction >;
 
         CompareInstruction( const std::vector< Value::Ptr >& operands,
-            const Annotation& info, Value::ID id = classid() );
+            const Annotation& info, const Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {
@@ -329,7 +329,7 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< LogicalInstruction >;
 
         LogicalInstruction( const std::vector< Value::Ptr >& operands,
-            const Annotation& info, Value::ID id = classid() );
+            const Annotation& info, const Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {

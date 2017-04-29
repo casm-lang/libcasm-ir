@@ -138,27 +138,56 @@ std::string Annotation::dump( void ) const
     return json().dump( 2 );
 }
 
-Type::ID Annotation::resultTypeForRelation(
-    const std::vector< const Type* > arguments ) const
+void Annotation::checkTypeRelation( const Type::Ptr& type ) const
 {
-    std::string key;
-
-    for( auto arg : arguments )
+    std::string key = "";
+    for( auto argTy : type->arguments() )
     {
-        libcasm_ir::Type::ID at = arg->result().id();
-        assert( at != libcasm_ir::Type::RELATION );
-
-        key += std::to_string( at ) + ";";
+        const auto arg = argTy->id();
+        assert( arg != libcasm_ir::Type::RELATION );
+        key += std::to_string( arg ) + ";";
     }
 
     auto result = m_relation_to_type.find( key );
-    if( result != m_relation_to_type.end() )
+    if( result == m_relation_to_type.end() )
     {
-        return result->second;
+        throw std::domain_error( "no type relation '" + type->description()
+                                 + "' defined in annotation for '"
+                                 + Value::token( id() )
+                                 + "'" );
     }
 
-    assert( !" no result type found for requested relation! " );
-    return Type::_BOTTOM_;
+    if( result->second != type->result().id() )
+    {
+        throw std::domain_error( "return of type relation '"
+                                 + type->description()
+                                 + "' does not match the annotation for '"
+                                 + Value::token( id() )
+                                 + "'" );
+    }
+}
+
+Type::ID Annotation::resolveTypeRelation(
+    const std::vector< Value::Ptr >& operands ) const
+{
+    std::string key;
+
+    for( auto argTy : operands )
+    {
+        const auto arg = argTy->type().id();
+        assert( arg != libcasm_ir::Type::RELATION );
+        key += std::to_string( arg ) + ";";
+    }
+
+    auto result = m_relation_to_type.find( key );
+    if( result == m_relation_to_type.end() )
+    {
+        throw std::domain_error( "no type relation found for annotation of '"
+                                 + Value::token( id() )
+                                 + "'" );
+    }
+
+    return result->second;
 }
 
 Type::ID Annotation::resultTypeForRelation(

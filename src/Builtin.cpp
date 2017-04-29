@@ -25,16 +25,12 @@
 
 using namespace libcasm_ir;
 
-Builtin::Builtin( const Type::Ptr& type, const Annotation& info, Value::ID id )
+Builtin::Builtin(
+    const Type::Ptr& type, const Annotation& info, const Value::ID id )
 : User( "", type, id )
-, m_annotation( info )
 {
+    info.checkTypeRelation( type );
     // TODO: if its an as<Enumeration> .. .do -> "as" + type->name()
-}
-
-const Annotation& Builtin::annotation( void ) const
-{
-    return m_annotation;
 }
 
 std::string Builtin::name( void ) const
@@ -251,7 +247,7 @@ Builtin::Ptr Builtin::asBuiltin( const Type::Ptr& type )
 //
 
 GeneralBuiltin::GeneralBuiltin(
-    const Type::Ptr& type, const Annotation& info, Value::ID id )
+    const Type::Ptr& type, const Annotation& info, const Value::ID id )
 : Builtin( type, info, id )
 {
 }
@@ -371,7 +367,7 @@ u1 AssertBuiltin::classof( Value const* obj )
 //
 
 OutputBuiltin::OutputBuiltin( const Type::Ptr& type, const Annotation& info,
-    const std::string& channel, u1 newline, Value::ID id )
+    const std::string& channel, u1 newline, const Value::ID id )
 : GeneralBuiltin( type, info, classid() )
 , m_channel( channel )
 , m_newline( newline )
@@ -399,9 +395,7 @@ u1 OutputBuiltin::classof( Value const* obj )
 //
 
 PrintBuiltin::PrintBuiltin( const Type::Ptr& type )
-: OutputBuiltin( libstdhl::get< RelationType >( libstdhl::get< VoidType >(),
-                     Types( { libstdhl::get< StringType >() } ) ),
-      info, "$stdout$", false, classid() )
+: OutputBuiltin( type, info, "$stdout$", false, classid() )
 {
 }
 
@@ -425,9 +419,7 @@ u1 PrintBuiltin::classof( Value const* obj )
 //
 
 PrintLnBuiltin::PrintLnBuiltin( const Type::Ptr& type )
-: OutputBuiltin( libstdhl::get< RelationType >( libstdhl::get< VoidType >(),
-                     Types( { libstdhl::get< StringType >() } ) ),
-      info, "$stdout$", true, classid() )
+: OutputBuiltin( type, info, "$stdout$", true, classid() )
 {
 }
 
@@ -453,7 +445,7 @@ u1 PrintLnBuiltin::classof( Value const* obj )
 //
 
 CastingBuiltin::CastingBuiltin(
-    const Type::Ptr& type, const Annotation& info, Value::ID id )
+    const Type::Ptr& type, const Annotation& info, const Value::ID id )
 : Builtin( type, info, id )
 {
 }
@@ -746,7 +738,7 @@ u1 AsEnumerationBuiltin::classof( Value const* obj )
 //
 
 StringifyBuiltin::StringifyBuiltin(
-    const Type::Ptr& type, const Annotation& info, Value::ID id )
+    const Type::Ptr& type, const Annotation& info, const Value::ID id )
 : Builtin( type, info, id )
 {
 }
@@ -868,7 +860,7 @@ u1 BinBuiltin::classof( Value const* obj )
 //
 
 OperatorBuiltin::OperatorBuiltin(
-    const Type::Ptr& type, const Annotation& info, Value::ID id )
+    const Type::Ptr& type, const Annotation& info, const Value::ID id )
 : Builtin( type, info, id )
 {
 }
@@ -884,7 +876,7 @@ u1 OperatorBuiltin::classof( Value const* obj )
 //
 
 ArithmeticBuiltin::ArithmeticBuiltin(
-    const Type::Ptr& type, const Annotation& info, Value::ID id )
+    const Type::Ptr& type, const Annotation& info, const Value::ID id )
 : OperatorBuiltin( type, info, id )
 {
 }
@@ -1012,7 +1004,7 @@ u1 MulsBuiltin::classof( Value const* obj )
 //
 
 CompareBuiltin::CompareBuiltin(
-    const Type::Ptr& type, const Annotation& info, Value::ID id )
+    const Type::Ptr& type, const Annotation& info, const Value::ID id )
 : OperatorBuiltin( type, info, id )
 {
 }
@@ -1184,7 +1176,7 @@ u1 GeqsBuiltin::classof( Value const* obj )
 //
 
 BitBuiltin::BitBuiltin(
-    const Type::Ptr& type, const Annotation& info, Value::ID id )
+    const Type::Ptr& type, const Annotation& info, const Value::ID id )
 : Builtin( type, info, id )
 {
 }

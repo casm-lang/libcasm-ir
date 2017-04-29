@@ -31,12 +31,14 @@
 
 using namespace libcasm_ir;
 
+static const auto VOID = libstdhl::get< VoidType >();
+static const auto BOOLEAN = libstdhl::get< BooleanType >();
 //
 // Instruction
 //
 
 Instruction::Instruction( const Type::Ptr& type,
-    const std::vector< Value::Ptr >& operands, Value::ID id )
+    const std::vector< Value::Ptr >& operands, const Value::ID id )
 : User( "", type, id )
 , m_operands()
 {
@@ -230,7 +232,7 @@ u1 BinaryInstruction::classof( Value const* obj )
 //
 
 SkipInstruction::SkipInstruction( void )
-: Instruction( libstdhl::get< VoidType >(), {}, classid() )
+: Instruction( VOID, {}, classid() )
 {
 }
 
@@ -249,7 +251,7 @@ u1 SkipInstruction::classof( Value const* obj )
 //
 
 ForkInstruction::ForkInstruction( void )
-: Instruction( libstdhl::get< VoidType >(), {}, classid() )
+: Instruction( VOID, {}, classid() )
 {
 }
 
@@ -268,7 +270,7 @@ u1 ForkInstruction::classof( Value const* obj )
 //
 
 MergeInstruction::MergeInstruction( void )
-: Instruction( libstdhl::get< VoidType >(), {}, classid() )
+: Instruction( VOID, {}, classid() )
 {
 }
 
@@ -421,18 +423,10 @@ u1 SelectInstruction::classof( Value const* obj )
 
 OperatorInstruction::OperatorInstruction( const Type::Ptr& type,
     const std::vector< Value::Ptr >& operands, const Annotation& info,
-    Value::ID id )
+    const Value::ID id )
 : Instruction( type, operands, id )
-, Annotation( info )
 {
-    std::vector< const Type* > arguments;
-
-    for( u32 c = 0; c < operands.size(); c++ )
-    {
-        arguments.push_back( &operand( c ).get()->type() );
-    }
-
-    m_resolved = resultTypeForRelation( arguments );
+    m_resolved = info.resolveTypeRelation( operands );
 }
 
 const Type::ID OperatorInstruction::resolved( void ) const
@@ -453,10 +447,9 @@ u1 OperatorInstruction::classof( Value const* obj )
 
 ArithmeticInstruction::ArithmeticInstruction(
     const std::vector< Value::Ptr >& operands, const Annotation& info,
-    Value::ID id )
+    const Value::ID id )
 : OperatorInstruction(
-      operands[ 0 ] ? operands[ 0 ]->ptr_type() : libstdhl::get< VoidType >(),
-      operands, info, id )
+      operands[ 0 ] ? operands[ 0 ]->ptr_type() : VOID, operands, info, id )
 {
     assert( operands.size() <= 2 );
 
@@ -486,8 +479,8 @@ u1 ArithmeticInstruction::classof( Value const* obj )
 
 CompareInstruction::CompareInstruction(
     const std::vector< Value::Ptr >& operands, const Annotation& info,
-    Value::ID id )
-: OperatorInstruction( libstdhl::get< BooleanType >(), operands, info, id )
+    const Value::ID id )
+: OperatorInstruction( BOOLEAN, operands, info, id )
 {
 }
 
@@ -505,12 +498,11 @@ u1 CompareInstruction::classof( Value const* obj )
 
 LogicalInstruction::LogicalInstruction(
     const std::vector< Value::Ptr >& operands, const Annotation& info,
-    Value::ID id )
-: OperatorInstruction(
-      operands[ 0 ]
-          ? ( operands[ 0 ]->type().isBit() ? operands[ 0 ]->ptr_type()
-                                            : libstdhl::get< BooleanType >() )
-          : libstdhl::get< VoidType >(),
+    const Value::ID id )
+: OperatorInstruction( operands[ 0 ] ? ( operands[ 0 ]->type().isBit()
+                                               ? operands[ 0 ]->ptr_type()
+                                               : BOOLEAN )
+                                     : VOID,
       operands, info, id )
 {
     assert( operands.size() <= 2 );
@@ -551,7 +543,6 @@ void InvInstruction::accept( Visitor& visitor )
 }
 
 const Annotation InvInstruction::info( classid(),
-
     Annotation::Data{
 
         { Type::INTEGER,

@@ -61,8 +61,10 @@ namespace libcasm_ir
 
         Value::ID id( void ) const;
 
-        Type::ID resultTypeForRelation(
-            const std::vector< const Type* > arguments ) const;
+        void checkTypeRelation( const Type::Ptr& type ) const;
+
+        Type::ID resolveTypeRelation(
+            const std::vector< Value::Ptr >& operands ) const;
 
         Type::ID resultTypeForRelation(
             const std::vector< Type::ID > arguments ) const;
