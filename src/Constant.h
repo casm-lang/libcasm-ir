@@ -139,6 +139,7 @@ namespace libcasm_ir
         IntegerConstant( const std::string& value,
             const libstdhl::Type::Radix radix = libstdhl::Type::DECIMAL );
         IntegerConstant( const BitConstant& value );
+        IntegerConstant( const libstdhl::Integer& value );
         IntegerConstant( i64 value );
         IntegerConstant( void );
 

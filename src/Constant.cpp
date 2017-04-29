@@ -318,6 +318,12 @@ IntegerConstant::IntegerConstant( const BitConstant& value )
 {
 }
 
+IntegerConstant::IntegerConstant( const libstdhl::Integer& value )
+: Constant( "", libstdhl::get< IntegerType >(), value, nullptr, true, false,
+      classid() )
+{
+}
+
 IntegerConstant::IntegerConstant( i64 value )
 : IntegerConstant( value, true, false )
 {
