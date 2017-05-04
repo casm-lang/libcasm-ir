@@ -1,0 +1,12 @@
+[submodule "lib/gtest"]
+	path = lib/gtest
+	url = https://github.com/google/googletest
+[submodule "lib/hayai"]
+	path = lib/hayai
+	url = https://github.com/nickbruun/hayai
+[submodule "lib/stdhl"]
+	path = lib/stdhl
+	url = https://github.com/ppaulweber/libstdhl
+[submodule "lib/pass"]
+	path = lib/pass
+	url = https://github.com/ppaulweber/libpass
