@@ -103,7 +103,7 @@ $(TESTS):%-test: %
 	@$(MAKE) $(MFLAGS) --no-print-directory \
 	-C $(OBJ) $(TARGET)-check
 	@echo "-- Running unit test"
-	@$(ENV_FLAGS) ./$(OBJ)/$(TARGET)-check $(ENV_ARGS)
+	@$(ENV_FLAGS) ./$(OBJ)/$(TARGET)-check --gtest_output=xml:obj/report.xml $(ENV_ARGS)
 
 
 benchmark: debug-benchmark
@@ -114,4 +114,4 @@ $(BENCH):%-benchmark: %
 	@$(MAKE) $(MFLAGS) --no-print-directory \
 	-C $(OBJ) $(TARGET)-run
 	@echo "-- Running benchmark"
-	@$(ENV_FLAGS) ./$(OBJ)/$(TARGET)-run $(ENV_ARGS)
+	@$(ENV_FLAGS) ./$(OBJ)/$(TARGET)-run -o console -o json:obj/report.json $(ENV_ARGS)
