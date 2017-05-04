@@ -71,12 +71,12 @@ add_library( ${TARGET} STATIC
 
 
 add_library( ${TARGET}-test OBJECT
-  ${LIBS}/gtest/googletest/src/gtest-all.cc
   ${CXX_UTS_FILES}
 )
 
 add_executable( ${TARGET}-check
   ${LIBS}/gtest/googletest/src/gtest_main.cc
+  ${LIBS}/gtest/googletest/src/gtest-all.cc
   $<TARGET_OBJECTS:${TARGET}-test>
 )
 
@@ -89,12 +89,13 @@ target_link_libraries( ${TARGET}-check
 
 
 add_library( ${TARGET}-benchmark OBJECT
-  ${LIBS}/hayai/src/hayai_posix_main.cpp
+  uts/main.cpp
 )
   
 add_executable( ${TARGET}-run
+  ${LIBS}/hayai/src/hayai_posix_main.cpp
+  ${LIBS}/gtest/googletest/src/gtest-all.cc
   $<TARGET_OBJECTS:${TARGET}-benchmark>
-  $<TARGET_OBJECTS:${TARGET}-test>
 )
 
 target_link_libraries( ${TARGET}-run

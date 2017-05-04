@@ -35,6 +35,10 @@ TEST( libcasm_ir_main, empty )
 {
 }
 
+BENCHMARK( libcasm_ir_main, empty, 10, 10 )
+{
+}
+
 //
 //  Local variables:
 //  mode: c++
