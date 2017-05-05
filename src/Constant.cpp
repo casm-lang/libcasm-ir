@@ -181,7 +181,6 @@ Constant Constant::choose( void ) const
 u1 Constant::classof( Value const* obj )
 {
     return obj->id() == classid() or VoidConstant::classof( obj )
-
            or BooleanConstant::classof( obj ) or IntegerConstant::classof( obj )
            or BitConstant::classof( obj ) or StringConstant::classof( obj )
            or FloatingConstant::classof( obj )
