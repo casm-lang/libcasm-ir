@@ -24,9 +24,11 @@
 #ifndef _LIB_CASMIR_CONSTANT_H_
 #define _LIB_CASMIR_CONSTANT_H_
 
-#include "Enumeration.h"
-#include "Rule.h"
 #include "Value.h"
+
+#include "Enumeration.h"
+#include "Range.h"
+#include "Rule.h"
 
 #include "../stdhl/cpp/Integer.h"
 #include "../stdhl/cpp/Rational.h"
@@ -53,6 +55,12 @@ namespace libcasm_ir
         std::string name( void ) const override;
 
         void accept( Visitor& visitor ) override;
+
+        void foreach(
+            const std::function< void( const Constant& constant ) >& callback )
+            const;
+
+        Constant choose( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -291,7 +299,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< EnumerationConstant >;
 
-      protected:
+      private:
         EnumerationConstant( const EnumerationType::Ptr& type,
             const std::string& value, u1 defined, u1 symbolic,
             Value::ID id = classid() );
@@ -312,6 +320,38 @@ namespace libcasm_ir
         std::string name( void ) const override;
 
         void accept( Visitor& visitor ) override;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::ENUMERATION_CONSTANT;
+        }
+
+        static u1 classof( Value const* obj );
+    };
+
+    class RangeConstant : public Constant
+    {
+      public:
+        using Ptr = std::shared_ptr< RangeConstant >;
+
+      private:
+        RangeConstant( const RangeType::Ptr& type, u1 defined, u1 symbolic,
+            Value::ID id = classid() );
+
+      public:
+        RangeConstant( const RangeType::Ptr& type );
+
+        Range::Ptr value( void ) const;
+
+        std::string name( void ) const override;
+
+        void accept( Visitor& visitor ) override;
+
+        void foreach(
+            const std::function< void( const Constant& constant ) >& callback )
+            const;
+
+        Constant choose( void ) const;
 
         static inline Value::ID classid( void )
         {

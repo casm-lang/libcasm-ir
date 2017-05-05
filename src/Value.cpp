@@ -242,6 +242,10 @@ std::string Value::token( const Value::ID id )
         {
             return "Enumeration";
         }
+        case Value::RANGE:
+        {
+            return "Range";
+        }
 
         case Value::BLOCK:
         {
@@ -311,6 +315,10 @@ std::string Value::token( const Value::ID id )
         case Value::ENUMERATION_CONSTANT:
         {
             return "EnumerationConstant";
+        }
+        case Value::RANGE_CONSTANT:
+        {
+            return "RangeConstant";
         }
         case Value::IDENTIFIER:
         {

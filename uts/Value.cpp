@@ -79,6 +79,11 @@ TEST( libcasm_ir_Value, id_to_token_string )
                 EXPECT_STREQ( Value::token( id ).c_str(), "Enumeration" );
                 break;
             }
+            case Value::RANGE:
+            {
+                EXPECT_STREQ( Value::token( id ).c_str(), "Range" );
+                break;
+            }
 
             case Value::BLOCK:
             {
@@ -167,6 +172,11 @@ TEST( libcasm_ir_Value, id_to_token_string )
             {
                 EXPECT_STREQ(
                     Value::token( id ).c_str(), "EnumerationConstant" );
+                break;
+            }
+            case Value::RANGE_CONSTANT:
+            {
+                EXPECT_STREQ( Value::token( id ).c_str(), "RangeConstant" );
                 break;
             }
             case Value::IDENTIFIER:

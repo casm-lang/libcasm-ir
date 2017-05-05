@@ -67,6 +67,7 @@ namespace libcasm_ir
         void visit( Builtin& value ) override;
 
         void visit( Enumeration& value ) override;
+        void visit( Range& value ) override;
 
         void visit( ParallelBlock& value ) override;
         void visit( SequentialBlock& value ) override;
@@ -126,6 +127,7 @@ namespace libcasm_ir
         void visit( FloatingConstant& value ) override;
         void visit( RationalConstant& value ) override;
         void visit( EnumerationConstant& value ) override;
+        void visit( RangeConstant& value ) override;
 
         void visit( Identifier& value ) override;
 

@@ -157,6 +157,11 @@ void ConsistencyCheckVisitor::visit( Enumeration& value )
     verify< Enumeration >( value );
 }
 
+void ConsistencyCheckVisitor::visit( Range& value )
+{
+    verify< Range >( value );
+}
+
 void ConsistencyCheckVisitor::visit( ParallelBlock& value )
 {
     verify< ParallelBlock >( value );
@@ -396,6 +401,10 @@ void ConsistencyCheckVisitor::visit( RationalConstant& value )
 void ConsistencyCheckVisitor::visit( EnumerationConstant& value )
 {
     verify< EnumerationConstant >( value );
+}
+void ConsistencyCheckVisitor::visit( RangeConstant& value )
+{
+    verify< RangeConstant >( value );
 }
 void ConsistencyCheckVisitor::visit( Identifier& value )
 {

@@ -40,7 +40,10 @@ namespace libcasm_ir
 {
     class Constant;
     class IntegerConstant;
+
     class Enumeration;
+    class Range;
+    class RangeType;
 
     class Type;
     using Types = libstdhl::List< Type >;
@@ -57,8 +60,6 @@ namespace libcasm_ir
         {
             _BOTTOM_ = 0,
 
-            RANGE,
-
             VOID,
             LABEL,
             LOCATION,
@@ -69,7 +70,9 @@ namespace libcasm_ir
             STRING,
             FLOATING,
             RATIONAL,
+
             ENUMERATION,
+            RANGE,
 
             RELATION,
 
@@ -81,7 +84,7 @@ namespace libcasm_ir
 
         Type( ID id );
 
-        ~Type( void ) = default;
+        virtual ~Type( void ) = default;
 
         virtual std::string name( void ) const = 0;
 
@@ -121,7 +124,6 @@ namespace libcasm_ir
             return !operator==( rhs );
         }
 
-        u1 isRange( void ) const;
         u1 isVoid( void ) const;
         u1 isLabel( void ) const;
         u1 isLocation( void ) const;
@@ -132,6 +134,7 @@ namespace libcasm_ir
         u1 isFloating( void ) const;
         u1 isRational( void ) const;
         u1 isEnumeration( void ) const;
+        u1 isRange( void ) const;
         u1 isRelation( void ) const;
         u1 isReference( void ) const;
         u1 isRuleReference( void ) const;
@@ -167,33 +170,6 @@ namespace libcasm_ir
             static std::unordered_map< std::string, Type::Ptr > cache;
             return cache;
         }
-    };
-
-    class RangeType final : public Type
-    {
-      public:
-        using Ptr = std::shared_ptr< RangeType >;
-
-        RangeType( const std::shared_ptr< IntegerConstant >& from,
-            const std::shared_ptr< IntegerConstant >& to );
-
-        u1 increasing( void ) const;
-
-        std::string name( void ) const override;
-
-        std::string description( void ) const override;
-
-        void foreach(
-            const std::function< void( const Constant& constant ) >& callback )
-            const override;
-
-        Constant choose( void ) const override;
-
-      private:
-        std::shared_ptr< IntegerConstant > m_from;
-        std::shared_ptr< IntegerConstant > m_to;
-
-        u1 m_increasing;
     };
 
     class PrimitiveType : public Type
@@ -281,11 +257,11 @@ namespace libcasm_ir
 
         IntegerType( void );
 
-        IntegerType( const RangeType::Ptr& range );
+        IntegerType( const std::shared_ptr< RangeType >& range );
 
         u1 constrained( void ) const;
 
-        RangeType::Ptr range( void ) const;
+        std::shared_ptr< RangeType > range( void ) const;
 
         std::string name( void ) const override;
 
@@ -298,7 +274,7 @@ namespace libcasm_ir
         Constant choose( void ) const override;
 
       private:
-        RangeType::Ptr m_range;
+        std::shared_ptr< RangeType > m_range;
     };
 
     class BitType final : public PrimitiveType
@@ -407,6 +383,39 @@ namespace libcasm_ir
 
       private:
         std::shared_ptr< Enumeration > m_kind;
+    };
+
+    class RangeType final : public PrimitiveType
+    {
+      public:
+        using Ptr = std::shared_ptr< RangeType >;
+
+        RangeType( const std::shared_ptr< Range >& range );
+
+        RangeType( const Type::Ptr& type );
+
+        Range& range( void ) const;
+
+        std::shared_ptr< Range > ptr_range( void ) const;
+
+        void setRange( const std::shared_ptr< Range >& range );
+
+        Type& type( void ) const;
+
+        Type::Ptr ptr_type( void ) const;
+
+        std::string name( void ) const override;
+
+        std::string description( void ) const override;
+
+        void foreach(
+            const std::function< void( const Constant& constant ) >& callback )
+            const override;
+
+        Constant choose( void ) const override;
+
+      private:
+        std::shared_ptr< Range > m_range;
     };
 
     class RelationType final : public Type

@@ -38,11 +38,6 @@ TEST( libcasm_ir__Type, id_to_token_string )
                 EXPECT_STREQ( Type::token( id ).c_str(), "_BOTTOM_" );
                 break;
             }
-            case Type::RANGE:
-            {
-                EXPECT_STREQ( Type::token( id ).c_str(), "Range" );
-                break;
-            }
             case Type::VOID:
             {
                 EXPECT_STREQ( Type::token( id ).c_str(), "Void" );
@@ -91,6 +86,11 @@ TEST( libcasm_ir__Type, id_to_token_string )
             case Type::ENUMERATION:
             {
                 EXPECT_STREQ( Type::token( id ).c_str(), "Enumeration" );
+                break;
+            }
+            case Type::RANGE:
+            {
+                EXPECT_STREQ( Type::token( id ).c_str(), "Range" );
                 break;
             }
             case Type::RELATION:

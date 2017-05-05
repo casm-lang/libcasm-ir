@@ -25,6 +25,7 @@
 
 #include "Constant.h"
 #include "Enumeration.h"
+#include "Range.h"
 
 #include "../stdhl/cpp/Random.h"
 
@@ -46,6 +47,10 @@ const Type& Type::result( void ) const
     {
         return *m_result.get();
     }
+    else if( isRange() )
+    {
+        return *m_arguments[ 0 ].get();
+    }
 
     return *this;
 }
@@ -55,6 +60,10 @@ Type::Ptr Type::ptr_result( void )
     if( isRelation() )
     {
         return m_result;
+    }
+    else if( isRange() )
+    {
+        return m_arguments[ 0 ];
     }
 
     return ptr_this< Type >();
@@ -68,11 +77,6 @@ const Types& Type::arguments( void ) const
 std::string Type::make_hash( void ) const
 {
     return "t:" + std::to_string( id() ) + ":" + description();
-}
-
-u1 Type::isRange( void ) const
-{
-    return id() == Type::RANGE;
 }
 
 u1 Type::isVoid( void ) const
@@ -125,6 +129,11 @@ u1 Type::isEnumeration( void ) const
     return id() == Type::ENUMERATION;
 }
 
+u1 Type::isRange( void ) const
+{
+    return id() == Type::RANGE;
+}
+
 u1 Type::isRelation( void ) const
 {
     return id() == Type::RELATION;
@@ -152,10 +161,6 @@ std::string Type::token( const Type::ID id )
         case _BOTTOM_:
         {
             return "_BOTTOM_";
-        }
-        case RANGE:
-        {
-            return "Range";
         }
         case VOID:
         {
@@ -197,6 +202,10 @@ std::string Type::token( const Type::ID id )
         {
             return "Enumeration";
         }
+        case RANGE:
+        {
+            return "Range";
+        }
         case RELATION:
         {
             return "Relation";
@@ -217,55 +226,6 @@ std::string Type::token( const Type::ID id )
 
     assert( !" internal error " );
     return "";
-}
-
-//
-//
-// Range Type
-//
-
-RangeType::RangeType(
-    const IntegerConstant::Ptr& from, const IntegerConstant::Ptr& to )
-: Type( Type::RANGE )
-, m_from( from )
-, m_to( to )
-, m_increasing( from->value() <= to->value() )
-{
-}
-
-u1 RangeType::increasing( void ) const
-{
-    return m_increasing;
-}
-
-std::string RangeType::name( void ) const
-{
-    return "[" + m_from->name() + ".." + m_to->name() + "]";
-}
-
-std::string RangeType::description( void ) const
-{
-    return this->name();
-}
-
-void RangeType::foreach(
-    const std::function< void( const Constant& constant ) >& callback ) const
-{
-    const auto a = m_increasing ? m_from->value_i64() : m_to->value_i64();
-    const auto b = m_increasing ? m_to->value_i64() : m_from->value_i64();
-
-    for( i64 i = a; i <= b; i++ )
-    {
-        callback( IntegerConstant( i ) );
-    }
-}
-
-Constant RangeType::choose( void ) const
-{
-    const auto a = m_increasing ? m_from->value_i64() : m_to->value_i64();
-    const auto b = m_increasing ? m_to->value_i64() : m_from->value_i64();
-
-    return IntegerConstant( libstdhl::Random::uniform< i64 >( a, b ) );
 }
 
 //
@@ -416,13 +376,20 @@ IntegerType::IntegerType( const RangeType::Ptr& range )
 {
     assert( range );
 
-    if( not range->increasing() )
+    if( not range->type().isInteger() )
     {
         throw std::domain_error(
-            "range '"
-            + range->name()
-            + "' violates monotonically nondecreasing property of 'Integer' type" );
+            "range '" + range->name() + "' has to be of type 'Integer'" );
     }
+
+    // if( TODO )
+    // {
+    //     throw std::domain_error(
+    //         "range '"
+    //         + range->name()
+    //         + "' violates monotonically nondecreasing property of 'Integer'
+    //         type" );
+    // }
 }
 
 u1 IntegerType::constrained( void ) const
@@ -705,6 +672,98 @@ Constant EnumerationType::choose( void ) const
         0, m_kind->elements().size() - 1 );
 
     return EnumerationConstant( m_kind, m_kind->elements()[ e ] );
+}
+
+//
+//
+// Range Type
+//
+
+RangeType::RangeType( const Range::Ptr& range )
+: PrimitiveType( Type::RANGE )
+, m_range( range )
+{
+    m_arguments.add( range->ptr_type() );
+}
+
+RangeType::RangeType( const Type::Ptr& type )
+: PrimitiveType( Type::RANGE )
+, m_range( nullptr )
+{
+    m_arguments.add( type );
+}
+
+Range& RangeType::range( void ) const
+{
+    assert( m_range );
+    return *m_range.get();
+}
+
+Range::Ptr RangeType::ptr_range( void ) const
+{
+    return m_range;
+}
+
+void RangeType::setRange( const Range::Ptr& range )
+{
+    assert( range->type() != type() );
+    m_range = range;
+}
+
+Type& RangeType::type( void ) const
+{
+    return *m_arguments[ 0 ].get();
+}
+
+Type::Ptr RangeType::ptr_type( void ) const
+{
+    return m_arguments[ 0 ];
+}
+
+std::string RangeType::name( void ) const
+{
+    if( m_range )
+    {
+        return m_range->name();
+    }
+    else
+    {
+        return "[" + type().description() + ".." + type().description() + "]";
+    }
+}
+
+std::string RangeType::description( void ) const
+{
+    return name();
+}
+
+void RangeType::foreach(
+    const std::function< void( const Constant& constant ) >& callback ) const
+{
+    // TODO
+
+    // const auto a = m_increasing ? m_from->value_i64() :
+    // m_to->value_i64();
+    // const auto b = m_increasing ? m_to->value_i64() :
+    // m_from->value_i64();
+
+    // for( i64 i = a; i <= b; i++ )
+    // {
+    //     callback( IntegerConstant( i ) );
+    // }
+}
+
+Constant RangeType::choose( void ) const
+{
+    // TODO
+
+    // const auto a = m_increasing ? m_from->value_i64() :
+    // m_to->value_i64();
+    // const auto b = m_increasing ? m_to->value_i64() :
+    // m_from->value_i64();
+
+    // return IntegerConstant( libstdhl::Random::uniform< i64 >( a, b ) );
+    return VoidConstant();
 }
 
 //

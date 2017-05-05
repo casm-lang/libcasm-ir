@@ -55,6 +55,7 @@ namespace libcasm_ir
             DERIVED,
             FUNCTION,
             ENUMERATION,
+            RANGE,
 
             BLOCK,
             EXECUTION_SEMANTICS_BLOCK,
@@ -77,6 +78,7 @@ namespace libcasm_ir
             FLOATING_CONSTANT,
             RATIONAL_CONSTANT,
             ENUMERATION_CONSTANT,
+            RANGE_CONSTANT,
             IDENTIFIER
 
             ,
@@ -194,7 +196,7 @@ namespace libcasm_ir
 
         Value( const std::string& name, const Type::Ptr& type, ID id );
 
-        ~Value( void ) = default;
+        virtual ~Value( void ) = default;
 
         virtual std::string name( void ) const = 0;
 

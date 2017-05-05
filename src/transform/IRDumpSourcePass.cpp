@@ -130,6 +130,11 @@ void IRDumpSourceVisitor::visit( Enumeration& value )
     m_stream << ";; " << value.dump() << "\n";
 }
 
+void IRDumpSourceVisitor::visit( Range& value )
+{
+    m_stream << ";; " << value.dump() << "\n";
+}
+
 void IRDumpSourceVisitor::visit( TrivialStatement& value )
 {
     dump( value );
@@ -298,6 +303,10 @@ void IRDumpSourceVisitor::visit( RationalConstant& value )
     dump( value );
 }
 void IRDumpSourceVisitor::visit( EnumerationConstant& value )
+{
+    dump( value );
+}
+void IRDumpSourceVisitor::visit( RangeConstant& value )
 {
     dump( value );
 }

@@ -153,6 +153,31 @@ void Constant::accept( Visitor& visitor )
     }
 }
 
+void Constant::foreach(
+    const std::function< void( const Constant& constant ) >& callback ) const
+{
+    if( id() == Value::RANGE_CONSTANT )
+    {
+        static_cast< const RangeConstant* >( this )->foreach( callback );
+    }
+    else
+    {
+        callback( *this );
+    }
+}
+
+Constant Constant::choose( void ) const
+{
+    if( id() == Value::RANGE_CONSTANT )
+    {
+        return static_cast< const RangeConstant* >( this )->choose();
+    }
+    else
+    {
+        return *this;
+    }
+}
+
 u1 Constant::classof( Value const* obj )
 {
     return obj->id() == classid() or VoidConstant::classof( obj )
@@ -645,6 +670,52 @@ void EnumerationConstant::accept( Visitor& visitor )
 }
 
 u1 EnumerationConstant::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
+
+//
+// Range Constant
+//
+
+RangeConstant::RangeConstant(
+    const RangeType::Ptr& type, u1 defined, u1 symbolic, Value::ID id )
+: Constant( "", type, {}, nullptr, defined, symbolic, id )
+{
+}
+
+RangeConstant::RangeConstant( const RangeType::Ptr& type )
+: RangeConstant( type, true, false )
+{
+}
+
+Range::Ptr RangeConstant::value( void ) const
+{
+    return static_cast< const RangeType& >( type() ).ptr_range();
+}
+
+std::string RangeConstant::name( void ) const
+{
+    return type().name();
+}
+
+void RangeConstant::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
+void RangeConstant::foreach(
+    const std::function< void( const Constant& constant ) >& callback ) const
+{
+    type().foreach( callback );
+}
+
+Constant RangeConstant::choose( void ) const
+{
+    return type().choose();
+}
+
+u1 RangeConstant::classof( Value const* obj )
 {
     return obj->id() == classid();
 }
