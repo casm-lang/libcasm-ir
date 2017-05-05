@@ -38,8 +38,9 @@
 
 namespace libcasm_ir
 {
-    class Enumeration;
+    class Constant;
     class IntegerConstant;
+    class Enumeration;
 
     class Type;
     using Types = libstdhl::List< Type >;
@@ -85,6 +86,12 @@ namespace libcasm_ir
         virtual std::string name( void ) const = 0;
 
         virtual std::string description( void ) const = 0;
+
+        virtual void foreach(
+            const std::function< void( const Constant& constant ) >& callback )
+            const = 0;
+
+        virtual Constant choose( void ) const = 0;
 
         ID id( void ) const;
 
@@ -176,6 +183,12 @@ namespace libcasm_ir
 
         std::string description( void ) const override;
 
+        void foreach(
+            const std::function< void( const Constant& constant ) >& callback )
+            const override;
+
+        Constant choose( void ) const override;
+
       private:
         std::shared_ptr< IntegerConstant > m_from;
         std::shared_ptr< IntegerConstant > m_to;
@@ -199,6 +212,12 @@ namespace libcasm_ir
         std::string name( void ) const override;
 
         std::string description( void ) const override;
+
+        void foreach(
+            const std::function< void( const Constant& constant ) >& callback )
+            const override;
+
+        Constant choose( void ) const override;
     };
 
     class LabelType final : public PrimitiveType
@@ -211,6 +230,12 @@ namespace libcasm_ir
         std::string name( void ) const override;
 
         std::string description( void ) const override;
+
+        void foreach(
+            const std::function< void( const Constant& constant ) >& callback )
+            const override;
+
+        Constant choose( void ) const override;
     };
 
     class LocationType final : public PrimitiveType
@@ -223,6 +248,12 @@ namespace libcasm_ir
         std::string name( void ) const override;
 
         std::string description( void ) const override;
+
+        void foreach(
+            const std::function< void( const Constant& constant ) >& callback )
+            const override;
+
+        Constant choose( void ) const override;
     };
 
     class BooleanType final : public PrimitiveType
@@ -235,6 +266,12 @@ namespace libcasm_ir
         std::string name( void ) const override;
 
         std::string description( void ) const override;
+
+        void foreach(
+            const std::function< void( const Constant& constant ) >& callback )
+            const override;
+
+        Constant choose( void ) const override;
     };
 
     class IntegerType final : public PrimitiveType
@@ -253,6 +290,12 @@ namespace libcasm_ir
         std::string name( void ) const override;
 
         std::string description( void ) const override;
+
+        void foreach(
+            const std::function< void( const Constant& constant ) >& callback )
+            const override;
+
+        Constant choose( void ) const override;
 
       private:
         RangeType::Ptr m_range;
@@ -277,6 +320,12 @@ namespace libcasm_ir
 
         std::string description( void ) const override;
 
+        void foreach(
+            const std::function< void( const Constant& constant ) >& callback )
+            const override;
+
+        Constant choose( void ) const override;
+
       private:
         u16 m_bitsize;
     };
@@ -291,6 +340,12 @@ namespace libcasm_ir
         std::string name( void ) const override;
 
         std::string description( void ) const override;
+
+        void foreach(
+            const std::function< void( const Constant& constant ) >& callback )
+            const override;
+
+        Constant choose( void ) const override;
     };
 
     class FloatingType final : public PrimitiveType
@@ -303,6 +358,12 @@ namespace libcasm_ir
         std::string name( void ) const override;
 
         std::string description( void ) const override;
+
+        void foreach(
+            const std::function< void( const Constant& constant ) >& callback )
+            const override;
+
+        Constant choose( void ) const override;
     };
 
     class RationalType final : public PrimitiveType
@@ -315,6 +376,12 @@ namespace libcasm_ir
         std::string name( void ) const override;
 
         std::string description( void ) const override;
+
+        void foreach(
+            const std::function< void( const Constant& constant ) >& callback )
+            const override;
+
+        Constant choose( void ) const override;
     };
 
     class EnumerationType final : public PrimitiveType
@@ -332,6 +399,12 @@ namespace libcasm_ir
 
         std::string description( void ) const override;
 
+        void foreach(
+            const std::function< void( const Constant& constant ) >& callback )
+            const override;
+
+        Constant choose( void ) const override;
+
       private:
         std::shared_ptr< Enumeration > m_kind;
     };
@@ -346,6 +419,12 @@ namespace libcasm_ir
         std::string name( void ) const override;
 
         std::string description( void ) const override;
+
+        void foreach(
+            const std::function< void( const Constant& constant ) >& callback )
+            const override;
+
+        Constant choose( void ) const override;
     };
 
     class ReferenceType : public Type
@@ -358,6 +437,12 @@ namespace libcasm_ir
         std::string name( void ) const override;
 
         std::string description( void ) const override;
+
+        void foreach(
+            const std::function< void( const Constant& constant ) >& callback )
+            const override;
+
+        Constant choose( void ) const override;
     };
 
     class RuleReferenceType final : public ReferenceType

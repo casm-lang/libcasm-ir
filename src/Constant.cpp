@@ -557,6 +557,12 @@ RationalConstant::RationalConstant( const std::string& value )
 {
 }
 
+RationalConstant::RationalConstant( const libstdhl::Rational& value )
+: Constant( "", libstdhl::get< RationalType >(), value, nullptr, true, false,
+      classid() )
+{
+}
+
 RationalConstant::RationalConstant( void )
 : RationalConstant( nullptr, false, false )
 {

@@ -29,6 +29,7 @@
 #include "Value.h"
 
 #include "../stdhl/cpp/Integer.h"
+#include "../stdhl/cpp/Rational.h"
 
 namespace libcasm_ir
 {
@@ -268,6 +269,7 @@ namespace libcasm_ir
 
       public:
         RationalConstant( const std::string& value );
+        RationalConstant( const libstdhl::Rational& value );
         RationalConstant( void );
 
         std::string value( void ) const;

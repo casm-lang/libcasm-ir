@@ -33,7 +33,6 @@ TEST( libcasm_ir__type_enum, make_and_get )
 
     EXPECT_STREQ( example->name().c_str(), "example" );
     EXPECT_STREQ( example->description().c_str(), "v example" );
-    // EXPECT_STREQ( example->label().c_str(), "@example" );
 
     auto v = libstdhl::make< EnumerationType >( example );
     ASSERT_TRUE( v != nullptr );
@@ -54,6 +53,11 @@ TEST( libcasm_ir__type_enum, make_and_get )
 
     EXPECT_TRUE( a == b );
     EXPECT_TRUE( *a == *b );
+
+    v->foreach( [](
+        const Constant& constant ) { std::cerr << constant.name() << "\n"; } );
+
+    std::cerr << v->choose().name() << "\n";
 }
 
 //

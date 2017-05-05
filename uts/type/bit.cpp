@@ -67,6 +67,12 @@ TEST( libcasm_ir__type_bit, get_valid )
 
         EXPECT_EQ( v->bitsize(), c );
         EXPECT_EQ( v->id(), Type::BIT );
+
+        v->foreach( []( const Constant& constant ) {
+            std::cerr << constant.name() << "\n";
+        } );
+
+        std::cerr << v->choose().name() << "\n";
     }
 }
 

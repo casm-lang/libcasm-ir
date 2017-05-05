@@ -26,6 +26,8 @@
 #include "Constant.h"
 #include "Enumeration.h"
 
+#include "../stdhl/cpp/Random.h"
+
 using namespace libcasm_ir;
 
 Type::Type( Type::ID id )
@@ -246,6 +248,26 @@ std::string RangeType::description( void ) const
     return this->name();
 }
 
+void RangeType::foreach(
+    const std::function< void( const Constant& constant ) >& callback ) const
+{
+    const auto a = m_increasing ? m_from->value_i64() : m_to->value_i64();
+    const auto b = m_increasing ? m_to->value_i64() : m_from->value_i64();
+
+    for( i64 i = a; i <= b; i++ )
+    {
+        callback( IntegerConstant( i ) );
+    }
+}
+
+Constant RangeType::choose( void ) const
+{
+    const auto a = m_increasing ? m_from->value_i64() : m_to->value_i64();
+    const auto b = m_increasing ? m_to->value_i64() : m_from->value_i64();
+
+    return IntegerConstant( libstdhl::Random::uniform< i64 >( a, b ) );
+}
+
 //
 //
 // Primitive Type
@@ -275,6 +297,17 @@ std::string VoidType::description( void ) const
     return token( id() );
 }
 
+void VoidType::foreach(
+    const std::function< void( const Constant& constant ) >& callback ) const
+{
+    // this type has no range to process
+}
+
+Constant VoidType::choose( void ) const
+{
+    return VoidConstant();
+}
+
 //
 // Label Type
 //
@@ -292,6 +325,17 @@ std::string LabelType::name( void ) const
 std::string LabelType::description( void ) const
 {
     return token( id() );
+}
+
+void LabelType::foreach(
+    const std::function< void( const Constant& constant ) >& callback ) const
+{
+    // this type has no range to process
+}
+
+Constant LabelType::choose( void ) const
+{
+    return VoidConstant();
 }
 
 //
@@ -313,6 +357,17 @@ std::string LocationType::description( void ) const
     return token( id() );
 }
 
+void LocationType::foreach(
+    const std::function< void( const Constant& constant ) >& callback ) const
+{
+    // this type has no range to process
+}
+
+Constant LocationType::choose( void ) const
+{
+    return VoidConstant();
+}
+
 //
 // Boolean Type
 //
@@ -332,11 +387,24 @@ std::string BooleanType::description( void ) const
     return token( id() );
 }
 
+void BooleanType::foreach(
+    const std::function< void( const Constant& constant ) >& callback ) const
+{
+    callback( BooleanConstant( false ) );
+    callback( BooleanConstant( true ) );
+}
+
+Constant BooleanType::choose( void ) const
+{
+    auto const value = ( u1 )( libstdhl::Random::uniform< u64 >() % 2 );
+    return BooleanConstant( value );
+}
+
 //
 // Integer Type
 //
 
-IntegerType::IntegerType()
+IntegerType::IntegerType( void )
 : PrimitiveType( Type::INTEGER )
 , m_range( nullptr )
 {
@@ -351,7 +419,9 @@ IntegerType::IntegerType( const RangeType::Ptr& range )
     if( not range->increasing() )
     {
         throw std::domain_error(
-            "range '" + range->name() + "' violates monotonically nondecreasing property of 'Integer' type" );
+            "range '"
+            + range->name()
+            + "' violates monotonically nondecreasing property of 'Integer' type" );
     }
 }
 
@@ -379,6 +449,36 @@ std::string IntegerType::description( void ) const
     else
     {
         return token( id() ) + "'" + m_range->name();
+    }
+}
+
+void IntegerType::foreach(
+    const std::function< void( const Constant& constant ) >& callback ) const
+{
+    if( constrained() )
+    {
+        m_range->foreach( callback );
+    }
+    else
+    {
+        // this type has an infinite range to process, therefore omitted (for
+        // now)
+    }
+}
+
+Constant IntegerType::choose( void ) const
+{
+    if( constrained() )
+    {
+        return m_range->choose();
+    }
+    else
+    {
+        return IntegerConstant( libstdhl::Random::uniform< i64 >() );
+        // LIMITATION: currently we only address the 64-bit range for
+        // this choosing value range, can be extended later even to address
+        // bigger
+        // randomized values
     }
 }
 
@@ -449,6 +549,21 @@ std::string BitType::description( void ) const
     return token( id() ) + "'" + std::to_string( m_bitsize );
 }
 
+void BitType::foreach(
+    const std::function< void( const Constant& constant ) >& callback ) const
+{
+    // this type has an (depending on the current bit-size) infinite range to
+    // process, therefore omitted (for now)
+}
+
+Constant BitType::choose( void ) const
+{
+    return BitConstant( m_bitsize,
+        libstdhl::Random::uniform< u64 >()
+            % m_bitsize ); // TODO: FIXME: PPA: fix the randomized value modulo
+                           // mapping to full range not only the bitsize
+}
+
 //
 // String Type
 //
@@ -466,6 +581,18 @@ std::string StringType::name( void ) const
 std::string StringType::description( void ) const
 {
     return token( id() );
+}
+
+void StringType::foreach(
+    const std::function< void( const Constant& constant ) >& callback ) const
+{
+    // this type has an infinite range to process, therefore omitted (for now)
+}
+
+Constant StringType::choose( void ) const
+{
+    // this is undefined for now
+    return StringConstant();
 }
 
 //
@@ -487,6 +614,18 @@ std::string FloatingType::description( void ) const
     return token( id() );
 }
 
+void FloatingType::foreach(
+    const std::function< void( const Constant& constant ) >& callback ) const
+{
+    // this type has an infinite range to process, therefore omitted (for now)
+}
+
+Constant FloatingType::choose( void ) const
+{
+    // this is undefined for now
+    return FloatingConstant();
+}
+
 //
 // Rational Type
 //
@@ -504,6 +643,21 @@ std::string RationalType::name( void ) const
 std::string RationalType::description( void ) const
 {
     return token( id() );
+}
+
+void RationalType::foreach(
+    const std::function< void( const Constant& constant ) >& callback ) const
+{
+    // this type has an infinite range to process, therefore omitted (for now)
+}
+
+Constant RationalType::choose( void ) const
+{
+    const auto n = libstdhl::Integer( libstdhl::Random::uniform< i64 >() );
+    const auto d = libstdhl::Integer( libstdhl::Random::uniform< i64 >() + 1 );
+    // d = randomvalue + 1 to avoid that the denominator is zero!
+
+    return RationalConstant( libstdhl::Rational( n, d ) );
 }
 
 //
@@ -534,6 +688,23 @@ std::string EnumerationType::name( void ) const
 std::string EnumerationType::description( void ) const
 {
     return m_kind->name();
+}
+
+void EnumerationType::foreach(
+    const std::function< void( const Constant& constant ) >& callback ) const
+{
+    for( auto element : m_kind->elements() )
+    {
+        callback( EnumerationConstant( m_kind, element ) );
+    }
+}
+
+Constant EnumerationType::choose( void ) const
+{
+    const auto e = libstdhl::Random::uniform< std::size_t >(
+        0, m_kind->elements().size() - 1 );
+
+    return EnumerationConstant( m_kind, m_kind->elements()[ e ] );
 }
 
 //
@@ -600,6 +771,17 @@ std::string RelationType::description( void ) const
     return tmp;
 }
 
+void RelationType::foreach(
+    const std::function< void( const Constant& constant ) >& callback ) const
+{
+    // this type has an infinite range to process, therefore omitted (for now)
+}
+
+Constant RelationType::choose( void ) const
+{
+    return VoidConstant();
+}
+
 //
 // Reference Type
 //
@@ -618,6 +800,17 @@ std::string ReferenceType::name( void ) const
 std::string ReferenceType::description( void ) const
 {
     return token( id() ) + m_result->description();
+}
+
+void ReferenceType::foreach(
+    const std::function< void( const Constant& constant ) >& callback ) const
+{
+    // this type has an infinite range to process, therefore omitted (for now)
+}
+
+Constant ReferenceType::choose( void ) const
+{
+    return VoidConstant();
 }
 
 //
