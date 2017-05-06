@@ -33,7 +33,7 @@ Annotation::Annotation( const Value::ID id, const Data& info )
 
     m_type_set.emplace_back( Set() );
 
-    for( auto relation : m_info )
+    for( const auto& relation : m_info )
     {
         Type::ID rt = relation.result;
 
@@ -69,7 +69,7 @@ Annotation::Annotation( const Value::ID id, const Data& info )
 
         assert( m_relation_to_type.find( key ) == m_relation_to_type.end()
                 and " result type of relation already exists!" );
-        m_relation_to_type[ key ] = rt;
+        m_relation_to_type[ key ] = &relation;
     }
 
     auto result_str = str2obj().emplace( Value::token( id ), this );
@@ -157,7 +157,7 @@ void Annotation::checkTypeRelation( const Type::Ptr& type ) const
                                  + "'" );
     }
 
-    if( result->second != type->result().id() )
+    if( result->second->result != type->result().id() )
     {
         throw std::domain_error( "return of type relation '"
                                  + type->description()
@@ -187,27 +187,60 @@ Type::ID Annotation::resolveTypeRelation(
                                  + "'" );
     }
 
-    return result->second;
+    return result->second->result;
 }
 
-Type::ID Annotation::resultTypeForRelation(
+const Annotation::Relation* Annotation::resultTypeForRelation(
     const std::vector< Type::ID > arguments ) const
 {
     std::string key;
 
+    std::size_t pos = -1;
+    std::size_t idx = 0;
     for( auto arg : arguments )
     {
         assert( arg != libcasm_ir::Type::RELATION );
         key += std::to_string( arg ) + ";";
+
+        if( arg == libcasm_ir::Type::_TOP_ )
+        {
+            if( pos != -1 )
+            {
+                throw std::invalid_argument( "multiple unbound types defined" );
+            }
+
+            pos = idx;
+        }
+
+        idx++;
     }
 
     auto result = m_relation_to_type.find( key );
-    if( result == m_relation_to_type.end() )
+    if( result != m_relation_to_type.end() )
     {
-        throw std::domain_error( "no relation defined" );
+        // found exact relation
+        return result->second;
     }
 
-    return result->second;
+    if( pos != -1 )
+    {
+        const auto argTypes = argumentTypes( pos );
+
+        for( auto at : argTypes )
+        {
+            auto argTypesTemplate = arguments;
+            argTypesTemplate[ pos ] = at;
+
+            const auto result = resultTypeForRelation( argTypesTemplate );
+            if( result )
+            {
+                return result;
+            }
+        }
+    }
+
+    // no result found
+    return 0;
 }
 
 const Annotation& Annotation::find( const std::string& token )

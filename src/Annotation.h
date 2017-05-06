@@ -66,7 +66,7 @@ namespace libcasm_ir
         Type::ID resolveTypeRelation(
             const std::vector< Value::Ptr >& operands ) const;
 
-        Type::ID resultTypeForRelation(
+        const Relation* resultTypeForRelation(
             const std::vector< Type::ID > arguments ) const;
 
         const Set& resultTypes( void ) const;
@@ -90,7 +90,7 @@ namespace libcasm_ir
 
         std::set< std::size_t > m_argument_sizes;
 
-        std::unordered_map< std::string, Type::ID > m_relation_to_type;
+        std::unordered_map< std::string, const Relation* > m_relation_to_type;
 
         Map m_map;
 
