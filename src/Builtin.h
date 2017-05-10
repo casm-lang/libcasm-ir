@@ -35,8 +35,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< Builtin >;
 
-        Builtin( const Type::Ptr& type, const Annotation& info,
-            const Value::ID id = classid() );
+        Builtin( const Type::Ptr& type, const Value::ID id = classid() );
 
         std::string name( void ) const override final;
 
@@ -71,8 +70,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< GeneralBuiltin >;
 
-        GeneralBuiltin( const Type::Ptr& type, const Annotation& info,
-            const Value::ID id = classid() );
+        GeneralBuiltin( const Type::Ptr& type, const Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {
@@ -138,9 +136,8 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< OutputBuiltin >;
 
-        OutputBuiltin( const Type::Ptr& type, const Annotation& info,
-            const std::string& channel, u1 newline,
-            const Value::ID id = classid() );
+        OutputBuiltin( const Type::Ptr& type, const std::string& channel,
+            u1 newline, const Value::ID id = classid() );
 
         std::string channel( void ) const;
 
@@ -199,8 +196,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< CastingBuiltin >;
 
-        CastingBuiltin( const Type::Ptr& type, const Annotation& info,
-            const Value::ID id = classid() );
+        CastingBuiltin( const Type::Ptr& type, const Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {
@@ -338,8 +334,8 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< StringifyBuiltin >;
 
-        StringifyBuiltin( const Type::Ptr& type, const Annotation& info,
-            const Value::ID id = classid() );
+        StringifyBuiltin(
+            const Type::Ptr& type, const Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {
@@ -426,8 +422,8 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< OperatorBuiltin >;
 
-        OperatorBuiltin( const Type::Ptr& type, const Annotation& info,
-            const Value::ID id = classid() );
+        OperatorBuiltin(
+            const Type::Ptr& type, const Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {
@@ -446,8 +442,8 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< ArithmeticBuiltin >;
 
-        ArithmeticBuiltin( const Type::Ptr& type, const Annotation& info,
-            const Value::ID id = classid() );
+        ArithmeticBuiltin(
+            const Type::Ptr& type, const Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {
@@ -568,8 +564,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< CompareBuiltin >;
 
-        CompareBuiltin( const Type::Ptr& type, const Annotation& info,
-            const Value::ID id = classid() );
+        CompareBuiltin( const Type::Ptr& type, const Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {
@@ -724,8 +719,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< BitBuiltin >;
 
-        BitBuiltin( const Type::Ptr& type, const Annotation& info,
-            const Value::ID id = classid() );
+        BitBuiltin( const Type::Ptr& type, const Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {

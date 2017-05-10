@@ -38,6 +38,8 @@
 
 using namespace libcasm_ir;
 
+static const auto VOID = libstdhl::get< VoidType >();
+
 Value::Value( const std::string& name, const Type::Ptr& type, Value::ID id )
 : m_name( name )
 , m_type( type )
@@ -47,6 +49,11 @@ Value::Value( const std::string& name, const Type::Ptr& type, Value::ID id )
 #ifndef NDEBUG
     m_id2objs()[ m_id ].insert( this );
 #endif
+}
+
+Value::Value( const std::string& name, Value::ID id )
+: Value( name, VOID, id )
+{
 }
 
 std::string Value::description( void ) const

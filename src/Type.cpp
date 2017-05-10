@@ -31,6 +31,8 @@
 
 using namespace libcasm_ir;
 
+static const auto VOID_TYPE = libstdhl::get< VoidType >();
+
 Type::Type( Type::ID id )
 : m_id( id )
 {
@@ -889,7 +891,7 @@ RuleReferenceType::RuleReferenceType(
 
 RuleReferenceType::RuleReferenceType( void )
 : RuleReferenceType(
-      libstdhl::make< RelationType >( libstdhl::get< VoidType >() ) )
+      libstdhl::make< RelationType >( libstdhl::make< VoidType >() ) )
 {
 }
 

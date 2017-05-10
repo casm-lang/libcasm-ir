@@ -25,12 +25,9 @@
 
 using namespace libcasm_ir;
 
-Builtin::Builtin(
-    const Type::Ptr& type, const Annotation& info, const Value::ID id )
+Builtin::Builtin( const Type::Ptr& type, const Value::ID id )
 : User( "", type, id )
 {
-    info.checkTypeRelation( type );
-    // TODO: if its an as<Enumeration> .. .do -> "as" + type->name()
 }
 
 std::string Builtin::name( void ) const
@@ -246,9 +243,8 @@ Builtin::Ptr Builtin::asBuiltin( const Type::Ptr& type )
 // GeneralBuiltin
 //
 
-GeneralBuiltin::GeneralBuiltin(
-    const Type::Ptr& type, const Annotation& info, const Value::ID id )
-: Builtin( type, info, id )
+GeneralBuiltin::GeneralBuiltin( const Type::Ptr& type, const Value::ID id )
+: Builtin( type, id )
 {
 }
 
@@ -264,7 +260,7 @@ u1 GeneralBuiltin::classof( Value const* obj )
 //
 
 IsSymbolicBuiltin::IsSymbolicBuiltin( const Type::Ptr& type )
-: GeneralBuiltin( type, info, classid() )
+: GeneralBuiltin( type, classid() )
 {
 }
 
@@ -318,7 +314,7 @@ u1 IsSymbolicBuiltin::classof( Value const* obj )
 //
 
 AbortBuiltin::AbortBuiltin( const Type::Ptr& type )
-: GeneralBuiltin( type, info, classid() )
+: GeneralBuiltin( type, classid() )
 {
 }
 
@@ -339,7 +335,7 @@ u1 AbortBuiltin::classof( Value const* obj )
 //
 
 AssertBuiltin::AssertBuiltin( const Type::Ptr& type )
-: GeneralBuiltin( type, info, classid() )
+: GeneralBuiltin( type, classid() )
 {
 }
 
@@ -366,9 +362,9 @@ u1 AssertBuiltin::classof( Value const* obj )
 // OutputBuiltin
 //
 
-OutputBuiltin::OutputBuiltin( const Type::Ptr& type, const Annotation& info,
-    const std::string& channel, u1 newline, const Value::ID id )
-: GeneralBuiltin( type, info, classid() )
+OutputBuiltin::OutputBuiltin( const Type::Ptr& type, const std::string& channel,
+    u1 newline, const Value::ID id )
+: GeneralBuiltin( type, classid() )
 , m_channel( channel )
 , m_newline( newline )
 {
@@ -395,7 +391,7 @@ u1 OutputBuiltin::classof( Value const* obj )
 //
 
 PrintBuiltin::PrintBuiltin( const Type::Ptr& type )
-: OutputBuiltin( type, info, "$stdout$", false, classid() )
+: OutputBuiltin( type, "$stdout$", false, classid() )
 {
 }
 
@@ -419,7 +415,7 @@ u1 PrintBuiltin::classof( Value const* obj )
 //
 
 PrintLnBuiltin::PrintLnBuiltin( const Type::Ptr& type )
-: OutputBuiltin( type, info, "$stdout$", true, classid() )
+: OutputBuiltin( type, "$stdout$", true, classid() )
 {
 }
 
@@ -444,9 +440,8 @@ u1 PrintLnBuiltin::classof( Value const* obj )
 // CastingBuiltin
 //
 
-CastingBuiltin::CastingBuiltin(
-    const Type::Ptr& type, const Annotation& info, const Value::ID id )
-: Builtin( type, info, id )
+CastingBuiltin::CastingBuiltin( const Type::Ptr& type, const Value::ID id )
+: Builtin( type, id )
 {
 }
 
@@ -464,7 +459,7 @@ u1 CastingBuiltin::classof( Value const* obj )
 //
 
 AsBooleanBuiltin::AsBooleanBuiltin( const Type::Ptr& type )
-: CastingBuiltin( type, info, classid() )
+: CastingBuiltin( type, classid() )
 {
 }
 
@@ -498,7 +493,7 @@ u1 AsBooleanBuiltin::classof( Value const* obj )
 //
 
 AsIntegerBuiltin::AsIntegerBuiltin( const Type::Ptr& type )
-: CastingBuiltin( type, info, classid() )
+: CastingBuiltin( type, classid() )
 {
 }
 
@@ -542,7 +537,7 @@ u1 AsIntegerBuiltin::classof( Value const* obj )
 //
 
 AsBitBuiltin::AsBitBuiltin( const Type::Ptr& type )
-: CastingBuiltin( type, info, classid() )
+: CastingBuiltin( type, classid() )
 {
 }
 
@@ -586,7 +581,7 @@ u1 AsBitBuiltin::classof( Value const* obj )
 //
 
 AsStringBuiltin::AsStringBuiltin( const Type::Ptr& type )
-: CastingBuiltin( type, info, classid() )
+: CastingBuiltin( type, classid() )
 {
 }
 
@@ -640,7 +635,7 @@ u1 AsStringBuiltin::classof( Value const* obj )
 //
 
 AsFloatingBuiltin::AsFloatingBuiltin( const Type::Ptr& type )
-: CastingBuiltin( type, info, classid() )
+: CastingBuiltin( type, classid() )
 {
 }
 
@@ -684,7 +679,7 @@ u1 AsFloatingBuiltin::classof( Value const* obj )
 //
 
 AsRationalBuiltin::AsRationalBuiltin( const Type::Ptr& type )
-: CastingBuiltin( type, info, classid() )
+: CastingBuiltin( type, classid() )
 {
 }
 
@@ -709,7 +704,7 @@ u1 AsRationalBuiltin::classof( Value const* obj )
 //
 
 AsEnumerationBuiltin::AsEnumerationBuiltin( const Type::Ptr& type )
-: CastingBuiltin( type, info, classid() )
+: CastingBuiltin( type, classid() )
 {
 }
 
@@ -737,9 +732,8 @@ u1 AsEnumerationBuiltin::classof( Value const* obj )
 // StringifyBuiltin
 //
 
-StringifyBuiltin::StringifyBuiltin(
-    const Type::Ptr& type, const Annotation& info, const Value::ID id )
-: Builtin( type, info, id )
+StringifyBuiltin::StringifyBuiltin( const Type::Ptr& type, const Value::ID id )
+: Builtin( type, id )
 {
 }
 
@@ -789,7 +783,7 @@ static const Annotation::Data stringify_builtin_data = {
 //
 
 DecBuiltin::DecBuiltin( const Type::Ptr& type )
-: StringifyBuiltin( type, info, classid() )
+: StringifyBuiltin( type, classid() )
 {
 }
 
@@ -805,7 +799,7 @@ u1 DecBuiltin::classof( Value const* obj )
 //
 
 HexBuiltin::HexBuiltin( const Type::Ptr& type )
-: StringifyBuiltin( type, info, classid() )
+: StringifyBuiltin( type, classid() )
 {
 }
 
@@ -821,7 +815,7 @@ u1 HexBuiltin::classof( Value const* obj )
 //
 
 OctBuiltin::OctBuiltin( const Type::Ptr& type )
-: StringifyBuiltin( type, info, classid() )
+: StringifyBuiltin( type, classid() )
 {
 }
 
@@ -837,7 +831,7 @@ u1 OctBuiltin::classof( Value const* obj )
 //
 
 BinBuiltin::BinBuiltin( const Type::Ptr& type )
-: StringifyBuiltin( type, info, classid() )
+: StringifyBuiltin( type, classid() )
 {
 }
 
@@ -859,9 +853,8 @@ u1 BinBuiltin::classof( Value const* obj )
 // OperatorBuiltin
 //
 
-OperatorBuiltin::OperatorBuiltin(
-    const Type::Ptr& type, const Annotation& info, const Value::ID id )
-: Builtin( type, info, id )
+OperatorBuiltin::OperatorBuiltin( const Type::Ptr& type, const Value::ID id )
+: Builtin( type, id )
 {
 }
 
@@ -876,8 +869,8 @@ u1 OperatorBuiltin::classof( Value const* obj )
 //
 
 ArithmeticBuiltin::ArithmeticBuiltin(
-    const Type::Ptr& type, const Annotation& info, const Value::ID id )
-: OperatorBuiltin( type, info, id )
+    const Type::Ptr& type, const Value::ID id )
+: OperatorBuiltin( type, id )
 {
 }
 
@@ -908,7 +901,7 @@ u1 ArithmeticBuiltin::classof( Value const* obj )
 //
 
 AdduBuiltin::AdduBuiltin( const Type::Ptr& type )
-: ArithmeticBuiltin( type, info, classid() )
+: ArithmeticBuiltin( type, classid() )
 {
 }
 
@@ -924,7 +917,7 @@ u1 AdduBuiltin::classof( Value const* obj )
 //
 
 AddsBuiltin::AddsBuiltin( const Type::Ptr& type )
-: ArithmeticBuiltin( type, info, classid() )
+: ArithmeticBuiltin( type, classid() )
 {
 }
 
@@ -940,7 +933,7 @@ u1 AddsBuiltin::classof( Value const* obj )
 //
 
 SubuBuiltin::SubuBuiltin( const Type::Ptr& type )
-: ArithmeticBuiltin( type, info, classid() )
+: ArithmeticBuiltin( type, classid() )
 {
 }
 
@@ -956,7 +949,7 @@ u1 SubuBuiltin::classof( Value const* obj )
 //
 
 SubsBuiltin::SubsBuiltin( const Type::Ptr& type )
-: ArithmeticBuiltin( type, info, classid() )
+: ArithmeticBuiltin( type, classid() )
 {
 }
 
@@ -972,7 +965,7 @@ u1 SubsBuiltin::classof( Value const* obj )
 //
 
 MuluBuiltin::MuluBuiltin( const Type::Ptr& type )
-: ArithmeticBuiltin( type, info, classid() )
+: ArithmeticBuiltin( type, classid() )
 {
 }
 
@@ -988,7 +981,7 @@ u1 MuluBuiltin::classof( Value const* obj )
 //
 
 MulsBuiltin::MulsBuiltin( const Type::Ptr& type )
-: ArithmeticBuiltin( type, info, classid() )
+: ArithmeticBuiltin( type, classid() )
 {
 }
 
@@ -1003,9 +996,8 @@ u1 MulsBuiltin::classof( Value const* obj )
 // CompareBuiltin
 //
 
-CompareBuiltin::CompareBuiltin(
-    const Type::Ptr& type, const Annotation& info, const Value::ID id )
-: OperatorBuiltin( type, info, id )
+CompareBuiltin::CompareBuiltin( const Type::Ptr& type, const Value::ID id )
+: OperatorBuiltin( type, id )
 {
 }
 
@@ -1048,7 +1040,7 @@ u1 CompareBuiltin::classof( Value const* obj )
 //
 
 LesuBuiltin::LesuBuiltin( const Type::Ptr& type )
-: CompareBuiltin( type, info, classid() )
+: CompareBuiltin( type, classid() )
 {
 }
 
@@ -1064,7 +1056,7 @@ u1 LesuBuiltin::classof( Value const* obj )
 //
 
 LessBuiltin::LessBuiltin( const Type::Ptr& type )
-: CompareBuiltin( type, info, classid() )
+: CompareBuiltin( type, classid() )
 {
 }
 
@@ -1080,7 +1072,7 @@ u1 LessBuiltin::classof( Value const* obj )
 //
 
 LequBuiltin::LequBuiltin( const Type::Ptr& type )
-: CompareBuiltin( type, info, classid() )
+: CompareBuiltin( type, classid() )
 {
 }
 
@@ -1096,7 +1088,7 @@ u1 LequBuiltin::classof( Value const* obj )
 //
 
 LeqsBuiltin::LeqsBuiltin( const Type::Ptr& type )
-: CompareBuiltin( type, info, classid() )
+: CompareBuiltin( type, classid() )
 {
 }
 
@@ -1112,7 +1104,7 @@ u1 LeqsBuiltin::classof( Value const* obj )
 //
 
 GreuBuiltin::GreuBuiltin( const Type::Ptr& type )
-: CompareBuiltin( type, info, classid() )
+: CompareBuiltin( type, classid() )
 {
 }
 
@@ -1128,7 +1120,7 @@ u1 GreuBuiltin::classof( Value const* obj )
 //
 
 GresBuiltin::GresBuiltin( const Type::Ptr& type )
-: CompareBuiltin( type, info, classid() )
+: CompareBuiltin( type, classid() )
 {
 }
 
@@ -1144,7 +1136,7 @@ u1 GresBuiltin::classof( Value const* obj )
 //
 
 GequBuiltin::GequBuiltin( const Type::Ptr& type )
-: CompareBuiltin( type, info, classid() )
+: CompareBuiltin( type, classid() )
 {
 }
 
@@ -1160,7 +1152,7 @@ u1 GequBuiltin::classof( Value const* obj )
 //
 
 GeqsBuiltin::GeqsBuiltin( const Type::Ptr& type )
-: CompareBuiltin( type, info, classid() )
+: CompareBuiltin( type, classid() )
 {
 }
 
@@ -1175,9 +1167,8 @@ u1 GeqsBuiltin::classof( Value const* obj )
 // BitBuiltin
 //
 
-BitBuiltin::BitBuiltin(
-    const Type::Ptr& type, const Annotation& info, const Value::ID id )
-: Builtin( type, info, id )
+BitBuiltin::BitBuiltin( const Type::Ptr& type, const Value::ID id )
+: Builtin( type, id )
 {
 }
 
@@ -1195,7 +1186,7 @@ u1 BitBuiltin::classof( Value const* obj )
 //
 
 ZextBuiltin::ZextBuiltin( const Type::Ptr& type )
-: BitBuiltin( type, info, classid() )
+: BitBuiltin( type, classid() )
 {
 }
 
@@ -1220,7 +1211,7 @@ u1 ZextBuiltin::classof( Value const* obj )
 //
 
 SextBuiltin::SextBuiltin( const Type::Ptr& type )
-: BitBuiltin( type, info, classid() )
+: BitBuiltin( type, classid() )
 {
 }
 
@@ -1244,7 +1235,7 @@ u1 SextBuiltin::classof( Value const* obj )
 //
 
 TruncBuiltin::TruncBuiltin( const Type::Ptr& type )
-: BitBuiltin( type, info, classid() )
+: BitBuiltin( type, classid() )
 {
 }
 
@@ -1268,7 +1259,7 @@ u1 TruncBuiltin::classof( Value const* obj )
 //
 
 ShlBuiltin::ShlBuiltin( const Type::Ptr& type )
-: BitBuiltin( type, info, classid() )
+: BitBuiltin( type, classid() )
 {
 }
 
@@ -1296,7 +1287,7 @@ u1 ShlBuiltin::classof( Value const* obj )
 //
 
 ShrBuiltin::ShrBuiltin( const Type::Ptr& type )
-: BitBuiltin( type, info, classid() )
+: BitBuiltin( type, classid() )
 {
 }
 
@@ -1325,7 +1316,7 @@ u1 ShrBuiltin::classof( Value const* obj )
 //
 
 AshrBuiltin::AshrBuiltin( const Type::Ptr& type )
-: BitBuiltin( type, info, classid() )
+: BitBuiltin( type, classid() )
 {
 }
 
@@ -1354,7 +1345,7 @@ u1 AshrBuiltin::classof( Value const* obj )
 //
 
 ClzBuiltin::ClzBuiltin( const Type::Ptr& type )
-: BitBuiltin( type, info, classid() )
+: BitBuiltin( type, classid() )
 {
 }
 
@@ -1378,7 +1369,7 @@ u1 ClzBuiltin::classof( Value const* obj )
 //
 
 CloBuiltin::CloBuiltin( const Type::Ptr& type )
-: BitBuiltin( type, info, classid() )
+: BitBuiltin( type, classid() )
 {
 }
 
@@ -1402,7 +1393,7 @@ u1 CloBuiltin::classof( Value const* obj )
 //
 
 ClsBuiltin::ClsBuiltin( const Type::Ptr& type )
-: BitBuiltin( type, info, classid() )
+: BitBuiltin( type, classid() )
 {
 }
 

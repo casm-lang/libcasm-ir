@@ -196,6 +196,8 @@ namespace libcasm_ir
 
         Value( const std::string& name, const Type::Ptr& type, ID id );
 
+        Value( const std::string& name, ID id );
+
         virtual ~Value( void ) = default;
 
         virtual std::string name( void ) const = 0;
@@ -290,7 +292,7 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< ValueList >;
 
         ValueList( void )
-        : Value( "value_list", libstdhl::get< VoidType >(), Value::VALUE_LIST )
+        : Value( "value_list", Value::VALUE_LIST )
         {
         }
 

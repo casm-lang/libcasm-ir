@@ -275,10 +275,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< OperatorInstruction >;
 
         OperatorInstruction( const Type::Ptr& type,
-            const std::vector< Value::Ptr >& operands, const Annotation& info,
+            const std::vector< Value::Ptr >& operands,
             const Value::ID id = classid() );
-
-        const Type::ID resolved( void ) const;
 
         static inline Value::ID classid( void )
         {
@@ -286,9 +284,6 @@ namespace libcasm_ir
         }
 
         static u1 classof( Value const* obj );
-
-      private:
-        Type::ID m_resolved;
     };
 
     class ArithmeticInstruction : public OperatorInstruction
@@ -297,7 +292,7 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< ArithmeticInstruction >;
 
         ArithmeticInstruction( const std::vector< Value::Ptr >& operands,
-            const Annotation& info, const Value::ID id = classid() );
+            const Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {
@@ -313,7 +308,7 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< CompareInstruction >;
 
         CompareInstruction( const std::vector< Value::Ptr >& operands,
-            const Annotation& info, const Value::ID id = classid() );
+            const Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {
@@ -329,7 +324,7 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< LogicalInstruction >;
 
         LogicalInstruction( const std::vector< Value::Ptr >& operands,
-            const Annotation& info, const Value::ID id = classid() );
+            const Value::ID id = classid() );
 
         static inline Value::ID classid( void )
         {

@@ -26,7 +26,7 @@
 using namespace libcasm_ir;
 
 Specification::Specification( const std::string& name )
-: Value( name, libstdhl::get< VoidType >(), classid() )
+: Value( name, classid() )
 {
 }
 

@@ -31,6 +31,13 @@ using namespace libcasm_ir;
 
 static constexpr const char* undef_str = "undef";
 
+static const auto VOID = libstdhl::get< VoidType >();
+static const auto BOOLEAN = libstdhl::get< BooleanType >();
+static const auto INTEGER = libstdhl::get< IntegerType >();
+static const auto STRING = libstdhl::get< StringType >();
+static const auto FLOATING = libstdhl::get< FloatingType >();
+static const auto RATIONAL = libstdhl::get< RationalType >();
+
 Constant::Constant( const std::string& name, const Type::Ptr& type,
     const libstdhl::Type& data, const Value::Ptr& value, u1 defined,
     u1 symbolic, Value::ID id )
@@ -43,8 +50,7 @@ Constant::Constant( const std::string& name, const Type::Ptr& type,
 }
 
 Constant::Constant( void )
-: Constant( "", libstdhl::get< VoidType >(), libstdhl::Type(), nullptr, false,
-      false, classid() )
+: Constant( "", VOID, libstdhl::Type(), nullptr, false, false, classid() )
 {
 }
 
@@ -256,8 +262,7 @@ Constant Constant::undef( const Type::Ptr& type )
 //
 
 VoidConstant::VoidConstant( void )
-: Constant( "", libstdhl::get< VoidType >(), libstdhl::Type(), nullptr, true,
-      false, classid() )
+: Constant( "", VOID, libstdhl::Type(), nullptr, true, false, classid() )
 {
 }
 
@@ -281,8 +286,8 @@ u1 VoidConstant::classof( Value const* obj )
 //
 
 BooleanConstant::BooleanConstant( u1 value, u1 defined, u1 symbolic )
-: Constant( "", libstdhl::get< BooleanType >(), libstdhl::Type( value, 1 ),
-      nullptr, defined, symbolic, classid() )
+: Constant( "", BOOLEAN, libstdhl::Type( value, 1 ), nullptr, defined, symbolic,
+      classid() )
 {
 }
 
@@ -321,15 +326,15 @@ u1 BooleanConstant::classof( Value const* obj )
 //
 
 IntegerConstant::IntegerConstant( i64 value, u1 defined, u1 symbolic )
-: Constant( "", libstdhl::get< IntegerType >(), libstdhl::Integer( value ),
-      nullptr, defined, symbolic, classid() )
+: Constant( "", INTEGER, libstdhl::Integer( value ), nullptr, defined, symbolic,
+      classid() )
 {
 }
 
 IntegerConstant::IntegerConstant(
     const std::string& value, const libstdhl::Type::Radix radix )
-: Constant( "", libstdhl::get< IntegerType >(),
-      libstdhl::Integer( value, radix ), nullptr, true, false, classid() )
+: Constant( "", INTEGER, libstdhl::Integer( value, radix ), nullptr, true,
+      false, classid() )
 {
     // TODO: PPA: force CASM integer string digit separator usage as
     // group of
@@ -337,14 +342,12 @@ IntegerConstant::IntegerConstant(
 }
 
 IntegerConstant::IntegerConstant( const BitConstant& value )
-: Constant( "", libstdhl::get< IntegerType >(), value.value(), nullptr, true,
-      false, classid() )
+: Constant( "", INTEGER, value.value(), nullptr, true, false, classid() )
 {
 }
 
 IntegerConstant::IntegerConstant( const libstdhl::Integer& value )
-: Constant( "", libstdhl::get< IntegerType >(), value, nullptr, true, false,
-      classid() )
+: Constant( "", INTEGER, value, nullptr, true, false, classid() )
 {
 }
 
@@ -481,8 +484,8 @@ u1 BitConstant::classof( Value const* obj )
 
 StringConstant::StringConstant(
     const std::string& value, u1 defined, u1 symbolic )
-: Constant( value, libstdhl::get< StringType >(), libstdhl::Type(), nullptr,
-      defined, symbolic, classid() )
+: Constant(
+      value, STRING, libstdhl::Type(), nullptr, defined, symbolic, classid() )
 {
 }
 
@@ -522,14 +525,14 @@ u1 StringConstant::classof( Value const* obj )
 
 FloatingConstant::FloatingConstant(
     const double value, u1 defined, u1 symbolic )
-: Constant( "", libstdhl::get< FloatingType >(),
-      libstdhl::FloatingPoint( value ), nullptr, defined, symbolic, classid() )
+: Constant( "", FLOATING, libstdhl::FloatingPoint( value ), nullptr, defined,
+      symbolic, classid() )
 {
 }
 
 FloatingConstant::FloatingConstant( const std::string& value )
-: Constant( "", libstdhl::get< FloatingType >(),
-      libstdhl::FloatingPoint( value ), nullptr, true, false, classid() )
+: Constant( "", FLOATING, libstdhl::FloatingPoint( value ), nullptr, true,
+      false, classid() )
 {
 }
 
@@ -571,8 +574,8 @@ u1 FloatingConstant::classof( Value const* obj )
 
 RationalConstant::RationalConstant(
     const std::string& value, u1 defined, u1 symbolic )
-: Constant( "", libstdhl::get< RationalType >(), libstdhl::Rational( value ),
-      nullptr, defined, symbolic, classid() )
+: Constant( "", RATIONAL, libstdhl::Rational( value ), nullptr, defined,
+      symbolic, classid() )
 {
 }
 
@@ -582,8 +585,7 @@ RationalConstant::RationalConstant( const std::string& value )
 }
 
 RationalConstant::RationalConstant( const libstdhl::Rational& value )
-: Constant( "", libstdhl::get< RationalType >(), value, nullptr, true, false,
-      classid() )
+: Constant( "", RATIONAL, value, nullptr, true, false, classid() )
 {
 }
 
