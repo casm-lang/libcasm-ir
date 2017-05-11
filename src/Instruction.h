@@ -39,25 +39,11 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< Instruction >;
 
         Instruction( const Type::Ptr& type, const Value::ID id,
-            const Constant* constants, const std::size_t size )
-        : User( "", type, id )
-        , m_size( size )
-        , m_constants( constants )
-        {
-        }
+            const Constant* constants, const std::size_t size );
 
         Instruction( const Type::Ptr& type,
             const Value::ID id,
-            const std::vector< Value::Ptr >& operands = {} )
-        : User( "", type, id )
-        , m_size( operands.size() )
-        , m_constants( nullptr )
-        {
-            for( auto operand : operands )
-            {
-                add( operand );
-            }
-        }
+            const std::vector< Value::Ptr >& operands = {} );
 
         void add( const Value::Ptr& operand );
 
@@ -372,6 +358,8 @@ namespace libcasm_ir
 
         InvInstruction( const Value::Ptr& lhs );
 
+        InvInstruction( const Constant* operands, const std::size_t size );
+
         void accept( Visitor& visitor ) override final;
 
         static const Annotation info;
@@ -412,6 +400,8 @@ namespace libcasm_ir
 
         SubInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
+        SubInstruction( const Constant* operands, const std::size_t size );
+
         void accept( Visitor& visitor ) override final;
 
         static const Annotation info;
@@ -430,6 +420,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< MulInstruction >;
 
         MulInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
+
+        MulInstruction( const Constant* operands, const std::size_t size );
 
         void accept( Visitor& visitor ) override final;
 
@@ -450,6 +442,8 @@ namespace libcasm_ir
 
         ModInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
+        ModInstruction( const Constant* operands, const std::size_t size );
+
         void accept( Visitor& visitor ) override final;
 
         static const Annotation info;
@@ -469,6 +463,8 @@ namespace libcasm_ir
 
         DivInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
+        DivInstruction( const Constant* operands, const std::size_t size );
+
         void accept( Visitor& visitor ) override final;
 
         static const Annotation info;
@@ -487,6 +483,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< PowInstruction >;
 
         PowInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
+
+        PowInstruction( const Constant* operands, const std::size_t size );
 
         void accept( Visitor& visitor ) override final;
 
@@ -511,6 +509,8 @@ namespace libcasm_ir
 
         AndInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
+        AndInstruction( const Constant* operands, const std::size_t size );
+
         void accept( Visitor& visitor ) override final;
 
         static const Annotation info;
@@ -529,6 +529,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< XorInstruction >;
 
         XorInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
+
+        XorInstruction( const Constant* operands, const std::size_t size );
 
         void accept( Visitor& visitor ) override final;
 
@@ -549,6 +551,8 @@ namespace libcasm_ir
 
         OrInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
+        OrInstruction( const Constant* operands, const std::size_t size );
+
         void accept( Visitor& visitor ) override final;
 
         static const Annotation info;
@@ -568,6 +572,8 @@ namespace libcasm_ir
 
         ImpInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
+        ImpInstruction( const Constant* operands, const std::size_t size );
+
         void accept( Visitor& visitor ) override final;
 
         static const Annotation info;
@@ -586,6 +592,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< NotInstruction >;
 
         NotInstruction( const Value::Ptr& lhs );
+
+        NotInstruction( const Constant* operands, const std::size_t size );
 
         void accept( Visitor& visitor ) override final;
 
@@ -631,6 +639,8 @@ namespace libcasm_ir
 
         NeqInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
+        NeqInstruction( const Constant* operands, const std::size_t size );
+
         void accept( Visitor& visitor ) override final;
 
         static const Annotation info;
@@ -649,6 +659,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< LthInstruction >;
 
         LthInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
+
+        LthInstruction( const Constant* operands, const std::size_t size );
 
         void accept( Visitor& visitor ) override final;
 
@@ -669,6 +681,8 @@ namespace libcasm_ir
 
         LeqInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
+        LeqInstruction( const Constant* operands, const std::size_t size );
+
         void accept( Visitor& visitor ) override final;
 
         static const Annotation info;
@@ -688,6 +702,8 @@ namespace libcasm_ir
 
         GthInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
+        GthInstruction( const Constant* operands, const std::size_t size );
+
         void accept( Visitor& visitor ) override final;
 
         static const Annotation info;
@@ -706,6 +722,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< GeqInstruction >;
 
         GeqInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
+
+        GeqInstruction( const Constant* operands, const std::size_t size );
 
         void accept( Visitor& visitor ) override final;
 

@@ -26,11 +26,6 @@
 
 using namespace libcasm_ir;
 
-TEST( libcasm_ir__instruction_imp, create_invalid )
-{
-    EXPECT_THROW( { ImpInstruction i( 0, 0 ); }, std::domain_error );
-}
-
 TEST( libcasm_ir__instruction_imp, make_and_get )
 {
     {

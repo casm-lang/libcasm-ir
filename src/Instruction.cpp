@@ -34,9 +34,32 @@ using namespace libcasm_ir;
 static const auto VOID = libstdhl::get< VoidType >();
 static const auto BOOLEAN = libstdhl::get< BooleanType >();
 
+static const std::string EMPTY = "";
+
 //
 // Instruction
 //
+
+Instruction::Instruction( const Type::Ptr& type, const Value::ID id,
+    const Constant* constants, const std::size_t size )
+: User( EMPTY, type, id )
+, m_size( size )
+, m_constants( constants )
+{
+}
+
+Instruction::Instruction( const Type::Ptr& type,
+    const Value::ID id,
+    const std::vector< Value::Ptr >& operands )
+: User( EMPTY, type, id )
+, m_size( operands.size() )
+, m_constants( nullptr )
+{
+    for( auto operand : operands )
+    {
+        add( operand );
+    }
+}
 
 void Instruction::add( const Value::Ptr& operand )
 {
@@ -492,6 +515,13 @@ InvInstruction::InvInstruction( const Value::Ptr& lhs )
 {
 }
 
+InvInstruction::InvInstruction(
+    const Constant* constants, const std::size_t size )
+: ArithmeticInstruction( constants ? constants[ 0 ].type().ptr_result() : VOID,
+      classid(), constants, size )
+{
+}
+
 void InvInstruction::accept( Visitor& visitor )
 {
     visitor.visit( *this );
@@ -533,8 +563,8 @@ AddInstruction::AddInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 
 AddInstruction::AddInstruction(
     const Constant* constants, const std::size_t size )
-: ArithmeticInstruction(
-      constants[ 0 ].type().ptr_result(), classid(), constants, size )
+: ArithmeticInstruction( constants ? constants[ 0 ].type().ptr_result() : VOID,
+      classid(), constants, size )
 {
 }
 
@@ -577,6 +607,13 @@ SubInstruction::SubInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
+SubInstruction::SubInstruction(
+    const Constant* constants, const std::size_t size )
+: ArithmeticInstruction( constants ? constants[ 0 ].type().ptr_result() : VOID,
+      classid(), constants, size )
+{
+}
+
 void SubInstruction::accept( Visitor& visitor )
 {
     visitor.visit( *this );
@@ -608,6 +645,13 @@ u1 SubInstruction::classof( Value const* obj )
 
 MulInstruction::MulInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 : ArithmeticInstruction( classid(), { lhs, rhs } )
+{
+}
+
+MulInstruction::MulInstruction(
+    const Constant* constants, const std::size_t size )
+: ArithmeticInstruction( constants ? constants[ 0 ].type().ptr_result() : VOID,
+      classid(), constants, size )
 {
 }
 
@@ -645,6 +689,13 @@ ModInstruction::ModInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
+ModInstruction::ModInstruction(
+    const Constant* constants, const std::size_t size )
+: ArithmeticInstruction( constants ? constants[ 0 ].type().ptr_result() : VOID,
+      classid(), constants, size )
+{
+}
+
 void ModInstruction::accept( Visitor& visitor )
 {
     visitor.visit( *this );
@@ -671,6 +722,13 @@ u1 ModInstruction::classof( Value const* obj )
 
 DivInstruction::DivInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 : ArithmeticInstruction( classid(), { lhs, rhs } )
+{
+}
+
+DivInstruction::DivInstruction(
+    const Constant* constants, const std::size_t size )
+: ArithmeticInstruction( constants ? constants[ 0 ].type().ptr_result() : VOID,
+      classid(), constants, size )
 {
 }
 
@@ -705,6 +763,13 @@ u1 DivInstruction::classof( Value const* obj )
 
 PowInstruction::PowInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 : ArithmeticInstruction( classid(), { lhs, rhs } )
+{
+}
+
+PowInstruction::PowInstruction(
+    const Constant* constants, const std::size_t size )
+: ArithmeticInstruction( constants ? constants[ 0 ].type().ptr_result() : VOID,
+      classid(), constants, size )
 {
 }
 
@@ -748,6 +813,13 @@ AndInstruction::AndInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
+AndInstruction::AndInstruction(
+    const Constant* constants, const std::size_t size )
+: LogicalInstruction( constants ? constants[ 0 ].type().ptr_result() : VOID,
+      classid(), constants, size )
+{
+}
+
 void AndInstruction::accept( Visitor& visitor )
 {
     visitor.visit( *this );
@@ -782,6 +854,13 @@ XorInstruction::XorInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
+XorInstruction::XorInstruction(
+    const Constant* constants, const std::size_t size )
+: LogicalInstruction( constants ? constants[ 0 ].type().ptr_result() : VOID,
+      classid(), constants, size )
+{
+}
+
 void XorInstruction::accept( Visitor& visitor )
 {
     visitor.visit( *this );
@@ -810,6 +889,13 @@ u1 XorInstruction::classof( Value const* obj )
 //
 // Or Instruction
 //
+
+OrInstruction::OrInstruction(
+    const Constant* constants, const std::size_t size )
+: LogicalInstruction( constants ? constants[ 0 ].type().ptr_result() : VOID,
+      classid(), constants, size )
+{
+}
 
 OrInstruction::OrInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 : LogicalInstruction( classid(), { lhs, rhs } )
@@ -850,6 +936,13 @@ ImpInstruction::ImpInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
+ImpInstruction::ImpInstruction(
+    const Constant* constants, const std::size_t size )
+: LogicalInstruction( constants ? constants[ 0 ].type().ptr_result() : VOID,
+      classid(), constants, size )
+{
+}
+
 void ImpInstruction::accept( Visitor& visitor )
 {
     visitor.visit( *this );
@@ -876,6 +969,13 @@ u1 ImpInstruction::classof( Value const* obj )
 
 NotInstruction::NotInstruction( const Value::Ptr& lhs )
 : LogicalInstruction( classid(), { lhs } )
+{
+}
+
+NotInstruction::NotInstruction(
+    const Constant* constants, const std::size_t size )
+: LogicalInstruction( constants ? constants[ 0 ].type().ptr_result() : VOID,
+      classid(), constants, size )
 {
 }
 
@@ -983,6 +1083,12 @@ NeqInstruction::NeqInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
+NeqInstruction::NeqInstruction(
+    const Constant* constants, const std::size_t size )
+: CompareInstruction( classid(), constants, size )
+{
+}
+
 void NeqInstruction::accept( Visitor& visitor )
 {
     visitor.visit( *this );
@@ -1042,6 +1148,12 @@ LthInstruction::LthInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
+LthInstruction::LthInstruction(
+    const Constant* constants, const std::size_t size )
+: CompareInstruction( classid(), constants, size )
+{
+}
+
 void LthInstruction::accept( Visitor& visitor )
 {
     visitor.visit( *this );
@@ -1068,6 +1180,12 @@ u1 LthInstruction::classof( Value const* obj )
 
 LeqInstruction::LeqInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 : CompareInstruction( classid(), { lhs, rhs } )
+{
+}
+
+LeqInstruction::LeqInstruction(
+    const Constant* constants, const std::size_t size )
+: CompareInstruction( classid(), constants, size )
 {
 }
 
@@ -1100,6 +1218,12 @@ GthInstruction::GthInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 {
 }
 
+GthInstruction::GthInstruction(
+    const Constant* constants, const std::size_t size )
+: CompareInstruction( classid(), constants, size )
+{
+}
+
 void GthInstruction::accept( Visitor& visitor )
 {
     visitor.visit( *this );
@@ -1123,6 +1247,12 @@ u1 GthInstruction::classof( Value const* obj )
 //
 // Geq Instruction
 //
+
+GeqInstruction::GeqInstruction(
+    const Constant* constants, const std::size_t size )
+: CompareInstruction( classid(), constants, size )
+{
+}
 
 GeqInstruction::GeqInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 : CompareInstruction( classid(), { lhs, rhs } )
