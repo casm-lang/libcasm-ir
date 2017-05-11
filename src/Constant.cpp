@@ -402,8 +402,8 @@ u1 IntegerConstant::classof( Value const* obj )
 
 BitConstant::BitConstant(
     const BitType::Ptr& type, u64 value, u1 defined, u1 symbolic )
-: Constant( "", type, libstdhl::Type( value, type->bitsize() ), nullptr,
-      defined, symbolic, classid() )
+: Constant(
+      "", type, libstdhl::Type( value ), nullptr, defined, symbolic, classid() )
 {
     if( type->bitsize() > BitType::SizeMax )
     {
@@ -415,8 +415,8 @@ BitConstant::BitConstant(
 
 BitConstant::BitConstant( const BitType::Ptr& type, const std::string& value,
     const libstdhl::Type::Radix radix )
-: Constant( "", type, libstdhl::Type( value, type->bitsize(), false, radix ),
-      nullptr, true, false, classid() )
+: Constant( "", type, libstdhl::Type( value, false, radix ), nullptr, true,
+      false, classid() )
 {
     if( type->bitsize() > BitType::SizeMax )
     {

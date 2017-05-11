@@ -54,11 +54,8 @@ TEST( libcasm_ir__transform_BranchEliminationPass, case_true )
     auto stmtF = lbl_F->add< TrivialStatement >();
     stmtF->add< SkipInstruction >();
 
-    auto inst = br0->add< SelectInstruction >( val_T );
-    inst->add( val_T );
-    inst->add( lbl_T );
-    inst->add( val_F );
-    inst->add( lbl_F );
+    auto inst = br0->add< SelectInstruction >( val_T,
+        std::initializer_list< Value::Ptr >{ val_T, lbl_T, val_F, lbl_F } );
 
     check.visit( *rule );
     EXPECT_EQ( check.errors(), 0 );
@@ -106,11 +103,8 @@ TEST( libcasm_ir__transform_BranchEliminationPass, case_false )
     auto stmtF = lbl_F->add< TrivialStatement >();
     stmtF->add< SkipInstruction >();
 
-    auto inst = br0->add< SelectInstruction >( val_F );
-    inst->add( val_T );
-    inst->add( lbl_T );
-    inst->add( val_F );
-    inst->add( lbl_F );
+    auto inst = br0->add< SelectInstruction >( val_F,
+        std::initializer_list< Value::Ptr >{ val_T, lbl_T, val_F, lbl_F } );
 
     check.visit( *rule );
     EXPECT_EQ( check.errors(), 0 );
@@ -154,9 +148,8 @@ TEST( libcasm_ir__transform_BranchEliminationPass, case_true_to_skip )
     auto stmtT = lbl_T->add< TrivialStatement >();
     stmtT->add< SkipInstruction >();
 
-    auto inst = br0->add< SelectInstruction >( val_T );
-    inst->add( val_T );
-    inst->add( lbl_T );
+    auto inst = br0->add< SelectInstruction >(
+        val_T, std::initializer_list< Value::Ptr >{ val_T, lbl_T } );
 
     check.visit( *rule );
     EXPECT_EQ( check.errors(), 0 );
@@ -200,9 +193,8 @@ TEST( libcasm_ir__transform_BranchEliminationPass, case_false_to_skip )
     auto stmtT = lbl_T->add< TrivialStatement >();
     stmtT->add< SkipInstruction >();
 
-    auto inst = br0->add< SelectInstruction >( val_F );
-    inst->add( val_T );
-    inst->add( lbl_T );
+    auto inst = br0->add< SelectInstruction >(
+        val_F, std::initializer_list< Value::Ptr >{ val_T, lbl_T } );
 
     check.visit( *rule );
     EXPECT_EQ( check.errors(), 0 );

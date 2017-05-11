@@ -100,7 +100,7 @@ namespace libcasm_ir
 
         const Type& result( void ) const;
 
-        Type::Ptr ptr_result( void );
+        Type::Ptr ptr_result( void ) const;
 
         const Types& arguments( void ) const;
 
@@ -150,7 +150,7 @@ namespace libcasm_ir
         template < typename T >
         inline typename T::Ptr ptr_this( void ) const
         {
-            return std::static_pointer_cast< T >( shared_from_this() );
+            return std::const_pointer_cast< T >( shared_from_this() );
         }
 
         std::string m_name;

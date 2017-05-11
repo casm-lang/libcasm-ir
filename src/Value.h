@@ -247,6 +247,12 @@ namespace libcasm_ir
             return std::static_pointer_cast< T >( shared_from_this() );
         }
 
+        template < typename T >
+        inline typename T::Ptr ptr_this( void ) const
+        {
+            return std::const_pointer_cast< T >( shared_from_this() );
+        }
+
         std::string _name( void ) const;
 
       private:

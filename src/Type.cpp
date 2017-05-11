@@ -57,7 +57,7 @@ const Type& Type::result( void ) const
     return *this;
 }
 
-Type::Ptr Type::ptr_result( void )
+Type::Ptr Type::ptr_result( void ) const
 {
     if( isRelation() )
     {
