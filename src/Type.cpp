@@ -45,13 +45,9 @@ Type::ID Type::id( void ) const
 
 const Type& Type::result( void ) const
 {
-    if( isRelation() )
+    if( isRelation() or isRange() )
     {
         return *m_result.get();
-    }
-    else if( isRange() )
-    {
-        return *m_arguments[ 0 ].get();
     }
 
     return *this;
@@ -59,13 +55,9 @@ const Type& Type::result( void ) const
 
 Type::Ptr Type::ptr_result( void ) const
 {
-    if( isRelation() )
+    if( isRelation() or isRange() )
     {
         return m_result;
-    }
-    else if( isRange() )
-    {
-        return m_arguments[ 0 ];
     }
 
     return ptr_this< Type >();
@@ -685,14 +677,14 @@ RangeType::RangeType( const Range::Ptr& range )
 : PrimitiveType( Type::RANGE )
 , m_range( range )
 {
-    m_arguments.add( range->ptr_type() );
+    m_result = range->ptr_type();
 }
 
 RangeType::RangeType( const Type::Ptr& type )
 : PrimitiveType( Type::RANGE )
 , m_range( nullptr )
 {
-    m_arguments.add( type );
+    m_result = type;
 }
 
 Range& RangeType::range( void ) const
@@ -714,12 +706,12 @@ void RangeType::setRange( const Range::Ptr& range )
 
 Type& RangeType::type( void ) const
 {
-    return *m_arguments[ 0 ].get();
+    return *m_result;
 }
 
 Type::Ptr RangeType::ptr_type( void ) const
 {
-    return m_arguments[ 0 ];
+    return m_result;
 }
 
 std::string RangeType::name( void ) const

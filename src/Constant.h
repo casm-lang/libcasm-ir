@@ -340,11 +340,16 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< RangeConstant >;
 
       private:
-        RangeConstant( const RangeType::Ptr& type, u1 defined, u1 symbolic,
-            Value::ID id = classid() );
+        RangeConstant( const RangeType::Ptr& type, const Range::Ptr& value,
+            u1 defined, u1 symbolic, Value::ID id = classid() );
 
       public:
+        RangeConstant( const RangeType::Ptr& type, const Range::Ptr& value );
+
         RangeConstant( const RangeType::Ptr& type );
+
+        RangeConstant( const RangeType::Ptr& type, const Constant& from,
+            const Constant& to );
 
         Range::Ptr value( void ) const;
 

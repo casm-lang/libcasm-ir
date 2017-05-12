@@ -28,12 +28,16 @@
 
 namespace libcasm_ir
 {
+    class Constant;
+
     class Range final : public Value
     {
       public:
         using Ptr = std::shared_ptr< Range >;
 
         Range( const Value::Ptr& from, const Value::Ptr& to );
+
+        Range( const Constant& from, const Constant& to );
 
         ~Range( void ) = default;
 

@@ -690,14 +690,27 @@ u1 EnumerationConstant::classof( Value const* obj )
 // Range Constant
 //
 
+RangeConstant::RangeConstant( const RangeType::Ptr& type,
+    const Range::Ptr& value, u1 defined, u1 symbolic, Value::ID id )
+: Constant( type, libstdhl::Type(), value, defined, symbolic, id )
+{
+}
+
 RangeConstant::RangeConstant(
-    const RangeType::Ptr& type, u1 defined, u1 symbolic, Value::ID id )
-: Constant( type, libstdhl::Type(), nullptr, defined, symbolic, id )
+    const RangeType::Ptr& type, const Range::Ptr& value )
+: RangeConstant( type, value, true, false )
 {
 }
 
 RangeConstant::RangeConstant( const RangeType::Ptr& type )
-: RangeConstant( type, true, false )
+: RangeConstant( type, type->ptr_range() ? type->ptr_range() : nullptr,
+      type->ptr_range() ? true : false, false )
+{
+}
+
+RangeConstant::RangeConstant(
+    const RangeType::Ptr& type, const Constant& from, const Constant& to )
+: RangeConstant( type, libstdhl::make_unique< Range >( from, to ), true, false )
 {
 }
 

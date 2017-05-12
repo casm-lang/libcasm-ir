@@ -478,6 +478,18 @@ namespace libcasm_ir
     };
 }
 
+namespace std
+{
+    template <>
+    struct hash< libcasm_ir::Type::ID >
+    {
+        inline size_t operator()( const libcasm_ir::Type::ID value ) const
+        {
+            return static_cast< size_t >( value );
+        }
+    };
+}
+
 #endif // _LIB_CASMIR_TYPE_H_
 
 //

@@ -23,6 +23,8 @@
 
 #include "Range.h"
 
+#include "Constant.h"
+
 using namespace libcasm_ir;
 
 Range::Range( const Value::Ptr& from, const Value::Ptr& to )
@@ -38,6 +40,12 @@ Range::Range( const Value::Ptr& from, const Value::Ptr& to )
             + to->name()
             + "'" );
     }
+}
+
+Range::Range( const Constant& from, const Constant& to )
+: Range( libstdhl::make_unique< Constant >( from ),
+      libstdhl::make_unique< Constant >( to ) )
+{
 }
 
 Value::Ptr Range::from( void ) const
