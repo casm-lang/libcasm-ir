@@ -690,8 +690,8 @@ u1 EnumerationConstant::classof( Value const* obj )
 // Range Constant
 //
 
-RangeConstant::RangeConstant( const RangeType::Ptr& type,
-    const Range::Ptr& value, u1 defined, u1 symbolic, Value::ID id )
+RangeConstant::RangeConstant( const Type::Ptr& type, const Range::Ptr& value,
+    u1 defined, u1 symbolic, Value::ID id )
 : Constant( type, libstdhl::Type(), value, defined, symbolic, id )
 {
 }
