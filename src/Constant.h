@@ -365,7 +365,7 @@ namespace libcasm_ir
 
         static inline Value::ID classid( void )
         {
-            return Value::ENUMERATION_CONSTANT;
+            return Value::RANGE_CONSTANT;
         }
 
         static u1 classof( Value const* obj );

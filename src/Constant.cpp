@@ -111,6 +111,10 @@ std::string Constant::name( void ) const
         {
             return static_cast< const EnumerationConstant* >( this )->name();
         }
+        case Value::RANGE_CONSTANT:
+        {
+            return static_cast< const RangeConstant* >( this )->name();
+        }
         case Value::RULE_REFERENCE_CONSTANT:
         {
             return static_cast< const RuleReferenceConstant* >( this )->name();
@@ -158,6 +162,10 @@ void Constant::accept( Visitor& visitor )
         case Value::ENUMERATION_CONSTANT:
         {
             static_cast< EnumerationConstant* >( this )->accept( visitor );
+        }
+        case Value::RANGE_CONSTANT:
+        {
+            static_cast< RangeConstant* >( this )->accept( visitor );
         }
         case Value::RULE_REFERENCE_CONSTANT:
         {
