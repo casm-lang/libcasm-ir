@@ -45,8 +45,13 @@ namespace libcasm_ir
             const libstdhl::Type& data, const Value::Ptr& value, u1 defined,
             u1 symbolic, Value::ID id );
 
+        Constant( const Type::Ptr& type, const libstdhl::Type& data,
+            const Value::Ptr& value, u1 defined, u1 symbolic, Value::ID id );
+
       public:
         explicit Constant( void );
+
+        virtual ~Constant( void ) = default;
 
         u1 defined( void ) const;
 
@@ -371,10 +376,10 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< ReferenceConstant >;
 
       protected:
-        ReferenceConstant( const std::string& name, const Type::Ptr& type,
+        inline ReferenceConstant( const Type::Ptr& type,
             const typename T::Ptr& value, u1 defined, u1 symbolic,
             Value::ID id )
-        : Constant( name, type, libstdhl::Type(), value, defined, symbolic, id )
+        : Constant( type, libstdhl::Type(), value, defined, symbolic, id )
         {
         }
 

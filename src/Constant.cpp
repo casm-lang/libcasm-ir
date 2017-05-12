@@ -30,6 +30,7 @@
 using namespace libcasm_ir;
 
 static constexpr const char* undef_str = "undef";
+static const std::string EMPTY = "";
 
 static const auto VOID = libstdhl::get< VoidType >();
 static const auto BOOLEAN = libstdhl::get< BooleanType >();
@@ -49,8 +50,18 @@ Constant::Constant( const std::string& name, const Type::Ptr& type,
 {
 }
 
+Constant::Constant( const Type::Ptr& type, const libstdhl::Type& data,
+    const Value::Ptr& value, u1 defined, u1 symbolic, Value::ID id )
+: Value( EMPTY, type, id )
+, m_data( data )
+, m_value( value )
+, m_defined( defined )
+, m_symbolic( symbolic )
+{
+}
+
 Constant::Constant( void )
-: Constant( "", VOID, libstdhl::Type(), nullptr, false, false, classid() )
+: Constant( VOID, libstdhl::Type(), nullptr, false, false, classid() )
 {
 }
 
@@ -262,7 +273,7 @@ Constant Constant::undef( const Type::Ptr& type )
 //
 
 VoidConstant::VoidConstant( void )
-: Constant( "", VOID, libstdhl::Type(), nullptr, true, false, classid() )
+: Constant( VOID, libstdhl::Type(), nullptr, true, false, classid() )
 {
 }
 
@@ -286,7 +297,7 @@ u1 VoidConstant::classof( Value const* obj )
 //
 
 BooleanConstant::BooleanConstant( u1 value, u1 defined, u1 symbolic )
-: Constant( "", BOOLEAN, libstdhl::Type( value, 1 ), nullptr, defined, symbolic,
+: Constant( BOOLEAN, libstdhl::Type( value, 1 ), nullptr, defined, symbolic,
       classid() )
 {
 }
@@ -326,15 +337,15 @@ u1 BooleanConstant::classof( Value const* obj )
 //
 
 IntegerConstant::IntegerConstant( i64 value, u1 defined, u1 symbolic )
-: Constant( "", INTEGER, libstdhl::Integer( value ), nullptr, defined, symbolic,
+: Constant( INTEGER, libstdhl::Integer( value ), nullptr, defined, symbolic,
       classid() )
 {
 }
 
 IntegerConstant::IntegerConstant(
     const std::string& value, const libstdhl::Type::Radix radix )
-: Constant( "", INTEGER, libstdhl::Integer( value, radix ), nullptr, true,
-      false, classid() )
+: Constant( INTEGER, libstdhl::Integer( value, radix ), nullptr, true, false,
+      classid() )
 {
     // TODO: PPA: force CASM integer string digit separator usage as
     // group of
@@ -342,12 +353,12 @@ IntegerConstant::IntegerConstant(
 }
 
 IntegerConstant::IntegerConstant( const BitConstant& value )
-: Constant( "", INTEGER, value.value(), nullptr, true, false, classid() )
+: Constant( INTEGER, value.value(), nullptr, true, false, classid() )
 {
 }
 
 IntegerConstant::IntegerConstant( const libstdhl::Integer& value )
-: Constant( "", INTEGER, value, nullptr, true, false, classid() )
+: Constant( INTEGER, value, nullptr, true, false, classid() )
 {
 }
 
@@ -403,7 +414,7 @@ u1 IntegerConstant::classof( Value const* obj )
 BitConstant::BitConstant(
     const BitType::Ptr& type, u64 value, u1 defined, u1 symbolic )
 : Constant(
-      "", type, libstdhl::Type( value ), nullptr, defined, symbolic, classid() )
+      type, libstdhl::Type( value ), nullptr, defined, symbolic, classid() )
 {
     if( type->bitsize() > BitType::SizeMax )
     {
@@ -415,8 +426,8 @@ BitConstant::BitConstant(
 
 BitConstant::BitConstant( const BitType::Ptr& type, const std::string& value,
     const libstdhl::Type::Radix radix )
-: Constant( "", type, libstdhl::Type( value, false, radix ), nullptr, true,
-      false, classid() )
+: Constant( type, libstdhl::Type( value, false, radix ), nullptr, true, false,
+      classid() )
 {
     if( type->bitsize() > BitType::SizeMax )
     {
@@ -525,14 +536,14 @@ u1 StringConstant::classof( Value const* obj )
 
 FloatingConstant::FloatingConstant(
     const double value, u1 defined, u1 symbolic )
-: Constant( "", FLOATING, libstdhl::FloatingPoint( value ), nullptr, defined,
+: Constant( FLOATING, libstdhl::FloatingPoint( value ), nullptr, defined,
       symbolic, classid() )
 {
 }
 
 FloatingConstant::FloatingConstant( const std::string& value )
-: Constant( "", FLOATING, libstdhl::FloatingPoint( value ), nullptr, true,
-      false, classid() )
+: Constant( FLOATING, libstdhl::FloatingPoint( value ), nullptr, true, false,
+      classid() )
 {
 }
 
@@ -574,8 +585,8 @@ u1 FloatingConstant::classof( Value const* obj )
 
 RationalConstant::RationalConstant(
     const std::string& value, u1 defined, u1 symbolic )
-: Constant( "", RATIONAL, libstdhl::Rational( value ), nullptr, defined,
-      symbolic, classid() )
+: Constant( RATIONAL, libstdhl::Rational( value ), nullptr, defined, symbolic,
+      classid() )
 {
 }
 
@@ -585,7 +596,7 @@ RationalConstant::RationalConstant( const std::string& value )
 }
 
 RationalConstant::RationalConstant( const libstdhl::Rational& value )
-: Constant( "", RATIONAL, value, nullptr, true, false, classid() )
+: Constant( RATIONAL, value, nullptr, true, false, classid() )
 {
 }
 
@@ -681,7 +692,7 @@ u1 EnumerationConstant::classof( Value const* obj )
 
 RangeConstant::RangeConstant(
     const RangeType::Ptr& type, u1 defined, u1 symbolic, Value::ID id )
-: Constant( "", type, {}, nullptr, defined, symbolic, id )
+: Constant( type, libstdhl::Type(), nullptr, defined, symbolic, id )
 {
 }
 
@@ -727,7 +738,7 @@ u1 RangeConstant::classof( Value const* obj )
 
 RuleReferenceConstant::RuleReferenceConstant(
     const Type::Ptr& type, const Rule::Ptr& value, u1 defined, u1 symbolic )
-: ReferenceConstant< Rule >( "", type, value, defined, symbolic, classid() )
+: ReferenceConstant< Rule >( type, value, defined, symbolic, classid() )
 {
 }
 
