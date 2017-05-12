@@ -463,7 +463,9 @@ BitType::BitType( const IntegerConstant::Ptr& bitsize )
 : PrimitiveType( Type::BIT )
 {
     assert( bitsize );
-    if( bitsize->value() > BitType::SizeMax )
+    if( static_cast< const libstdhl::Type& >( bitsize->value() )
+            > BitType::SizeMax
+        or bitsize->value().sign() )
     {
         throw std::domain_error(
             "invalid bit size '" + bitsize->name() + "' for 'Bit' type" );
