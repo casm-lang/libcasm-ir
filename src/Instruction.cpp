@@ -974,7 +974,10 @@ NotInstruction::NotInstruction( const Value::Ptr& lhs )
 
 NotInstruction::NotInstruction(
     const Constant* constants, const std::size_t size )
-: LogicalInstruction( constants ? constants[ 0 ].type().ptr_result() : VOID,
+: LogicalInstruction(
+      constants ? ( constants[ 0 ].type().isBit() ? constants[ 0 ].ptr_type()
+                                                  : BOOLEAN )
+                : VOID,
       classid(), constants, size )
 {
 }
