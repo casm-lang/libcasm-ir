@@ -709,7 +709,7 @@ RangeConstant::RangeConstant( const RangeType::Ptr& type )
 }
 
 RangeConstant::RangeConstant(
-    const RangeType::Ptr& type, const Constant& from, const Constant& to )
+    const Type::Ptr& type, const Constant& from, const Constant& to )
 : RangeConstant( type, libstdhl::make_unique< Range >( from, to ), true, false )
 {
 }

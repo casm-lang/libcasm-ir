@@ -348,8 +348,8 @@ namespace libcasm_ir
 
         RangeConstant( const RangeType::Ptr& type );
 
-        RangeConstant( const RangeType::Ptr& type, const Constant& from,
-            const Constant& to );
+        RangeConstant(
+            const Type::Ptr& type, const Constant& from, const Constant& to );
 
         Range::Ptr value( void ) const;
 
