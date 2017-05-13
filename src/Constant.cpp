@@ -344,16 +344,15 @@ u1 BooleanConstant::classof( Value const* obj )
 // Integer Constant
 //
 
-IntegerConstant::IntegerConstant( i64 value, u1 defined, u1 symbolic )
-: Constant( INTEGER, libstdhl::Integer( value ), nullptr, defined, symbolic,
-      classid() )
+IntegerConstant::IntegerConstant(
+    const libstdhl::Type& value, u1 defined, u1 symbolic )
+: Constant( INTEGER, value, nullptr, defined, symbolic, classid() )
 {
 }
 
 IntegerConstant::IntegerConstant(
     const std::string& value, const libstdhl::Type::Radix radix )
-: Constant( INTEGER, libstdhl::Integer( value, radix ), nullptr, true, false,
-      classid() )
+: IntegerConstant( libstdhl::Integer( value, radix ), true, false )
 {
     // TODO: PPA: force CASM integer string digit separator usage as
     // group of
@@ -361,22 +360,22 @@ IntegerConstant::IntegerConstant(
 }
 
 IntegerConstant::IntegerConstant( const BitConstant& value )
-: Constant( INTEGER, value.value(), nullptr, true, false, classid() )
+: IntegerConstant( value.value(), true, false )
 {
 }
 
 IntegerConstant::IntegerConstant( const libstdhl::Integer& value )
-: Constant( INTEGER, value, nullptr, true, false, classid() )
-{
-}
-
-IntegerConstant::IntegerConstant( i64 value )
 : IntegerConstant( value, true, false )
 {
 }
 
+IntegerConstant::IntegerConstant( i64 value )
+: IntegerConstant( libstdhl::Integer( value ), true, false )
+{
+}
+
 IntegerConstant::IntegerConstant( void )
-: IntegerConstant( 0, false, false )
+: IntegerConstant( libstdhl::Type(), false, false )
 {
 }
 
@@ -441,6 +440,19 @@ BitConstant::BitConstant( const BitType::Ptr& type, const std::string& value,
     {
         throw std::domain_error( "invalid bit size '"
                                  + std::to_string( type->bitsize() )
+                                 + "' to create BitConstant" );
+    }
+}
+
+BitConstant::BitConstant( const Type::Ptr& type, const libstdhl::Type& value )
+: Constant( type, value, nullptr, true, false, classid() )
+{
+    assert( type->isBit() );
+    const auto& t = static_cast< const BitType& >( *type );
+    if( t.bitsize() > BitType::SizeMax )
+    {
+        throw std::domain_error( "invalid bit size '"
+                                 + std::to_string( t.bitsize() )
                                  + "' to create BitConstant" );
     }
 }
@@ -543,37 +555,39 @@ u1 StringConstant::classof( Value const* obj )
 //
 
 FloatingConstant::FloatingConstant(
-    const double value, u1 defined, u1 symbolic )
-: Constant( FLOATING, libstdhl::FloatingPoint( value ), nullptr, defined,
-      symbolic, classid() )
+    const libstdhl::Type& value, u1 defined, u1 symbolic )
+: Constant( FLOATING, value, nullptr, defined, symbolic, classid() )
 {
 }
 
-FloatingConstant::FloatingConstant( const std::string& value )
-: Constant( FLOATING, libstdhl::FloatingPoint( value ), nullptr, true, false,
-      classid() )
-{
-}
-
-FloatingConstant::FloatingConstant( const double value )
+FloatingConstant::FloatingConstant( const libstdhl::Type& value )
 : FloatingConstant( value, true, false )
 {
 }
 
-FloatingConstant::FloatingConstant( void )
-: FloatingConstant( 0.0, false, false )
+FloatingConstant::FloatingConstant( const std::string& value )
+: FloatingConstant( libstdhl::FloatingPoint( value ), true, false )
 {
 }
 
-double FloatingConstant::value( void ) const
+FloatingConstant::FloatingConstant( const double value )
+: FloatingConstant( libstdhl::FloatingPoint( value ), true, false )
 {
-    std::cerr << __FILE__ << ":" << __LINE__ << ": TODO: FIXME\n";
-    return 0.0;
+}
+
+FloatingConstant::FloatingConstant( void )
+: FloatingConstant( libstdhl::Type(), false, false )
+{
+}
+
+const libstdhl::FloatingPoint& FloatingConstant::value( void ) const
+{
+    return static_cast< const libstdhl::FloatingPoint& >( m_data );
 }
 
 std::string FloatingConstant::name( void ) const
 {
-    return ( defined() ? ( std::to_string( value() ) ) : undef_str );
+    return ( defined() ? ( "TODO" ) : undef_str );
     // TODO: PPA: use literal function from libstdhl::Type
 }
 
@@ -592,36 +606,34 @@ u1 FloatingConstant::classof( Value const* obj )
 //
 
 RationalConstant::RationalConstant(
-    const std::string& value, u1 defined, u1 symbolic )
-: Constant( RATIONAL, libstdhl::Rational( value ), nullptr, defined, symbolic,
-      classid() )
+    const libstdhl::Type& value, u1 defined, u1 symbolic )
+: Constant( RATIONAL, value, nullptr, defined, symbolic, classid() )
 {
 }
 
-RationalConstant::RationalConstant( const std::string& value )
+RationalConstant::RationalConstant( const libstdhl::Type& value )
 : RationalConstant( value, true, false )
 {
 }
 
-RationalConstant::RationalConstant( const libstdhl::Rational& value )
-: Constant( RATIONAL, value, nullptr, true, false, classid() )
+RationalConstant::RationalConstant( const std::string& value )
+: RationalConstant( libstdhl::Rational( value ), true, false )
 {
 }
 
 RationalConstant::RationalConstant( void )
-: RationalConstant( nullptr, false, false )
+: RationalConstant( libstdhl::Type(), false, false )
 {
 }
 
-std::string RationalConstant::value( void ) const
+const libstdhl::Rational& RationalConstant::value( void ) const
 {
-    return "";
-    // TODO: PPA: use literal function from libstdhl::Type
+    return static_cast< const libstdhl::Rational& >( m_data );
 }
 
 std::string RationalConstant::name( void ) const
 {
-    return ( defined() ? ( value() ) : undef_str );
+    return ( defined() ? ( "TODO" ) : undef_str );
     // TODO: PPA: use literal function from libstdhl::Type
 }
 

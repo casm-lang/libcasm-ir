@@ -30,6 +30,7 @@
 #include "Range.h"
 #include "Rule.h"
 
+#include "../stdhl/cpp/FloatingPoint.h"
 #include "../stdhl/cpp/Integer.h"
 #include "../stdhl/cpp/Rational.h"
 
@@ -147,7 +148,7 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< IntegerConstant >;
 
       private:
-        IntegerConstant( i64 value, u1 defined, u1 symbolic );
+        IntegerConstant( const libstdhl::Type& value, u1 defined, u1 symbolic );
 
       public:
         IntegerConstant( const std::string& value,
@@ -189,6 +190,8 @@ namespace libcasm_ir
             const libstdhl::Type::Radix radix );
 
       public:
+        BitConstant( const Type::Ptr& type, const libstdhl::Type& value );
+
         BitConstant( const BitType::Ptr& type, u64 value );
 
         BitConstant( const BitType::Ptr& type );
@@ -251,14 +254,16 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< FloatingConstant >;
 
       private:
-        FloatingConstant( const double value, u1 defined, u1 symbolic );
+        FloatingConstant(
+            const libstdhl::Type& value, u1 defined, u1 symbolic );
 
       public:
+        FloatingConstant( const libstdhl::Type& value );
         FloatingConstant( const std::string& value );
         FloatingConstant( const double value );
         FloatingConstant( void );
 
-        double value( void ) const;
+        const libstdhl::FloatingPoint& value( void ) const;
 
         std::string name( void ) const override;
 
@@ -278,14 +283,15 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< RationalConstant >;
 
       private:
-        RationalConstant( const std::string& value, u1 defined, u1 symbolic );
+        RationalConstant(
+            const libstdhl::Type& value, u1 defined, u1 symbolic );
 
       public:
+        RationalConstant( const libstdhl::Type& value );
         RationalConstant( const std::string& value );
-        RationalConstant( const libstdhl::Rational& value );
         RationalConstant( void );
 
-        std::string value( void ) const;
+        const libstdhl::Rational& value( void ) const;
 
         std::string name( void ) const override;
 
