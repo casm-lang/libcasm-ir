@@ -326,7 +326,7 @@ namespace libcasm_ir
 
         EnumerationConstant( const Enumeration::Ptr& kind );
 
-        u64 value( void ) const;
+        const libstdhl::Type& value( void ) const;
 
         std::string name( void ) const override;
 

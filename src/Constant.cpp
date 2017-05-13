@@ -305,8 +305,8 @@ u1 VoidConstant::classof( Value const* obj )
 //
 
 BooleanConstant::BooleanConstant( u1 value, u1 defined, u1 symbolic )
-: Constant( BOOLEAN, libstdhl::Type( value, 1 ), nullptr, defined, symbolic,
-      classid() )
+: Constant(
+      BOOLEAN, libstdhl::Type( value ), nullptr, defined, symbolic, classid() )
 {
 }
 
@@ -654,7 +654,7 @@ u1 RationalConstant::classof( Value const* obj )
 EnumerationConstant::EnumerationConstant( const EnumerationType::Ptr& type,
     const std::string& value, u1 defined, u1 symbolic, Value::ID id )
 : Constant( value, type,
-      defined ? libstdhl::Type( type->kind().encode( value ), 64 )
+      defined ? libstdhl::Type( type->kind().encode( value ) )
               : libstdhl::Type(),
       nullptr, defined, symbolic, id )
 {
@@ -682,18 +682,14 @@ EnumerationConstant::EnumerationConstant( const Enumeration::Ptr& kind )
 {
 }
 
-u64 EnumerationConstant::value( void ) const
+const libstdhl::Type& EnumerationConstant::value( void ) const
 {
-    return m_data.word( 0 );
+    return m_data;
 }
 
 std::string EnumerationConstant::name( void ) const
 {
-    return (
-        defined()
-            ? ( static_cast< const EnumerationType& >( type() ).kind().decode(
-                  value() ) )
-            : undef_str );
+    return _name();
 }
 
 void EnumerationConstant::accept( Visitor& visitor )
