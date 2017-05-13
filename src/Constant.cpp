@@ -732,6 +732,9 @@ RangeConstant::RangeConstant(
     const Type::Ptr& type, const Constant& from, const Constant& to )
 : RangeConstant( type, libstdhl::make_unique< Range >( from, to ), true, false )
 {
+    assert( type->isRange() );
+    static_cast< RangeType& >( *type ).setRange(
+        std::static_pointer_cast< Range >( m_value ) );
 }
 
 Range::Ptr RangeConstant::value( void ) const

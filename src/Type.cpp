@@ -736,30 +736,44 @@ std::string RangeType::description( void ) const
 void RangeType::foreach(
     const std::function< void( const Constant& constant ) >& callback ) const
 {
-    // TODO
+    assert( m_range );
+    if( type().isInteger() )
+    {
+        const auto& a
+            = static_cast< IntegerConstant& >( *range().from() ).value_i64();
+        const auto& b
+            = static_cast< IntegerConstant& >( *range().to() ).value_i64();
 
-    // const auto a = m_increasing ? m_from->value_i64() :
-    // m_to->value_i64();
-    // const auto b = m_increasing ? m_to->value_i64() :
-    // m_from->value_i64();
-
-    // for( i64 i = a; i <= b; i++ )
-    // {
-    //     callback( IntegerConstant( i ) );
-    // }
+        for( i64 i = a; i <= b; i++ )
+        {
+            callback( IntegerConstant( i ) );
+        }
+    }
+    else
+    {
+        throw std::domain_error(
+            "unimplemented 'foreach' of range type '" + name() + "'" );
+    }
 }
 
 Constant RangeType::choose( void ) const
 {
-    // TODO
+    assert( m_range );
+    if( type().isInteger() )
+    {
+        const auto& a
+            = static_cast< IntegerConstant& >( *range().from() ).value_i64();
+        const auto& b
+            = static_cast< IntegerConstant& >( *range().to() ).value_i64();
 
-    // const auto a = m_increasing ? m_from->value_i64() :
-    // m_to->value_i64();
-    // const auto b = m_increasing ? m_to->value_i64() :
-    // m_from->value_i64();
-
-    // return IntegerConstant( libstdhl::Random::uniform< i64 >( a, b ) );
-    return VoidConstant();
+        return IntegerConstant( libstdhl::Random::uniform< i64 >( a, b ) );
+    }
+    else
+    {
+        throw std::domain_error(
+            "unimplemented 'foreach' of range type '" + name() + "'" );
+        return VoidConstant();
+    }
 }
 
 //
