@@ -702,7 +702,7 @@ Range::Ptr RangeType::ptr_range( void ) const
 
 void RangeType::setRange( const Range::Ptr& range )
 {
-    assert( range->type() != type() );
+    assert( range->type() == type() );
     m_range = range;
 }
 
