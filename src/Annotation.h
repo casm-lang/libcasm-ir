@@ -57,7 +57,12 @@ namespace libcasm_ir
         using Set = std::set< Type::ID >;
         using Map = std::unordered_map< Type::ID, std::vector< Set > >;
 
-        Annotation( const Value::ID id, const Data& info );
+        Annotation( const Value::ID id, const Data& info,
+            const std::function< Type::Ptr( const std::vector< Type::Ptr >& ) >
+                inference
+            = []( const std::vector< Type::Ptr >& ) -> Type::Ptr {
+                return nullptr;
+            } );
 
         Value::ID id( void ) const;
 
@@ -81,10 +86,15 @@ namespace libcasm_ir
 
         std::string dump( void ) const;
 
+        Type::Ptr inference( const std::vector< Type::Ptr >& types ) const;
+
       private:
         Value::ID m_id;
 
         const Data m_info;
+
+        const std::function< Type::Ptr( const std::vector< Type::Ptr >& ) >
+            m_inference;
 
         std::vector< Set > m_type_set;
 

@@ -25,6 +25,9 @@
 
 using namespace libcasm_ir;
 
+static const auto VOID = libstdhl::get< VoidType >();
+static const auto BOOLEAN = libstdhl::get< BooleanType >();
+
 Builtin::Builtin( const Type::Ptr& type, const Value::ID id )
 : User( "", type, id )
 {
@@ -885,7 +888,21 @@ static const Annotation::Data arithmetic_builtin_data = {
         {
             Type::BIT, Type::BIT,
         } }
+};
 
+static const auto arithmetic_builtin_inference
+    = []( const std::vector< Type::Ptr > types ) -> Type::Ptr {
+    assert( types.size() == 2 );
+    const auto& lhs = types[ 0 ];
+    const auto& rhs = types[ 1 ];
+    if( *lhs == *rhs )
+    {
+        return lhs;
+    }
+    else
+    {
+        return nullptr;
+    }
 };
 
 u1 ArithmeticBuiltin::classof( Value const* obj )
@@ -905,7 +922,8 @@ AdduBuiltin::AdduBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation AdduBuiltin::info( classid(), arithmetic_builtin_data );
+const Annotation AdduBuiltin::info(
+    classid(), arithmetic_builtin_data, arithmetic_builtin_inference );
 
 u1 AdduBuiltin::classof( Value const* obj )
 {
@@ -921,7 +939,8 @@ AddsBuiltin::AddsBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation AddsBuiltin::info( classid(), arithmetic_builtin_data );
+const Annotation AddsBuiltin::info(
+    classid(), arithmetic_builtin_data, arithmetic_builtin_inference );
 
 u1 AddsBuiltin::classof( Value const* obj )
 {
@@ -937,7 +956,8 @@ SubuBuiltin::SubuBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation SubuBuiltin::info( classid(), arithmetic_builtin_data );
+const Annotation SubuBuiltin::info(
+    classid(), arithmetic_builtin_data, arithmetic_builtin_inference );
 
 u1 SubuBuiltin::classof( Value const* obj )
 {
@@ -953,7 +973,8 @@ SubsBuiltin::SubsBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation SubsBuiltin::info( classid(), arithmetic_builtin_data );
+const Annotation SubsBuiltin::info(
+    classid(), arithmetic_builtin_data, arithmetic_builtin_inference );
 
 u1 SubsBuiltin::classof( Value const* obj )
 {
@@ -969,7 +990,8 @@ MuluBuiltin::MuluBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation MuluBuiltin::info( classid(), arithmetic_builtin_data );
+const Annotation MuluBuiltin::info(
+    classid(), arithmetic_builtin_data, arithmetic_builtin_inference );
 
 u1 MuluBuiltin::classof( Value const* obj )
 {
@@ -985,7 +1007,8 @@ MulsBuiltin::MulsBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation MulsBuiltin::info( classid(), arithmetic_builtin_data );
+const Annotation MulsBuiltin::info(
+    classid(), arithmetic_builtin_data, arithmetic_builtin_inference );
 
 u1 MulsBuiltin::classof( Value const* obj )
 {
@@ -1026,6 +1049,21 @@ const Annotation::Data compare_builtin_data = {
     // TODO: PPA: add more?
 };
 
+static const auto compare_builtin_inference
+    = []( const std::vector< Type::Ptr > types ) -> Type::Ptr {
+    assert( types.size() == 2 );
+    const auto& lhs = types[ 0 ];
+    const auto& rhs = types[ 1 ];
+    if( *lhs == *rhs )
+    {
+        return BOOLEAN;
+    }
+    else
+    {
+        return nullptr;
+    }
+};
+
 u1 CompareBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid() or LesuBuiltin::classof( obj )
@@ -1044,7 +1082,8 @@ LesuBuiltin::LesuBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation LesuBuiltin::info( classid(), compare_builtin_data );
+const Annotation LesuBuiltin::info(
+    classid(), compare_builtin_data, compare_builtin_inference );
 
 u1 LesuBuiltin::classof( Value const* obj )
 {
@@ -1060,7 +1099,8 @@ LessBuiltin::LessBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation LessBuiltin::info( classid(), compare_builtin_data );
+const Annotation LessBuiltin::info(
+    classid(), compare_builtin_data, compare_builtin_inference );
 
 u1 LessBuiltin::classof( Value const* obj )
 {
@@ -1076,7 +1116,8 @@ LequBuiltin::LequBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation LequBuiltin::info( classid(), compare_builtin_data );
+const Annotation LequBuiltin::info(
+    classid(), compare_builtin_data, compare_builtin_inference );
 
 u1 LequBuiltin::classof( Value const* obj )
 {
@@ -1092,7 +1133,8 @@ LeqsBuiltin::LeqsBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation LeqsBuiltin::info( classid(), compare_builtin_data );
+const Annotation LeqsBuiltin::info(
+    classid(), compare_builtin_data, compare_builtin_inference );
 
 u1 LeqsBuiltin::classof( Value const* obj )
 {
@@ -1108,7 +1150,8 @@ GreuBuiltin::GreuBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation GreuBuiltin::info( classid(), compare_builtin_data );
+const Annotation GreuBuiltin::info(
+    classid(), compare_builtin_data, compare_builtin_inference );
 
 u1 GreuBuiltin::classof( Value const* obj )
 {
@@ -1124,7 +1167,8 @@ GresBuiltin::GresBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation GresBuiltin::info( classid(), compare_builtin_data );
+const Annotation GresBuiltin::info(
+    classid(), compare_builtin_data, compare_builtin_inference );
 
 u1 GresBuiltin::classof( Value const* obj )
 {
@@ -1140,7 +1184,8 @@ GequBuiltin::GequBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation GequBuiltin::info( classid(), compare_builtin_data );
+const Annotation GequBuiltin::info(
+    classid(), compare_builtin_data, compare_builtin_inference );
 
 u1 GequBuiltin::classof( Value const* obj )
 {
@@ -1156,7 +1201,8 @@ GeqsBuiltin::GeqsBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation GeqsBuiltin::info( classid(), compare_builtin_data );
+const Annotation GeqsBuiltin::info(
+    classid(), compare_builtin_data, compare_builtin_inference );
 
 u1 GeqsBuiltin::classof( Value const* obj )
 {

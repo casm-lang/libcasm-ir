@@ -25,9 +25,12 @@
 
 using namespace libcasm_ir;
 
-Annotation::Annotation( const Value::ID id, const Data& info )
+Annotation::Annotation( const Value::ID id, const Data& info,
+    const std::function< Type::Ptr( const std::vector< Type::Ptr >& ) >
+        inference )
 : m_id( id )
 , m_info( info )
+, m_inference( inference )
 {
     assert( m_info.size() > 0 );
 
@@ -136,6 +139,28 @@ libstdhl::Json::Object Annotation::json( void ) const
 std::string Annotation::dump( void ) const
 {
     return json().dump( 2 );
+}
+
+Type::Ptr Annotation::inference( const std::vector< Type::Ptr >& types ) const
+{
+    const auto resultType = m_inference( types );
+
+    if( not resultType )
+    {
+        u1 first = true;
+        std::string tmp = "";
+        for( auto type : types )
+        {
+            tmp += ( first ? "" : ", " );
+            tmp += ( type ? type->description() : "(nil)" );
+            first = false;
+        }
+
+        throw std::domain_error(
+            "no type inference defined for arguments '" + tmp + "'" );
+    }
+
+    return resultType;
 }
 
 void Annotation::checkTypeRelation( const Type::Ptr& type ) const

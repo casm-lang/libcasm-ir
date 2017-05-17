@@ -453,6 +453,23 @@ u1 ArithmeticInstruction::classof( Value const* obj )
            or AndInstruction::classof( obj ) or NotInstruction::classof( obj );
 }
 
+static auto arithmetic_instruction_inference
+    = []( const std::vector< Type::Ptr > types ) -> Type::Ptr {
+    assert( types.size() >= 1 );
+    assert( types.size() <= 2 );
+
+    const auto& lhs = types[ 0 ];
+    if( types.size() == 2 )
+    {
+        const auto& rhs = types[ 1 ];
+        if( *lhs != *rhs )
+        {
+            return nullptr;
+        }
+    }
+    return lhs;
+};
+
 //
 // Compare Instruction
 //
@@ -477,6 +494,19 @@ u1 CompareInstruction::classof( Value const* obj )
            or GeqInstruction::classof( obj );
 }
 
+static auto compare_instruction_inference
+    = []( const std::vector< Type::Ptr > types ) -> Type::Ptr {
+    assert( types.size() == 2 );
+
+    const auto& lhs = types[ 0 ];
+    const auto& rhs = types[ 1 ];
+    if( *lhs != *rhs )
+    {
+        return nullptr;
+    }
+    return BOOLEAN;
+};
+
 //
 // Logical Instruction
 //
@@ -498,6 +528,23 @@ LogicalInstruction::LogicalInstruction(
         assert( lhs_ty == rhs_ty );
     }
 }
+
+static auto logical_instruction_inference
+    = []( const std::vector< Type::Ptr > types ) -> Type::Ptr {
+    assert( types.size() >= 1 );
+    assert( types.size() <= 2 );
+
+    const auto& lhs = types[ 0 ];
+    if( types.size() == 2 )
+    {
+        const auto& rhs = types[ 1 ];
+        if( *lhs != *rhs )
+        {
+            return nullptr;
+        }
+    }
+    return lhs;
+};
 
 u1 LogicalInstruction::classof( Value const* obj )
 {
@@ -535,6 +582,11 @@ const Annotation InvInstruction::info( classid(),
                 Type::INTEGER,
             } },
 
+        { Type::BIT,
+            {
+                Type::BIT,
+            } },
+
         { Type::FLOATING,
             {
                 Type::FLOATING,
@@ -545,7 +597,8 @@ const Annotation InvInstruction::info( classid(),
                 Type::RATIONAL,
             } },
 
-    } );
+    },
+    arithmetic_instruction_inference );
 
 u1 InvInstruction::classof( Value const* obj )
 {
@@ -578,20 +631,21 @@ const Annotation AddInstruction::info( classid(),
 
         { Type::INTEGER,
             {
-                Type::INTEGER, Type::INTEGER,
+                Type::INTEGER, Type::INTEGER, // signed integer add no wrap
             } },
 
         { Type::BIT,
             {
-                Type::BIT, Type::BIT,
+                Type::BIT, Type::BIT, // unsigned bit add with wrap
             } },
 
         { Type::STRING,
             {
-                Type::STRING, Type::STRING,
+                Type::STRING, Type::STRING, // concatenation
             } },
 
-    } );
+    },
+    arithmetic_instruction_inference );
 
 u1 AddInstruction::classof( Value const* obj )
 {
@@ -624,15 +678,16 @@ const Annotation SubInstruction::info( classid(),
 
         { Type::INTEGER,
             {
-                Type::INTEGER, Type::INTEGER,
+                Type::INTEGER, Type::INTEGER, // signed integer sub no wrap
             } },
 
         { Type::BIT,
             {
-                Type::BIT, Type::BIT,
+                Type::BIT, Type::BIT, // unsigned bit sub with wrap
             } },
 
-    } );
+    },
+    arithmetic_instruction_inference );
 
 u1 SubInstruction::classof( Value const* obj )
 {
@@ -665,15 +720,16 @@ const Annotation MulInstruction::info( classid(),
 
         { Type::INTEGER,
             {
-                Type::INTEGER, Type::INTEGER,
+                Type::INTEGER, Type::INTEGER, // signed integer mul no wrap
             } },
 
         { Type::BIT,
             {
-                Type::BIT, Type::BIT,
+                Type::BIT, Type::BIT, // unsigned integer mul with wrap
             } },
 
-    } );
+    },
+    arithmetic_instruction_inference );
 
 u1 MulInstruction::classof( Value const* obj )
 {
@@ -706,10 +762,11 @@ const Annotation ModInstruction::info( classid(),
 
         { Type::INTEGER,
             {
-                Type::INTEGER, Type::INTEGER,
+                Type::INTEGER, Type::INTEGER, // signed integer mod no wrap
             } },
 
-    } );
+    },
+    arithmetic_instruction_inference );
 
 u1 ModInstruction::classof( Value const* obj )
 {
@@ -742,15 +799,16 @@ const Annotation DivInstruction::info( classid(),
 
         { Type::INTEGER,
             {
-                Type::INTEGER, Type::INTEGER,
+                Type::INTEGER, Type::INTEGER, // signed integer div no wrap
             } },
 
         { Type::RATIONAL,
             {
-                Type::RATIONAL, Type::RATIONAL,
+                Type::RATIONAL, Type::RATIONAL, // signed ration div no wrap
             } },
 
-    } );
+    },
+    arithmetic_instruction_inference );
 
 u1 DivInstruction::classof( Value const* obj )
 {
@@ -783,7 +841,7 @@ const Annotation PowInstruction::info( classid(),
 
         { Type::INTEGER,
             {
-                Type::INTEGER, Type::INTEGER,
+                Type::INTEGER, Type::INTEGER, // signed integer pow no wrap
             } },
 
         // { Type::RATIONAL, // TODO: PPA: enable this after clear semantics
@@ -797,7 +855,8 @@ const Annotation PowInstruction::info( classid(),
         //         Type::FLOATING, Type::FLOATING,
         //     } },
 
-    } );
+    },
+    arithmetic_instruction_inference );
 
 u1 PowInstruction::classof( Value const* obj )
 {
@@ -838,7 +897,8 @@ const Annotation AndInstruction::info( classid(),
                 Type::BIT, Type::BIT,
             } },
 
-    } );
+    },
+    logical_instruction_inference );
 
 u1 AndInstruction::classof( Value const* obj )
 {
@@ -879,7 +939,8 @@ const Annotation XorInstruction::info( classid(),
                 Type::BIT, Type::BIT,
             } },
 
-    } );
+    },
+    logical_instruction_inference );
 
 u1 XorInstruction::classof( Value const* obj )
 {
@@ -920,7 +981,8 @@ const Annotation OrInstruction::info( classid(),
                 Type::BIT, Type::BIT,
             } },
 
-    } );
+    },
+    logical_instruction_inference );
 
 u1 OrInstruction::classof( Value const* obj )
 {
@@ -956,7 +1018,8 @@ const Annotation ImpInstruction::info( classid(),
                 Type::BOOLEAN, Type::BOOLEAN,
             } },
 
-    } );
+    },
+    logical_instruction_inference );
 
 u1 ImpInstruction::classof( Value const* obj )
 {
@@ -1005,6 +1068,10 @@ const Annotation NotInstruction::info( classid(),
                 Type::BIT,
             } },
 
+    },
+    []( const std::vector< Type::Ptr > types ) -> Type::Ptr {
+        assert( types.size() == 1 );
+        return types[ 0 ]->isBit() ? types[ 0 ] : BOOLEAN;
     } );
 
 u1 NotInstruction::classof( Value const* obj )
@@ -1070,7 +1137,8 @@ const Annotation EquInstruction::info( classid(),
                 Type::ENUMERATION, Type::ENUMERATION,
             } },
 
-    } );
+    },
+    compare_instruction_inference );
 
 u1 EquInstruction::classof( Value const* obj )
 {
@@ -1135,7 +1203,8 @@ const Annotation NeqInstruction::info( classid(),
                 Type::ENUMERATION, Type::ENUMERATION,
             } },
 
-    } );
+    },
+    compare_instruction_inference );
 
 u1 NeqInstruction::classof( Value const* obj )
 {
@@ -1170,7 +1239,8 @@ const Annotation LthInstruction::info( classid(),
                 Type::INTEGER, Type::INTEGER,
             } },
 
-    } );
+    },
+    compare_instruction_inference );
 
 u1 LthInstruction::classof( Value const* obj )
 {
@@ -1205,7 +1275,8 @@ const Annotation LeqInstruction::info( classid(),
                 Type::INTEGER, Type::INTEGER,
             } },
 
-    } );
+    },
+    compare_instruction_inference );
 
 u1 LeqInstruction::classof( Value const* obj )
 {
@@ -1240,7 +1311,8 @@ const Annotation GthInstruction::info( classid(),
                 Type::INTEGER, Type::INTEGER,
             } },
 
-    } );
+    },
+    compare_instruction_inference );
 
 u1 GthInstruction::classof( Value const* obj )
 {
@@ -1275,7 +1347,8 @@ const Annotation GeqInstruction::info( classid(),
                 Type::INTEGER, Type::INTEGER,
             } },
 
-    } );
+    },
+    compare_instruction_inference );
 
 u1 GeqInstruction::classof( Value const* obj )
 {
