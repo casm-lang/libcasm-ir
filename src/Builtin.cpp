@@ -27,6 +27,10 @@ using namespace libcasm_ir;
 
 static const auto VOID = libstdhl::get< VoidType >();
 static const auto BOOLEAN = libstdhl::get< BooleanType >();
+static const auto INTEGER = libstdhl::get< IntegerType >();
+static const auto FLOATING = libstdhl::get< FloatingType >();
+static const auto RATIONAL = libstdhl::get< RationalType >();
+static const auto STRING = libstdhl::get< StringType >();
 
 Builtin::Builtin( const Type::Ptr& type, const Value::ID id )
 : User( "", type, id )
@@ -305,6 +309,11 @@ const Annotation IsSymbolicBuiltin::info( classid(),
                 Type::ENUMERATION,
             } },
 
+    },
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& values ) -> Type::Ptr {
+        assert( types.size() == 1 );
+        return BOOLEAN;
     } );
 
 u1 IsSymbolicBuiltin::classof( Value const* obj )
@@ -326,6 +335,11 @@ const Annotation AbortBuiltin::info( classid(),
 
         { Type::VOID, {} },
 
+    },
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& values ) -> Type::Ptr {
+        assert( types.size() == 0 );
+        return VOID;
     } );
 
 u1 AbortBuiltin::classof( Value const* obj )
@@ -354,6 +368,11 @@ const Annotation AssertBuiltin::info( classid(),
             {
                 Type::BOOLEAN, Type::STRING,
             } },
+    },
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& values ) -> Type::Ptr {
+        assert( types.size() >= 1 and types.size() <= 2 );
+        return VOID;
     } );
 
 u1 AssertBuiltin::classof( Value const* obj )
@@ -406,6 +425,11 @@ const Annotation PrintBuiltin::info( classid(),
                 Type::STRING,
             } }
 
+    },
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& values ) -> Type::Ptr {
+        assert( types.size() == 1 );
+        return VOID;
     } );
 
 u1 PrintBuiltin::classof( Value const* obj )
@@ -430,6 +454,11 @@ const Annotation PrintLnBuiltin::info( classid(),
                 Type::STRING,
             } }
 
+    },
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& values ) -> Type::Ptr {
+        assert( types.size() == 1 );
+        return STRING;
     } );
 
 u1 PrintLnBuiltin::classof( Value const* obj )
@@ -484,6 +513,11 @@ const Annotation AsBooleanBuiltin::info( classid(),
                 Type::BIT,
             } },
 
+    },
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& values ) -> Type::Ptr {
+        assert( types.size() == 1 );
+        return BOOLEAN;
     } );
 
 u1 AsBooleanBuiltin::classof( Value const* obj )
@@ -528,6 +562,18 @@ const Annotation AsIntegerBuiltin::info( classid(),
                 Type::ENUMERATION,
             } }
 
+    },
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& values ) -> Type::Ptr {
+        assert( types.size() == 1 );
+        const auto& arg = types[ 0 ];
+        if( arg->isInteger() )
+        {
+            const auto& integerType = static_cast< const IntegerType& >( *arg );
+            assert( not integerType
+                            .range() ); // TODO: PPA: handle integer range case!
+        }
+        return INTEGER;
     } );
 
 u1 AsIntegerBuiltin::classof( Value const* obj )
@@ -572,6 +618,20 @@ const Annotation AsBitBuiltin::info( classid(),
                 Type::ENUMERATION, Type::INTEGER,
             } }
 
+    },
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& values ) -> Type::Ptr {
+        assert( types.size() == 2 );
+        const auto& lhs = types[ 0 ];
+        const auto& rhs = types[ 1 ];
+        if( *lhs == *rhs )
+        {
+            return lhs;
+        }
+        else
+        {
+            return nullptr;
+        }
     } );
 
 u1 AsBitBuiltin::classof( Value const* obj )
@@ -626,6 +686,11 @@ const Annotation AsStringBuiltin::info( classid(),
                 Type::ENUMERATION,
             } }
 
+    },
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& values ) -> Type::Ptr {
+        assert( types.size() == 1 );
+        return STRING;
     } );
 
 u1 AsStringBuiltin::classof( Value const* obj )
@@ -670,6 +735,11 @@ const Annotation AsFloatingBuiltin::info( classid(),
                 Type::ENUMERATION,
             } }
 
+    },
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& values ) -> Type::Ptr {
+        assert( types.size() == 1 );
+        return FLOATING;
     } );
 
 u1 AsFloatingBuiltin::classof( Value const* obj )
@@ -695,6 +765,11 @@ const Annotation AsRationalBuiltin::info( classid(),
             } }
 
         // TODO: PPA: add more relations for possible input types!
+    },
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& values ) -> Type::Ptr {
+        assert( types.size() == 1 );
+        return RATIONAL;
     } );
 
 u1 AsRationalBuiltin::classof( Value const* obj )
@@ -724,6 +799,12 @@ const Annotation AsEnumerationBuiltin::info( classid(),
                 Type::BIT,
             } }
 
+    },
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& values ) -> Type::Ptr {
+        assert( types.size() == 1 );
+        return nullptr; // TODO: PPA: fetch through values a enumeration kind
+                        // hint and return its type!
     } );
 
 u1 AsEnumerationBuiltin::classof( Value const* obj )
@@ -781,6 +862,13 @@ static const Annotation::Data stringify_builtin_data = {
 
 };
 
+static const auto stringify_builtin_inference
+    = []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& values ) -> Type::Ptr {
+    assert( types.size() == 1 );
+    return STRING;
+};
+
 //
 // DecBuiltin
 //
@@ -790,7 +878,8 @@ DecBuiltin::DecBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation DecBuiltin::info( classid(), stringify_builtin_data );
+const Annotation DecBuiltin::info(
+    classid(), stringify_builtin_data, stringify_builtin_inference );
 
 u1 DecBuiltin::classof( Value const* obj )
 {
@@ -806,7 +895,8 @@ HexBuiltin::HexBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation HexBuiltin::info( classid(), stringify_builtin_data );
+const Annotation HexBuiltin::info(
+    classid(), stringify_builtin_data, stringify_builtin_inference );
 
 u1 HexBuiltin::classof( Value const* obj )
 {
@@ -822,7 +912,8 @@ OctBuiltin::OctBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation OctBuiltin::info( classid(), stringify_builtin_data );
+const Annotation OctBuiltin::info(
+    classid(), stringify_builtin_data, stringify_builtin_inference );
 
 u1 OctBuiltin::classof( Value const* obj )
 {
@@ -838,7 +929,8 @@ BinBuiltin::BinBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation BinBuiltin::info( classid(), stringify_builtin_data );
+const Annotation BinBuiltin::info(
+    classid(), stringify_builtin_data, stringify_builtin_inference );
 
 u1 BinBuiltin::classof( Value const* obj )
 {
@@ -891,7 +983,8 @@ static const Annotation::Data arithmetic_builtin_data = {
 };
 
 static const auto arithmetic_builtin_inference
-    = []( const std::vector< Type::Ptr > types ) -> Type::Ptr {
+    = []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& ) -> Type::Ptr {
     assert( types.size() == 2 );
     const auto& lhs = types[ 0 ];
     const auto& rhs = types[ 1 ];
@@ -1050,7 +1143,8 @@ const Annotation::Data compare_builtin_data = {
 };
 
 static const auto compare_builtin_inference
-    = []( const std::vector< Type::Ptr > types ) -> Type::Ptr {
+    = []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& ) -> Type::Ptr {
     assert( types.size() == 2 );
     const auto& lhs = types[ 0 ];
     const auto& rhs = types[ 1 ];
@@ -1245,6 +1339,13 @@ const Annotation ZextBuiltin::info( classid(),
                 Type::BIT, Type::INTEGER,
             } }
 
+    },
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& values ) -> Type::Ptr {
+        assert( types.size() == 2 );
+        assert( values.size() == 1 );
+        return nullptr; // TODO: PPA: fetch through values a integer constant
+                        // which defines the new bitsize
     } );
 
 u1 ZextBuiltin::classof( Value const* obj )
@@ -1269,6 +1370,13 @@ const Annotation SextBuiltin::info( classid(),
                 Type::BIT, Type::INTEGER,
             } }
 
+    },
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& values ) -> Type::Ptr {
+        assert( types.size() == 2 );
+        assert( values.size() == 1 );
+        return nullptr; // TODO: PPA: fetch through values a integer constant
+                        // which defines the new bitsize
     } );
 
 u1 SextBuiltin::classof( Value const* obj )
@@ -1293,6 +1401,13 @@ const Annotation TruncBuiltin::info( classid(),
                 Type::BIT, Type::INTEGER,
             } }
 
+    },
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& values ) -> Type::Ptr {
+        assert( types.size() == 2 );
+        assert( values.size() == 1 );
+        return nullptr; // TODO: PPA: fetch through values a integer constant
+                        // which defines the new bitsize
     } );
 
 u1 TruncBuiltin::classof( Value const* obj )
@@ -1321,6 +1436,20 @@ const Annotation ShlBuiltin::info( classid(),
                 Type::BIT, Type::BIT,
             } }
 
+    },
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& values ) -> Type::Ptr {
+        assert( types.size() == 2 );
+        const auto& lhs = types[ 0 ];
+        const auto& rhs = types[ 1 ];
+        if( rhs->isBit() )
+        {
+            if( *lhs != *rhs )
+            {
+                return nullptr;
+            }
+        }
+        return lhs;
     } );
 
 u1 ShlBuiltin::classof( Value const* obj )
@@ -1350,6 +1479,20 @@ const Annotation ShrBuiltin::info( classid(),
                 Type::BIT, Type::BIT,
             } }
 
+    },
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& values ) -> Type::Ptr {
+        assert( types.size() == 2 );
+        const auto& lhs = types[ 0 ];
+        const auto& rhs = types[ 1 ];
+        if( rhs->isBit() )
+        {
+            if( *lhs != *rhs )
+            {
+                return nullptr;
+            }
+        }
+        return lhs;
     } );
 
 u1 ShrBuiltin::classof( Value const* obj )
@@ -1379,6 +1522,20 @@ const Annotation AshrBuiltin::info( classid(),
                 Type::BIT, Type::BIT,
             } }
 
+    },
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& values ) -> Type::Ptr {
+        assert( types.size() == 2 );
+        const auto& lhs = types[ 0 ];
+        const auto& rhs = types[ 1 ];
+        if( rhs->isBit() )
+        {
+            if( *lhs != *rhs )
+            {
+                return nullptr;
+            }
+        }
+        return lhs;
     } );
 
 u1 AshrBuiltin::classof( Value const* obj )
@@ -1403,6 +1560,11 @@ const Annotation ClzBuiltin::info( classid(),
                 Type::BIT,
             } }
 
+    },
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& values ) -> Type::Ptr {
+        assert( types.size() == 1 );
+        return INTEGER;
     } );
 
 u1 ClzBuiltin::classof( Value const* obj )
@@ -1427,6 +1589,11 @@ const Annotation CloBuiltin::info( classid(),
                 Type::BIT,
             } }
 
+    },
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& values ) -> Type::Ptr {
+        assert( types.size() == 1 );
+        return INTEGER;
     } );
 
 u1 CloBuiltin::classof( Value const* obj )
@@ -1451,6 +1618,11 @@ const Annotation ClsBuiltin::info( classid(),
                 Type::BIT,
             } }
 
+    },
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& values ) -> Type::Ptr {
+        assert( types.size() == 1 );
+        return INTEGER;
     } );
 
 u1 ClsBuiltin::classof( Value const* obj )
