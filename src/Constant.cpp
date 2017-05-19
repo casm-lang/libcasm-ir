@@ -181,6 +181,10 @@ void Constant::accept( Visitor& visitor )
 void Constant::foreach(
     const std::function< void( const Constant& constant ) >& callback ) const
 {
+    assert( this->defined() ); // PPA: foreach only valid if a constant is
+                               // defined, please ensure the correct invocation,
+                               // a universe shall not be undefined
+
     if( id() == Value::RANGE_CONSTANT )
     {
         static_cast< const RangeConstant* >( this )->foreach( callback );
@@ -193,6 +197,10 @@ void Constant::foreach(
 
 Constant Constant::choose( void ) const
 {
+    assert( this->defined() ); // PPA: foreach only valid if a constant is
+                               // defined, please ensure the correct invocation,
+                               // a universe shall not be undefined
+
     if( id() == Value::RANGE_CONSTANT )
     {
         return static_cast< const RangeConstant* >( this )->choose();
