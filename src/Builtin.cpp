@@ -23,6 +23,8 @@
 
 #include "Builtin.h"
 
+#include "Exception.h"
+
 using namespace libcasm_ir;
 
 static const auto VOID = libstdhl::get< VoidType >();
@@ -429,6 +431,18 @@ const Annotation PrintBuiltin::info( classid(),
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
         assert( types.size() == 1 );
+        const auto& argumentType = types[ 0 ];
+        assert( argumentType );
+
+        if( not argumentType->isString() )
+        {
+            throw TypeArgumentException( "found '" + argumentType->description()
+                                             + "', but expects '"
+                                             + STRING->description()
+                                             + "'",
+                0 );
+        }
+
         return VOID;
     } );
 
@@ -458,7 +472,19 @@ const Annotation PrintLnBuiltin::info( classid(),
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
         assert( types.size() == 1 );
-        return STRING;
+        const auto& argumentType = types[ 0 ];
+        assert( argumentType );
+
+        if( not argumentType->isString() )
+        {
+            throw TypeArgumentException( "found '" + argumentType->description()
+                                             + "', but expects '"
+                                             + STRING->description()
+                                             + "'",
+                0 );
+        }
+
+        return VOID;
     } );
 
 u1 PrintLnBuiltin::classof( Value const* obj )
