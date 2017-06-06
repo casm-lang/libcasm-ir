@@ -33,6 +33,7 @@ using namespace libcasm_ir;
 
 static const auto VOID = libstdhl::get< VoidType >();
 static const auto BOOLEAN = libstdhl::get< BooleanType >();
+static const auto INTEGER = libstdhl::get< IntegerType >();
 
 static const std::string EMPTY = "";
 
@@ -463,6 +464,12 @@ static auto arithmetic_instruction_inference
     if( types.size() == 2 )
     {
         const auto& rhs = types[ 1 ];
+
+        if( lhs->isInteger() and rhs->isInteger() )
+        {
+            return INTEGER;
+        }
+
         if( *lhs != *rhs )
         {
             return nullptr;
@@ -813,6 +820,7 @@ static auto logical_instruction_inference
     if( types.size() == 2 )
     {
         const auto& rhs = types[ 1 ];
+
         if( *lhs != *rhs )
         {
             return nullptr;
@@ -1075,10 +1083,17 @@ static auto compare_instruction_inference
     assert( types.size() == 2 );
     const auto& lhs = types[ 0 ];
     const auto& rhs = types[ 1 ];
+
+    if( lhs->isInteger() and rhs->isInteger() )
+    {
+        return BOOLEAN;
+    }
+
     if( *lhs != *rhs )
     {
         return nullptr;
     }
+
     return BOOLEAN;
 };
 
