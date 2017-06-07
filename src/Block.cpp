@@ -124,7 +124,7 @@ std::shared_ptr< Statement > ExecutionSemanticsBlock::exit( void ) const
     return m_exit;
 }
 
-Blocks ExecutionSemanticsBlock::blocks( void ) const
+Blocks& ExecutionSemanticsBlock::blocks( void )
 {
     return m_blocks;
 }

@@ -88,7 +88,7 @@ namespace libcasm_ir
 
         std::shared_ptr< Statement > exit( void ) const;
 
-        Blocks blocks( void ) const;
+        Blocks& blocks( void );
 
         void add( const Block::Ptr& block );
 
