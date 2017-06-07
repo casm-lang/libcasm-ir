@@ -190,6 +190,11 @@ u1 UnaryInstruction::classof( Value const* obj )
 {
     if( Instruction::classof( obj ) )
     {
+        if( isa< LocationInstruction >( obj ) or isa< CallInstruction >( obj ) )
+        {
+            return false;
+        }
+
         const auto& instr = static_cast< const Instruction& >( *obj );
         return instr.size() == 1;
     }
@@ -207,6 +212,11 @@ u1 BinaryInstruction::classof( Value const* obj )
 {
     if( Instruction::classof( obj ) )
     {
+        if( isa< LocationInstruction >( obj ) or isa< CallInstruction >( obj ) )
+        {
+            return false;
+        }
+
         const auto& instr = static_cast< const Instruction& >( *obj );
         return instr.size() == 2;
     }
@@ -340,10 +350,16 @@ u1 LocalInstruction::classof( Value const* obj )
 // Location Instruction
 //
 
-LocationInstruction::LocationInstruction( const Value::Ptr& function )
+LocationInstruction::LocationInstruction(
+    const Value::Ptr& function, const std::vector< Value::Ptr >& operands )
 : Instruction( function->ptr_type(), classid(), { function } )
 {
     assert( isa< Function >( function ) );
+
+    for( auto operand : operands )
+    {
+        add( operand );
+    }
 }
 
 void LocationInstruction::accept( Visitor& visitor )

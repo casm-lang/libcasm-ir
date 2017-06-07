@@ -212,7 +212,8 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< LocationInstruction >;
 
-        LocationInstruction( const Value::Ptr& function );
+        LocationInstruction( const Value::Ptr& function,
+            const std::vector< Value::Ptr >& operands = {} );
 
         void accept( Visitor& visitor ) override final;
 
