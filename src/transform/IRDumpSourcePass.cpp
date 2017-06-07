@@ -385,14 +385,18 @@ void IRDumpSourceVisitor::dump( Instruction& value ) const
         for( auto u : value.uses() )
         {
             uses += u->use().label();
-            uses += " : ";
-            uses += u->use().name();
             uses += ", ";
         }
         uses += "}";
 
-        m_stream << indention( value ) << value.label() << " = " << value.name()
-                 << " " << tmp << "                 ;; uses = " << uses << "\n";
+        m_stream << indention( value );
+        if( not value.type().isVoid() )
+        {
+            m_stream << value.label() << " = ";
+        }
+
+        m_stream << value.name() << " " << tmp << "    ;; uses = " << uses
+                 << "\n";
     }
 }
 
