@@ -81,169 +81,274 @@ u1 Builtin::available( const std::string& token, std::size_t argumentSize )
     return true;
 }
 
-Builtin::Ptr Builtin::find( const std::string& name, const Type::Ptr& type )
+Builtin::Ptr Builtin::create( const Value::ID id, const Type::Ptr& type )
 {
-    if( name.rfind( "as", 0 ) == 0 )
+    switch( id )
     {
-        return asBuiltin( type );
-    }
-    else if( name.compare( "dec" ) == 0 )
-    {
-        return libstdhl::get< DecBuiltin >( type );
-    }
-    else if( name.compare( "hex" ) == 0 )
-    {
-        return libstdhl::get< HexBuiltin >( type );
-    }
-    else if( name.compare( "oct" ) == 0 )
-    {
-        return libstdhl::get< OctBuiltin >( type );
-    }
-    else if( name.compare( "bin" ) == 0 )
-    {
-        return libstdhl::get< BinBuiltin >( type );
+        case Value::VALUE:                     // [fallthrough]
+        case Value::VALUE_LIST:                // [fallthrough]
+        case Value::USER:                      // [fallthrough]
+        case Value::SPECIFICATION:             // [fallthrough]
+        case Value::AGENT:                     // [fallthrough]
+        case Value::RULE:                      // [fallthrough]
+        case Value::DERIVED:                   // [fallthrough]
+        case Value::FUNCTION:                  // [fallthrough]
+        case Value::ENUMERATION:               // [fallthrough]
+        case Value::RANGE:                     // [fallthrough]
+        case Value::BLOCK:                     // [fallthrough]
+        case Value::EXECUTION_SEMANTICS_BLOCK: // [fallthrough]
+        case Value::PARALLEL_BLOCK:            // [fallthrough]
+        case Value::SEQUENTIAL_BLOCK:          // [fallthrough]
+        case Value::STATEMENT:                 // [fallthrough]
+        case Value::TRIVIAL_STATEMENT:         // [fallthrough]
+        case Value::BRANCH_STATEMENT:          // [fallthrough]
+        case Value::CONSTANT:                  // [fallthrough]
+        case Value::VOID_CONSTANT:             // [fallthrough]
+        case Value::RULE_REFERENCE_CONSTANT:   // [fallthrough]
+        case Value::BOOLEAN_CONSTANT:          // [fallthrough]
+        case Value::INTEGER_CONSTANT:          // [fallthrough]
+        case Value::BIT_CONSTANT:              // [fallthrough]
+        case Value::STRING_CONSTANT:           // [fallthrough]
+        case Value::FLOATING_CONSTANT:         // [fallthrough]
+        case Value::RATIONAL_CONSTANT:         // [fallthrough]
+        case Value::ENUMERATION_CONSTANT:      // [fallthrough]
+        case Value::RANGE_CONSTANT:            // [fallthrough]
+        case Value::IDENTIFIER:                // [fallthrough]
+        case Value::INSTRUCTION:               // [fallthrough]
+        case Value::UNARY_INSTRUCTION:         // [fallthrough]
+        case Value::BINARY_INSTRUCTION:        // [fallthrough]
+        case Value::SELECT_INSTRUCTION:        // [fallthrough]
+        case Value::SKIP_INSTRUCTION:          // [fallthrough]
+        case Value::FORK_INSTRUCTION:          // [fallthrough]
+        case Value::MERGE_INSTRUCTION:         // [fallthrough]
+        case Value::LOOKUP_INSTRUCTION:        // [fallthrough]
+        case Value::UPDATE_INSTRUCTION:        // [fallthrough]
+        case Value::LOCATION_INSTRUCTION:      // [fallthrough]
+        case Value::CALL_INSTRUCTION:          // [fallthrough]
+        case Value::LOCAL_INSTRUCTION:         // [fallthrough]
+        case Value::OPERATOR_INSTRUCTION:      // [fallthrough]
+        case Value::ARITHMETIC_INSTRUCTION:    // [fallthrough]
+        case Value::INV_INSTRUCTION:           // [fallthrough]
+        case Value::ADD_INSTRUCTION:           // [fallthrough]
+        case Value::SUB_INSTRUCTION:           // [fallthrough]
+        case Value::MUL_INSTRUCTION:           // [fallthrough]
+        case Value::DIV_INSTRUCTION:           // [fallthrough]
+        case Value::POW_INSTRUCTION:           // [fallthrough]
+        case Value::MOD_INSTRUCTION:           // [fallthrough]
+        case Value::COMPARE_INSTRUCTION:       // [fallthrough]
+        case Value::EQU_INSTRUCTION:           // [fallthrough]
+        case Value::NEQ_INSTRUCTION:           // [fallthrough]
+        case Value::LTH_INSTRUCTION:           // [fallthrough]
+        case Value::LEQ_INSTRUCTION:           // [fallthrough]
+        case Value::GTH_INSTRUCTION:           // [fallthrough]
+        case Value::GEQ_INSTRUCTION:           // [fallthrough]
+        case Value::LOGICAL_INSTRUCTION:       // [fallthrough]
+        case Value::OR_INSTRUCTION:            // [fallthrough]
+        case Value::XOR_INSTRUCTION:           // [fallthrough]
+        case Value::AND_INSTRUCTION:           // [fallthrough]
+        case Value::IMP_INSTRUCTION:           // [fallthrough]
+        case Value::NOT_INSTRUCTION:           // [fallthrough]
+        case Value::BUILTIN:                   // [fallthrough]
+        case Value::GENERAL_BUILTIN:
+        {
+            break;
+        }
+        case Value::IS_SYMBOLIC_BUILTIN:
+        {
+            return libstdhl::make< IsSymbolicBuiltin >( type );
+        }
+        case Value::ABORT_BUILTIN:
+        {
+            return libstdhl::make< AbortBuiltin >( type );
+        }
+        case Value::ASSERT_BUILTIN:
+        {
+            return libstdhl::make< AssertBuiltin >( type );
+        }
+
+        case Value::OUTPUT_BUILTIN:
+        {
+            break;
+        }
+        case Value::PRINT_BUILTIN:
+        {
+            return libstdhl::make< PrintBuiltin >( type );
+        }
+        case Value::PRINTLN_BUILTIN:
+        {
+            return libstdhl::make< PrintLnBuiltin >( type );
+        }
+
+        case Value::CASTING_BUILTIN:
+        {
+            break;
+        }
+        case Value::AS_BOOLEAN_BUILTIN:
+        {
+            return libstdhl::make< AsBooleanBuiltin >( type );
+        }
+        case Value::AS_INTEGER_BUILTIN:
+        {
+            return libstdhl::make< AsIntegerBuiltin >( type );
+        }
+        case Value::AS_BIT_BUILTIN:
+        {
+            return libstdhl::make< AsBitBuiltin >( type );
+        }
+        case Value::AS_STRING_BUILTIN:
+        {
+            return libstdhl::make< AsStringBuiltin >( type );
+        }
+        case Value::AS_FLOATING_BUILTIN:
+        {
+            return libstdhl::make< AsFloatingBuiltin >( type );
+        }
+        case Value::AS_RATIONAL_BUILTIN:
+        {
+            return libstdhl::make< AsRationalBuiltin >( type );
+        }
+        case Value::AS_ENUMERATION_BUILTIN:
+        {
+            return libstdhl::make< AsEnumerationBuiltin >( type );
+        }
+
+        case Value::STRINGIFY_BUILTIN:
+        {
+            break;
+        }
+        case Value::DEC_BUILTIN:
+        {
+            return libstdhl::make< DecBuiltin >( type );
+        }
+        case Value::HEX_BUILTIN:
+        {
+            return libstdhl::make< HexBuiltin >( type );
+        }
+        case Value::OCT_BUILTIN:
+        {
+            return libstdhl::make< OctBuiltin >( type );
+        }
+        case Value::BIN_BUILTIN:
+        {
+            return libstdhl::make< BinBuiltin >( type );
+        }
+
+        case Value::OPERATOR_BUILTIN: // [fallthrough]
+        case Value::ARITHMETIC_BUILTIN:
+        {
+            break;
+        }
+        case Value::ADDU_BUILTIN:
+        {
+            return libstdhl::make< AdduBuiltin >( type );
+        }
+        case Value::ADDS_BUILTIN:
+        {
+            return libstdhl::make< AddsBuiltin >( type );
+        }
+        case Value::SUBU_BUILTIN:
+        {
+            return libstdhl::make< SubuBuiltin >( type );
+        }
+        case Value::SUBS_BUILTIN:
+        {
+            return libstdhl::make< SubsBuiltin >( type );
+        }
+        case Value::MULU_BUILTIN:
+        {
+            return libstdhl::make< MuluBuiltin >( type );
+        }
+        case Value::MULS_BUILTIN:
+        {
+            return libstdhl::make< MulsBuiltin >( type );
+        }
+
+        case Value::COMPARE_BUILTIN:
+        {
+            break;
+        }
+        case Value::LESU_BUILTIN:
+        {
+            return libstdhl::make< LesuBuiltin >( type );
+        }
+        case Value::LESS_BUILTIN:
+        {
+            return libstdhl::make< LessBuiltin >( type );
+        }
+        case Value::LEQU_BUILTIN:
+        {
+            return libstdhl::make< LequBuiltin >( type );
+        }
+        case Value::LEQS_BUILTIN:
+        {
+            return libstdhl::make< LeqsBuiltin >( type );
+        }
+        case Value::GREU_BUILTIN:
+        {
+            return libstdhl::make< GreuBuiltin >( type );
+        }
+        case Value::GRES_BUILTIN:
+        {
+            return libstdhl::make< GresBuiltin >( type );
+        }
+        case Value::GEQU_BUILTIN:
+        {
+            return libstdhl::make< GequBuiltin >( type );
+        }
+        case Value::GEQS_BUILTIN:
+        {
+            return libstdhl::make< GeqsBuiltin >( type );
+        }
+
+        case Value::BIT_BUILTIN:
+        {
+            break;
+        }
+        case Value::ZEXT_BUILTIN:
+        {
+            return libstdhl::make< ZextBuiltin >( type );
+        }
+        case Value::SEXT_BUILTIN:
+        {
+            return libstdhl::make< SextBuiltin >( type );
+        }
+        case Value::TRUNC_BUILTIN:
+        {
+            return libstdhl::make< TruncBuiltin >( type );
+        }
+        case Value::SHL_BUILTIN:
+        {
+            return libstdhl::make< ShlBuiltin >( type );
+        }
+        case Value::SHR_BUILTIN:
+        {
+            return libstdhl::make< ShrBuiltin >( type );
+        }
+        case Value::ASHR_BUILTIN:
+        {
+            return libstdhl::make< AshrBuiltin >( type );
+        }
+        case Value::CLZ_BUILTIN:
+        {
+            return libstdhl::make< ClzBuiltin >( type );
+        }
+        case Value::CLO_BUILTIN:
+        {
+            return libstdhl::make< CloBuiltin >( type );
+        }
+        case Value::CLS_BUILTIN:
+        {
+            return libstdhl::make< ClsBuiltin >( type );
+        }
+
+        case Value::_SIZE_:
+        {
+            break;
+        }
     }
 
-    else if( name.compare( "addu" ) == 0 )
-    {
-        return libstdhl::get< AdduBuiltin >( type );
-    }
-    else if( name.compare( "adds" ) == 0 )
-    {
-        return libstdhl::get< AddsBuiltin >( type );
-    }
-    else if( name.compare( "subu" ) == 0 )
-    {
-        return libstdhl::get< SubuBuiltin >( type );
-    }
-    else if( name.compare( "subs" ) == 0 )
-    {
-        return libstdhl::get< SubsBuiltin >( type );
-    }
-    else if( name.compare( "mulu" ) == 0 )
-    {
-        return libstdhl::get< MuluBuiltin >( type );
-    }
-    else if( name.compare( "muls" ) == 0 )
-    {
-        return libstdhl::get< MulsBuiltin >( type );
-    }
-
-    else if( name.compare( "lesu" ) == 0 )
-    {
-        return libstdhl::get< LesuBuiltin >( type );
-    }
-    else if( name.compare( "less" ) == 0 )
-    {
-        return libstdhl::get< LessBuiltin >( type );
-    }
-    else if( name.compare( "lequ" ) == 0 )
-    {
-        return libstdhl::get< LequBuiltin >( type );
-    }
-    else if( name.compare( "leqs" ) == 0 )
-    {
-        return libstdhl::get< LeqsBuiltin >( type );
-    }
-    else if( name.compare( "greu" ) == 0 )
-    {
-        return libstdhl::get< GreuBuiltin >( type );
-    }
-    else if( name.compare( "gres" ) == 0 )
-    {
-        return libstdhl::get< GresBuiltin >( type );
-    }
-    else if( name.compare( "gequ" ) == 0 )
-    {
-        return libstdhl::get< GequBuiltin >( type );
-    }
-    else if( name.compare( "geqs" ) == 0 )
-    {
-        return libstdhl::get< GeqsBuiltin >( type );
-    }
-
-    else if( name.compare( "zext" ) == 0 )
-    {
-        return libstdhl::get< ZextBuiltin >( type );
-    }
-    else if( name.compare( "sext" ) == 0 )
-    {
-        return libstdhl::get< SextBuiltin >( type );
-    }
-    else if( name.compare( "trunc" ) == 0 )
-    {
-        return libstdhl::get< TruncBuiltin >( type );
-    }
-    else if( name.compare( "shl" ) == 0 )
-    {
-        return libstdhl::get< ShlBuiltin >( type );
-    }
-    else if( name.compare( "shr" ) == 0 )
-    {
-        return libstdhl::get< ShrBuiltin >( type );
-    }
-    else if( name.compare( "ashr" ) == 0 )
-    {
-        return libstdhl::get< AshrBuiltin >( type );
-    }
-    else if( name.compare( "clz" ) == 0 )
-    {
-        return libstdhl::get< ClzBuiltin >( type );
-    }
-    else if( name.compare( "clo" ) == 0 )
-    {
-        return libstdhl::get< CloBuiltin >( type );
-    }
-    else if( name.compare( "cls" ) == 0 )
-    {
-        return libstdhl::get< ClsBuiltin >( type );
-    }
-
-    else
-    {
-        throw std::domain_error(
-            "could not find a builtin for '" + name + "'" );
-    }
-}
-
-Builtin::Ptr Builtin::asBuiltin( const Type::Ptr& type )
-{
-    switch( type->result().id() )
-    {
-        case Type::BOOLEAN:
-        {
-            return libstdhl::get< AsBooleanBuiltin >( type );
-        }
-        case Type::INTEGER:
-        {
-            return libstdhl::get< AsIntegerBuiltin >( type );
-        }
-        case Type::BIT:
-        {
-            return libstdhl::get< AsBitBuiltin >( type );
-        }
-        case Type::STRING:
-        {
-            return libstdhl::get< AsStringBuiltin >( type );
-        }
-        case Type::FLOATING:
-        {
-            return libstdhl::get< AsFloatingBuiltin >( type );
-        }
-        case Type::RATIONAL:
-        {
-            return libstdhl::get< AsRationalBuiltin >( type );
-        }
-        case Type::ENUMERATION:
-        {
-            return libstdhl::get< AsEnumerationBuiltin >( type );
-        }
-        default:
-        {
-            throw std::domain_error(
-                "could not find a builtin for '" + type->name() + "'" );
-        }
-    }
+    assert( not" invalid ID to create IR built-in " );
+    return nullptr;
 }
 
 //------------------------------------------------------------------------------

@@ -51,10 +51,7 @@ namespace libcasm_ir
         static u1 available(
             const std::string& token, std::size_t argumentSize );
 
-        static Builtin::Ptr find(
-            const std::string& name, const Type::Ptr& type );
-
-        static Builtin::Ptr asBuiltin( const Type::Ptr& type );
+        static Builtin::Ptr create( const Value::ID id, const Type::Ptr& type );
 
         std::unordered_map< std::string, Builtin::Ptr >& make_cache( void )
         {
