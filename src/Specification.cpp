@@ -40,6 +40,10 @@ Agent::Ptr Specification::agent( void ) const
     return m_agent;
 }
 
+void Specification::add( const Type::Ptr& type )
+{
+    m_types.add( type );
+}
 void Specification::add( const Constant::Ptr& constant )
 {
     m_constants.add( constant );
@@ -59,6 +63,11 @@ void Specification::add( const Derived::Ptr& derived )
 void Specification::add( const Rule::Ptr& rule )
 {
     m_rules.add( rule );
+}
+
+Types& Specification::types( void )
+{
+    return m_types;
 }
 
 Constants& Specification::constants( void )

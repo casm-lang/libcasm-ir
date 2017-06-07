@@ -49,12 +49,14 @@ namespace libcasm_ir
         void setAgent( const Agent::Ptr& agent );
         Agent::Ptr agent( void ) const;
 
+        void add( const Type::Ptr& type );
         void add( const Constant::Ptr& constant );
         void add( const Builtin::Ptr& builtin );
         void add( const Function::Ptr& function );
         void add( const Derived::Ptr& derived );
         void add( const Rule::Ptr& rule );
 
+        Types& types( void );
         Constants& constants( void );
         Builtins& builtins( void );
         Functions& functions( void );
@@ -91,6 +93,7 @@ namespace libcasm_ir
       private:
         Agent::Ptr m_agent;
 
+        Types m_types;
         Constants m_constants;
         Builtins m_builtins;
         Functions m_functions;
