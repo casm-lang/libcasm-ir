@@ -74,7 +74,7 @@ void Statement::add( const Instruction::Ptr& instruction )
     m_instructions.add( instruction );
 }
 
-Instructions Statement::instructions( void ) const
+Instructions& Statement::instructions( void )
 {
     return m_instructions;
 }
@@ -100,7 +100,7 @@ ExecutionSemanticsBlock::Ptr Statement::add(
     return block;
 }
 
-ExecutionSemanticsBlocks Statement::blocks( void ) const
+ExecutionSemanticsBlocks& Statement::blocks( void )
 {
     if( isa< TrivialStatement >( this ) )
     {

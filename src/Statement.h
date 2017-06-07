@@ -39,12 +39,12 @@ namespace libcasm_ir
 
         void add( const Instruction::Ptr& instruction );
 
-        Instructions instructions( void ) const;
+        Instructions& instructions( void );
 
         ExecutionSemanticsBlock::Ptr add(
             const ExecutionSemanticsBlock::Ptr& block );
 
-        ExecutionSemanticsBlocks blocks( void ) const;
+        ExecutionSemanticsBlocks& blocks( void );
 
         template < typename T, typename... Args >
         typename T::Ptr add( Args&&... args )
