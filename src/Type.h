@@ -60,10 +60,12 @@ namespace libcasm_ir
         {
             _BOTTOM_ = 0,
 
+            // synthetic
             VOID,
             LABEL,
             LOCATION,
 
+            // primitive
             BOOLEAN,
             INTEGER,
             BIT,
@@ -71,11 +73,14 @@ namespace libcasm_ir
             FLOATING,
             RATIONAL,
 
+            // composed
             ENUMERATION,
             RANGE,
 
+            // relation
             RELATION,
 
+            // reference
             RULE_REFERENCE,
             FUNCTION_REFERENCE,
 
@@ -172,13 +177,13 @@ namespace libcasm_ir
         }
     };
 
-    class PrimitiveType : public Type
+    class SyntheticType : public Type
     {
       public:
-        PrimitiveType( Type::ID id );
+        SyntheticType( Type::ID id );
     };
 
-    class VoidType final : public PrimitiveType
+    class VoidType final : public SyntheticType
     {
       public:
         using Ptr = std::shared_ptr< VoidType >;
@@ -196,7 +201,7 @@ namespace libcasm_ir
         Constant choose( void ) const override;
     };
 
-    class LabelType final : public PrimitiveType
+    class LabelType final : public SyntheticType
     {
       public:
         using Ptr = std::shared_ptr< LabelType >;
@@ -214,7 +219,7 @@ namespace libcasm_ir
         Constant choose( void ) const override;
     };
 
-    class LocationType final : public PrimitiveType
+    class LocationType final : public SyntheticType
     {
       public:
         using Ptr = std::shared_ptr< LocationType >;
@@ -230,6 +235,12 @@ namespace libcasm_ir
             const override;
 
         Constant choose( void ) const override;
+    };
+
+    class PrimitiveType : public Type
+    {
+      public:
+        PrimitiveType( Type::ID id );
     };
 
     class BooleanType final : public PrimitiveType
@@ -360,7 +371,13 @@ namespace libcasm_ir
         Constant choose( void ) const override;
     };
 
-    class EnumerationType final : public PrimitiveType
+    class ComposedType : public Type
+    {
+      public:
+        ComposedType( Type::ID id );
+    };
+
+    class EnumerationType final : public ComposedType
     {
       public:
         using Ptr = std::shared_ptr< EnumerationType >;
@@ -385,7 +402,7 @@ namespace libcasm_ir
         std::shared_ptr< Enumeration > m_kind;
     };
 
-    class RangeType final : public PrimitiveType
+    class RangeType final : public ComposedType
     {
       public:
         using Ptr = std::shared_ptr< RangeType >;

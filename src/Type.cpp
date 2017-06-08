@@ -224,10 +224,10 @@ std::string Type::token( const Type::ID id )
 
 //
 //
-// Primitive Type
+// Synthetic Type
 //
 
-PrimitiveType::PrimitiveType( Type::ID id )
+SyntheticType::SyntheticType( Type::ID id )
 : Type( id )
 {
 }
@@ -236,8 +236,8 @@ PrimitiveType::PrimitiveType( Type::ID id )
 // Void Type
 //
 
-VoidType::VoidType()
-: PrimitiveType( Type::VOID )
+VoidType::VoidType( void )
+: SyntheticType( Type::VOID )
 {
 }
 
@@ -266,8 +266,8 @@ Constant VoidType::choose( void ) const
 // Label Type
 //
 
-LabelType::LabelType()
-: PrimitiveType( Type::LABEL )
+LabelType::LabelType( void )
+: SyntheticType( Type::LABEL )
 {
 }
 
@@ -296,8 +296,8 @@ Constant LabelType::choose( void ) const
 // Location Type
 //
 
-LocationType::LocationType()
-: PrimitiveType( Type::LOCATION )
+LocationType::LocationType( void )
+: SyntheticType( Type::LOCATION )
 {
 }
 
@@ -323,10 +323,20 @@ Constant LocationType::choose( void ) const
 }
 
 //
+//
+// Primitive Type
+//
+
+PrimitiveType::PrimitiveType( Type::ID id )
+: Type( id )
+{
+}
+
+//
 // Boolean Type
 //
 
-BooleanType::BooleanType()
+BooleanType::BooleanType( void )
 : PrimitiveType( Type::BOOLEAN )
 {
 }
@@ -531,7 +541,7 @@ Constant BitType::choose( void ) const
 // String Type
 //
 
-StringType::StringType()
+StringType::StringType( void )
 : PrimitiveType( Type::STRING )
 {
 }
@@ -562,7 +572,7 @@ Constant StringType::choose( void ) const
 // Flaoting Type
 //
 
-FloatingType::FloatingType()
+FloatingType::FloatingType( void )
 : PrimitiveType( Type::FLOATING )
 {
 }
@@ -593,7 +603,7 @@ Constant FloatingType::choose( void ) const
 // Rational Type
 //
 
-RationalType::RationalType()
+RationalType::RationalType( void )
 : PrimitiveType( Type::RATIONAL )
 {
 }
@@ -624,11 +634,21 @@ Constant RationalType::choose( void ) const
 }
 
 //
+//
+// Composed Type
+//
+
+ComposedType::ComposedType( Type::ID id )
+: Type( id )
+{
+}
+
+//
 // Enumeration Type
 //
 
 EnumerationType::EnumerationType( const Enumeration::Ptr& kind )
-: PrimitiveType( Type::ENUMERATION )
+: ComposedType( Type::ENUMERATION )
 , m_kind( kind )
 {
 }
@@ -676,14 +696,14 @@ Constant EnumerationType::choose( void ) const
 //
 
 RangeType::RangeType( const Range::Ptr& range )
-: PrimitiveType( Type::RANGE )
+: ComposedType( Type::RANGE )
 , m_range( range )
 {
     m_result = range->ptr_type();
 }
 
 RangeType::RangeType( const Type::Ptr& type )
-: PrimitiveType( Type::RANGE )
+: ComposedType( Type::RANGE )
 , m_range( nullptr )
 {
     m_result = type;
