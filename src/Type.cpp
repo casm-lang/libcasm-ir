@@ -128,6 +128,16 @@ u1 Type::isRange( void ) const
     return id() == Type::RANGE;
 }
 
+u1 Type::isTuple( void ) const
+{
+    return id() == Type::TUPLE;
+}
+
+u1 Type::isList( void ) const
+{
+    return id() == Type::LIST;
+}
+
 u1 Type::isRelation( void ) const
 {
     return id() == Type::RELATION;
@@ -206,6 +216,10 @@ std::string Type::token( const Type::ID id )
         case TUPLE:
         {
             return "Tuple";
+        }
+        case LIST:
+        {
+            return "List";
         }
         // relation
         case RELATION:
@@ -857,6 +871,39 @@ void TupleType::foreach(
 }
 
 Constant TupleType::choose( void ) const
+{
+    // TODO
+    return VoidConstant();
+}
+
+//
+//
+// List Type
+//
+
+ListType::ListType( const Type::Ptr& type )
+: ComposedType( Type::LIST )
+{
+    m_result = type;
+}
+
+std::string ListType::name( void ) const
+{
+    return "l<" + m_result->name() + ">";
+}
+
+std::string ListType::description( void ) const
+{
+    return "List< " + m_result->description() + " >";
+}
+
+void ListType::foreach(
+    const std::function< void( const Constant& constant ) >& callback ) const
+{
+    // TODO
+}
+
+Constant ListType::choose( void ) const
 {
     // TODO
     return VoidConstant();

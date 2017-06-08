@@ -101,6 +101,11 @@ TEST( libcasm_ir__Type, id_to_token_string )
                 EXPECT_STREQ( Type::token( id ).c_str(), "Tuple" );
                 break;
             }
+            case Type::LIST:
+            {
+                EXPECT_STREQ( Type::token( id ).c_str(), "List" );
+                break;
+            }
             // relation
             case Type::RELATION:
             {

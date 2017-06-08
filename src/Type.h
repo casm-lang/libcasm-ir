@@ -77,6 +77,7 @@ namespace libcasm_ir
             ENUMERATION,
             RANGE,
             TUPLE,
+            LIST,
 
             // relation
             RELATION,
@@ -141,6 +142,8 @@ namespace libcasm_ir
         u1 isRational( void ) const;
         u1 isEnumeration( void ) const;
         u1 isRange( void ) const;
+        u1 isTuple( void ) const;
+        u1 isList( void ) const;
         u1 isRelation( void ) const;
         u1 isReference( void ) const;
         u1 isRuleReference( void ) const;
@@ -448,6 +451,24 @@ namespace libcasm_ir
         : TupleType( { { std::forward< Args >( args )... } } )
         {
         }
+
+        std::string name( void ) const override;
+
+        std::string description( void ) const override;
+
+        void foreach(
+            const std::function< void( const Constant& constant ) >& callback )
+            const override;
+
+        Constant choose( void ) const override;
+    };
+
+    class ListType final : public ComposedType
+    {
+      public:
+        using Ptr = std::shared_ptr< ListType >;
+
+        ListType( const Type::Ptr& type );
 
         std::string name( void ) const override;
 
