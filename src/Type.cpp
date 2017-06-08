@@ -158,6 +158,11 @@ u1 Type::isFunctionReference( void ) const
     return id() == Type::FUNCTION_REFERENCE;
 }
 
+u1 Type::isFile( void ) const
+{
+    return id() == Type::FILE;
+}
+
 std::string Type::token( const Type::ID id )
 {
     switch( id )
@@ -233,6 +238,11 @@ std::string Type::token( const Type::ID id )
         case FUNCTION_REFERENCE:
         {
             return "FuncRef";
+        }
+        // abstract
+        case FILE:
+        {
+            return "File";
         }
         case _TOP_:
         {
@@ -984,6 +994,7 @@ Constant ListType::choose( void ) const
 }
 
 //
+//
 // Reference Type
 //
 
@@ -1015,6 +1026,7 @@ Constant ReferenceType::choose( void ) const
 }
 
 //
+//
 // Rule Reference Type
 //
 
@@ -1036,6 +1048,7 @@ RuleReferenceType::RuleReferenceType( void )
 }
 
 //
+//
 // Function Reference Type
 //
 
@@ -1048,6 +1061,47 @@ FunctionReferenceType::FunctionReferenceType(
     const Type::Ptr& result, const Types& arguments )
 : FunctionReferenceType( libstdhl::make< RelationType >( result, arguments ) )
 {
+}
+
+//
+//
+// Abstract Type
+//
+
+AbstractType::AbstractType( Type::ID id )
+: Type( id )
+{
+}
+
+//
+//
+// File Type
+//
+
+FileType::FileType( void )
+: AbstractType( Type::FILE )
+{
+}
+
+std::string FileType::name( void ) const
+{
+    return "file";
+}
+
+std::string FileType::description( void ) const
+{
+    return token( id() );
+}
+
+void FileType::foreach(
+    const std::function< void( const Constant& constant ) >& callback ) const
+{
+    // nothing to process
+}
+
+Constant FileType::choose( void ) const
+{
+    return VoidConstant();
 }
 
 //

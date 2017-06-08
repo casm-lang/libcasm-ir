@@ -84,6 +84,9 @@ namespace libcasm_ir
             RULE_REFERENCE,
             FUNCTION_REFERENCE,
 
+            // abstract
+            FILE,
+
             _TOP_
         };
 
@@ -146,6 +149,7 @@ namespace libcasm_ir
         u1 isReference( void ) const;
         u1 isRuleReference( void ) const;
         u1 isFunctionReference( void ) const;
+        u1 isFile( void ) const;
 
       protected:
         template < typename T >
@@ -536,6 +540,30 @@ namespace libcasm_ir
 
         FunctionReferenceType(
             const Type::Ptr& result, const Types& arguments );
+    };
+
+    class AbstractType : public Type
+    {
+      public:
+        AbstractType( Type::ID id );
+    };
+
+    class FileType final : public AbstractType
+    {
+      public:
+        using Ptr = std::shared_ptr< FileType >;
+
+        FileType( void );
+
+        std::string name( void ) const override;
+
+        std::string description( void ) const override;
+
+        void foreach(
+            const std::function< void( const Constant& constant ) >& callback )
+            const override;
+
+        Constant choose( void ) const override;
     };
 }
 

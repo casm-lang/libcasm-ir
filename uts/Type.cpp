@@ -122,6 +122,12 @@ TEST( libcasm_ir__Type, id_to_token_string )
                 EXPECT_STREQ( Type::token( id ).c_str(), "FuncRef" );
                 break;
             }
+            // abstract
+            case Type::FILE:
+            {
+                EXPECT_STREQ( Type::token( id ).c_str(), "File" );
+                break;
+            }
             case Type::_TOP_:
             {
                 EXPECT_STREQ( Type::token( id ).c_str(), "_TOP_" );
