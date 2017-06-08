@@ -128,6 +128,11 @@ TEST( libcasm_ir__Type, id_to_token_string )
                 EXPECT_STREQ( Type::token( id ).c_str(), "File" );
                 break;
             }
+            case Type::PORT:
+            {
+                EXPECT_STREQ( Type::token( id ).c_str(), "Port" );
+                break;
+            }
             case Type::_TOP_:
             {
                 EXPECT_STREQ( Type::token( id ).c_str(), "_TOP_" );

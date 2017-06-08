@@ -163,6 +163,11 @@ u1 Type::isFile( void ) const
     return id() == Type::FILE;
 }
 
+u1 Type::isPort( void ) const
+{
+    return id() == Type::PORT;
+}
+
 std::string Type::token( const Type::ID id )
 {
     switch( id )
@@ -243,6 +248,10 @@ std::string Type::token( const Type::ID id )
         case FILE:
         {
             return "File";
+        }
+        case PORT:
+        {
+            return "Port";
         }
         case _TOP_:
         {
@@ -1081,6 +1090,7 @@ AbstractType::AbstractType( Type::ID id )
 FileType::FileType( void )
 : AbstractType( Type::FILE )
 {
+    // TODO: PPA: add file properties?
 }
 
 std::string FileType::name( void ) const
@@ -1100,6 +1110,38 @@ void FileType::foreach(
 }
 
 Constant FileType::choose( void ) const
+{
+    return VoidConstant();
+}
+
+//
+//
+// Port Type
+//
+
+PortType::PortType( void )
+: AbstractType( Type::PORT )
+{
+    // TODO: PPA: add port properties?
+}
+
+std::string PortType::name( void ) const
+{
+    return "port";
+}
+
+std::string PortType::description( void ) const
+{
+    return token( id() );
+}
+
+void PortType::foreach(
+    const std::function< void( const Constant& constant ) >& callback ) const
+{
+    // nothing to process
+}
+
+Constant PortType::choose( void ) const
 {
     return VoidConstant();
 }

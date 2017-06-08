@@ -86,6 +86,7 @@ namespace libcasm_ir
 
             // abstract
             FILE,
+            PORT,
 
             _TOP_
         };
@@ -150,6 +151,7 @@ namespace libcasm_ir
         u1 isRuleReference( void ) const;
         u1 isFunctionReference( void ) const;
         u1 isFile( void ) const;
+        u1 isPort( void ) const;
 
       protected:
         template < typename T >
@@ -554,6 +556,24 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< FileType >;
 
         FileType( void );
+
+        std::string name( void ) const override;
+
+        std::string description( void ) const override;
+
+        void foreach(
+            const std::function< void( const Constant& constant ) >& callback )
+            const override;
+
+        Constant choose( void ) const override;
+    };
+
+    class PortType final : public AbstractType
+    {
+      public:
+        using Ptr = std::shared_ptr< PortType >;
+
+        PortType( void );
 
         std::string name( void ) const override;
 
