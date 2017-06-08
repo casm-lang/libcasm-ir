@@ -227,6 +227,13 @@ Constant Constant::undef( const Type::Ptr& type )
 {
     switch( type->id() )
     {
+        case Type::ID::_BOTTOM_: // [[fallthrough]]
+        case Type::ID::LABEL:    // [[fallthrough]]
+        case Type::ID::LOCATION: // [[fallthrough]]
+        case Type::ID::RELATION:
+        {
+            break;
+        }
         case Type::ID::VOID:
         {
             return VoidConstant();
@@ -260,26 +267,42 @@ Constant Constant::undef( const Type::Ptr& type )
             return EnumerationConstant(
                 std::static_pointer_cast< EnumerationType >( type ) );
         }
+        case Type::ID::RANGE:
+        {
+            break;
+        }
+        case Type::ID::TUPLE:
+        {
+            break;
+        }
+        case Type::ID::LIST:
+        {
+            break;
+        }
         case Type::ID::RULE_REFERENCE:
         {
             return RuleReferenceConstant( type );
         }
-
-        case Type::ID::_BOTTOM_: // [[fallthrough]]
-        case Type::ID::_TOP_:    // [[fallthrough]]
-        case Type::ID::RANGE:    // [[fallthrough]]
-        case Type::ID::LABEL:    // [[fallthrough]]
-        case Type::ID::LOCATION: // [[fallthrough]]
-        case Type::ID::RELATION: // [[fallthrough]]
         case Type::ID::FUNCTION_REFERENCE:
         {
-            throw std::domain_error( "unimplemented type '"
-                                     + type->description()
-                                     + "' to create a 'undef' constant" );
+            break;
+        }
+        case Type::ID::FILE:
+        {
+            break;
+        }
+        case Type::ID::PORT:
+        {
+            break;
+        }
+        case Type::ID::_TOP_:
+        {
             break;
         }
     }
 
+    throw std::domain_error( "unimplemented type '" + type->description()
+                             + "' to create a 'undef' constant" );
     return VoidConstant();
 }
 
