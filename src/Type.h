@@ -76,6 +76,7 @@ namespace libcasm_ir
             // composed
             ENUMERATION,
             RANGE,
+            TUPLE,
 
             // relation
             RELATION,
@@ -433,6 +434,30 @@ namespace libcasm_ir
 
       private:
         std::shared_ptr< Range > m_range;
+    };
+
+    class TupleType final : public ComposedType
+    {
+      public:
+        using Ptr = std::shared_ptr< TupleType >;
+
+        TupleType( const Types& types );
+
+        template < typename... Args >
+        inline TupleType( Args&&... args )
+        : TupleType( { { std::forward< Args >( args )... } } )
+        {
+        }
+
+        std::string name( void ) const override;
+
+        std::string description( void ) const override;
+
+        void foreach(
+            const std::function< void( const Constant& constant ) >& callback )
+            const override;
+
+        Constant choose( void ) const override;
     };
 
     class RelationType final : public Type

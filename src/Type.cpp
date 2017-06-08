@@ -156,6 +156,7 @@ std::string Type::token( const Type::ID id )
         {
             return "_BOTTOM_";
         }
+        // synthetic
         case VOID:
         {
             return "Void";
@@ -168,6 +169,7 @@ std::string Type::token( const Type::ID id )
         {
             return "Location";
         }
+        // primitive
         case BOOLEAN:
         {
             return "Boolean";
@@ -192,6 +194,7 @@ std::string Type::token( const Type::ID id )
         {
             return "Rational";
         }
+        // composed
         case ENUMERATION:
         {
             return "Enumeration";
@@ -200,10 +203,16 @@ std::string Type::token( const Type::ID id )
         {
             return "Range";
         }
+        case TUPLE:
+        {
+            return "Tuple";
+        }
+        // relation
         case RELATION:
         {
             return "Relation";
         }
+        // reference
         case RULE_REFERENCE:
         {
             return "RuleRef";
@@ -794,6 +803,63 @@ Constant RangeType::choose( void ) const
             "unimplemented 'foreach' of range type '" + name() + "'" );
         return VoidConstant();
     }
+}
+
+//
+//
+// Tuple Type
+//
+
+TupleType::TupleType( const Types& types )
+: ComposedType( Type::TUPLE )
+{
+    m_arguments = types;
+}
+
+std::string TupleType::name( void ) const
+{
+    std::string tmp = "t<";
+
+    u1 first = true;
+    for( auto argument : m_arguments )
+    {
+        tmp += ( not first ? "," : "" );
+        tmp += argument->name();
+        first = false;
+    }
+
+    tmp += ">";
+
+    return tmp;
+}
+
+std::string TupleType::description( void ) const
+{
+    std::string tmp = token( id() ) + "< ";
+
+    u1 first = true;
+    for( auto argument : m_arguments )
+    {
+        tmp += ( not first ? ", " : "" );
+        tmp += argument->description();
+        first = false;
+    }
+
+    tmp += " >";
+
+    return tmp;
+}
+
+void TupleType::foreach(
+    const std::function< void( const Constant& constant ) >& callback ) const
+{
+    // TODO
+}
+
+Constant TupleType::choose( void ) const
+{
+    // TODO
+    return VoidConstant();
 }
 
 //

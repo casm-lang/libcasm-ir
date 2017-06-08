@@ -38,6 +38,7 @@ TEST( libcasm_ir__Type, id_to_token_string )
                 EXPECT_STREQ( Type::token( id ).c_str(), "_BOTTOM_" );
                 break;
             }
+            // synthetic
             case Type::VOID:
             {
                 EXPECT_STREQ( Type::token( id ).c_str(), "Void" );
@@ -53,6 +54,7 @@ TEST( libcasm_ir__Type, id_to_token_string )
                 EXPECT_STREQ( Type::token( id ).c_str(), "Location" );
                 break;
             }
+            // primitive
             case Type::BOOLEAN:
             {
                 EXPECT_STREQ( Type::token( id ).c_str(), "Boolean" );
@@ -83,6 +85,7 @@ TEST( libcasm_ir__Type, id_to_token_string )
                 EXPECT_STREQ( Type::token( id ).c_str(), "Rational" );
                 break;
             }
+            // composed
             case Type::ENUMERATION:
             {
                 EXPECT_STREQ( Type::token( id ).c_str(), "Enumeration" );
@@ -93,11 +96,18 @@ TEST( libcasm_ir__Type, id_to_token_string )
                 EXPECT_STREQ( Type::token( id ).c_str(), "Range" );
                 break;
             }
+            case Type::TUPLE:
+            {
+                EXPECT_STREQ( Type::token( id ).c_str(), "Tuple" );
+                break;
+            }
+            // relation
             case Type::RELATION:
             {
                 EXPECT_STREQ( Type::token( id ).c_str(), "Relation" );
                 break;
             }
+            // reference
             case Type::RULE_REFERENCE:
             {
                 EXPECT_STREQ( Type::token( id ).c_str(), "RuleRef" );
