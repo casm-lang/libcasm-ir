@@ -64,6 +64,7 @@ namespace libcasm_ir
             VOID,
             LABEL,
             LOCATION,
+            RELATION,
 
             // primitive
             BOOLEAN,
@@ -78,9 +79,6 @@ namespace libcasm_ir
             RANGE,
             TUPLE,
             LIST,
-
-            // relation
-            RELATION,
 
             // reference
             RULE_REFERENCE,
@@ -134,6 +132,7 @@ namespace libcasm_ir
         u1 isVoid( void ) const;
         u1 isLabel( void ) const;
         u1 isLocation( void ) const;
+        u1 isRelation( void ) const;
         u1 isBoolean( void ) const;
         u1 isInteger( void ) const;
         u1 isBit( void ) const;
@@ -144,7 +143,6 @@ namespace libcasm_ir
         u1 isRange( void ) const;
         u1 isTuple( void ) const;
         u1 isList( void ) const;
-        u1 isRelation( void ) const;
         u1 isReference( void ) const;
         u1 isRuleReference( void ) const;
         u1 isFunctionReference( void ) const;
@@ -229,6 +227,24 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< LocationType >;
 
         LocationType( void );
+
+        std::string name( void ) const override;
+
+        std::string description( void ) const override;
+
+        void foreach(
+            const std::function< void( const Constant& constant ) >& callback )
+            const override;
+
+        Constant choose( void ) const override;
+    };
+
+    class RelationType final : public SyntheticType
+    {
+      public:
+        using Ptr = std::shared_ptr< RelationType >;
+
+        RelationType( const Type::Ptr& result, const Types& arguments = {} );
 
         std::string name( void ) const override;
 
@@ -469,24 +485,6 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< ListType >;
 
         ListType( const Type::Ptr& type );
-
-        std::string name( void ) const override;
-
-        std::string description( void ) const override;
-
-        void foreach(
-            const std::function< void( const Constant& constant ) >& callback )
-            const override;
-
-        Constant choose( void ) const override;
-    };
-
-    class RelationType final : public Type
-    {
-      public:
-        using Ptr = std::shared_ptr< RelationType >;
-
-        RelationType( const Type::Ptr& result, const Types& arguments = {} );
 
         std::string name( void ) const override;
 

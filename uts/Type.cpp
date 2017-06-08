@@ -54,6 +54,11 @@ TEST( libcasm_ir__Type, id_to_token_string )
                 EXPECT_STREQ( Type::token( id ).c_str(), "Location" );
                 break;
             }
+            case Type::RELATION:
+            {
+                EXPECT_STREQ( Type::token( id ).c_str(), "Relation" );
+                break;
+            }
             // primitive
             case Type::BOOLEAN:
             {
@@ -104,12 +109,6 @@ TEST( libcasm_ir__Type, id_to_token_string )
             case Type::LIST:
             {
                 EXPECT_STREQ( Type::token( id ).c_str(), "List" );
-                break;
-            }
-            // relation
-            case Type::RELATION:
-            {
-                EXPECT_STREQ( Type::token( id ).c_str(), "Relation" );
                 break;
             }
             // reference

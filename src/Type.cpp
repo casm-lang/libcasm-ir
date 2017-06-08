@@ -88,6 +88,11 @@ u1 Type::isLocation( void ) const
     return id() == Type::LOCATION;
 }
 
+u1 Type::isRelation( void ) const
+{
+    return id() == Type::RELATION;
+}
+
 u1 Type::isBoolean( void ) const
 {
     return id() == Type::BOOLEAN;
@@ -138,11 +143,6 @@ u1 Type::isList( void ) const
     return id() == Type::LIST;
 }
 
-u1 Type::isRelation( void ) const
-{
-    return id() == Type::RELATION;
-}
-
 u1 Type::isReference( void ) const
 {
     return isRuleReference() or isFunctionReference();
@@ -178,6 +178,10 @@ std::string Type::token( const Type::ID id )
         case LOCATION:
         {
             return "Location";
+        }
+        case RELATION:
+        {
+            return "Relation";
         }
         // primitive
         case BOOLEAN:
@@ -220,11 +224,6 @@ std::string Type::token( const Type::ID id )
         case LIST:
         {
             return "List";
-        }
-        // relation
-        case RELATION:
-        {
-            return "Relation";
         }
         // reference
         case RULE_REFERENCE:
@@ -341,6 +340,81 @@ void LocationType::foreach(
 }
 
 Constant LocationType::choose( void ) const
+{
+    return VoidConstant();
+}
+
+//
+//
+// Relation Type
+//
+
+RelationType::RelationType( const Type::Ptr& result, const Types& arguments )
+: SyntheticType( Type::RELATION )
+{
+    m_result = result;
+    m_arguments = arguments;
+
+#ifndef NDEBUG
+    assert( result );
+    for( auto argument : arguments )
+    {
+        assert( argument );
+    }
+#endif
+}
+
+std::string RelationType::name( void ) const
+{
+    std::string tmp = "<";
+
+    u1 first = true;
+    for( auto argument : m_arguments )
+    {
+        if( not first )
+        {
+            tmp += ", ";
+        }
+
+        tmp += argument->name();
+
+        first = false;
+    }
+
+    tmp += " -> " + m_result->name() + ">";
+
+    return tmp;
+}
+
+std::string RelationType::description( void ) const
+{
+    std::string tmp = "< ";
+
+    u1 first = true;
+    for( auto argument : m_arguments )
+    {
+        if( not first )
+        {
+            tmp += " * ";
+        }
+
+        tmp += argument->description();
+
+        first = false;
+    }
+
+    tmp += " -> " + m_result->description() + " >";
+
+    return tmp;
+}
+
+void RelationType::foreach(
+    const std::function< void( const Constant& constant ) >& callback ) const
+{
+    // this type has an infinite range to process, therefore omitted (for now)
+}
+
+Constant RelationType::choose( void ) const
 {
     return VoidConstant();
 }
@@ -906,81 +980,6 @@ void ListType::foreach(
 Constant ListType::choose( void ) const
 {
     // TODO
-    return VoidConstant();
-}
-
-//
-//
-// Relation Type
-//
-
-RelationType::RelationType( const Type::Ptr& result, const Types& arguments )
-: Type( Type::RELATION )
-{
-    m_result = result;
-    m_arguments = arguments;
-
-#ifndef NDEBUG
-    assert( result );
-    for( auto argument : arguments )
-    {
-        assert( argument );
-    }
-#endif
-}
-
-std::string RelationType::name( void ) const
-{
-    std::string tmp = "<";
-
-    u1 first = true;
-    for( auto argument : m_arguments )
-    {
-        if( not first )
-        {
-            tmp += ", ";
-        }
-
-        tmp += argument->name();
-
-        first = false;
-    }
-
-    tmp += " -> " + m_result->name() + ">";
-
-    return tmp;
-}
-
-std::string RelationType::description( void ) const
-{
-    std::string tmp = "< ";
-
-    u1 first = true;
-    for( auto argument : m_arguments )
-    {
-        if( not first )
-        {
-            tmp += " * ";
-        }
-
-        tmp += argument->description();
-
-        first = false;
-    }
-
-    tmp += " -> " + m_result->description() + " >";
-
-    return tmp;
-}
-
-void RelationType::foreach(
-    const std::function< void( const Constant& constant ) >& callback ) const
-{
-    // this type has an infinite range to process, therefore omitted (for now)
-}
-
-Constant RelationType::choose( void ) const
-{
     return VoidConstant();
 }
 
