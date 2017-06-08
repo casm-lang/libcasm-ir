@@ -73,6 +73,11 @@ std::string Type::make_hash( void ) const
     return "t:" + std::to_string( id() ) + ":" + description();
 }
 
+u1 Type::isSynthetic( void ) const
+{
+    return isVoid() or isLabel() or isLocation() or isRelation();
+}
+
 u1 Type::isVoid( void ) const
 {
     return id() == Type::VOID;
@@ -91,6 +96,12 @@ u1 Type::isLocation( void ) const
 u1 Type::isRelation( void ) const
 {
     return id() == Type::RELATION;
+}
+
+u1 Type::isPrimitive( void ) const
+{
+    return isBoolean() or isInteger() or isBit() or isString() or isFloating()
+           or isRational();
 }
 
 u1 Type::isBoolean( void ) const
@@ -121,6 +132,11 @@ u1 Type::isFloating( void ) const
 u1 Type::isRational( void ) const
 {
     return id() == Type::RATIONAL;
+}
+
+u1 Type::isComposed( void ) const
+{
+    return isEnumeration() or isRange() or isTuple() or isList();
 }
 
 u1 Type::isEnumeration( void ) const
@@ -156,6 +172,11 @@ u1 Type::isRuleReference( void ) const
 u1 Type::isFunctionReference( void ) const
 {
     return id() == Type::FUNCTION_REFERENCE;
+}
+
+u1 Type::isAbstraction( void ) const
+{
+    return isFile() or isPort();
 }
 
 u1 Type::isFile( void ) const
@@ -244,7 +265,7 @@ std::string Type::token( const Type::ID id )
         {
             return "FuncRef";
         }
-        // abstract
+        // abstraction
         case FILE:
         {
             return "File";
@@ -1074,10 +1095,10 @@ FunctionReferenceType::FunctionReferenceType(
 
 //
 //
-// Abstract Type
+// Abstraction Type
 //
 
-AbstractType::AbstractType( Type::ID id )
+AbstractionType::AbstractionType( Type::ID id )
 : Type( id )
 {
 }
@@ -1088,7 +1109,7 @@ AbstractType::AbstractType( Type::ID id )
 //
 
 FileType::FileType( void )
-: AbstractType( Type::FILE )
+: AbstractionType( Type::FILE )
 {
     // TODO: PPA: add file properties?
 }
@@ -1120,7 +1141,7 @@ Constant FileType::choose( void ) const
 //
 
 PortType::PortType( void )
-: AbstractType( Type::PORT )
+: AbstractionType( Type::PORT )
 {
     // TODO: PPA: add port properties?
 }

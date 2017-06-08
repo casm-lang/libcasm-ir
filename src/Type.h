@@ -84,7 +84,7 @@ namespace libcasm_ir
             RULE_REFERENCE,
             FUNCTION_REFERENCE,
 
-            // abstract
+            // abstraction
             FILE,
             PORT,
 
@@ -133,23 +133,31 @@ namespace libcasm_ir
             return !operator==( rhs );
         }
 
+        u1 isSynthetic( void ) const;
         u1 isVoid( void ) const;
         u1 isLabel( void ) const;
         u1 isLocation( void ) const;
         u1 isRelation( void ) const;
+
+        u1 isPrimitive( void ) const;
         u1 isBoolean( void ) const;
         u1 isInteger( void ) const;
         u1 isBit( void ) const;
         u1 isString( void ) const;
         u1 isFloating( void ) const;
         u1 isRational( void ) const;
+
+        u1 isComposed( void ) const;
         u1 isEnumeration( void ) const;
         u1 isRange( void ) const;
         u1 isTuple( void ) const;
         u1 isList( void ) const;
+
         u1 isReference( void ) const;
         u1 isRuleReference( void ) const;
         u1 isFunctionReference( void ) const;
+
+        u1 isAbstraction( void ) const;
         u1 isFile( void ) const;
         u1 isPort( void ) const;
 
@@ -544,13 +552,13 @@ namespace libcasm_ir
             const Type::Ptr& result, const Types& arguments );
     };
 
-    class AbstractType : public Type
+    class AbstractionType : public Type
     {
       public:
-        AbstractType( Type::ID id );
+        AbstractionType( Type::ID id );
     };
 
-    class FileType final : public AbstractType
+    class FileType final : public AbstractionType
     {
       public:
         using Ptr = std::shared_ptr< FileType >;
@@ -568,7 +576,7 @@ namespace libcasm_ir
         Constant choose( void ) const override;
     };
 
-    class PortType final : public AbstractType
+    class PortType final : public AbstractionType
     {
       public:
         using Ptr = std::shared_ptr< PortType >;

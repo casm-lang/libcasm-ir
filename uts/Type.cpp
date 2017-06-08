@@ -122,7 +122,7 @@ TEST( libcasm_ir__Type, id_to_token_string )
                 EXPECT_STREQ( Type::token( id ).c_str(), "FuncRef" );
                 break;
             }
-            // abstract
+            // abstraction
             case Type::FILE:
             {
                 EXPECT_STREQ( Type::token( id ).c_str(), "File" );
