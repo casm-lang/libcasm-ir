@@ -173,7 +173,7 @@ void Constant::accept( Visitor& visitor )
         }
         default:
         {
-            assert( !" invalid constant to dispatch found! " );
+            assert( !" invalid constant to dispatch 'accept' found! " );
         }
     }
 }
@@ -209,6 +209,60 @@ Constant Constant::choose( void ) const
     {
         return *this;
     }
+}
+
+std::size_t Constant::hash( void ) const
+{
+    switch( id() )
+    {
+        case Value::VOID_CONSTANT:
+        {
+            return static_cast< const VoidConstant* >( this )->hash();
+        }
+        case Value::BOOLEAN_CONSTANT:
+        {
+            return static_cast< const BooleanConstant* >( this )->hash();
+        }
+        case Value::INTEGER_CONSTANT:
+        {
+            return static_cast< const IntegerConstant* >( this )->hash();
+        }
+        case Value::BIT_CONSTANT:
+        {
+            return static_cast< const BitConstant* >( this )->hash();
+        }
+        case Value::STRING_CONSTANT:
+        {
+            return static_cast< const StringConstant* >( this )->hash();
+        }
+        case Value::FLOATING_CONSTANT:
+        {
+            return static_cast< const FloatingConstant* >( this )->hash();
+        }
+        case Value::RATIONAL_CONSTANT:
+        {
+            return static_cast< const RationalConstant* >( this )->hash();
+        }
+        case Value::ENUMERATION_CONSTANT:
+        {
+            return static_cast< const EnumerationConstant* >( this )->hash();
+        }
+        case Value::RANGE_CONSTANT:
+        {
+            return static_cast< const RangeConstant* >( this )->hash();
+        }
+        case Value::RULE_REFERENCE_CONSTANT:
+        {
+            return static_cast< const RuleReferenceConstant* >( this )->hash();
+        }
+        default:
+        {
+            break;
+        }
+    }
+
+    assert( !" invalid constant to dispatch 'hash' found! " );
+    return 0;
 }
 
 u1 Constant::classof( Value const* obj )
@@ -326,6 +380,12 @@ void VoidConstant::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
+std::size_t VoidConstant::hash( void ) const
+{
+    const auto h = ( (std::size_t)classid() ) << 1;
+    return h;
+}
+
 u1 VoidConstant::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -364,6 +424,12 @@ std::string BooleanConstant::name( void ) const
 void BooleanConstant::accept( Visitor& visitor )
 {
     visitor.visit( *this );
+}
+
+std::size_t BooleanConstant::hash( void ) const
+{
+    const auto h = ( ( (std::size_t)classid() ) << 1 ) | defined();
+    return libstdhl::Hash::combine( h, value() );
 }
 
 u1 BooleanConstant::classof( Value const* obj )
@@ -438,6 +504,12 @@ std::string IntegerConstant::name( void ) const
 void IntegerConstant::accept( Visitor& visitor )
 {
     visitor.visit( *this );
+}
+
+std::size_t IntegerConstant::hash( void ) const
+{
+    const auto h = ( ( (std::size_t)classid() ) << 1 ) | defined();
+    return libstdhl::Hash::combine( h, libstdhl::Hash::value( value() ) );
 }
 
 u1 IntegerConstant::classof( Value const* obj )
@@ -535,6 +607,12 @@ void BitConstant::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
+std::size_t BitConstant::hash( void ) const
+{
+    const auto h = ( ( (std::size_t)classid() ) << 1 ) | defined();
+    return libstdhl::Hash::combine( h, libstdhl::Hash::value( value() ) );
+}
+
 u1 BitConstant::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -574,6 +652,12 @@ std::string StringConstant::name( void ) const
 void StringConstant::accept( Visitor& visitor )
 {
     visitor.visit( *this );
+}
+
+std::size_t StringConstant::hash( void ) const
+{
+    const auto h = ( ( (std::size_t)classid() ) << 1 ) | defined();
+    return libstdhl::Hash::combine( h, libstdhl::Hash::value( value() ) );
 }
 
 u1 StringConstant::classof( Value const* obj )
@@ -627,6 +711,12 @@ void FloatingConstant::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
+std::size_t FloatingConstant::hash( void ) const
+{
+    const auto h = ( ( (std::size_t)classid() ) << 1 ) | defined();
+    return libstdhl::Hash::combine( h, libstdhl::Hash::value( value() ) );
+}
+
 u1 FloatingConstant::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -671,6 +761,12 @@ std::string RationalConstant::name( void ) const
 void RationalConstant::accept( Visitor& visitor )
 {
     visitor.visit( *this );
+}
+
+std::size_t RationalConstant::hash( void ) const
+{
+    const auto h = ( ( (std::size_t)classid() ) << 1 ) | defined();
+    return libstdhl::Hash::combine( h, libstdhl::Hash::value( value() ) );
 }
 
 u1 RationalConstant::classof( Value const* obj )
@@ -726,6 +822,12 @@ std::string EnumerationConstant::name( void ) const
 void EnumerationConstant::accept( Visitor& visitor )
 {
     visitor.visit( *this );
+}
+
+std::size_t EnumerationConstant::hash( void ) const
+{
+    const auto h = ( ( (std::size_t)classid() ) << 1 ) | defined();
+    return libstdhl::Hash::combine( h, libstdhl::Hash::value( value() ) );
 }
 
 u1 EnumerationConstant::classof( Value const* obj )
@@ -790,6 +892,12 @@ Constant RangeConstant::choose( void ) const
     return type().choose();
 }
 
+std::size_t RangeConstant::hash( void ) const
+{
+    const auto h = ( ( (std::size_t)classid() ) << 1 ) | defined();
+    return libstdhl::Hash::combine( h, value()->hash() );
+}
+
 u1 RangeConstant::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -825,6 +933,12 @@ void RuleReferenceConstant::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
+std::size_t RuleReferenceConstant::hash( void ) const
+{
+    const auto h = ( ( (std::size_t)classid() ) << 1 ) | defined();
+    return libstdhl::Hash::combine( h, value()->hash() );
+}
+
 u1 RuleReferenceConstant::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -847,6 +961,12 @@ std::string Identifier::name( void ) const
 void Identifier::accept( Visitor& visitor )
 {
     visitor.visit( *this );
+}
+
+std::size_t Identifier::hash( void ) const
+{
+    const auto h = ( ( (std::size_t)classid() ) << 1 ) | defined();
+    return libstdhl::Hash::combine( h, libstdhl::Hash::value( name() ) );
 }
 
 u1 Identifier::classof( Value const* obj )

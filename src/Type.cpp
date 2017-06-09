@@ -324,6 +324,12 @@ Constant VoidType::choose( void ) const
     return VoidConstant();
 }
 
+std::size_t VoidType::hash( void ) const
+{
+    return libstdhl::Hash::combine(
+        classid(), std::hash< std::string >()( name() ) );
+}
+
 //
 // Label Type
 //
@@ -354,6 +360,12 @@ Constant LabelType::choose( void ) const
     return VoidConstant();
 }
 
+std::size_t LabelType::hash( void ) const
+{
+    return libstdhl::Hash::combine(
+        classid(), std::hash< std::string >()( name() ) );
+}
+
 //
 // Location Type
 //
@@ -382,6 +394,12 @@ void LocationType::foreach(
 Constant LocationType::choose( void ) const
 {
     return VoidConstant();
+}
+
+std::size_t LocationType::hash( void ) const
+{
+    return libstdhl::Hash::combine(
+        classid(), std::hash< std::string >()( name() ) );
 }
 
 //
@@ -459,6 +477,12 @@ Constant RelationType::choose( void ) const
     return VoidConstant();
 }
 
+std::size_t RelationType::hash( void ) const
+{
+    return libstdhl::Hash::combine(
+        classid(), std::hash< std::string >()( name() ) );
+}
+
 //
 //
 // Primitive Type
@@ -499,6 +523,12 @@ Constant BooleanType::choose( void ) const
 {
     auto const value = ( u1 )( libstdhl::Random::uniform< u64 >() % 2 );
     return BooleanConstant( value );
+}
+
+std::size_t BooleanType::hash( void ) const
+{
+    return libstdhl::Hash::combine(
+        classid(), std::hash< std::string >()( name() ) );
 }
 
 //
@@ -590,6 +620,12 @@ Constant IntegerType::choose( void ) const
     }
 }
 
+std::size_t IntegerType::hash( void ) const
+{
+    return libstdhl::Hash::combine(
+        classid(), std::hash< std::string >()( name() ) );
+}
+
 //
 // Bit Type
 //
@@ -674,6 +710,12 @@ Constant BitType::choose( void ) const
                            // mapping to full range not only the bitsize
 }
 
+std::size_t BitType::hash( void ) const
+{
+    return libstdhl::Hash::combine(
+        classid(), std::hash< std::string >()( name() ) );
+}
+
 //
 // String Type
 //
@@ -705,6 +747,12 @@ Constant StringType::choose( void ) const
     return StringConstant();
 }
 
+std::size_t StringType::hash( void ) const
+{
+    return libstdhl::Hash::combine(
+        classid(), std::hash< std::string >()( name() ) );
+}
+
 //
 // Flaoting Type
 //
@@ -734,6 +782,12 @@ Constant FloatingType::choose( void ) const
 {
     // this is undefined for now
     return FloatingConstant();
+}
+
+std::size_t FloatingType::hash( void ) const
+{
+    return libstdhl::Hash::combine(
+        classid(), std::hash< std::string >()( name() ) );
 }
 
 //
@@ -768,6 +822,12 @@ Constant RationalType::choose( void ) const
     // d = randomvalue + 1 to avoid that the denominator is zero!
 
     return RationalConstant( libstdhl::Rational( n, d ) );
+}
+
+std::size_t RationalType::hash( void ) const
+{
+    return libstdhl::Hash::combine(
+        classid(), std::hash< std::string >()( name() ) );
 }
 
 //
@@ -825,6 +885,12 @@ Constant EnumerationType::choose( void ) const
         0, m_kind->elements().size() - 1 );
 
     return EnumerationConstant( m_kind, m_kind->elements()[ e ] );
+}
+
+std::size_t EnumerationType::hash( void ) const
+{
+    return libstdhl::Hash::combine(
+        classid(), std::hash< std::string >()( name() ) );
 }
 
 //
@@ -933,6 +999,12 @@ Constant RangeType::choose( void ) const
     }
 }
 
+std::size_t RangeType::hash( void ) const
+{
+    return libstdhl::Hash::combine(
+        classid(), std::hash< std::string >()( name() ) );
+}
+
 //
 //
 // Tuple Type
@@ -990,6 +1062,12 @@ Constant TupleType::choose( void ) const
     return VoidConstant();
 }
 
+std::size_t TupleType::hash( void ) const
+{
+    return libstdhl::Hash::combine(
+        classid(), std::hash< std::string >()( name() ) );
+}
+
 //
 //
 // List Type
@@ -1021,6 +1099,12 @@ Constant ListType::choose( void ) const
 {
     // TODO
     return VoidConstant();
+}
+
+std::size_t ListType::hash( void ) const
+{
+    return libstdhl::Hash::combine(
+        classid(), std::hash< std::string >()( name() ) );
 }
 
 //
@@ -1077,6 +1161,12 @@ RuleReferenceType::RuleReferenceType( void )
 {
 }
 
+std::size_t RuleReferenceType::hash( void ) const
+{
+    return libstdhl::Hash::combine(
+        classid(), std::hash< std::string >()( name() ) );
+}
+
 //
 //
 // Function Reference Type
@@ -1091,6 +1181,12 @@ FunctionReferenceType::FunctionReferenceType(
     const Type::Ptr& result, const Types& arguments )
 : FunctionReferenceType( libstdhl::make< RelationType >( result, arguments ) )
 {
+}
+
+std::size_t FunctionReferenceType::hash( void ) const
+{
+    return libstdhl::Hash::combine(
+        classid(), std::hash< std::string >()( name() ) );
 }
 
 //
@@ -1135,6 +1231,12 @@ Constant FileType::choose( void ) const
     return VoidConstant();
 }
 
+std::size_t FileType::hash( void ) const
+{
+    return libstdhl::Hash::combine(
+        classid(), std::hash< std::string >()( name() ) );
+}
+
 //
 //
 // Port Type
@@ -1165,6 +1267,12 @@ void PortType::foreach(
 Constant PortType::choose( void ) const
 {
     return VoidConstant();
+}
+
+std::size_t PortType::hash( void ) const
+{
+    return libstdhl::Hash::combine(
+        classid(), std::hash< std::string >()( name() ) );
 }
 
 //

@@ -56,6 +56,8 @@ namespace libcasm_ir
 
         std::string name( void ) const override;
 
+        std::size_t hash( void ) const override;
+
         static inline Value::ID classid( void )
         {
             return Value::BLOCK;

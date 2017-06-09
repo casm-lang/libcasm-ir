@@ -66,6 +66,12 @@ std::string Rule::name( void ) const
     return _name();
 }
 
+std::size_t Rule::hash( void ) const
+{
+    return libstdhl::Hash::combine(
+        classid(), std::hash< std::string >()( name() ) );
+}
+
 void Rule::accept( Visitor& visitor )
 {
     visitor.visit( *this );

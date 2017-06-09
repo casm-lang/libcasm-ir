@@ -168,6 +168,12 @@ std::string Instruction::name( void ) const
     return Value::token( id() );
 }
 
+std::size_t Instruction::hash( void ) const
+{
+    return libstdhl::Hash::combine(
+        classid(), std::hash< std::string >()( name() ) );
+}
+
 u1 Instruction::classof( Value const* obj )
 {
     return obj->id() == classid() or SkipInstruction::classof( obj )

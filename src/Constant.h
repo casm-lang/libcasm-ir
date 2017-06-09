@@ -68,6 +68,8 @@ namespace libcasm_ir
 
         Constant choose( void ) const;
 
+        std::size_t hash( void ) const override;
+
         static inline Value::ID classid( void )
         {
             return Value::CONSTANT;
@@ -108,6 +110,8 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override;
 
+        std::size_t hash( void ) const override;
+
         static inline Value::ID classid( void )
         {
             return Value::VOID_CONSTANT;
@@ -133,6 +137,8 @@ namespace libcasm_ir
         std::string name( void ) const override;
 
         void accept( Visitor& visitor ) override;
+
+        std::size_t hash( void ) const override;
 
         static inline Value::ID classid( void )
         {
@@ -168,6 +174,8 @@ namespace libcasm_ir
         std::string name( void ) const override;
 
         void accept( Visitor& visitor ) override;
+
+        std::size_t hash( void ) const override;
 
         static inline Value::ID classid( void )
         {
@@ -214,6 +222,8 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override;
 
+        std::size_t hash( void ) const override;
+
         static inline Value::ID classid( void )
         {
             return Value::BIT_CONSTANT;
@@ -239,6 +249,8 @@ namespace libcasm_ir
         std::string name( void ) const override;
 
         void accept( Visitor& visitor ) override;
+
+        std::size_t hash( void ) const override;
 
         static inline Value::ID classid( void )
         {
@@ -269,6 +281,8 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override;
 
+        std::size_t hash( void ) const override;
+
         static inline Value::ID classid( void )
         {
             return Value::FLOATING_CONSTANT;
@@ -296,6 +310,8 @@ namespace libcasm_ir
         std::string name( void ) const override;
 
         void accept( Visitor& visitor ) override;
+
+        std::size_t hash( void ) const override;
 
         static inline Value::ID classid( void )
         {
@@ -331,6 +347,8 @@ namespace libcasm_ir
         std::string name( void ) const override;
 
         void accept( Visitor& visitor ) override;
+
+        std::size_t hash( void ) const override;
 
         static inline Value::ID classid( void )
         {
@@ -368,6 +386,8 @@ namespace libcasm_ir
             const;
 
         Constant choose( void ) const;
+
+        std::size_t hash( void ) const override;
 
         static inline Value::ID classid( void )
         {
@@ -418,6 +438,8 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override;
 
+        std::size_t hash( void ) const override;
+
         static inline Value::ID classid( void )
         {
             return Value::RULE_REFERENCE_CONSTANT;
@@ -446,6 +468,8 @@ namespace libcasm_ir
 
     //     void accept( Visitor& visitor ) override;
 
+    //     std::size_t hash( void ) const override;
+
     //     static inline Value::ID classid( void )
     //     {
     //         return Value::FUNCTION_REFERENCE_CONSTANT;
@@ -454,7 +478,7 @@ namespace libcasm_ir
     //     static u1 classof( Value const* obj );
     // };
 
-    class Identifier : public Constant
+    class Identifier final : public Constant
     {
       public:
         using Ptr = std::shared_ptr< Identifier >;
@@ -465,6 +489,8 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override;
 
+        std::size_t hash( void ) const override;
+
         static inline Value::ID classid( void )
         {
             return Value::IDENTIFIER;
@@ -472,6 +498,30 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
     };
+}
+
+namespace libstdhl
+{
+    namespace Hash
+    {
+        inline std::size_t value( const libcasm_ir::Constant& constant )
+        {
+            return constant.hash();
+        }
+
+        inline std::size_t value(
+            const std::vector< libcasm_ir::Constant >& constants )
+        {
+            std::size_t hash = constants.size();
+
+            for( const auto& constant : constants )
+            {
+                hash = libstdhl::Hash::combine( hash, constant.hash() );
+            }
+
+            return hash;
+        }
+    }
 }
 
 #endif // _LIB_CASMIR_CONSTANT_H_

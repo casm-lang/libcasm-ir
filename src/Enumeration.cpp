@@ -93,6 +93,12 @@ std::string Enumeration::name( void ) const
     return _name();
 }
 
+std::size_t Enumeration::hash( void ) const
+{
+    return libstdhl::Hash::combine(
+        classid(), std::hash< std::string >()( name() ) );
+}
+
 void Enumeration::accept( Visitor& visitor )
 {
     visitor.visit( *this );

@@ -69,6 +69,12 @@ std::string Block::name( void ) const
     return _name();
 }
 
+std::size_t Block::hash( void ) const
+{
+    return libstdhl::Hash::combine(
+        classid(), std::hash< std::string >()( name() ) );
+}
+
 u1 Block::classof( Value const* obj )
 {
     return obj->id() == classid() or ExecutionSemanticsBlock::classof( obj )

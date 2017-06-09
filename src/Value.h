@@ -35,6 +35,8 @@
 #include "Type.h"
 #include "Visitor.h"
 
+#include "../stdhl/cpp/Hash.h"
+
 namespace libcasm_ir
 {
     class Value : public CasmIR, public std::enable_shared_from_this< Value >
@@ -216,11 +218,13 @@ namespace libcasm_ir
 
         std::string label( void ) const;
 
+        virtual std::size_t hash( void ) const = 0;
+
         inline u1 operator==( const Value& rhs ) const
         {
             if( this != &rhs )
             {
-                if( this->id() != rhs.id() or this->name().compare( rhs.name() )
+                if( this->id() != rhs.id() or this->hash() != rhs.hash()
                     or this->type() != rhs.type() )
                 {
                     return false;
@@ -314,6 +318,18 @@ namespace libcasm_ir
             }
 
             return "[" + s.str() + "]";
+        }
+
+        std::size_t hash( void ) const override final
+        {
+            std::size_t h = Value::VALUE_LIST;
+
+            for( const auto& value : *this )
+            {
+                h = libstdhl::Hash::combine( h, value->hash() );
+            }
+
+            return h;
         }
 
         void accept( Visitor& visitor ) override final

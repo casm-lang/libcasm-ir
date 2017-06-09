@@ -48,6 +48,12 @@ std::string Derived::name( void ) const
     return _name();
 }
 
+std::size_t Derived::hash( void ) const
+{
+    return libstdhl::Hash::combine(
+        classid(), std::hash< std::string >()( name() ) );
+}
+
 void Derived::accept( Visitor& visitor )
 {
     visitor.visit( *this );

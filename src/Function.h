@@ -37,6 +37,8 @@ namespace libcasm_ir
 
         std::string name( void ) const override;
 
+        std::size_t hash( void ) const override;
+
         void accept( Visitor& visitor ) override;
 
         static inline Value::ID classid( void )

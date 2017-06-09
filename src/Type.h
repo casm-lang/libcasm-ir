@@ -115,6 +115,8 @@ namespace libcasm_ir
 
         std::string make_hash( void ) const;
 
+        virtual std::size_t hash( void ) const = 0;
+
         inline u1 operator==( const Type& rhs ) const
         {
             if( this != &rhs )
@@ -215,6 +217,13 @@ namespace libcasm_ir
             const override;
 
         Constant choose( void ) const override;
+
+        std::size_t hash( void ) const override;
+
+        static inline Type::ID classid( void )
+        {
+            return Type::VOID;
+        }
     };
 
     class LabelType final : public SyntheticType
@@ -233,6 +242,13 @@ namespace libcasm_ir
             const override;
 
         Constant choose( void ) const override;
+
+        std::size_t hash( void ) const override;
+
+        static inline Type::ID classid( void )
+        {
+            return Type::LABEL;
+        }
     };
 
     class LocationType final : public SyntheticType
@@ -251,6 +267,13 @@ namespace libcasm_ir
             const override;
 
         Constant choose( void ) const override;
+
+        std::size_t hash( void ) const override;
+
+        static inline Type::ID classid( void )
+        {
+            return Type::LOCATION;
+        }
     };
 
     class RelationType final : public SyntheticType
@@ -269,6 +292,13 @@ namespace libcasm_ir
             const override;
 
         Constant choose( void ) const override;
+
+        std::size_t hash( void ) const override;
+
+        static inline Type::ID classid( void )
+        {
+            return Type::RELATION;
+        }
     };
 
     class PrimitiveType : public Type
@@ -293,6 +323,13 @@ namespace libcasm_ir
             const override;
 
         Constant choose( void ) const override;
+
+        std::size_t hash( void ) const override;
+
+        static inline Type::ID classid( void )
+        {
+            return Type::BOOLEAN;
+        }
     };
 
     class IntegerType final : public PrimitiveType
@@ -317,6 +354,13 @@ namespace libcasm_ir
             const override;
 
         Constant choose( void ) const override;
+
+        std::size_t hash( void ) const override;
+
+        static inline Type::ID classid( void )
+        {
+            return Type::INTEGER;
+        }
 
       private:
         std::shared_ptr< RangeType > m_range;
@@ -347,6 +391,13 @@ namespace libcasm_ir
 
         Constant choose( void ) const override;
 
+        std::size_t hash( void ) const override;
+
+        static inline Type::ID classid( void )
+        {
+            return Type::BIT;
+        }
+
       private:
         u16 m_bitsize;
     };
@@ -367,6 +418,13 @@ namespace libcasm_ir
             const override;
 
         Constant choose( void ) const override;
+
+        std::size_t hash( void ) const override;
+
+        static inline Type::ID classid( void )
+        {
+            return Type::STRING;
+        }
     };
 
     class FloatingType final : public PrimitiveType
@@ -385,6 +443,13 @@ namespace libcasm_ir
             const override;
 
         Constant choose( void ) const override;
+
+        std::size_t hash( void ) const override;
+
+        static inline Type::ID classid( void )
+        {
+            return Type::FLOATING;
+        }
     };
 
     class RationalType final : public PrimitiveType
@@ -403,6 +468,13 @@ namespace libcasm_ir
             const override;
 
         Constant choose( void ) const override;
+
+        std::size_t hash( void ) const override;
+
+        static inline Type::ID classid( void )
+        {
+            return Type::RATIONAL;
+        }
     };
 
     class ComposedType : public Type
@@ -431,6 +503,13 @@ namespace libcasm_ir
             const override;
 
         Constant choose( void ) const override;
+
+        std::size_t hash( void ) const override;
+
+        static inline Type::ID classid( void )
+        {
+            return Type::ENUMERATION;
+        }
 
       private:
         std::shared_ptr< Enumeration > m_kind;
@@ -465,6 +544,13 @@ namespace libcasm_ir
 
         Constant choose( void ) const override;
 
+        std::size_t hash( void ) const override;
+
+        static inline Type::ID classid( void )
+        {
+            return Type::RANGE;
+        }
+
       private:
         std::shared_ptr< Range > m_range;
     };
@@ -491,6 +577,13 @@ namespace libcasm_ir
             const override;
 
         Constant choose( void ) const override;
+
+        std::size_t hash( void ) const override;
+
+        static inline Type::ID classid( void )
+        {
+            return Type::TUPLE;
+        }
     };
 
     class ListType final : public ComposedType
@@ -509,6 +602,13 @@ namespace libcasm_ir
             const override;
 
         Constant choose( void ) const override;
+
+        std::size_t hash( void ) const override;
+
+        static inline Type::ID classid( void )
+        {
+            return Type::LIST;
+        }
     };
 
     class ReferenceType : public Type
@@ -539,6 +639,13 @@ namespace libcasm_ir
         RuleReferenceType( const Type::Ptr& result, const Types& arguments );
 
         RuleReferenceType( void );
+
+        std::size_t hash( void ) const override;
+
+        static inline Type::ID classid( void )
+        {
+            return Type::RULE_REFERENCE;
+        }
     };
 
     class FunctionReferenceType final : public ReferenceType
@@ -550,6 +657,13 @@ namespace libcasm_ir
 
         FunctionReferenceType(
             const Type::Ptr& result, const Types& arguments );
+
+        std::size_t hash( void ) const override;
+
+        static inline Type::ID classid( void )
+        {
+            return Type::FUNCTION_REFERENCE;
+        }
     };
 
     class AbstractionType : public Type
@@ -574,6 +688,13 @@ namespace libcasm_ir
             const override;
 
         Constant choose( void ) const override;
+
+        std::size_t hash( void ) const override;
+
+        static inline Type::ID classid( void )
+        {
+            return Type::FILE;
+        }
     };
 
     class PortType final : public AbstractionType
@@ -592,6 +713,13 @@ namespace libcasm_ir
             const override;
 
         Constant choose( void ) const override;
+
+        std::size_t hash( void ) const override;
+
+        static inline Type::ID classid( void )
+        {
+            return Type::PORT;
+        }
     };
 }
 

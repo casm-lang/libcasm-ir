@@ -63,6 +63,12 @@ std::string Range::name( void ) const
     return "[" + m_from->name() + ".." + m_to->name() + "]";
 }
 
+std::size_t Range::hash( void ) const
+{
+    return libstdhl::Hash::combine(
+        classid(), std::hash< std::string >()( name() ) );
+}
+
 void Range::accept( Visitor& visitor )
 {
     visitor.visit( *this );

@@ -44,6 +44,12 @@ std::string Agent::name( void ) const
     return _name();
 }
 
+std::size_t Agent::hash( void ) const
+{
+    return libstdhl::Hash::combine(
+        classid(), std::hash< std::string >()( name() ) );
+}
+
 void Agent::accept( Visitor& visitor )
 {
     visitor.visit( *this );

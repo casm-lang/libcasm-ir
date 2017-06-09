@@ -100,6 +100,12 @@ std::string Specification::name( void ) const
     return _name();
 }
 
+std::size_t Specification::hash( void ) const
+{
+    return libstdhl::Hash::combine(
+        classid(), std::hash< std::string >()( name() ) );
+}
+
 void Specification::accept( Visitor& visitor )
 {
     visitor.visit( *this );

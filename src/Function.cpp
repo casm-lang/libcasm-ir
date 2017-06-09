@@ -40,6 +40,12 @@ void Function::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
+std::size_t Function::hash( void ) const
+{
+    return libstdhl::Hash::combine(
+        classid(), std::hash< std::string >()( name() ) );
+}
+
 u1 Function::classof( Value const* obj )
 {
     return obj->id() == classid();

@@ -44,6 +44,12 @@ std::string Builtin::name( void ) const
     return Value::token( id() );
 }
 
+std::size_t Builtin::hash( void ) const
+{
+    return libstdhl::Hash::combine(
+        classid(), std::hash< std::string >()( name() ) );
+}
+
 void Builtin::accept( Visitor& visitor )
 {
     visitor.visit( *this );
