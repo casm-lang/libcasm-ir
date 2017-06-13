@@ -923,10 +923,14 @@ RuleReferenceConstant::RuleReferenceConstant(
     const Type::Ptr& type, const Rule::Ptr& value, u1 defined, u1 symbolic )
 : ReferenceConstant< Rule >( type, value, defined, symbolic, classid() )
 {
+    assert( type->isRuleReference() );
 }
 
 RuleReferenceConstant::RuleReferenceConstant( const Rule::Ptr& value )
-: RuleReferenceConstant( value->ptr_type(), value, true, false )
+: RuleReferenceConstant(
+      std::static_pointer_cast< Type >( libstdhl::make< RuleReferenceType >(
+          std::static_pointer_cast< RelationType >( value->ptr_type() ) ) ),
+      value, true, false )
 {
 }
 
