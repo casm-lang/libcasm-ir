@@ -801,7 +801,7 @@ RationalType::RationalType( void )
 
 std::string RationalType::name( void ) const
 {
-    return "r";
+    return "q";
 }
 
 std::string RationalType::description( void ) const
@@ -1118,11 +1118,6 @@ ReferenceType::ReferenceType( const Type::ID id, const RelationType::Ptr& type )
     m_result = type;
 }
 
-std::string ReferenceType::name( void ) const
-{
-    return token( id() ) + m_result->name();
-}
-
 std::string ReferenceType::description( void ) const
 {
     return token( id() ) + m_result->description();
@@ -1161,6 +1156,11 @@ RuleReferenceType::RuleReferenceType( void )
 {
 }
 
+std::string RuleReferenceType::name( void ) const
+{
+    return "r" + m_result->name();
+}
+
 std::size_t RuleReferenceType::hash( void ) const
 {
     return libstdhl::Hash::combine(
@@ -1181,6 +1181,11 @@ FunctionReferenceType::FunctionReferenceType(
     const Type::Ptr& result, const Types& arguments )
 : FunctionReferenceType( libstdhl::make< RelationType >( result, arguments ) )
 {
+}
+
+std::string FunctionReferenceType::name( void ) const
+{
+    return "f" + m_result->name();
 }
 
 std::size_t FunctionReferenceType::hash( void ) const

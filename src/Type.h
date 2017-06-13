@@ -618,8 +618,6 @@ namespace libcasm_ir
 
         ReferenceType( Type::ID id, const RelationType::Ptr& type );
 
-        std::string name( void ) const override;
-
         std::string description( void ) const override;
 
         void foreach(
@@ -640,6 +638,8 @@ namespace libcasm_ir
 
         RuleReferenceType( void );
 
+        std::string name( void ) const override;
+
         std::size_t hash( void ) const override;
 
         static inline Type::ID classid( void )
@@ -657,6 +657,8 @@ namespace libcasm_ir
 
         FunctionReferenceType(
             const Type::Ptr& result, const Types& arguments );
+
+        std::string name( void ) const override;
 
         std::size_t hash( void ) const override;
 
