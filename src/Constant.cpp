@@ -121,10 +121,12 @@ std::string Constant::name( void ) const
         }
         default:
         {
-            assert( !" invalid constant to dispatch found! " );
-            return "";
+            break;
         }
     }
+
+    assert( !" invalid constant to dispatch 'name' found! " );
+    return "";
 }
 
 void Constant::accept( Visitor& visitor )
@@ -134,42 +136,52 @@ void Constant::accept( Visitor& visitor )
         case Value::VOID_CONSTANT:
         {
             static_cast< VoidConstant* >( this )->accept( visitor );
+            break;
         }
         case Value::BOOLEAN_CONSTANT:
         {
             static_cast< BooleanConstant* >( this )->accept( visitor );
+            break;
         }
         case Value::INTEGER_CONSTANT:
         {
             static_cast< IntegerConstant* >( this )->accept( visitor );
+            break;
         }
         case Value::BIT_CONSTANT:
         {
             static_cast< BitConstant* >( this )->accept( visitor );
+            break;
         }
         case Value::STRING_CONSTANT:
         {
             static_cast< StringConstant* >( this )->accept( visitor );
+            break;
         }
         case Value::FLOATING_CONSTANT:
         {
             static_cast< FloatingConstant* >( this )->accept( visitor );
+            break;
         }
         case Value::RATIONAL_CONSTANT:
         {
             static_cast< RationalConstant* >( this )->accept( visitor );
+            break;
         }
         case Value::ENUMERATION_CONSTANT:
         {
             static_cast< EnumerationConstant* >( this )->accept( visitor );
+            break;
         }
         case Value::RANGE_CONSTANT:
         {
             static_cast< RangeConstant* >( this )->accept( visitor );
+            break;
         }
         case Value::RULE_REFERENCE_CONSTANT:
         {
             static_cast< RuleReferenceConstant* >( this )->accept( visitor );
+            break;
         }
         default:
         {
