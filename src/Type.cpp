@@ -377,7 +377,7 @@ LocationType::LocationType( void )
 
 std::string LocationType::name( void ) const
 {
-    return "location";
+    return "loc";
 }
 
 std::string LocationType::description( void ) const
@@ -764,7 +764,7 @@ FloatingType::FloatingType( void )
 
 std::string FloatingType::name( void ) const
 {
-    return "f";
+    return "z";
 }
 
 std::string FloatingType::description( void ) const
