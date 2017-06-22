@@ -105,7 +105,7 @@ namespace libcasm_ir
 
         virtual Constant choose( void ) const = 0;
 
-        virtual u1 valid( const Constant& constant ) const = 0;
+        virtual void validate( const Constant& constant ) const = 0;
 
         ID id( void ) const;
 
@@ -219,7 +219,7 @@ namespace libcasm_ir
 
         Constant choose( void ) const override;
 
-        u1 valid( const Constant& constant ) const override;
+        void validate( const Constant& constant ) const override;
 
         std::size_t hash( void ) const override;
 
@@ -246,7 +246,7 @@ namespace libcasm_ir
 
         Constant choose( void ) const override;
 
-        u1 valid( const Constant& constant ) const override;
+        void validate( const Constant& constant ) const override;
 
         std::size_t hash( void ) const override;
 
@@ -273,7 +273,7 @@ namespace libcasm_ir
 
         Constant choose( void ) const override;
 
-        u1 valid( const Constant& constant ) const override;
+        void validate( const Constant& constant ) const override;
 
         std::size_t hash( void ) const override;
 
@@ -300,7 +300,7 @@ namespace libcasm_ir
 
         Constant choose( void ) const override;
 
-        u1 valid( const Constant& constant ) const override;
+        void validate( const Constant& constant ) const override;
 
         std::size_t hash( void ) const override;
 
@@ -333,7 +333,7 @@ namespace libcasm_ir
 
         Constant choose( void ) const override;
 
-        u1 valid( const Constant& constant ) const override;
+        void validate( const Constant& constant ) const override;
 
         std::size_t hash( void ) const override;
 
@@ -366,7 +366,7 @@ namespace libcasm_ir
 
         Constant choose( void ) const override;
 
-        u1 valid( const Constant& constant ) const override;
+        void validate( const Constant& constant ) const override;
 
         std::size_t hash( void ) const override;
 
@@ -404,7 +404,7 @@ namespace libcasm_ir
 
         Constant choose( void ) const override;
 
-        u1 valid( const Constant& constant ) const override;
+        void validate( const Constant& constant ) const override;
 
         std::size_t hash( void ) const override;
 
@@ -434,7 +434,7 @@ namespace libcasm_ir
 
         Constant choose( void ) const override;
 
-        u1 valid( const Constant& constant ) const override;
+        void validate( const Constant& constant ) const override;
 
         std::size_t hash( void ) const override;
 
@@ -461,7 +461,7 @@ namespace libcasm_ir
 
         Constant choose( void ) const override;
 
-        u1 valid( const Constant& constant ) const override;
+        void validate( const Constant& constant ) const override;
 
         std::size_t hash( void ) const override;
 
@@ -488,7 +488,7 @@ namespace libcasm_ir
 
         Constant choose( void ) const override;
 
-        u1 valid( const Constant& constant ) const override;
+        void validate( const Constant& constant ) const override;
 
         std::size_t hash( void ) const override;
 
@@ -525,7 +525,7 @@ namespace libcasm_ir
 
         Constant choose( void ) const override;
 
-        u1 valid( const Constant& constant ) const override;
+        void validate( const Constant& constant ) const override;
 
         std::size_t hash( void ) const override;
 
@@ -567,7 +567,7 @@ namespace libcasm_ir
 
         Constant choose( void ) const override;
 
-        u1 valid( const Constant& constant ) const override;
+        void validate( const Constant& constant ) const override;
 
         std::size_t hash( void ) const override;
 
@@ -603,7 +603,7 @@ namespace libcasm_ir
 
         Constant choose( void ) const override;
 
-        u1 valid( const Constant& constant ) const override;
+        void validate( const Constant& constant ) const override;
 
         std::size_t hash( void ) const override;
 
@@ -630,7 +630,7 @@ namespace libcasm_ir
 
         Constant choose( void ) const override;
 
-        u1 valid( const Constant& constant ) const override;
+        void validate( const Constant& constant ) const override;
 
         std::size_t hash( void ) const override;
 
@@ -669,7 +669,7 @@ namespace libcasm_ir
 
         std::string name( void ) const override;
 
-        u1 valid( const Constant& constant ) const override;
+        void validate( const Constant& constant ) const override;
 
         std::size_t hash( void ) const override;
 
@@ -691,7 +691,7 @@ namespace libcasm_ir
 
         std::string name( void ) const override;
 
-        u1 valid( const Constant& constant ) const override;
+        void validate( const Constant& constant ) const override;
 
         std::size_t hash( void ) const override;
 
@@ -724,7 +724,7 @@ namespace libcasm_ir
 
         Constant choose( void ) const override;
 
-        u1 valid( const Constant& constant ) const override;
+        void validate( const Constant& constant ) const override;
 
         std::size_t hash( void ) const override;
 
@@ -751,7 +751,7 @@ namespace libcasm_ir
 
         Constant choose( void ) const override;
 
-        u1 valid( const Constant& constant ) const override;
+        void validate( const Constant& constant ) const override;
 
         std::size_t hash( void ) const override;
 

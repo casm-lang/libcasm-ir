@@ -23,6 +23,8 @@
 
 #include "uts/main.h"
 
+#include "src/Exception.h"
+
 using namespace libcasm_ir;
 
 TEST( libcasm_ir__type_ranged_integer, make_and_get )
@@ -75,15 +77,15 @@ TEST( libcasm_ir__type_ranged_integer, valid_check )
     const auto x5 = libstdhl::get< IntegerConstant >( 14 );
     const auto x6 = libstdhl::get< IntegerConstant >( 4321 );
 
-    EXPECT_FALSE( r->valid( *x0 ) );
-    EXPECT_FALSE( r->valid( *x1 ) );
-    EXPECT_TRUE( r->valid( *a ) );
-    EXPECT_TRUE( r->valid( *x2 ) );
-    EXPECT_TRUE( r->valid( *x3 ) );
-    EXPECT_TRUE( r->valid( *x4 ) );
-    EXPECT_TRUE( r->valid( *b ) );
-    EXPECT_FALSE( r->valid( *x5 ) );
-    EXPECT_FALSE( r->valid( *x6 ) );
+    EXPECT_THROW( r->validate( *x0 );, ValidationException );
+    EXPECT_THROW( r->validate( *x1 );, ValidationException );
+    r->validate( *a );
+    r->validate( *x2 );
+    r->validate( *x3 );
+    r->validate( *x4 );
+    r->validate( *b );
+    EXPECT_THROW( r->validate( *x5 );, ValidationException );
+    EXPECT_THROW( r->validate( *x6 );, ValidationException );
 }
 
 TEST( DISABLED_libcasm_ir__type_ranged_integer, invalid_range )

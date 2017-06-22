@@ -34,13 +34,24 @@ namespace libcasm_ir
         TypeArgumentException(
             const std::string& message, const std::size_t position );
 
-        const char* what() const noexcept override;
+        const char* what( void ) const noexcept override;
 
         std::size_t position( void ) const noexcept;
 
       private:
         const std::string m_message;
         const std::size_t m_position;
+    };
+
+    class ValidationException : public std::exception
+    {
+      public:
+        ValidationException( const std::string& message );
+
+        const char* what( void ) const noexcept override;
+
+      private:
+        const std::string m_message;
     };
 }
 

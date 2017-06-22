@@ -32,7 +32,7 @@ TypeArgumentException::TypeArgumentException(
 {
 }
 
-const char* TypeArgumentException::what() const noexcept
+const char* TypeArgumentException::what( void ) const noexcept
 {
     return m_message.c_str();
 }
@@ -40,6 +40,16 @@ const char* TypeArgumentException::what() const noexcept
 std::size_t TypeArgumentException::position( void ) const noexcept
 {
     return m_position;
+}
+
+ValidationException::ValidationException( const std::string& message )
+: m_message( message )
+{
+}
+
+const char* ValidationException::what( void ) const noexcept
+{
+    return m_message.c_str();
 }
 
 //

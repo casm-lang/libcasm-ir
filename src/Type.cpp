@@ -25,6 +25,7 @@
 
 #include "Constant.h"
 #include "Enumeration.h"
+#include "Exception.h"
 #include "Range.h"
 
 #include "../stdhl/cpp/Random.h"
@@ -324,9 +325,9 @@ Constant VoidType::choose( void ) const
     return VoidConstant();
 }
 
-u1 VoidType::valid( const Constant& constant ) const
+void VoidType::validate( const Constant& constant ) const
 {
-    return isa< VoidConstant >( constant );
+    assert( isa< VoidConstant >( constant ) );
 }
 
 std::size_t VoidType::hash( void ) const
@@ -365,9 +366,10 @@ Constant LabelType::choose( void ) const
     return VoidConstant();
 }
 
-u1 LabelType::valid( const Constant& constant ) const
+void LabelType::validate( const Constant& constant ) const
 {
-    return false;
+    // TODO: enable line if there will be a value LabelConstant
+    // assert( isa< LabelConstant >( constant ) );
 }
 
 std::size_t LabelType::hash( void ) const
@@ -406,9 +408,9 @@ Constant LocationType::choose( void ) const
     return VoidConstant();
 }
 
-u1 LocationType::valid( const Constant& constant ) const
+void LocationType::validate( const Constant& constant ) const
 {
-    return false;
+    // TODO: assert( isa< LocationConstant >( constant ) );
 }
 
 std::size_t LocationType::hash( void ) const
@@ -492,9 +494,9 @@ Constant RelationType::choose( void ) const
     return VoidConstant();
 }
 
-u1 RelationType::valid( const Constant& constant ) const
+void RelationType::validate( const Constant& constant ) const
 {
-    return false;
+    // relation constants are not possible, nothing to validate here!
 }
 
 std::size_t RelationType::hash( void ) const
@@ -545,9 +547,9 @@ Constant BooleanType::choose( void ) const
     return BooleanConstant( value );
 }
 
-u1 BooleanType::valid( const Constant& constant ) const
+void BooleanType::validate( const Constant& constant ) const
 {
-    return isa< BooleanConstant >( constant );
+    assert( isa< BooleanConstant >( constant ) );
 }
 
 std::size_t BooleanType::hash( void ) const
@@ -645,22 +647,13 @@ Constant IntegerType::choose( void ) const
     }
 }
 
-u1 IntegerType::valid( const Constant& constant ) const
+void IntegerType::validate( const Constant& constant ) const
 {
-    if( isa< IntegerConstant >( constant ) )
+    assert( isa< IntegerConstant >( constant ) );
+
+    if( constrained() )
     {
-        if( constrained() )
-        {
-            return m_range->valid( constant );
-        }
-        else
-        {
-            return true;
-        }
-    }
-    else
-    {
-        return false;
+        return m_range->validate( constant );
     }
 }
 
@@ -754,18 +747,19 @@ Constant BitType::choose( void ) const
                            // mapping to full range not only the bitsize
 }
 
-u1 BitType::valid( const Constant& constant ) const
+void BitType::validate( const Constant& constant ) const
 {
-    if( isa< BitConstant >( constant ) )
+    assert( isa< BitConstant >( constant ) );
+
+    const auto& c = static_cast< const BitConstant& >( constant );
+    assert( c.type().isBit() );
+    const auto& t = static_cast< const BitType& >( c.type() );
+
+    if( m_bitsize < t.bitsize() )
     {
-        const auto& c = static_cast< const BitConstant& >( constant );
-        assert( c.type().isBit() );
-        const auto& t = static_cast< const BitType& >( c.type() );
-        return m_bitsize >= t.bitsize();
-    }
-    else
-    {
-        return false;
+        throw ValidationException( " type " + t.description()
+                                   + " of constant is invalid for type "
+                                   + this->description() );
     }
 }
 
@@ -806,9 +800,9 @@ Constant StringType::choose( void ) const
     return StringConstant();
 }
 
-u1 StringType::valid( const Constant& constant ) const
+void StringType::validate( const Constant& constant ) const
 {
-    return isa< StringConstant >( constant );
+    assert( isa< StringConstant >( constant ) );
 }
 
 std::size_t StringType::hash( void ) const
@@ -848,9 +842,9 @@ Constant FloatingType::choose( void ) const
     return FloatingConstant();
 }
 
-u1 FloatingType::valid( const Constant& constant ) const
+void FloatingType::validate( const Constant& constant ) const
 {
-    return isa< FloatingConstant >( constant );
+    assert( isa< FloatingConstant >( constant ) );
 }
 
 std::size_t FloatingType::hash( void ) const
@@ -893,9 +887,9 @@ Constant RationalType::choose( void ) const
     return RationalConstant( libstdhl::Rational( n, d ) );
 }
 
-u1 RationalType::valid( const Constant& constant ) const
+void RationalType::validate( const Constant& constant ) const
 {
-    return isa< RationalConstant >( constant );
+    assert( isa< RationalConstant >( constant ) );
 }
 
 std::size_t RationalType::hash( void ) const
@@ -961,31 +955,29 @@ Constant EnumerationType::choose( void ) const
     return EnumerationConstant( m_kind, m_kind->elements()[ e ] );
 }
 
-u1 EnumerationType::valid( const Constant& constant ) const
+void EnumerationType::validate( const Constant& constant ) const
 {
-    if( isa< EnumerationConstant >( constant ) )
+    assert( isa< EnumerationConstant >( constant ) );
+
+    const auto& c = static_cast< const EnumerationConstant& >( constant );
+    if( *this == c.type() )
     {
-        const auto& c = static_cast< const EnumerationConstant& >( constant );
-        if( *this == c.type() )
+        try
         {
-            try
-            {
-                m_kind->encode( c.name() );
-                return true;
-            }
-            catch( const std::domain_error& e )
-            {
-                return false;
-            }
+            m_kind->encode( c.name() );
         }
-        else
+        catch( const std::domain_error& e )
         {
-            return false;
+            throw ValidationException( "value '" + c.name()
+                                       + "' of constant is invalid for type "
+                                       + this->description() );
         }
     }
     else
     {
-        return false;
+        throw ValidationException( "type " + c.type().description()
+                                   + " of constant is invalid for type "
+                                   + this->description() );
     }
 }
 
@@ -1101,29 +1093,28 @@ Constant RangeType::choose( void ) const
     }
 }
 
-u1 RangeType::valid( const Constant& constant ) const
+void RangeType::validate( const Constant& constant ) const
 {
     assert( m_range );
+
     if( type().isInteger() )
     {
-        if( isa< IntegerConstant >( constant ) )
-        {
-            const auto& a = static_cast< IntegerConstant& >( *range().from() );
-            const auto& b = static_cast< IntegerConstant& >( *range().to() );
-            const auto& x = static_cast< const IntegerConstant& >( constant );
+        assert( isa< IntegerConstant >( constant ) );
 
-            return ( a.value() <= x.value() ) and ( x.value() <= b.value() );
-        }
-        else
+        const auto& a = static_cast< IntegerConstant& >( *range().from() );
+        const auto& b = static_cast< IntegerConstant& >( *range().to() );
+        const auto& x = static_cast< const IntegerConstant& >( constant );
+
+        if( ( a.value() > x.value() ) or ( x.value() > b.value() ) )
         {
-            return false;
+            throw ValidationException( "value '" + x.name()
+                                       + "' is out of type range "
+                                       + this->description() );
         }
     }
     else
     {
-        throw std::domain_error(
-            "unimplemented 'valid' of range type '" + name() + "'" );
-        return false;
+        // TODO: unimplemented
     }
 }
 
@@ -1190,10 +1181,9 @@ Constant TupleType::choose( void ) const
     return VoidConstant();
 }
 
-u1 TupleType::valid( const Constant& constant ) const
+void TupleType::validate( const Constant& constant ) const
 {
     // TODO
-    return false;
 }
 
 std::size_t TupleType::hash( void ) const
@@ -1235,10 +1225,9 @@ Constant ListType::choose( void ) const
     return VoidConstant();
 }
 
-u1 ListType::valid( const Constant& constant ) const
+void ListType::validate( const Constant& constant ) const
 {
     // TODO
-    return false;
 }
 
 std::size_t ListType::hash( void ) const
@@ -1301,10 +1290,9 @@ std::string RuleReferenceType::name( void ) const
     return "r" + m_result->name();
 }
 
-u1 RuleReferenceType::valid( const Constant& constant ) const
+void RuleReferenceType::validate( const Constant& constant ) const
 {
     // TODO
-    return false;
 }
 
 std::size_t RuleReferenceType::hash( void ) const
@@ -1334,10 +1322,9 @@ std::string FunctionReferenceType::name( void ) const
     return "f" + m_result->name();
 }
 
-u1 FunctionReferenceType::valid( const Constant& constant ) const
+void FunctionReferenceType::validate( const Constant& constant ) const
 {
     // TODO
-    return false;
 }
 
 std::size_t FunctionReferenceType::hash( void ) const
@@ -1388,10 +1375,9 @@ Constant FileType::choose( void ) const
     return VoidConstant();
 }
 
-u1 FileType::valid( const Constant& constant ) const
+void FileType::validate( const Constant& constant ) const
 {
     // TODO
-    return false;
 }
 
 std::size_t FileType::hash( void ) const
@@ -1432,10 +1418,9 @@ Constant PortType::choose( void ) const
     return VoidConstant();
 }
 
-u1 PortType::valid( const Constant& constant ) const
+void PortType::validate( const Constant& constant ) const
 {
     // TODO
-    return false;
 }
 
 std::size_t PortType::hash( void ) const
