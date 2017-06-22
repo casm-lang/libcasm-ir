@@ -324,6 +324,11 @@ Constant VoidType::choose( void ) const
     return VoidConstant();
 }
 
+u1 VoidType::valid( const Constant& constant ) const
+{
+    return isa< VoidConstant >( constant );
+}
+
 std::size_t VoidType::hash( void ) const
 {
     return libstdhl::Hash::combine(
@@ -360,6 +365,11 @@ Constant LabelType::choose( void ) const
     return VoidConstant();
 }
 
+u1 LabelType::valid( const Constant& constant ) const
+{
+    return false;
+}
+
 std::size_t LabelType::hash( void ) const
 {
     return libstdhl::Hash::combine(
@@ -394,6 +404,11 @@ void LocationType::foreach(
 Constant LocationType::choose( void ) const
 {
     return VoidConstant();
+}
+
+u1 LocationType::valid( const Constant& constant ) const
+{
+    return false;
 }
 
 std::size_t LocationType::hash( void ) const
@@ -477,6 +492,11 @@ Constant RelationType::choose( void ) const
     return VoidConstant();
 }
 
+u1 RelationType::valid( const Constant& constant ) const
+{
+    return false;
+}
+
 std::size_t RelationType::hash( void ) const
 {
     return libstdhl::Hash::combine(
@@ -523,6 +543,11 @@ Constant BooleanType::choose( void ) const
 {
     auto const value = ( u1 )( libstdhl::Random::uniform< u64 >() % 2 );
     return BooleanConstant( value );
+}
+
+u1 BooleanType::valid( const Constant& constant ) const
+{
+    return isa< BooleanConstant >( constant );
 }
 
 std::size_t BooleanType::hash( void ) const
@@ -620,6 +645,25 @@ Constant IntegerType::choose( void ) const
     }
 }
 
+u1 IntegerType::valid( const Constant& constant ) const
+{
+    if( isa< IntegerConstant >( constant ) )
+    {
+        if( constrained() )
+        {
+            return m_range->valid( constant );
+        }
+        else
+        {
+            return true;
+        }
+    }
+    else
+    {
+        return false;
+    }
+}
+
 std::size_t IntegerType::hash( void ) const
 {
     return libstdhl::Hash::combine(
@@ -710,6 +754,21 @@ Constant BitType::choose( void ) const
                            // mapping to full range not only the bitsize
 }
 
+u1 BitType::valid( const Constant& constant ) const
+{
+    if( isa< BitConstant >( constant ) )
+    {
+        const auto& c = static_cast< const BitConstant& >( constant );
+        assert( c.type().isBit() );
+        const auto& t = static_cast< const BitType& >( c.type() );
+        return m_bitsize >= t.bitsize();
+    }
+    else
+    {
+        return false;
+    }
+}
+
 std::size_t BitType::hash( void ) const
 {
     return libstdhl::Hash::combine(
@@ -747,6 +806,11 @@ Constant StringType::choose( void ) const
     return StringConstant();
 }
 
+u1 StringType::valid( const Constant& constant ) const
+{
+    return isa< StringConstant >( constant );
+}
+
 std::size_t StringType::hash( void ) const
 {
     return libstdhl::Hash::combine(
@@ -782,6 +846,11 @@ Constant FloatingType::choose( void ) const
 {
     // this is undefined for now
     return FloatingConstant();
+}
+
+u1 FloatingType::valid( const Constant& constant ) const
+{
+    return isa< FloatingConstant >( constant );
 }
 
 std::size_t FloatingType::hash( void ) const
@@ -822,6 +891,11 @@ Constant RationalType::choose( void ) const
     // d = randomvalue + 1 to avoid that the denominator is zero!
 
     return RationalConstant( libstdhl::Rational( n, d ) );
+}
+
+u1 RationalType::valid( const Constant& constant ) const
+{
+    return isa< RationalConstant >( constant );
 }
 
 std::size_t RationalType::hash( void ) const
@@ -885,6 +959,34 @@ Constant EnumerationType::choose( void ) const
         0, m_kind->elements().size() - 1 );
 
     return EnumerationConstant( m_kind, m_kind->elements()[ e ] );
+}
+
+u1 EnumerationType::valid( const Constant& constant ) const
+{
+    if( isa< EnumerationConstant >( constant ) )
+    {
+        const auto& c = static_cast< const EnumerationConstant& >( constant );
+        if( *this == c.type() )
+        {
+            try
+            {
+                m_kind->encode( c.name() );
+                return true;
+            }
+            catch( const std::domain_error& e )
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+    else
+    {
+        return false;
+    }
 }
 
 std::size_t EnumerationType::hash( void ) const
@@ -999,6 +1101,32 @@ Constant RangeType::choose( void ) const
     }
 }
 
+u1 RangeType::valid( const Constant& constant ) const
+{
+    assert( m_range );
+    if( type().isInteger() )
+    {
+        if( isa< IntegerConstant >( constant ) )
+        {
+            const auto& a = static_cast< IntegerConstant& >( *range().from() );
+            const auto& b = static_cast< IntegerConstant& >( *range().to() );
+            const auto& x = static_cast< const IntegerConstant& >( constant );
+
+            return ( a.value() <= x.value() ) and ( x.value() <= b.value() );
+        }
+        else
+        {
+            return false;
+        }
+    }
+    else
+    {
+        throw std::domain_error(
+            "unimplemented 'valid' of range type '" + name() + "'" );
+        return false;
+    }
+}
+
 std::size_t RangeType::hash( void ) const
 {
     return libstdhl::Hash::combine(
@@ -1062,6 +1190,12 @@ Constant TupleType::choose( void ) const
     return VoidConstant();
 }
 
+u1 TupleType::valid( const Constant& constant ) const
+{
+    // TODO
+    return false;
+}
+
 std::size_t TupleType::hash( void ) const
 {
     return libstdhl::Hash::combine(
@@ -1099,6 +1233,12 @@ Constant ListType::choose( void ) const
 {
     // TODO
     return VoidConstant();
+}
+
+u1 ListType::valid( const Constant& constant ) const
+{
+    // TODO
+    return false;
 }
 
 std::size_t ListType::hash( void ) const
@@ -1161,6 +1301,12 @@ std::string RuleReferenceType::name( void ) const
     return "r" + m_result->name();
 }
 
+u1 RuleReferenceType::valid( const Constant& constant ) const
+{
+    // TODO
+    return false;
+}
+
 std::size_t RuleReferenceType::hash( void ) const
 {
     return libstdhl::Hash::combine(
@@ -1186,6 +1332,12 @@ FunctionReferenceType::FunctionReferenceType(
 std::string FunctionReferenceType::name( void ) const
 {
     return "f" + m_result->name();
+}
+
+u1 FunctionReferenceType::valid( const Constant& constant ) const
+{
+    // TODO
+    return false;
 }
 
 std::size_t FunctionReferenceType::hash( void ) const
@@ -1236,6 +1388,12 @@ Constant FileType::choose( void ) const
     return VoidConstant();
 }
 
+u1 FileType::valid( const Constant& constant ) const
+{
+    // TODO
+    return false;
+}
+
 std::size_t FileType::hash( void ) const
 {
     return libstdhl::Hash::combine(
@@ -1272,6 +1430,12 @@ void PortType::foreach(
 Constant PortType::choose( void ) const
 {
     return VoidConstant();
+}
+
+u1 PortType::valid( const Constant& constant ) const
+{
+    // TODO
+    return false;
 }
 
 std::size_t PortType::hash( void ) const

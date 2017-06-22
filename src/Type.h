@@ -105,6 +105,8 @@ namespace libcasm_ir
 
         virtual Constant choose( void ) const = 0;
 
+        virtual u1 valid( const Constant& constant ) const = 0;
+
         ID id( void ) const;
 
         const Type& result( void ) const;
@@ -218,6 +220,8 @@ namespace libcasm_ir
 
         Constant choose( void ) const override;
 
+        u1 valid( const Constant& constant ) const override;
+
         std::size_t hash( void ) const override;
 
         static inline Type::ID classid( void )
@@ -242,6 +246,8 @@ namespace libcasm_ir
             const override;
 
         Constant choose( void ) const override;
+
+        u1 valid( const Constant& constant ) const override;
 
         std::size_t hash( void ) const override;
 
@@ -268,6 +274,8 @@ namespace libcasm_ir
 
         Constant choose( void ) const override;
 
+        u1 valid( const Constant& constant ) const override;
+
         std::size_t hash( void ) const override;
 
         static inline Type::ID classid( void )
@@ -292,6 +300,8 @@ namespace libcasm_ir
             const override;
 
         Constant choose( void ) const override;
+
+        u1 valid( const Constant& constant ) const override;
 
         std::size_t hash( void ) const override;
 
@@ -324,6 +334,8 @@ namespace libcasm_ir
 
         Constant choose( void ) const override;
 
+        u1 valid( const Constant& constant ) const override;
+
         std::size_t hash( void ) const override;
 
         static inline Type::ID classid( void )
@@ -354,6 +366,8 @@ namespace libcasm_ir
             const override;
 
         Constant choose( void ) const override;
+
+        u1 valid( const Constant& constant ) const override;
 
         std::size_t hash( void ) const override;
 
@@ -391,6 +405,8 @@ namespace libcasm_ir
 
         Constant choose( void ) const override;
 
+        u1 valid( const Constant& constant ) const override;
+
         std::size_t hash( void ) const override;
 
         static inline Type::ID classid( void )
@@ -419,6 +435,8 @@ namespace libcasm_ir
 
         Constant choose( void ) const override;
 
+        u1 valid( const Constant& constant ) const override;
+
         std::size_t hash( void ) const override;
 
         static inline Type::ID classid( void )
@@ -444,6 +462,8 @@ namespace libcasm_ir
 
         Constant choose( void ) const override;
 
+        u1 valid( const Constant& constant ) const override;
+
         std::size_t hash( void ) const override;
 
         static inline Type::ID classid( void )
@@ -468,6 +488,8 @@ namespace libcasm_ir
             const override;
 
         Constant choose( void ) const override;
+
+        u1 valid( const Constant& constant ) const override;
 
         std::size_t hash( void ) const override;
 
@@ -503,6 +525,8 @@ namespace libcasm_ir
             const override;
 
         Constant choose( void ) const override;
+
+        u1 valid( const Constant& constant ) const override;
 
         std::size_t hash( void ) const override;
 
@@ -544,6 +568,8 @@ namespace libcasm_ir
 
         Constant choose( void ) const override;
 
+        u1 valid( const Constant& constant ) const override;
+
         std::size_t hash( void ) const override;
 
         static inline Type::ID classid( void )
@@ -578,6 +604,8 @@ namespace libcasm_ir
 
         Constant choose( void ) const override;
 
+        u1 valid( const Constant& constant ) const override;
+
         std::size_t hash( void ) const override;
 
         static inline Type::ID classid( void )
@@ -602,6 +630,8 @@ namespace libcasm_ir
             const override;
 
         Constant choose( void ) const override;
+
+        u1 valid( const Constant& constant ) const override;
 
         std::size_t hash( void ) const override;
 
@@ -640,6 +670,8 @@ namespace libcasm_ir
 
         std::string name( void ) const override;
 
+        u1 valid( const Constant& constant ) const override;
+
         std::size_t hash( void ) const override;
 
         static inline Type::ID classid( void )
@@ -659,6 +691,8 @@ namespace libcasm_ir
             const Type::Ptr& result, const Types& arguments );
 
         std::string name( void ) const override;
+
+        u1 valid( const Constant& constant ) const override;
 
         std::size_t hash( void ) const override;
 
@@ -691,6 +725,8 @@ namespace libcasm_ir
 
         Constant choose( void ) const override;
 
+        u1 valid( const Constant& constant ) const override;
+
         std::size_t hash( void ) const override;
 
         static inline Type::ID classid( void )
@@ -715,6 +751,8 @@ namespace libcasm_ir
             const override;
 
         Constant choose( void ) const override;
+
+        u1 valid( const Constant& constant ) const override;
 
         std::size_t hash( void ) const override;
 

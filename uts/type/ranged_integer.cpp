@@ -60,6 +60,32 @@ TEST( libcasm_ir__type_ranged_integer, make_and_get )
     std::cerr << v->choose().name() << "\n";
 }
 
+TEST( libcasm_ir__type_ranged_integer, valid_check )
+{
+    const auto a = libstdhl::get< IntegerConstant >( -4 );
+    const auto b = libstdhl::get< IntegerConstant >( 13 );
+    const auto R = libstdhl::make< Range >( a, b );
+    const auto r = libstdhl::make< RangeType >( R );
+
+    const auto x0 = libstdhl::get< IntegerConstant >( -4321 );
+    const auto x1 = libstdhl::get< IntegerConstant >( -5 );
+    const auto x2 = libstdhl::get< IntegerConstant >( -3 );
+    const auto x3 = libstdhl::get< IntegerConstant >( 0 );
+    const auto x4 = libstdhl::get< IntegerConstant >( 12 );
+    const auto x5 = libstdhl::get< IntegerConstant >( 14 );
+    const auto x6 = libstdhl::get< IntegerConstant >( 4321 );
+
+    EXPECT_FALSE( r->valid( *x0 ) );
+    EXPECT_FALSE( r->valid( *x1 ) );
+    EXPECT_TRUE( r->valid( *a ) );
+    EXPECT_TRUE( r->valid( *x2 ) );
+    EXPECT_TRUE( r->valid( *x3 ) );
+    EXPECT_TRUE( r->valid( *x4 ) );
+    EXPECT_TRUE( r->valid( *b ) );
+    EXPECT_FALSE( r->valid( *x5 ) );
+    EXPECT_FALSE( r->valid( *x6 ) );
+}
+
 TEST( DISABLED_libcasm_ir__type_ranged_integer, invalid_range )
 {
     const auto m = libstdhl::get< IntegerConstant >( -4 );
