@@ -123,8 +123,7 @@ namespace libcasm_ir
         {
             if( this != &rhs )
             {
-                if( this->id() != rhs.id()
-                    or this->name().compare( rhs.name() ) )
+                if( this->id() != rhs.id() or this->hash() != rhs.hash() )
                 {
                     return false;
                 }
