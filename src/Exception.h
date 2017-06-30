@@ -28,74 +28,57 @@
 
 namespace libcasm_ir
 {
-    class TypeArgumentException : public std::exception
+    class Exception : public std::exception
+    {
+      public:
+        Exception( const std::string& message );
+
+        const char* what( void ) const noexcept override;
+
+      private:
+        const std::string m_message;
+    };
+
+    class TypeArgumentException : public Exception
     {
       public:
         TypeArgumentException(
             const std::string& message, const std::size_t position );
 
-        const char* what( void ) const noexcept override;
-
         std::size_t position( void ) const noexcept;
 
       private:
-        const std::string m_message;
         const std::size_t m_position;
     };
 
-    class ValidationException : public std::exception
+    class ValidationException : public Exception
     {
       public:
         ValidationException( const std::string& message );
-
-        const char* what( void ) const noexcept override;
-
-      private:
-        const std::string m_message;
     };
 
-    class UndefinedConstantException : public std::exception
+    class UndefinedConstantException : public Exception
     {
       public:
         UndefinedConstantException( const std::string& message );
-
-        const char* what( void ) const noexcept override;
-
-      private:
-        const std::string m_message;
     };
 
-    class AssertionException : public std::exception
+    class AssertionException : public Exception
     {
       public:
         AssertionException( const std::string& message );
-
-        const char* what( void ) const noexcept override;
-
-      private:
-        const std::string m_message;
     };
 
-    class AbortException : public std::exception
+    class AbortException : public Exception
     {
       public:
         AbortException( const std::string& message );
-
-        const char* what( void ) const noexcept override;
-
-      private:
-        const std::string m_message;
     };
 
-    class InternalException : public std::exception
+    class InternalException : public Exception
     {
       public:
         InternalException( const std::string& message );
-
-        const char* what( void ) const noexcept override;
-
-      private:
-        const std::string m_message;
     };
 }
 

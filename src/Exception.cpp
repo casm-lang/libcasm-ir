@@ -25,16 +25,21 @@
 
 using namespace libcasm_ir;
 
-TypeArgumentException::TypeArgumentException(
-    const std::string& message, const std::size_t position )
+Exception::Exception( const std::string& message )
 : m_message( message )
-, m_position( position )
 {
 }
 
-const char* TypeArgumentException::what( void ) const noexcept
+const char* Exception::what( void ) const noexcept
 {
     return m_message.c_str();
+}
+
+TypeArgumentException::TypeArgumentException(
+    const std::string& message, const std::size_t position )
+: Exception( message )
+, m_position( position )
+{
 }
 
 std::size_t TypeArgumentException::position( void ) const noexcept
@@ -43,54 +48,29 @@ std::size_t TypeArgumentException::position( void ) const noexcept
 }
 
 ValidationException::ValidationException( const std::string& message )
-: m_message( message )
+: Exception( message )
 {
-}
-
-const char* ValidationException::what( void ) const noexcept
-{
-    return m_message.c_str();
 }
 
 UndefinedConstantException::UndefinedConstantException(
     const std::string& message )
-: m_message( message )
+: Exception( message )
 {
-}
-
-const char* UndefinedConstantException::what( void ) const noexcept
-{
-    return m_message.c_str();
 }
 
 AssertionException::AssertionException( const std::string& message )
-: m_message( message )
+: Exception( message )
 {
-}
-
-const char* AssertionException::what( void ) const noexcept
-{
-    return m_message.c_str();
 }
 
 AbortException::AbortException( const std::string& message )
-: m_message( message )
+: Exception( message )
 {
-}
-
-const char* AbortException::what( void ) const noexcept
-{
-    return m_message.c_str();
 }
 
 InternalException::InternalException( const std::string& message )
-: m_message( message )
+: Exception( message )
 {
-}
-
-const char* InternalException::what( void ) const noexcept
-{
-    return m_message.c_str();
 }
 
 //
