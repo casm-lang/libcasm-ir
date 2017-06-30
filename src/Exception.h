@@ -53,6 +53,50 @@ namespace libcasm_ir
       private:
         const std::string m_message;
     };
+
+    class UndefinedConstantException : public std::exception
+    {
+      public:
+        UndefinedConstantException( const std::string& message );
+
+        const char* what( void ) const noexcept override;
+
+      private:
+        const std::string m_message;
+    };
+
+    class AssertionException : public std::exception
+    {
+      public:
+        AssertionException( const std::string& message );
+
+        const char* what( void ) const noexcept override;
+
+      private:
+        const std::string m_message;
+    };
+
+    class AbortException : public std::exception
+    {
+      public:
+        AbortException( const std::string& message );
+
+        const char* what( void ) const noexcept override;
+
+      private:
+        const std::string m_message;
+    };
+
+    class InternalException : public std::exception
+    {
+      public:
+        InternalException( const std::string& message );
+
+        const char* what( void ) const noexcept override;
+
+      private:
+        const std::string m_message;
+    };
 }
 
 #endif // _LIB_CASMIR_EXCEPTIONS_H_

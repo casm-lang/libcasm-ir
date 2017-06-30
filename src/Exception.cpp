@@ -52,6 +52,47 @@ const char* ValidationException::what( void ) const noexcept
     return m_message.c_str();
 }
 
+UndefinedConstantException::UndefinedConstantException(
+    const std::string& message )
+: m_message( message )
+{
+}
+
+const char* UndefinedConstantException::what( void ) const noexcept
+{
+    return m_message.c_str();
+}
+
+AssertionException::AssertionException( const std::string& message )
+: m_message( message )
+{
+}
+
+const char* AssertionException::what( void ) const noexcept
+{
+    return m_message.c_str();
+}
+
+AbortException::AbortException( const std::string& message )
+: m_message( message )
+{
+}
+
+const char* AbortException::what( void ) const noexcept
+{
+    return m_message.c_str();
+}
+
+InternalException::InternalException( const std::string& message )
+: m_message( message )
+{
+}
+
+const char* InternalException::what( void ) const noexcept
+{
+    return m_message.c_str();
+}
+
 //
 //  Local variables:
 //  mode: c++
