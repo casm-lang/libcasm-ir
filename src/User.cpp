@@ -33,20 +33,14 @@
 
 using namespace libcasm_ir;
 
-User::User( const std::string& name, const Type::Ptr& type, Value::ID id )
-: Value( name, type, id )
-, m_uses()
-{
-}
-
-Uses User::uses() const
+const std::vector< Use::Ptr >& User::uses( void ) const
 {
     return m_uses;
 }
 
 void User::setUse( User& user )
 {
-    m_uses.add( libstdhl::make< Use >( *this, user ) );
+    m_uses.emplace_back( libstdhl::make< Use >( *this, user ) );
 }
 
 void User::removeUse( const User& user )
@@ -54,10 +48,8 @@ void User::removeUse( const User& user )
     fprintf(
         stderr, "removeUse: %s in %s\n", user.name().c_str(), name().c_str() );
 
-    m_uses.remove( std::remove_if(
-        m_uses.begin(), m_uses.end(), [&user]( const Use::Ptr& element ) {
-            return element->use() == user;
-        } ) );
+    std::remove_if( m_uses.begin(), m_uses.end(),
+        [&user]( const Use::Ptr& element ) { return element->use() == user; } );
 }
 
 void User::replaceAllUsesWith( const Value::Ptr& value )

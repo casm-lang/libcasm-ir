@@ -41,12 +41,12 @@ namespace libcasm_ir
         {
         }
 
-        Value& def() const
+        Value& def( void ) const
         {
             return m_def;
         }
 
-        User& use() const
+        User& use( void ) const
         {
             return m_use;
         }
@@ -56,15 +56,17 @@ namespace libcasm_ir
         User& m_use;
     };
 
-    using Uses = libstdhl::List< Use >;
-
     class User : public Value
     {
       public:
-        User( const std::string& name, const Type::Ptr& type,
-            Value::ID id = classid() );
+        inline User( const std::string& name, const Type::Ptr& type,
+            Value::ID id = classid() )
+        : Value( name, type, id )
+        , m_uses()
+        {
+        }
 
-        Uses uses() const;
+        const std::vector< Use::Ptr >& uses( void ) const;
 
         void setUse( User& user );
 
@@ -80,7 +82,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
 
       private:
-        Uses m_uses;
+        std::vector< Use::Ptr > m_uses;
     };
 }
 

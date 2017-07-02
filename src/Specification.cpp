@@ -25,8 +25,10 @@
 
 using namespace libcasm_ir;
 
+static const auto VOID = libstdhl::get< VoidType >();
+
 Specification::Specification( const std::string& name )
-: Value( name, classid() )
+: Value( name, VOID, classid() )
 {
 }
 

@@ -41,14 +41,6 @@ static const std::string EMPTY = "";
 // Instruction
 //
 
-Instruction::Instruction( const Type::Ptr& type, const Value::ID id,
-    const Constant* constants, const std::size_t size )
-: User( EMPTY, type, id )
-, m_size( size )
-, m_constants( constants )
-{
-}
-
 Instruction::Instruction( const Type::Ptr& type,
     const Value::ID id,
     const std::vector< Value::Ptr >& operands )
@@ -80,7 +72,7 @@ void Instruction::add( const Value::Ptr& operand )
         throw std::domain_error( "instruction operand is a null pointer" );
     }
 
-    m_operands.add( operand );
+    m_operands.emplace_back( operand );
 
     if( isa< User >( operand ) )
     {
@@ -109,7 +101,7 @@ Value::Ptr Instruction::operand( u8 position ) const
     }
 }
 
-const Values& Instruction::operands( void ) const
+const std::vector< Value::Ptr >& Instruction::operands( void ) const
 {
     return m_operands;
 }

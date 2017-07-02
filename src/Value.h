@@ -196,9 +196,13 @@ namespace libcasm_ir
             _SIZE_
         };
 
-        Value( const std::string& name, const Type::Ptr& type, ID id );
-
-        Value( const std::string& name, ID id );
+        inline Value( const std::string& name, const Type::Ptr& type, ID id )
+        : m_name( name )
+        , m_type( type )
+        , m_id( id )
+        {
+            assert( type );
+        }
 
         virtual ~Value( void ) = default;
 
@@ -283,16 +287,6 @@ namespace libcasm_ir
         {
             return true;
         }
-
-#ifndef NDEBUG
-      protected:
-        static std::unordered_map< u8, std::unordered_set< Value* > >&
-        m_id2objs( void )
-        {
-            static std::unordered_map< u8, std::unordered_set< Value* > > cache;
-            return cache;
-        }
-#endif
     };
 
     template < typename T >
@@ -302,7 +296,7 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< ValueList >;
 
         ValueList( void )
-        : Value( "value_list", Value::VALUE_LIST )
+        : Value( "value_list", libstdhl::get< VoidType >(), Value::VALUE_LIST )
         {
         }
 

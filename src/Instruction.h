@@ -38,8 +38,13 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< Instruction >;
 
-        Instruction( const Type::Ptr& type, const Value::ID id,
-            const Constant* constants, const std::size_t size );
+        inline Instruction( const Type::Ptr& type, const Value::ID id,
+            const Constant* constants, const std::size_t size )
+        : User( "", type, id )
+        , m_size( size )
+        , m_constants( constants )
+        {
+        }
 
         Instruction( const Type::Ptr& type,
             const Value::ID id,
@@ -59,7 +64,7 @@ namespace libcasm_ir
 
         Value::Ptr operand( u8 position ) const;
 
-        const Values& operands( void ) const;
+        const std::vector< Value::Ptr >& operands( void ) const;
 
         void replace( Value& from, const Value::Ptr& to );
 
@@ -86,7 +91,7 @@ namespace libcasm_ir
         std::size_t m_size;
         const Constant* m_constants;
 
-        Values m_operands;
+        std::vector< Value::Ptr > m_operands;
 
         std::weak_ptr< Statement > m_statement;
 
@@ -273,7 +278,7 @@ namespace libcasm_ir
         OperatorInstruction( const Type::Ptr& type, const Value::ID id,
             const std::vector< Value::Ptr >& operands );
 
-        OperatorInstruction( const Type::Ptr& type, const Value::ID id,
+        inline OperatorInstruction( const Type::Ptr& type, const Value::ID id,
             const Constant* operands, const std::size_t size )
         : Instruction( type, id, operands, size )
         {
