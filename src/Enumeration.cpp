@@ -99,6 +99,22 @@ std::size_t Enumeration::hash( void ) const
         classid(), std::hash< std::string >()( name() ) );
 }
 
+u1 Enumeration::operator==( const Value& rhs ) const
+{
+    if( this == &rhs )
+    {
+        return true;
+    }
+
+    if( not Value::operator==( rhs ) )
+    {
+        return false;
+    }
+
+    const auto& other = static_cast< const Enumeration& >( rhs );
+    return ( this->name() == other.name() );
+}
+
 void Enumeration::accept( Visitor& visitor )
 {
     visitor.visit( *this );

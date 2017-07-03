@@ -70,6 +70,8 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
+        u1 operator==( const Value& rhs ) const override;
+
         static inline Value::ID classid( void )
         {
             return Value::CONSTANT;
@@ -112,6 +114,8 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
+        u1 operator==( const Value& rhs ) const override;
+
         static inline Value::ID classid( void )
         {
             return Value::VOID_CONSTANT;
@@ -139,6 +143,8 @@ namespace libcasm_ir
         void accept( Visitor& visitor ) override;
 
         std::size_t hash( void ) const override;
+
+        u1 operator==( const Value& rhs ) const override;
 
         static inline Value::ID classid( void )
         {
@@ -176,6 +182,8 @@ namespace libcasm_ir
         void accept( Visitor& visitor ) override;
 
         std::size_t hash( void ) const override;
+
+        u1 operator==( const Value& rhs ) const override;
 
         static inline Value::ID classid( void )
         {
@@ -224,6 +232,8 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
+        u1 operator==( const Value& rhs ) const override;
+
         static inline Value::ID classid( void )
         {
             return Value::BIT_CONSTANT;
@@ -251,6 +261,8 @@ namespace libcasm_ir
         void accept( Visitor& visitor ) override;
 
         std::size_t hash( void ) const override;
+
+        u1 operator==( const Value& rhs ) const override;
 
         static inline Value::ID classid( void )
         {
@@ -283,6 +295,8 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
+        u1 operator==( const Value& rhs ) const override;
+
         static inline Value::ID classid( void )
         {
             return Value::FLOATING_CONSTANT;
@@ -312,6 +326,8 @@ namespace libcasm_ir
         void accept( Visitor& visitor ) override;
 
         std::size_t hash( void ) const override;
+
+        u1 operator==( const Value& rhs ) const override;
 
         static inline Value::ID classid( void )
         {
@@ -349,6 +365,8 @@ namespace libcasm_ir
         void accept( Visitor& visitor ) override;
 
         std::size_t hash( void ) const override;
+
+        u1 operator==( const Value& rhs ) const override;
 
         static inline Value::ID classid( void )
         {
@@ -388,6 +406,8 @@ namespace libcasm_ir
         Constant choose( void ) const;
 
         std::size_t hash( void ) const override;
+
+        u1 operator==( const Value& rhs ) const override;
 
         static inline Value::ID classid( void )
         {
@@ -440,6 +460,8 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
+        u1 operator==( const Value& rhs ) const override;
+
         static inline Value::ID classid( void )
         {
             return Value::RULE_REFERENCE_CONSTANT;
@@ -490,6 +512,8 @@ namespace libcasm_ir
         void accept( Visitor& visitor ) override;
 
         std::size_t hash( void ) const override;
+
+        u1 operator==( const Value& rhs ) const override;
 
         static inline Value::ID classid( void )
         {

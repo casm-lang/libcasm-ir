@@ -108,6 +108,22 @@ std::size_t Specification::hash( void ) const
         classid(), std::hash< std::string >()( name() ) );
 }
 
+u1 Specification::operator==( const Value& rhs ) const
+{
+    if( this == &rhs )
+    {
+        return true;
+    }
+
+    if( not Value::operator==( rhs ) )
+    {
+        return false;
+    }
+
+    const auto& other = static_cast< const Specification& >( rhs );
+    return ( this->name() == other.name() );
+}
+
 void Specification::accept( Visitor& visitor )
 {
     visitor.visit( *this );

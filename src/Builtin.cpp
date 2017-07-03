@@ -50,6 +50,22 @@ std::size_t Builtin::hash( void ) const
         classid(), std::hash< std::string >()( name() ) );
 }
 
+u1 Builtin::operator==( const Value& rhs ) const
+{
+    if( this == &rhs )
+    {
+        return true;
+    }
+
+    if( not Value::operator==( rhs ) )
+    {
+        return false;
+    }
+
+    const auto& other = static_cast< const Builtin& >( rhs );
+    return ( this->name() == other.name() );
+}
+
 void Builtin::accept( Visitor& visitor )
 {
     visitor.visit( *this );

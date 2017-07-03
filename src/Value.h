@@ -224,27 +224,15 @@ namespace libcasm_ir
 
         virtual std::size_t hash( void ) const = 0;
 
-        inline u1 operator==( const Value& rhs ) const
-        {
-            if( this != &rhs )
-            {
-                if( this->id() != rhs.id() or this->hash() != rhs.hash()
-                    or this->type() != rhs.type() )
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
+        virtual u1 operator==( const Value& rhs ) const;
 
         inline u1 operator!=( const Value& rhs ) const
         {
             return !operator==( rhs );
         }
 
-        virtual void iterate(
-            const Traversal order, std::function< void( Value& ) > callback )
-            final;
+        virtual void iterate( const Traversal order,
+            std::function< void( Value& ) > callback ) final;
 
         virtual void accept( Visitor& visitor ) = 0;
 
@@ -324,6 +312,37 @@ namespace libcasm_ir
             }
 
             return h;
+        }
+
+        u1 operator==( const Value& rhs ) const override final
+        {
+            if( this == &rhs )
+            {
+                return true;
+            }
+
+            if( not Value::operator==( rhs ) )
+            {
+                return false;
+            }
+
+            const auto& other = static_cast< const ValueList& >( rhs );
+            if( this->size() != other.size() )
+            {
+                return false;
+            }
+
+            const auto end = this->end();
+            for( auto it1 = this->begin(), it2 = other.begin(); it1 != end;
+                 ++it1, ++it2 )
+            {
+                if( **it1 != **it2 )
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         void accept( Visitor& visitor ) override final
