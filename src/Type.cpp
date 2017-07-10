@@ -683,9 +683,7 @@ BitType::BitType( const IntegerConstant::Ptr& bitsize )
 : PrimitiveType( Type::BIT )
 {
     assert( bitsize );
-    if( static_cast< const libstdhl::Type& >( bitsize->value() )
-            > BitType::SizeMax
-        or bitsize->value().sign() )
+    if( bitsize->value().value() > BitType::SizeMax or bitsize->value().sign() )
     {
         throw std::domain_error(
             "invalid bit size '" + bitsize->name() + "' for 'Bit' type" );
@@ -880,11 +878,13 @@ void RationalType::foreach(
 
 Constant RationalType::choose( void ) const
 {
-    const auto n = libstdhl::Integer( libstdhl::Random::uniform< i64 >() );
-    const auto d = libstdhl::Integer( libstdhl::Random::uniform< i64 >() + 1 );
+    const auto n
+        = libstdhl::Type::Integer( libstdhl::Random::uniform< i64 >() );
+    const auto d
+        = libstdhl::Type::Integer( libstdhl::Random::uniform< i64 >() + 1 );
     // d = randomvalue + 1 to avoid that the denominator is zero!
 
-    return RationalConstant( libstdhl::Rational( n, d ) );
+    return RationalConstant( libstdhl::Type::Rational( n, d ) );
 }
 
 void RationalType::validate( const Constant& constant ) const

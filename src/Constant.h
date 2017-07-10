@@ -30,9 +30,11 @@
 #include "Range.h"
 #include "Rule.h"
 
-#include "../stdhl/cpp/FloatingPoint.h"
-#include "../stdhl/cpp/Integer.h"
-#include "../stdhl/cpp/Rational.h"
+#include "../stdhl/cpp/type/Binary.h"
+#include "../stdhl/cpp/type/FloatingPoint.h"
+#include "../stdhl/cpp/type/Integer.h"
+#include "../stdhl/cpp/type/Layout.h"
+#include "../stdhl/cpp/type/Rational.h"
 
 namespace libcasm_ir
 {
@@ -43,10 +45,10 @@ namespace libcasm_ir
 
       protected:
         Constant( const std::string& name, const Type::Ptr& type,
-            const libstdhl::Type& data, const Value::Ptr& value, u1 defined,
-            u1 symbolic, Value::ID id );
+            const libstdhl::Type::Layout& data, const Value::Ptr& value,
+            u1 defined, u1 symbolic, Value::ID id );
 
-        Constant( const Type::Ptr& type, const libstdhl::Type& data,
+        Constant( const Type::Ptr& type, const libstdhl::Type::Layout& data,
             const Value::Ptr& value, u1 defined, u1 symbolic, Value::ID id );
 
       public:
@@ -80,7 +82,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
 
       protected:
-        libstdhl::Type m_data;
+        libstdhl::Type::Layout m_data;
 
         Value::Ptr m_value;
 
@@ -160,13 +162,14 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< IntegerConstant >;
 
       private:
-        IntegerConstant( const libstdhl::Type& value, u1 defined, u1 symbolic );
+        IntegerConstant(
+            const libstdhl::Type::Layout& value, u1 defined, u1 symbolic );
 
       public:
         IntegerConstant( const std::string& value,
             const libstdhl::Type::Radix radix = libstdhl::Type::DECIMAL );
         IntegerConstant( const BitConstant& value );
-        IntegerConstant( const libstdhl::Integer& value );
+        IntegerConstant( const libstdhl::Type::Integer& value );
         IntegerConstant( i64 value );
         IntegerConstant( void );
 
@@ -175,7 +178,7 @@ namespace libcasm_ir
 
         i64 value_i64( void ) const;
 
-        const libstdhl::Integer& value( void ) const;
+        const libstdhl::Type::Integer& value( void ) const;
 
         std::string name( void ) const override;
 
@@ -206,7 +209,8 @@ namespace libcasm_ir
             const libstdhl::Type::Radix radix );
 
       public:
-        BitConstant( const Type::Ptr& type, const libstdhl::Type& value );
+        BitConstant(
+            const Type::Ptr& type, const libstdhl::Type::Binary& value );
 
         BitConstant( const BitType::Ptr& type, u64 value );
 
@@ -224,7 +228,7 @@ namespace libcasm_ir
 
         u64 value_u64( void ) const;
 
-        const libstdhl::Type& value( void ) const;
+        const libstdhl::Type::Binary& value( void ) const;
 
         std::string name( void ) const override;
 
@@ -279,15 +283,15 @@ namespace libcasm_ir
 
       private:
         FloatingConstant(
-            const libstdhl::Type& value, u1 defined, u1 symbolic );
+            const libstdhl::Type::Layout& value, u1 defined, u1 symbolic );
 
       public:
-        FloatingConstant( const libstdhl::Type& value );
+        FloatingConstant( const libstdhl::Type::Layout& value );
         FloatingConstant( const std::string& value );
         FloatingConstant( const double value );
         FloatingConstant( void );
 
-        const libstdhl::FloatingPoint& value( void ) const;
+        const libstdhl::Type::FloatingPoint& value( void ) const;
 
         std::string name( void ) const override;
 
@@ -312,14 +316,14 @@ namespace libcasm_ir
 
       private:
         RationalConstant(
-            const libstdhl::Type& value, u1 defined, u1 symbolic );
+            const libstdhl::Type::Layout& value, u1 defined, u1 symbolic );
 
       public:
-        RationalConstant( const libstdhl::Type& value );
+        RationalConstant( const libstdhl::Type::Layout& value );
         RationalConstant( const std::string& value );
         RationalConstant( void );
 
-        const libstdhl::Rational& value( void ) const;
+        const libstdhl::Type::Rational& value( void ) const;
 
         std::string name( void ) const override;
 
@@ -358,7 +362,7 @@ namespace libcasm_ir
 
         EnumerationConstant( const Enumeration::Ptr& kind );
 
-        const libstdhl::Type& value( void ) const;
+        const libstdhl::Type::Binary& value( void ) const;
 
         std::string name( void ) const override;
 
@@ -430,7 +434,8 @@ namespace libcasm_ir
         inline ReferenceConstant( const Type::Ptr& type,
             const typename T::Ptr& value, u1 defined, u1 symbolic,
             Value::ID id )
-        : Constant( type, libstdhl::Type(), value, defined, symbolic, id )
+        : Constant(
+              type, libstdhl::Type::Layout(), value, defined, symbolic, id )
         {
         }
 
