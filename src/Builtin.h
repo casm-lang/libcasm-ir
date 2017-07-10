@@ -41,6 +41,8 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
+        u1 operator==( const Value& rhs ) const override;
+
         void accept( Visitor& visitor ) override final;
 
         static inline Value::ID classid( void )

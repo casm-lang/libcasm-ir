@@ -54,6 +54,22 @@ std::size_t Derived::hash( void ) const
         classid(), std::hash< std::string >()( name() ) );
 }
 
+u1 Derived::operator==( const Value& rhs ) const
+{
+    if( this == &rhs )
+    {
+        return true;
+    }
+
+    if( not Value::operator==( rhs ) )
+    {
+        return false;
+    }
+
+    const auto& other = static_cast< const Derived& >( rhs );
+    return ( this->name() == other.name() );
+}
+
 void Derived::accept( Visitor& visitor )
 {
     visitor.visit( *this );

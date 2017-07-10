@@ -69,6 +69,23 @@ std::size_t Range::hash( void ) const
         classid(), std::hash< std::string >()( name() ) );
 }
 
+u1 Range::operator==( const Value& rhs ) const
+{
+    if( this == &rhs )
+    {
+        return true;
+    }
+
+    if( not Value::operator==( rhs ) )
+    {
+        return false;
+    }
+
+    const auto& other = static_cast< const Range& >( rhs );
+    return ( *this->from() == *other.from() )
+           and ( *this->to() == *other.to() );
+}
+
 void Range::accept( Visitor& visitor )
 {
     visitor.visit( *this );

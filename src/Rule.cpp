@@ -72,6 +72,22 @@ std::size_t Rule::hash( void ) const
         classid(), std::hash< std::string >()( name() ) );
 }
 
+u1 Rule::operator==( const Value& rhs ) const
+{
+    if( this == &rhs )
+    {
+        return true;
+    }
+
+    if( not Value::operator==( rhs ) )
+    {
+        return false;
+    }
+
+    const auto& other = static_cast< const Rule& >( rhs );
+    return ( this->name() == other.name() );
+}
+
 void Rule::accept( Visitor& visitor )
 {
     visitor.visit( *this );

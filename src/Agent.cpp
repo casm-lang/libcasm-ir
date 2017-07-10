@@ -50,6 +50,21 @@ std::size_t Agent::hash( void ) const
         classid(), std::hash< std::string >()( name() ) );
 }
 
+u1 Agent::operator==( const Value& rhs ) const
+{
+    if( this == &rhs )
+    {
+        return true;
+    }
+
+    if( not Value::operator==( rhs ) )
+    {
+        return false;
+    }
+
+    return true;
+}
+
 void Agent::accept( Visitor& visitor )
 {
     visitor.visit( *this );

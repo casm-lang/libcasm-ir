@@ -75,6 +75,22 @@ std::size_t Block::hash( void ) const
         classid(), std::hash< std::string >()( name() ) );
 }
 
+u1 Block::operator==( const Value& rhs ) const
+{
+    if( this == &rhs )
+    {
+        return true;
+    }
+
+    if( not Value::operator==( rhs ) )
+    {
+        return false;
+    }
+
+    const auto& other = static_cast< const Block& >( rhs );
+    return ( this->name() == other.name() );
+}
+
 u1 Block::classof( Value const* obj )
 {
     return obj->id() == classid() or ExecutionSemanticsBlock::classof( obj )

@@ -164,6 +164,21 @@ std::size_t Instruction::hash( void ) const
         classid(), std::hash< std::string >()( name() ) );
 }
 
+u1 Instruction::operator==( const Value& rhs ) const
+{
+    if( this == &rhs )
+    {
+        return true;
+    }
+
+    if( not Value::operator==( rhs ) )
+    {
+        return false;
+    }
+
+    return true;
+}
+
 u1 Instruction::classof( Value const* obj )
 {
     return obj->id() == classid() or SkipInstruction::classof( obj )
