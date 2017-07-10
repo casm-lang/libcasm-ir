@@ -45,8 +45,6 @@ Instruction::Instruction( const Type::Ptr& type,
     const Value::ID id,
     const std::vector< Value::Ptr >& operands )
 : User( EMPTY, type, id )
-, m_size( operands.size() )
-, m_constants( nullptr )
 {
     for( auto operand : operands )
     {
@@ -193,8 +191,14 @@ u1 UnaryInstruction::classof( Value const* obj )
             return false;
         }
 
-        const auto& instr = static_cast< const Instruction& >( *obj );
-        return instr.size() == 1;
+        if( NotInstruction::classof( obj ) or InvInstruction::classof( obj ) )
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
     else
     {
@@ -215,8 +219,27 @@ u1 BinaryInstruction::classof( Value const* obj )
             return false;
         }
 
-        const auto& instr = static_cast< const Instruction& >( *obj );
-        return instr.size() == 2;
+        if( AddInstruction::classof( obj ) or SubInstruction::classof( obj )
+            or MulInstruction::classof( obj )
+            or DivInstruction::classof( obj )
+            or PowInstruction::classof( obj )
+            or ModInstruction::classof( obj )
+            or OrInstruction::classof( obj )
+            or XorInstruction::classof( obj )
+            or AndInstruction::classof( obj )
+            or NotInstruction::classof( obj )
+            or OrInstruction::classof( obj )
+            or ImpInstruction::classof( obj )
+            or XorInstruction::classof( obj )
+            or AndInstruction::classof( obj )
+            or CompareInstruction::classof( obj ) )
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
     else
     {
@@ -443,18 +466,14 @@ u1 OperatorInstruction::classof( Value const* obj )
 // Arithmetic Instruction
 //
 
-ArithmeticInstruction::ArithmeticInstruction(
+ArithmeticInstruction::ArithmeticInstruction( const Type::Ptr& type,
     const Value::ID id, const std::vector< Value::Ptr >& operands )
-: OperatorInstruction(
-      operands[ 0 ] ? operands[ 0 ]->ptr_type() : VOID, id, operands )
+: OperatorInstruction( type, id, operands )
 {
     assert( operands.size() <= 2 );
-
-    const auto& lhs_ty = operand( 0 )->type();
-    if( operands.size() > 1 )
+    if( operands.size() > 0 )
     {
-        const auto& rhs_ty = operand( 1 )->type();
-        assert( lhs_ty == rhs_ty );
+        assert( this->type() == operands[ 0 ]->type() );
     }
 }
 
@@ -465,46 +484,20 @@ u1 ArithmeticInstruction::classof( Value const* obj )
            or MulInstruction::classof( obj ) or DivInstruction::classof( obj )
            or PowInstruction::classof( obj ) or ModInstruction::classof( obj )
            or OrInstruction::classof( obj ) or XorInstruction::classof( obj )
-           or AndInstruction::classof( obj ) or NotInstruction::classof( obj );
+           or AndInstruction::classof( obj );
 }
-
-static auto arithmetic_instruction_inference
-    = []( const std::vector< Type::Ptr >& types,
-        const std::vector< Value::Ptr >& ) -> Type::Ptr {
-    assert( types.size() >= 1 );
-    assert( types.size() <= 2 );
-
-    const auto& lhs = types[ 0 ];
-    if( types.size() == 2 )
-    {
-        const auto& rhs = types[ 1 ];
-
-        if( lhs->isInteger() and rhs->isInteger() )
-        {
-            return INTEGER;
-        }
-
-        if( *lhs != *rhs )
-        {
-            return nullptr;
-        }
-    }
-    return lhs;
-};
 
 //
 // Inv Instruction
 //
 
 InvInstruction::InvInstruction( const Value::Ptr& lhs )
-: ArithmeticInstruction( classid(), { lhs } )
+: ArithmeticInstruction( lhs->ptr_type(), classid(), { lhs } )
 {
 }
 
-InvInstruction::InvInstruction(
-    const Constant* constants, const std::size_t size )
-: ArithmeticInstruction( constants ? constants[ 0 ].type().ptr_result() : VOID,
-      classid(), constants, size )
+InvInstruction::InvInstruction( const Type::Ptr& type )
+: ArithmeticInstruction( type->ptr_result(), classid() )
 {
 }
 
@@ -537,7 +530,19 @@ const Annotation InvInstruction::info( classid(),
             } },
 
     },
-    arithmetic_instruction_inference );
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& ) -> Type::Ptr {
+        assert( types.size() == 1 );
+
+        const auto& lhs = types[ 0 ];
+
+        if( lhs->isInteger() )
+        {
+            return INTEGER;
+        }
+
+        return lhs;
+    } );
 
 u1 InvInstruction::classof( Value const* obj )
 {
@@ -549,14 +554,12 @@ u1 InvInstruction::classof( Value const* obj )
 //
 
 AddInstruction::AddInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: ArithmeticInstruction( classid(), { lhs, rhs } )
+: ArithmeticInstruction( lhs->ptr_type(), classid(), { lhs, rhs } )
 {
 }
 
-AddInstruction::AddInstruction(
-    const Constant* constants, const std::size_t size )
-: ArithmeticInstruction( constants ? constants[ 0 ].type().ptr_result() : VOID,
-      classid(), constants, size )
+AddInstruction::AddInstruction( const Type::Ptr& type )
+: ArithmeticInstruction( type->ptr_result(), classid() )
 {
 }
 
@@ -578,13 +581,41 @@ const Annotation AddInstruction::info( classid(),
                 Type::BIT, Type::BIT, // unsigned bit add with wrap
             } },
 
+        { Type::RATIONAL,
+            {
+                Type::RATIONAL, Type::RATIONAL, // signed rational add no wrap
+            } },
+
+        { Type::FLOATING,
+            {
+                Type::FLOATING, Type::FLOATING, // signed floating add no wrap
+            } },
+
         { Type::STRING,
             {
                 Type::STRING, Type::STRING, // concatenation
             } },
 
     },
-    arithmetic_instruction_inference );
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& ) -> Type::Ptr {
+        assert( types.size() == 2 );
+
+        const auto& lhs = types[ 0 ];
+        const auto& rhs = types[ 1 ];
+
+        if( lhs->isInteger() and rhs->isInteger() )
+        {
+            return INTEGER;
+        }
+
+        if( *lhs != *rhs )
+        {
+            return nullptr;
+        }
+
+        return lhs;
+    } );
 
 u1 AddInstruction::classof( Value const* obj )
 {
@@ -596,14 +627,12 @@ u1 AddInstruction::classof( Value const* obj )
 //
 
 SubInstruction::SubInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: ArithmeticInstruction( classid(), { lhs, rhs } )
+: ArithmeticInstruction( lhs->ptr_type(), classid(), { lhs, rhs } )
 {
 }
 
-SubInstruction::SubInstruction(
-    const Constant* constants, const std::size_t size )
-: ArithmeticInstruction( constants ? constants[ 0 ].type().ptr_result() : VOID,
-      classid(), constants, size )
+SubInstruction::SubInstruction( const Type::Ptr& type )
+: ArithmeticInstruction( type->ptr_result(), classid() )
 {
 }
 
@@ -625,8 +654,36 @@ const Annotation SubInstruction::info( classid(),
                 Type::BIT, Type::BIT, // unsigned bit sub with wrap
             } },
 
+        { Type::RATIONAL,
+            {
+                Type::RATIONAL, Type::RATIONAL, // signed rational sub no wrap
+            } },
+
+        { Type::FLOATING,
+            {
+                Type::FLOATING, Type::FLOATING, // signed floating sub no wrap
+            } },
+
     },
-    arithmetic_instruction_inference );
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& ) -> Type::Ptr {
+        assert( types.size() == 2 );
+
+        const auto& lhs = types[ 0 ];
+        const auto& rhs = types[ 1 ];
+
+        if( lhs->isInteger() and rhs->isInteger() )
+        {
+            return INTEGER;
+        }
+
+        if( *lhs != *rhs )
+        {
+            return nullptr;
+        }
+
+        return lhs;
+    } );
 
 u1 SubInstruction::classof( Value const* obj )
 {
@@ -638,14 +695,12 @@ u1 SubInstruction::classof( Value const* obj )
 //
 
 MulInstruction::MulInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: ArithmeticInstruction( classid(), { lhs, rhs } )
+: ArithmeticInstruction( lhs->ptr_type(), classid(), { lhs, rhs } )
 {
 }
 
-MulInstruction::MulInstruction(
-    const Constant* constants, const std::size_t size )
-: ArithmeticInstruction( constants ? constants[ 0 ].type().ptr_result() : VOID,
-      classid(), constants, size )
+MulInstruction::MulInstruction( const Type::Ptr& type )
+: ArithmeticInstruction( type->ptr_result(), classid() )
 {
 }
 
@@ -667,8 +722,36 @@ const Annotation MulInstruction::info( classid(),
                 Type::BIT, Type::BIT, // unsigned integer mul with wrap
             } },
 
+        { Type::RATIONAL,
+            {
+                Type::RATIONAL, Type::RATIONAL, // signed rational mul no wrap
+            } },
+
+        { Type::FLOATING,
+            {
+                Type::FLOATING, Type::FLOATING, // signed floating mul no wrap
+            } },
+
     },
-    arithmetic_instruction_inference );
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& ) -> Type::Ptr {
+        assert( types.size() == 2 );
+
+        const auto& lhs = types[ 0 ];
+        const auto& rhs = types[ 1 ];
+
+        if( lhs->isInteger() and rhs->isInteger() )
+        {
+            return INTEGER;
+        }
+
+        if( *lhs != *rhs )
+        {
+            return nullptr;
+        }
+
+        return lhs;
+    } );
 
 u1 MulInstruction::classof( Value const* obj )
 {
@@ -680,14 +763,12 @@ u1 MulInstruction::classof( Value const* obj )
 //
 
 ModInstruction::ModInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: ArithmeticInstruction( classid(), { lhs, rhs } )
+: ArithmeticInstruction( lhs->ptr_type(), classid(), { lhs, rhs } )
 {
 }
 
-ModInstruction::ModInstruction(
-    const Constant* constants, const std::size_t size )
-: ArithmeticInstruction( constants ? constants[ 0 ].type().ptr_result() : VOID,
-      classid(), constants, size )
+ModInstruction::ModInstruction( const Type::Ptr& type )
+: ArithmeticInstruction( type->ptr_result(), classid() )
 {
 }
 
@@ -705,7 +786,25 @@ const Annotation ModInstruction::info( classid(),
             } },
 
     },
-    arithmetic_instruction_inference );
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& ) -> Type::Ptr {
+        assert( types.size() == 2 );
+
+        const auto& lhs = types[ 0 ];
+        const auto& rhs = types[ 1 ];
+
+        if( lhs->isInteger() and rhs->isInteger() )
+        {
+            return INTEGER;
+        }
+
+        if( *lhs != *rhs )
+        {
+            return nullptr;
+        }
+
+        return lhs;
+    } );
 
 u1 ModInstruction::classof( Value const* obj )
 {
@@ -717,14 +816,12 @@ u1 ModInstruction::classof( Value const* obj )
 //
 
 DivInstruction::DivInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: ArithmeticInstruction( classid(), { lhs, rhs } )
+: ArithmeticInstruction( lhs->ptr_type(), classid(), { lhs, rhs } )
 {
 }
 
-DivInstruction::DivInstruction(
-    const Constant* constants, const std::size_t size )
-: ArithmeticInstruction( constants ? constants[ 0 ].type().ptr_result() : VOID,
-      classid(), constants, size )
+DivInstruction::DivInstruction( const Type::Ptr& type )
+: ArithmeticInstruction( type->ptr_result(), classid() )
 {
 }
 
@@ -743,11 +840,29 @@ const Annotation DivInstruction::info( classid(),
 
         { Type::RATIONAL,
             {
-                Type::RATIONAL, Type::RATIONAL, // signed ration div no wrap
+                Type::RATIONAL, Type::RATIONAL, // signed rational div no wrap
             } },
 
     },
-    arithmetic_instruction_inference );
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& ) -> Type::Ptr {
+        assert( types.size() == 2 );
+
+        const auto& lhs = types[ 0 ];
+        const auto& rhs = types[ 1 ];
+
+        if( lhs->isInteger() and rhs->isInteger() )
+        {
+            return INTEGER;
+        }
+
+        if( *lhs != *rhs )
+        {
+            return nullptr;
+        }
+
+        return lhs;
+    } );
 
 u1 DivInstruction::classof( Value const* obj )
 {
@@ -759,14 +874,12 @@ u1 DivInstruction::classof( Value const* obj )
 //
 
 PowInstruction::PowInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: ArithmeticInstruction( classid(), { lhs, rhs } )
+: ArithmeticInstruction( lhs->ptr_type(), classid(), { lhs, rhs } )
 {
 }
 
-PowInstruction::PowInstruction(
-    const Constant* constants, const std::size_t size )
-: ArithmeticInstruction( constants ? constants[ 0 ].type().ptr_result() : VOID,
-      classid(), constants, size )
+PowInstruction::PowInstruction( const Type::Ptr& type )
+: ArithmeticInstruction( type->ptr_result(), classid() )
 {
 }
 
@@ -789,13 +902,35 @@ const Annotation PowInstruction::info( classid(),
         //     } },
 
         // { Type::FLOATING, // TODO: PPA: enable this after clear semantics
-        //
         //     {
         //         Type::FLOATING, Type::FLOATING,
         //     } },
 
+        { Type::FLOATING,
+            {
+                Type::FLOATING, Type::INTEGER,
+            } },
+
     },
-    arithmetic_instruction_inference );
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& ) -> Type::Ptr {
+        assert( types.size() == 2 );
+
+        const auto& lhs = types[ 0 ];
+        const auto& rhs = types[ 1 ];
+
+        if( lhs->isInteger() and rhs->isInteger() )
+        {
+            return INTEGER;
+        }
+
+        if( *lhs != *rhs )
+        {
+            return nullptr;
+        }
+
+        return lhs;
+    } );
 
 u1 PowInstruction::classof( Value const* obj )
 {
@@ -806,42 +941,18 @@ u1 PowInstruction::classof( Value const* obj )
 // Logical Instruction
 //
 
-LogicalInstruction::LogicalInstruction(
+LogicalInstruction::LogicalInstruction( const Type::Ptr& type,
     const Value::ID id, const std::vector< Value::Ptr >& operands )
-: OperatorInstruction( operands[ 0 ] ? ( operands[ 0 ]->type().isBit()
-                                               ? operands[ 0 ]->ptr_type()
-                                               : BOOLEAN )
-                                     : VOID,
-      id, operands )
+: OperatorInstruction( type, id, operands )
 {
     assert( operands.size() <= 2 );
-
-    const auto& lhs_ty = operands[ 0 ]->type();
-    if( operands.size() > 1 )
+    if( operands.size() > 0 )
     {
-        const auto& rhs_ty = operands[ 1 ]->type();
-        assert( lhs_ty == rhs_ty );
+        assert( ( operands[ 0 ]->type().isBit() and this->type().isBit() )
+                or ( not operands[ 0 ]->type().isBit()
+                       and this->type().isBoolean() ) );
     }
 }
-
-static auto logical_instruction_inference
-    = []( const std::vector< Type::Ptr >& types,
-        const std::vector< Value::Ptr >& ) -> Type::Ptr {
-    assert( types.size() >= 1 );
-    assert( types.size() <= 2 );
-
-    const auto& lhs = types[ 0 ];
-    if( types.size() == 2 )
-    {
-        const auto& rhs = types[ 1 ];
-
-        if( *lhs != *rhs )
-        {
-            return nullptr;
-        }
-    }
-    return lhs;
-};
 
 u1 LogicalInstruction::classof( Value const* obj )
 {
@@ -855,14 +966,13 @@ u1 LogicalInstruction::classof( Value const* obj )
 //
 
 AndInstruction::AndInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: LogicalInstruction( classid(), { lhs, rhs } )
+: LogicalInstruction(
+      lhs->type().isBit() ? lhs->ptr_type() : BOOLEAN, classid(), { lhs, rhs } )
 {
 }
 
-AndInstruction::AndInstruction(
-    const Constant* constants, const std::size_t size )
-: LogicalInstruction( constants ? constants[ 0 ].type().ptr_result() : VOID,
-      classid(), constants, size )
+AndInstruction::AndInstruction( const Type::Ptr& type )
+: LogicalInstruction( type->ptr_result(), classid() )
 {
 }
 
@@ -885,7 +995,27 @@ const Annotation AndInstruction::info( classid(),
             } },
 
     },
-    logical_instruction_inference );
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& ) -> Type::Ptr {
+        assert( types.size() == 2 );
+
+        const auto& lhs = types[ 0 ];
+        const auto& rhs = types[ 1 ];
+
+        if( *lhs != *rhs )
+        {
+            return nullptr;
+        }
+
+        if( lhs->isBit() )
+        {
+            return lhs;
+        }
+        else
+        {
+            return BOOLEAN;
+        }
+    } );
 
 u1 AndInstruction::classof( Value const* obj )
 {
@@ -897,14 +1027,13 @@ u1 AndInstruction::classof( Value const* obj )
 //
 
 XorInstruction::XorInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: LogicalInstruction( classid(), { lhs, rhs } )
+: LogicalInstruction(
+      lhs->type().isBit() ? lhs->ptr_type() : BOOLEAN, classid(), { lhs, rhs } )
 {
 }
 
-XorInstruction::XorInstruction(
-    const Constant* constants, const std::size_t size )
-: LogicalInstruction( constants ? constants[ 0 ].type().ptr_result() : VOID,
-      classid(), constants, size )
+XorInstruction::XorInstruction( const Type::Ptr& type )
+: LogicalInstruction( type->ptr_result(), classid() )
 {
 }
 
@@ -927,7 +1056,27 @@ const Annotation XorInstruction::info( classid(),
             } },
 
     },
-    logical_instruction_inference );
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& ) -> Type::Ptr {
+        assert( types.size() == 2 );
+
+        const auto& lhs = types[ 0 ];
+        const auto& rhs = types[ 1 ];
+
+        if( *lhs != *rhs )
+        {
+            return nullptr;
+        }
+
+        if( lhs->isBit() )
+        {
+            return lhs;
+        }
+        else
+        {
+            return BOOLEAN;
+        }
+    } );
 
 u1 XorInstruction::classof( Value const* obj )
 {
@@ -938,15 +1087,14 @@ u1 XorInstruction::classof( Value const* obj )
 // Or Instruction
 //
 
-OrInstruction::OrInstruction(
-    const Constant* constants, const std::size_t size )
-: LogicalInstruction( constants ? constants[ 0 ].type().ptr_result() : VOID,
-      classid(), constants, size )
+OrInstruction::OrInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
+: LogicalInstruction(
+      lhs->type().isBit() ? lhs->ptr_type() : BOOLEAN, classid(), { lhs, rhs } )
 {
 }
 
-OrInstruction::OrInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: LogicalInstruction( classid(), { lhs, rhs } )
+OrInstruction::OrInstruction( const Type::Ptr& type )
+: LogicalInstruction( type->ptr_result(), classid() )
 {
 }
 
@@ -969,7 +1117,27 @@ const Annotation OrInstruction::info( classid(),
             } },
 
     },
-    logical_instruction_inference );
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& ) -> Type::Ptr {
+        assert( types.size() == 2 );
+
+        const auto& lhs = types[ 0 ];
+        const auto& rhs = types[ 1 ];
+
+        if( *lhs != *rhs )
+        {
+            return nullptr;
+        }
+
+        if( lhs->isBit() )
+        {
+            return lhs;
+        }
+        else
+        {
+            return BOOLEAN;
+        }
+    } );
 
 u1 OrInstruction::classof( Value const* obj )
 {
@@ -981,14 +1149,13 @@ u1 OrInstruction::classof( Value const* obj )
 //
 
 ImpInstruction::ImpInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: LogicalInstruction( classid(), { lhs, rhs } )
+: LogicalInstruction(
+      lhs->type().isBit() ? lhs->ptr_type() : BOOLEAN, classid(), { lhs, rhs } )
 {
 }
 
-ImpInstruction::ImpInstruction(
-    const Constant* constants, const std::size_t size )
-: LogicalInstruction( constants ? constants[ 0 ].type().ptr_result() : VOID,
-      classid(), constants, size )
+ImpInstruction::ImpInstruction( const Type::Ptr& type )
+: LogicalInstruction( type->ptr_result(), classid() )
 {
 }
 
@@ -1006,7 +1173,27 @@ const Annotation ImpInstruction::info( classid(),
             } },
 
     },
-    logical_instruction_inference );
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& ) -> Type::Ptr {
+        assert( types.size() == 2 );
+
+        const auto& lhs = types[ 0 ];
+        const auto& rhs = types[ 1 ];
+
+        if( *lhs != *rhs )
+        {
+            return nullptr;
+        }
+
+        if( lhs->isBit() )
+        {
+            return lhs;
+        }
+        else
+        {
+            return BOOLEAN;
+        }
+    } );
 
 u1 ImpInstruction::classof( Value const* obj )
 {
@@ -1018,17 +1205,13 @@ u1 ImpInstruction::classof( Value const* obj )
 //
 
 NotInstruction::NotInstruction( const Value::Ptr& lhs )
-: LogicalInstruction( classid(), { lhs } )
+: LogicalInstruction(
+      lhs->type().isBit() ? lhs->ptr_type() : BOOLEAN, classid(), { lhs } )
 {
 }
 
-NotInstruction::NotInstruction(
-    const Constant* constants, const std::size_t size )
-: LogicalInstruction(
-      constants ? ( constants[ 0 ].type().isBit() ? constants[ 0 ].ptr_type()
-                                                  : BOOLEAN )
-                : VOID,
-      classid(), constants, size )
+NotInstruction::NotInstruction( const Type::Ptr& type )
+: LogicalInstruction( type->ptr_result(), classid() )
 {
 }
 
@@ -1045,10 +1228,10 @@ const Annotation NotInstruction::info( classid(),
                 Type::BOOLEAN,
             } },
 
-        { Type::BOOLEAN,
-            {
-                Type::INTEGER,
-            } },
+        // { Type::BOOLEAN, // TODO: PPA: should we really allow this?
+        //     {
+        //         Type::INTEGER,
+        //     } },
 
         { Type::BIT,
             {
@@ -1059,7 +1242,17 @@ const Annotation NotInstruction::info( classid(),
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
         assert( types.size() == 1 );
-        return types[ 0 ]->isBit() ? types[ 0 ] : BOOLEAN;
+
+        const auto& lhs = types[ 0 ];
+
+        if( lhs->isBit() )
+        {
+            return lhs;
+        }
+        else
+        {
+            return BOOLEAN;
+        }
     } );
 
 u1 NotInstruction::classof( Value const* obj )
@@ -1071,16 +1264,12 @@ u1 NotInstruction::classof( Value const* obj )
 // Compare Instruction
 //
 
-CompareInstruction::CompareInstruction(
+CompareInstruction::CompareInstruction( const Type::Ptr& type,
     const Value::ID id, const std::vector< Value::Ptr >& operands )
-: OperatorInstruction( BOOLEAN, id, operands )
+: OperatorInstruction( type, id, operands )
 {
-}
-
-CompareInstruction::CompareInstruction(
-    const Value::ID id, const Constant* operands, const std::size_t size )
-: OperatorInstruction( BOOLEAN, id, operands, size )
-{
+    assert( operands.size() == 0 or operands.size() == 2 );
+    assert( this->type().isBoolean() );
 }
 
 u1 CompareInstruction::classof( Value const* obj )
@@ -1098,11 +1287,6 @@ static auto compare_instruction_inference
     const auto& lhs = types[ 0 ];
     const auto& rhs = types[ 1 ];
 
-    if( lhs->isInteger() and rhs->isInteger() )
-    {
-        return BOOLEAN;
-    }
-
     if( *lhs != *rhs )
     {
         return nullptr;
@@ -1116,14 +1300,14 @@ static auto compare_instruction_inference
 //
 
 EquInstruction::EquInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: CompareInstruction( classid(), { lhs, rhs } )
+: CompareInstruction( BOOLEAN, classid(), { lhs, rhs } )
 {
 }
 
-EquInstruction::EquInstruction(
-    const Constant* constants, const std::size_t size )
-: CompareInstruction( classid(), constants, size )
+EquInstruction::EquInstruction( const Type::Ptr& type )
+: CompareInstruction( BOOLEAN, classid() )
 {
+    assert( type->isBoolean() );
 }
 
 void EquInstruction::accept( Visitor& visitor )
@@ -1133,11 +1317,6 @@ void EquInstruction::accept( Visitor& visitor )
 
 const Annotation EquInstruction::info( classid(),
     Annotation::Data{
-
-        { Type::BOOLEAN,
-            {
-                Type::RULE_REFERENCE, Type::RULE_REFERENCE,
-            } },
 
         { Type::BOOLEAN,
             {
@@ -1167,6 +1346,11 @@ const Annotation EquInstruction::info( classid(),
         { Type::BOOLEAN,
             {
                 Type::ENUMERATION, Type::ENUMERATION,
+            } },
+
+        { Type::BOOLEAN,
+            {
+                Type::RULE_REFERENCE, Type::RULE_REFERENCE,
             } },
 
     },
@@ -1182,14 +1366,14 @@ u1 EquInstruction::classof( Value const* obj )
 //
 
 NeqInstruction::NeqInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: CompareInstruction( classid(), { lhs, rhs } )
+: CompareInstruction( BOOLEAN, classid(), { lhs, rhs } )
 {
 }
 
-NeqInstruction::NeqInstruction(
-    const Constant* constants, const std::size_t size )
-: CompareInstruction( classid(), constants, size )
+NeqInstruction::NeqInstruction( const Type::Ptr& type )
+: CompareInstruction( BOOLEAN, classid() )
 {
+    assert( type->isBoolean() );
 }
 
 void NeqInstruction::accept( Visitor& visitor )
@@ -1199,11 +1383,6 @@ void NeqInstruction::accept( Visitor& visitor )
 
 const Annotation NeqInstruction::info( classid(),
     Annotation::Data{
-
-        { Type::BOOLEAN,
-            {
-                Type::RULE_REFERENCE, Type::RULE_REFERENCE,
-            } },
 
         { Type::BOOLEAN,
             {
@@ -1235,6 +1414,11 @@ const Annotation NeqInstruction::info( classid(),
                 Type::ENUMERATION, Type::ENUMERATION,
             } },
 
+        { Type::BOOLEAN,
+            {
+                Type::RULE_REFERENCE, Type::RULE_REFERENCE,
+            } },
+
     },
     compare_instruction_inference );
 
@@ -1248,14 +1432,14 @@ u1 NeqInstruction::classof( Value const* obj )
 //
 
 LthInstruction::LthInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: CompareInstruction( classid(), { lhs, rhs } )
+: CompareInstruction( BOOLEAN, classid(), { lhs, rhs } )
 {
 }
 
-LthInstruction::LthInstruction(
-    const Constant* constants, const std::size_t size )
-: CompareInstruction( classid(), constants, size )
+LthInstruction::LthInstruction( const Type::Ptr& type )
+: CompareInstruction( BOOLEAN, classid() )
 {
+    assert( type->isBoolean() );
 }
 
 void LthInstruction::accept( Visitor& visitor )
@@ -1271,6 +1455,16 @@ const Annotation LthInstruction::info( classid(),
                 Type::INTEGER, Type::INTEGER,
             } },
 
+        { Type::BOOLEAN,
+            {
+                Type::RATIONAL, Type::RATIONAL,
+            } },
+
+        { Type::BOOLEAN,
+            {
+                Type::FLOATING, Type::FLOATING,
+            } },
+
     },
     compare_instruction_inference );
 
@@ -1284,14 +1478,14 @@ u1 LthInstruction::classof( Value const* obj )
 //
 
 LeqInstruction::LeqInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: CompareInstruction( classid(), { lhs, rhs } )
+: CompareInstruction( BOOLEAN, classid(), { lhs, rhs } )
 {
 }
 
-LeqInstruction::LeqInstruction(
-    const Constant* constants, const std::size_t size )
-: CompareInstruction( classid(), constants, size )
+LeqInstruction::LeqInstruction( const Type::Ptr& type )
+: CompareInstruction( BOOLEAN, classid() )
 {
+    assert( type->isBoolean() );
 }
 
 void LeqInstruction::accept( Visitor& visitor )
@@ -1307,6 +1501,16 @@ const Annotation LeqInstruction::info( classid(),
                 Type::INTEGER, Type::INTEGER,
             } },
 
+        { Type::BOOLEAN,
+            {
+                Type::RATIONAL, Type::RATIONAL,
+            } },
+
+        { Type::BOOLEAN,
+            {
+                Type::FLOATING, Type::FLOATING,
+            } },
+
     },
     compare_instruction_inference );
 
@@ -1320,14 +1524,14 @@ u1 LeqInstruction::classof( Value const* obj )
 //
 
 GthInstruction::GthInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: CompareInstruction( classid(), { lhs, rhs } )
+: CompareInstruction( BOOLEAN, classid(), { lhs, rhs } )
 {
 }
 
-GthInstruction::GthInstruction(
-    const Constant* constants, const std::size_t size )
-: CompareInstruction( classid(), constants, size )
+GthInstruction::GthInstruction( const Type::Ptr& type )
+: CompareInstruction( BOOLEAN, classid() )
 {
+    assert( type->isBoolean() );
 }
 
 void GthInstruction::accept( Visitor& visitor )
@@ -1343,6 +1547,16 @@ const Annotation GthInstruction::info( classid(),
                 Type::INTEGER, Type::INTEGER,
             } },
 
+        { Type::BOOLEAN,
+            {
+                Type::RATIONAL, Type::RATIONAL,
+            } },
+
+        { Type::BOOLEAN,
+            {
+                Type::FLOATING, Type::FLOATING,
+            } },
+
     },
     compare_instruction_inference );
 
@@ -1355,15 +1569,15 @@ u1 GthInstruction::classof( Value const* obj )
 // Geq Instruction
 //
 
-GeqInstruction::GeqInstruction(
-    const Constant* constants, const std::size_t size )
-: CompareInstruction( classid(), constants, size )
+GeqInstruction::GeqInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
+: CompareInstruction( BOOLEAN, classid(), { lhs, rhs } )
 {
 }
 
-GeqInstruction::GeqInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: CompareInstruction( classid(), { lhs, rhs } )
+GeqInstruction::GeqInstruction( const Type::Ptr& type )
+: CompareInstruction( BOOLEAN, classid() )
 {
+    assert( type->isBoolean() );
 }
 
 void GeqInstruction::accept( Visitor& visitor )
@@ -1377,6 +1591,16 @@ const Annotation GeqInstruction::info( classid(),
         { Type::BOOLEAN,
             {
                 Type::INTEGER, Type::INTEGER,
+            } },
+
+        { Type::BOOLEAN,
+            {
+                Type::RATIONAL, Type::RATIONAL,
+            } },
+
+        { Type::BOOLEAN,
+            {
+                Type::FLOATING, Type::FLOATING,
             } },
 
     },

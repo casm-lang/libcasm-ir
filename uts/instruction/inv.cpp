@@ -26,11 +26,6 @@
 
 using namespace libcasm_ir;
 
-TEST( libcasm_ir__instruction_inv, create_invalid )
-{
-    EXPECT_THROW( { InvInstruction i( 0 ); }, std::domain_error );
-}
-
 TEST( libcasm_ir__instruction_inv, integer )
 {
     {

@@ -38,29 +38,11 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< Instruction >;
 
-        inline Instruction( const Type::Ptr& type, const Value::ID id,
-            const Constant* constants, const std::size_t size )
-        : User( "", type, id )
-        , m_size( size )
-        , m_constants( constants )
-        {
-        }
-
         Instruction( const Type::Ptr& type,
             const Value::ID id,
             const std::vector< Value::Ptr >& operands = {} );
 
         void add( const Value::Ptr& operand );
-
-        inline std::size_t size( void ) const
-        {
-            return m_size;
-        }
-
-        inline const Constant* constants( void ) const
-        {
-            return m_constants;
-        }
 
         Value::Ptr operand( u8 position ) const;
 
@@ -88,9 +70,6 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
 
       private:
-        std::size_t m_size;
-        const Constant* m_constants;
-
         std::vector< Value::Ptr > m_operands;
 
         std::weak_ptr< Statement > m_statement;
@@ -276,13 +255,7 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< OperatorInstruction >;
 
         OperatorInstruction( const Type::Ptr& type, const Value::ID id,
-            const std::vector< Value::Ptr >& operands );
-
-        inline OperatorInstruction( const Type::Ptr& type, const Value::ID id,
-            const Constant* operands, const std::size_t size )
-        : Instruction( type, id, operands, size )
-        {
-        }
+            const std::vector< Value::Ptr >& operands = {} );
 
         static inline Value::ID classid( void )
         {
@@ -292,19 +265,17 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
+    //
+    // Arithmetic Instructions
+    //
+
     class ArithmeticInstruction : public OperatorInstruction
     {
       public:
         using Ptr = std::shared_ptr< ArithmeticInstruction >;
 
-        ArithmeticInstruction(
-            const Value::ID id, const std::vector< Value::Ptr >& operands );
-
         ArithmeticInstruction( const Type::Ptr& type, const Value::ID id,
-            const Constant* operands, const std::size_t size )
-        : OperatorInstruction( type, id, operands, size )
-        {
-        }
+            const std::vector< Value::Ptr >& operands = {} );
 
         static inline Value::ID classid( void )
         {
@@ -314,51 +285,6 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class CompareInstruction : public OperatorInstruction
-    {
-      public:
-        using Ptr = std::shared_ptr< CompareInstruction >;
-
-        CompareInstruction(
-            const Value::ID id, const std::vector< Value::Ptr >& operands );
-
-        CompareInstruction( const Value::ID id, const Constant* operands,
-            const std::size_t size );
-
-        static inline Value::ID classid( void )
-        {
-            return Value::COMPARE_INSTRUCTION;
-        }
-
-        static u1 classof( Value const* obj );
-    };
-
-    class LogicalInstruction : public OperatorInstruction
-    {
-      public:
-        using Ptr = std::shared_ptr< LogicalInstruction >;
-
-        LogicalInstruction(
-            const Value::ID id, const std::vector< Value::Ptr >& operands );
-
-        LogicalInstruction( const Type::Ptr& type, const Value::ID id,
-            const Constant* operands, const std::size_t size )
-        : OperatorInstruction( type, id, operands, size )
-        {
-        }
-
-        static inline Value::ID classid( void )
-        {
-            return Value::LOGICAL_INSTRUCTION;
-        }
-
-        static u1 classof( Value const* obj );
-    };
-
-    //
-    // Arithmetic Instructions
-    //
-
     class InvInstruction final : public ArithmeticInstruction
     {
       public:
@@ -366,7 +292,7 @@ namespace libcasm_ir
 
         InvInstruction( const Value::Ptr& lhs );
 
-        InvInstruction( const Constant* operands, const std::size_t size );
+        InvInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
 
@@ -387,7 +313,7 @@ namespace libcasm_ir
 
         AddInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
-        AddInstruction( const Constant* operands, const std::size_t size );
+        AddInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
 
@@ -408,7 +334,7 @@ namespace libcasm_ir
 
         SubInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
-        SubInstruction( const Constant* operands, const std::size_t size );
+        SubInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
 
@@ -429,7 +355,7 @@ namespace libcasm_ir
 
         MulInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
-        MulInstruction( const Constant* operands, const std::size_t size );
+        MulInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
 
@@ -450,7 +376,7 @@ namespace libcasm_ir
 
         ModInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
-        ModInstruction( const Constant* operands, const std::size_t size );
+        ModInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
 
@@ -471,7 +397,7 @@ namespace libcasm_ir
 
         DivInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
-        DivInstruction( const Constant* operands, const std::size_t size );
+        DivInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
 
@@ -492,7 +418,7 @@ namespace libcasm_ir
 
         PowInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
-        PowInstruction( const Constant* operands, const std::size_t size );
+        PowInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
 
@@ -510,6 +436,22 @@ namespace libcasm_ir
     // Logical Instructions
     //
 
+    class LogicalInstruction : public OperatorInstruction
+    {
+      public:
+        using Ptr = std::shared_ptr< LogicalInstruction >;
+
+        LogicalInstruction( const Type::Ptr& type, const Value::ID id,
+            const std::vector< Value::Ptr >& operands = {} );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::LOGICAL_INSTRUCTION;
+        }
+
+        static u1 classof( Value const* obj );
+    };
+
     class AndInstruction final : public LogicalInstruction
     {
       public:
@@ -517,7 +459,7 @@ namespace libcasm_ir
 
         AndInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
-        AndInstruction( const Constant* operands, const std::size_t size );
+        AndInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
 
@@ -538,7 +480,7 @@ namespace libcasm_ir
 
         XorInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
-        XorInstruction( const Constant* operands, const std::size_t size );
+        XorInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
 
@@ -559,7 +501,7 @@ namespace libcasm_ir
 
         OrInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
-        OrInstruction( const Constant* operands, const std::size_t size );
+        OrInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
 
@@ -580,7 +522,7 @@ namespace libcasm_ir
 
         ImpInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
-        ImpInstruction( const Constant* operands, const std::size_t size );
+        ImpInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
 
@@ -601,7 +543,7 @@ namespace libcasm_ir
 
         NotInstruction( const Value::Ptr& lhs );
 
-        NotInstruction( const Constant* operands, const std::size_t size );
+        NotInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
 
@@ -619,6 +561,22 @@ namespace libcasm_ir
     // Compare Instructions
     //
 
+    class CompareInstruction : public OperatorInstruction
+    {
+      public:
+        using Ptr = std::shared_ptr< CompareInstruction >;
+
+        CompareInstruction( const Type::Ptr& type, const Value::ID id,
+            const std::vector< Value::Ptr >& operands = {} );
+
+        static inline Value::ID classid( void )
+        {
+            return Value::COMPARE_INSTRUCTION;
+        }
+
+        static u1 classof( Value const* obj );
+    };
+
     class EquInstruction final : public CompareInstruction
     {
       public:
@@ -626,7 +584,7 @@ namespace libcasm_ir
 
         EquInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
-        EquInstruction( const Constant* operands, const std::size_t size );
+        EquInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
 
@@ -647,7 +605,7 @@ namespace libcasm_ir
 
         NeqInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
-        NeqInstruction( const Constant* operands, const std::size_t size );
+        NeqInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
 
@@ -668,7 +626,7 @@ namespace libcasm_ir
 
         LthInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
-        LthInstruction( const Constant* operands, const std::size_t size );
+        LthInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
 
@@ -689,7 +647,7 @@ namespace libcasm_ir
 
         LeqInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
-        LeqInstruction( const Constant* operands, const std::size_t size );
+        LeqInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
 
@@ -710,7 +668,7 @@ namespace libcasm_ir
 
         GthInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
-        GthInstruction( const Constant* operands, const std::size_t size );
+        GthInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
 
@@ -731,7 +689,7 @@ namespace libcasm_ir
 
         GeqInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
 
-        GeqInstruction( const Constant* operands, const std::size_t size );
+        GeqInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
 
