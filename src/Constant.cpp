@@ -23,9 +23,7 @@
 
 #include "Constant.h"
 
-#include "../stdhl/cpp/FloatingPoint.h"
 #include "../stdhl/cpp/Math.h"
-#include "../stdhl/cpp/Rational.h"
 
 using namespace libcasm_ir;
 
@@ -40,7 +38,7 @@ static const auto FLOATING = libstdhl::get< FloatingType >();
 static const auto RATIONAL = libstdhl::get< RationalType >();
 
 Constant::Constant( const std::string& name, const Type::Ptr& type,
-    const libstdhl::Type& data, const Value::Ptr& value, u1 defined,
+    const libstdhl::Type::Layout& data, const Value::Ptr& value, u1 defined,
     u1 symbolic, Value::ID id )
 : Value( name, type, id )
 , m_data( data )
@@ -50,7 +48,7 @@ Constant::Constant( const std::string& name, const Type::Ptr& type,
 {
 }
 
-Constant::Constant( const Type::Ptr& type, const libstdhl::Type& data,
+Constant::Constant( const Type::Ptr& type, const libstdhl::Type::Layout& data,
     const Value::Ptr& value, u1 defined, u1 symbolic, Value::ID id )
 : Value( EMPTY, type, id )
 , m_data( data )
@@ -61,7 +59,7 @@ Constant::Constant( const Type::Ptr& type, const libstdhl::Type& data,
 }
 
 Constant::Constant( void )
-: Constant( VOID, libstdhl::Type(), nullptr, false, false, classid() )
+: Constant( VOID, libstdhl::Type::Layout(), nullptr, false, false, classid() )
 {
 }
 
@@ -441,7 +439,7 @@ Constant Constant::undef( const Type::Ptr& type )
 //
 
 VoidConstant::VoidConstant( void )
-: Constant( VOID, libstdhl::Type(), nullptr, true, false, classid() )
+: Constant( VOID, libstdhl::Type::Layout(), nullptr, true, false, classid() )
 {
 }
 
@@ -487,8 +485,8 @@ u1 VoidConstant::classof( Value const* obj )
 //
 
 BooleanConstant::BooleanConstant( u1 value, u1 defined, u1 symbolic )
-: Constant(
-      BOOLEAN, libstdhl::Type( value ), nullptr, defined, symbolic, classid() )
+: Constant( BOOLEAN, libstdhl::Type::Layout( value, false ), nullptr, defined,
+      symbolic, classid() )
 {
 }
 
@@ -504,7 +502,7 @@ BooleanConstant::BooleanConstant( void )
 
 u1 BooleanConstant::value( void ) const
 {
-    return static_cast< u1 >( m_data.word( 0 ) );
+    return static_cast< u1 >( m_data.value() );
 }
 
 std::string BooleanConstant::name( void ) const
@@ -550,14 +548,14 @@ u1 BooleanConstant::classof( Value const* obj )
 //
 
 IntegerConstant::IntegerConstant(
-    const libstdhl::Type& value, u1 defined, u1 symbolic )
+    const libstdhl::Type::Layout& value, u1 defined, u1 symbolic )
 : Constant( INTEGER, value, nullptr, defined, symbolic, classid() )
 {
 }
 
 IntegerConstant::IntegerConstant(
     const std::string& value, const libstdhl::Type::Radix radix )
-: IntegerConstant( libstdhl::Integer( value, radix ), true, false )
+: IntegerConstant( libstdhl::Type::Integer( value, radix ), true, false )
 {
     // TODO: PPA: force CASM integer string digit separator usage as
     // group of
@@ -569,38 +567,37 @@ IntegerConstant::IntegerConstant( const BitConstant& value )
 {
 }
 
-IntegerConstant::IntegerConstant( const libstdhl::Integer& value )
+IntegerConstant::IntegerConstant( const libstdhl::Type::Integer& value )
 : IntegerConstant( value, true, false )
 {
 }
 
 IntegerConstant::IntegerConstant( i64 value )
-: IntegerConstant( libstdhl::Integer( value ), true, false )
+: IntegerConstant( libstdhl::Type::Integer( value ), true, false )
 {
 }
 
 IntegerConstant::IntegerConstant( void )
-: IntegerConstant( libstdhl::Type(), false, false )
+: IntegerConstant( libstdhl::Type::Layout(), false, false )
 {
 }
 
 i64 IntegerConstant::value_i64( void ) const
 {
-    i64 v = ( i64 )( m_data.word( 0 ) );
-
-    if( m_data.sign() )
+    if( m_data.trivial() )
     {
-        return v * -1;
+        return m_data.value() * ( m_data.sign() ? -1 : 1 );
     }
     else
     {
-        return v;
+        assert( !" internal error! " );
+        return 0;
     }
 }
 
-const libstdhl::Integer& IntegerConstant::value( void ) const
+const libstdhl::Type::Integer& IntegerConstant::value( void ) const
 {
-    return static_cast< const libstdhl::Integer& >( m_data );
+    return static_cast< const libstdhl::Type::Integer& >( m_data );
 }
 
 std::string IntegerConstant::name( void ) const
@@ -648,8 +645,8 @@ u1 IntegerConstant::classof( Value const* obj )
 
 BitConstant::BitConstant(
     const BitType::Ptr& type, u64 value, u1 defined, u1 symbolic )
-: Constant(
-      type, libstdhl::Type( value ), nullptr, defined, symbolic, classid() )
+: Constant( type, libstdhl::Type::Binary( value ), nullptr, defined, symbolic,
+      classid() )
 {
     if( type->bitsize() > BitType::SizeMax )
     {
@@ -661,7 +658,7 @@ BitConstant::BitConstant(
 
 BitConstant::BitConstant( const BitType::Ptr& type, const std::string& value,
     const libstdhl::Type::Radix radix )
-: Constant( type, libstdhl::Type( value, false, radix ), nullptr, true, false,
+: Constant( type, libstdhl::Type::Binary( value, radix ), nullptr, true, false,
       classid() )
 {
     if( type->bitsize() > BitType::SizeMax )
@@ -672,7 +669,8 @@ BitConstant::BitConstant( const BitType::Ptr& type, const std::string& value,
     }
 }
 
-BitConstant::BitConstant( const Type::Ptr& type, const libstdhl::Type& value )
+BitConstant::BitConstant(
+    const Type::Ptr& type, const libstdhl::Type::Binary& value )
 : Constant( type, value, nullptr, true, false, classid() )
 {
     assert( type->isBit() );
@@ -713,12 +711,12 @@ BitConstant::BitConstant( u16 bitsize )
 
 u64 BitConstant::value_u64( void ) const
 {
-    return m_data.word( 0 );
+    return m_data.value();
 }
 
-const libstdhl::Type& BitConstant::value( void ) const
+const libstdhl::Type::Binary& BitConstant::value( void ) const
 {
-    return m_data;
+    return static_cast< const libstdhl::Type::Binary& >( m_data );
 }
 
 std::string BitConstant::name( void ) const
@@ -766,8 +764,8 @@ u1 BitConstant::classof( Value const* obj )
 
 StringConstant::StringConstant(
     const std::string& value, u1 defined, u1 symbolic )
-: Constant(
-      value, STRING, libstdhl::Type(), nullptr, defined, symbolic, classid() )
+: Constant( value, STRING, libstdhl::Type::Layout(), nullptr, defined, symbolic,
+      classid() )
 {
 }
 
@@ -829,40 +827,40 @@ u1 StringConstant::classof( Value const* obj )
 //
 
 FloatingConstant::FloatingConstant(
-    const libstdhl::Type& value, u1 defined, u1 symbolic )
+    const libstdhl::Type::Layout& value, u1 defined, u1 symbolic )
 : Constant( FLOATING, value, nullptr, defined, symbolic, classid() )
 {
 }
 
-FloatingConstant::FloatingConstant( const libstdhl::Type& value )
+FloatingConstant::FloatingConstant( const libstdhl::Type::Layout& value )
 : FloatingConstant( value, true, false )
 {
 }
 
 FloatingConstant::FloatingConstant( const std::string& value )
-: FloatingConstant( libstdhl::FloatingPoint( value ), true, false )
+: FloatingConstant( libstdhl::Type::FloatingPoint( value ), true, false )
 {
 }
 
 FloatingConstant::FloatingConstant( const double value )
-: FloatingConstant( libstdhl::FloatingPoint( value ), true, false )
+: FloatingConstant( libstdhl::Type::FloatingPoint( value ), true, false )
 {
 }
 
 FloatingConstant::FloatingConstant( void )
-: FloatingConstant( libstdhl::Type(), false, false )
+: FloatingConstant( libstdhl::Type::Layout(), false, false )
 {
 }
 
-const libstdhl::FloatingPoint& FloatingConstant::value( void ) const
+const libstdhl::Type::FloatingPoint& FloatingConstant::value( void ) const
 {
-    return static_cast< const libstdhl::FloatingPoint& >( m_data );
+    return static_cast< const libstdhl::Type::FloatingPoint& >( m_data );
 }
 
 std::string FloatingConstant::name( void ) const
 {
     return ( defined() ? ( "TODO" ) : undef_str );
-    // TODO: PPA: use literal function from libstdhl::Type
+    // TODO: PPA: use literal function from libstdhl::Type::Layout
 }
 
 void FloatingConstant::accept( Visitor& visitor )
@@ -903,35 +901,35 @@ u1 FloatingConstant::classof( Value const* obj )
 //
 
 RationalConstant::RationalConstant(
-    const libstdhl::Type& value, u1 defined, u1 symbolic )
+    const libstdhl::Type::Layout& value, u1 defined, u1 symbolic )
 : Constant( RATIONAL, value, nullptr, defined, symbolic, classid() )
 {
 }
 
-RationalConstant::RationalConstant( const libstdhl::Type& value )
+RationalConstant::RationalConstant( const libstdhl::Type::Layout& value )
 : RationalConstant( value, true, false )
 {
 }
 
 RationalConstant::RationalConstant( const std::string& value )
-: RationalConstant( libstdhl::Rational( value ), true, false )
+: RationalConstant( libstdhl::Type::Rational( value ), true, false )
 {
 }
 
 RationalConstant::RationalConstant( void )
-: RationalConstant( libstdhl::Type(), false, false )
+: RationalConstant( libstdhl::Type::Layout(), false, false )
 {
 }
 
-const libstdhl::Rational& RationalConstant::value( void ) const
+const libstdhl::Type::Rational& RationalConstant::value( void ) const
 {
-    return static_cast< const libstdhl::Rational& >( m_data );
+    return static_cast< const libstdhl::Type::Rational& >( m_data );
 }
 
 std::string RationalConstant::name( void ) const
 {
     return ( defined() ? ( "TODO" ) : undef_str );
-    // TODO: PPA: use literal function from libstdhl::Type
+    // TODO: PPA: use literal function from libstdhl::Type::Layout
 }
 
 void RationalConstant::accept( Visitor& visitor )
@@ -974,8 +972,8 @@ u1 RationalConstant::classof( Value const* obj )
 EnumerationConstant::EnumerationConstant( const EnumerationType::Ptr& type,
     const std::string& value, u1 defined, u1 symbolic, Value::ID id )
 : Constant( value, type,
-      defined ? libstdhl::Type( type->kind().encode( value ) )
-              : libstdhl::Type(),
+      defined ? libstdhl::Type::Binary( type->kind().encode( value ) )
+              : libstdhl::Type::Layout(),
       nullptr, defined, symbolic, id )
 {
 }
@@ -1002,9 +1000,9 @@ EnumerationConstant::EnumerationConstant( const Enumeration::Ptr& kind )
 {
 }
 
-const libstdhl::Type& EnumerationConstant::value( void ) const
+const libstdhl::Type::Binary& EnumerationConstant::value( void ) const
 {
-    return m_data;
+    return static_cast< const libstdhl::Type::Binary& >( m_data );
 }
 
 std::string EnumerationConstant::name( void ) const
@@ -1051,7 +1049,7 @@ u1 EnumerationConstant::classof( Value const* obj )
 
 RangeConstant::RangeConstant( const Type::Ptr& type, const Range::Ptr& value,
     u1 defined, u1 symbolic, Value::ID id )
-: Constant( type, libstdhl::Type(), value, defined, symbolic, id )
+: Constant( type, libstdhl::Type::Layout(), value, defined, symbolic, id )
 {
 }
 
@@ -1197,7 +1195,8 @@ u1 RuleReferenceConstant::classof( Value const* obj )
 //
 
 Identifier::Identifier( const std::string& value, const Type::Ptr& type )
-: Constant( value, type, libstdhl::Type(), nullptr, true, false, classid() )
+: Constant(
+      value, type, libstdhl::Type::Layout(), nullptr, true, false, classid() )
 {
 }
 
