@@ -177,6 +177,11 @@ std::string Value::label( void ) const
     }
 }
 
+u1 Value::operator==( const Value& rhs ) const
+{
+    return ( this->id() == rhs.id() ) and ( this->type() == rhs.type() );
+}
+
 void Value::iterate(
     const Traversal order, std::function< void( Value& ) > action )
 {

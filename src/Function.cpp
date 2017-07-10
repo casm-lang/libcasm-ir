@@ -46,6 +46,22 @@ std::size_t Function::hash( void ) const
         classid(), std::hash< std::string >()( name() ) );
 }
 
+u1 Function::operator==( const Value& rhs ) const
+{
+    if( this == &rhs )
+    {
+        return true;
+    }
+
+    if( not Value::operator==( rhs ) )
+    {
+        return false;
+    }
+
+    const auto& other = static_cast< const Function& >( rhs );
+    return ( this->name() == other.name() );
+}
+
 u1 Function::classof( Value const* obj )
 {
     return obj->id() == classid();
