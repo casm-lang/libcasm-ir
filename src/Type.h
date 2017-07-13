@@ -177,9 +177,6 @@ namespace libcasm_ir
             return std::const_pointer_cast< T >( shared_from_this() );
         }
 
-        std::string m_name;
-        std::string m_description;
-
         Type::Ptr m_result;
         Types m_arguments;
 
