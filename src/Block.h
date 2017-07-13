@@ -39,7 +39,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< Block >;
 
-        Block( const std::string& name, Value::ID id = classid() );
+        Block( const Value::ID id = classid() );
 
         void clear( void );
 
@@ -81,7 +81,7 @@ namespace libcasm_ir
 
       protected:
         ExecutionSemanticsBlock(
-            const std::string& name, u1 parallel, Value::ID id = classid() );
+            const u1 parallel, const Value::ID id = classid() );
 
       public:
         u1 parallel( void ) const;
@@ -105,6 +105,8 @@ namespace libcasm_ir
         }
 
         void replace( Block& from, const Block::Ptr to );
+
+        std::string name( void ) const override final;
 
         static inline Value::ID classid( void )
         {
@@ -133,7 +135,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< ParallelBlock >;
 
-        static ParallelBlock::Ptr create( u1 empty = false );
+        static ParallelBlock::Ptr create( const u1 empty = false );
 
       private:
         ParallelBlock( void );

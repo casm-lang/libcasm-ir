@@ -27,8 +27,8 @@
 
 using namespace libcasm_ir;
 
-Statement::Statement( const std::string& name, Value::ID id )
-: Block( name, id )
+Statement::Statement( const Value::ID id )
+: Block( id )
 {
 }
 
@@ -121,6 +121,21 @@ void Statement::replaceWith( const Block::Ptr block )
     blk->replace( *this, block );
 }
 
+std::string Statement::name( void ) const
+{
+    if( isa< TrivialStatement >( this ) )
+    {
+        return "statement";
+    }
+    else if( isa< BranchStatement >( this ) )
+    {
+        return "branch";
+    }
+
+    assert( !" invalid statement to dispatch 'name' found! " );
+    return "";
+}
+
 u1 Statement::classof( Value const* obj )
 {
     return obj->id() == classid() or TrivialStatement::classof( obj )
@@ -128,7 +143,7 @@ u1 Statement::classof( Value const* obj )
 }
 
 TrivialStatement::TrivialStatement( void )
-: Statement( "statement", classid() )
+: Statement( classid() )
 {
 }
 
@@ -143,7 +158,7 @@ u1 TrivialStatement::classof( Value const* obj )
 }
 
 BranchStatement::BranchStatement( void )
-: Statement( "branch", classid() )
+: Statement( classid() )
 {
 }
 

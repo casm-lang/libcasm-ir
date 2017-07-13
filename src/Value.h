@@ -196,13 +196,7 @@ namespace libcasm_ir
             _SIZE_
         };
 
-        inline Value( const std::string& name, const Type::Ptr& type, ID id )
-        : m_name( name )
-        , m_type( type )
-        , m_id( id )
-        {
-            assert( type );
-        }
+        Value( const Type::Ptr& type, ID id );
 
         virtual ~Value( void ) = default;
 
@@ -231,8 +225,9 @@ namespace libcasm_ir
             return !operator==( rhs );
         }
 
-        virtual void iterate( const Traversal order,
-            std::function< void( Value& ) > callback ) final;
+        virtual void iterate(
+            const Traversal order, std::function< void( Value& ) > callback )
+            final;
 
         virtual void accept( Visitor& visitor ) = 0;
 
@@ -249,11 +244,7 @@ namespace libcasm_ir
             return std::const_pointer_cast< T >( shared_from_this() );
         }
 
-        std::string _name( void ) const;
-
       private:
-        std::string m_name;
-
         Type::Ptr m_type;
 
         ID m_id;
@@ -284,7 +275,7 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< ValueList >;
 
         ValueList( void )
-        : Value( "value_list", libstdhl::get< VoidType >(), Value::VALUE_LIST )
+        : Value( libstdhl::get< VoidType >(), Value::VALUE_LIST )
         {
         }
 

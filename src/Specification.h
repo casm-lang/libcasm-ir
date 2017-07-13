@@ -95,6 +95,8 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
 
       private:
+        std::string m_name;
+
         Agent::Ptr m_agent;
 
         Types m_types;

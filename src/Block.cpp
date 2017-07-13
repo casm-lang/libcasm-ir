@@ -29,8 +29,8 @@
 
 using namespace libcasm_ir;
 
-Block::Block( const std::string& name, Value::ID id )
-: Value( name, libstdhl::get< LabelType >(), id )
+Block::Block( Value::ID id )
+: Value( libstdhl::get< LabelType >(), id )
 , m_parent()
 , m_scope()
 {
@@ -66,7 +66,17 @@ ExecutionSemanticsBlock::Ptr Block::scope( void ) const
 
 std::string Block::name( void ) const
 {
-    return _name();
+    if( isa< ExecutionSemanticsBlock >( this ) )
+    {
+        return static_cast< const ExecutionSemanticsBlock* >( this )->name();
+    }
+    else if( isa< Statement >( this ) )
+    {
+        return static_cast< const Statement* >( this )->name();
+    }
+
+    assert( !" invalid block to dispatch 'name' found! " );
+    return "";
 }
 
 std::size_t Block::hash( void ) const
@@ -98,8 +108,8 @@ u1 Block::classof( Value const* obj )
 }
 
 ExecutionSemanticsBlock::ExecutionSemanticsBlock(
-    const std::string& name, u1 parallel, Value::ID id )
-: Block( name, id )
+    const u1 parallel, Value::ID id )
+: Block( id )
 , m_parallel( parallel )
 , m_pseudostate( 0 )
 {
@@ -186,6 +196,18 @@ void ExecutionSemanticsBlock::replace( Block& from, const Block::Ptr to )
     to->setParent( self );
 }
 
+std::string ExecutionSemanticsBlock::name( void ) const
+{
+    if( parallel() )
+    {
+        return "par";
+    }
+    else
+    {
+        return "seq";
+    }
+}
+
 u1 ExecutionSemanticsBlock::classof( Value const* obj )
 {
     return obj->id() == classid() or ParallelBlock::classof( obj )
@@ -210,7 +232,7 @@ ParallelBlock::Ptr ParallelBlock::create( u1 empty )
 }
 
 ParallelBlock::ParallelBlock( void )
-: ExecutionSemanticsBlock( "par", true, classid() )
+: ExecutionSemanticsBlock( true, classid() )
 {
 }
 
@@ -281,7 +303,7 @@ SequentialBlock::Ptr SequentialBlock::create( u1 empty )
 }
 
 SequentialBlock::SequentialBlock( void )
-: ExecutionSemanticsBlock( "seq", false, classid() )
+: ExecutionSemanticsBlock( false, classid() )
 {
 }
 

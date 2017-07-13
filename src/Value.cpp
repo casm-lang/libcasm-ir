@@ -38,6 +38,13 @@
 
 using namespace libcasm_ir;
 
+Value::Value( const Type::Ptr& type, ID id )
+: m_type( type )
+, m_id( id )
+{
+    assert( type );
+}
+
 std::string Value::description( void ) const
 {
     return type().name() + " " + name();
@@ -188,11 +195,6 @@ void Value::iterate(
     TraversalVisitor visitor( order, action );
 
     accept( visitor );
-}
-
-std::string Value::_name( void ) const
-{
-    return m_name;
 }
 
 std::string Value::token( const Value::ID id )

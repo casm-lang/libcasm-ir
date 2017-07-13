@@ -49,6 +49,9 @@ namespace libcasm_ir
         }
 
         static u1 classof( Value const* obj );
+
+      private:
+        std::string m_name;
     };
 
     using Functions = ValueList< Function >;

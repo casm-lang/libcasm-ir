@@ -35,7 +35,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< Statement >;
 
-        Statement( const std::string& name, Value::ID id = classid() );
+        Statement( const Value::ID id = classid() );
 
         void add( const Instruction::Ptr& instruction );
 
@@ -55,6 +55,8 @@ namespace libcasm_ir
         }
 
         void replaceWith( const Block::Ptr block ) override final;
+
+        std::string name( void ) const override;
 
         static inline Value::ID classid( void )
         {

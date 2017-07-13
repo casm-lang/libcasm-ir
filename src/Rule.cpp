@@ -29,7 +29,8 @@
 using namespace libcasm_ir;
 
 Rule::Rule( const std::string& name, const Type::Ptr& type )
-: User( name, type, classid() )
+: User( type, classid() )
+, m_name( name )
 , m_context( 0 )
 {
 }
@@ -63,7 +64,7 @@ ParallelBlock::Ptr Rule::context( void ) const
 
 std::string Rule::name( void ) const
 {
-    return _name();
+    return m_name;
 }
 
 std::size_t Rule::hash( void ) const

@@ -29,7 +29,8 @@
 using namespace libcasm_ir;
 
 Derived::Derived( const std::string& name, const Type::Ptr& result )
-: User( name, result, classid() )
+: User( result, classid() )
+, m_name( name )
 {
 }
 
@@ -45,7 +46,7 @@ Statement::Ptr Derived::context( void ) const
 
 std::string Derived::name( void ) const
 {
-    return _name();
+    return m_name;
 }
 
 std::size_t Derived::hash( void ) const

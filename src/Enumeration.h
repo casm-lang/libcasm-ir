@@ -64,6 +64,8 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
 
       private:
+        std::string m_name;
+
         std::vector< std::string > m_values;
 
         std::unordered_map< std::string, u64 > m_value2uid;

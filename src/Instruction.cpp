@@ -35,8 +35,6 @@ static const auto VOID = libstdhl::get< VoidType >();
 static const auto BOOLEAN = libstdhl::get< BooleanType >();
 static const auto INTEGER = libstdhl::get< IntegerType >();
 
-static const std::string EMPTY = "";
-
 //
 // Instruction
 //
@@ -44,7 +42,7 @@ static const std::string EMPTY = "";
 Instruction::Instruction( const Type::Ptr& type,
     const Value::ID id,
     const std::vector< Value::Ptr >& operands )
-: User( EMPTY, type, id )
+: User( type, id )
 {
     for( auto operand : operands )
     {

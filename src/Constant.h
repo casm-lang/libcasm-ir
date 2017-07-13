@@ -44,10 +44,6 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< Constant >;
 
       protected:
-        Constant( const std::string& name, const Type::Ptr& type,
-            const libstdhl::Type::Layout& data, const Value::Ptr& value,
-            u1 defined, u1 symbolic, Value::ID id );
-
         Constant( const Type::Ptr& type, const libstdhl::Type::Layout& data,
             const Value::Ptr& value, u1 defined, u1 symbolic, Value::ID id );
 

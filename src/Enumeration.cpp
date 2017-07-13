@@ -29,7 +29,8 @@ using namespace libcasm_ir;
 
 Enumeration::Enumeration(
     const std::string& name, const std::vector< std::string >& values )
-: Value( name, libstdhl::get< VoidType >(), classid() )
+: Value( libstdhl::get< VoidType >(), classid() )
+, m_name( name )
 {
     for( const auto& v : values )
     {
@@ -90,7 +91,7 @@ std::string Enumeration::decode( const u64 value ) const
 
 std::string Enumeration::name( void ) const
 {
-    return _name();
+    return m_name;
 }
 
 std::size_t Enumeration::hash( void ) const

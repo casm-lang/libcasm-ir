@@ -35,7 +35,7 @@ static const auto RATIONAL = libstdhl::get< RationalType >();
 static const auto STRING = libstdhl::get< StringType >();
 
 Builtin::Builtin( const Type::Ptr& type, const Value::ID id )
-: User( "", type, id )
+: User( type, id )
 {
 }
 

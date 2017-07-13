@@ -29,7 +29,7 @@
 using namespace libcasm_ir;
 
 Agent::Agent( const Type::Ptr& type )
-: Value( "agent", type, classid() )
+: Value( type, classid() )
 {
 }
 
@@ -41,7 +41,7 @@ Agent::Agent( const std::vector< std::string >& agents )
 
 std::string Agent::name( void ) const
 {
-    return _name();
+    return "agent";
 }
 
 std::size_t Agent::hash( void ) const

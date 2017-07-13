@@ -59,9 +59,8 @@ namespace libcasm_ir
     class User : public Value
     {
       public:
-        inline User( const std::string& name, const Type::Ptr& type,
-            Value::ID id = classid() )
-        : Value( name, type, id )
+        inline User( const Type::Ptr& type, Value::ID id = classid() )
+        : Value( type, id )
         , m_uses()
         {
         }

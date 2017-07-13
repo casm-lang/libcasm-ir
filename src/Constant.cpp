@@ -28,7 +28,6 @@
 using namespace libcasm_ir;
 
 static constexpr const char* undef_str = "undef";
-static const std::string EMPTY = "";
 
 static const auto VOID = libstdhl::get< VoidType >();
 static const auto BOOLEAN = libstdhl::get< BooleanType >();
@@ -37,20 +36,9 @@ static const auto STRING = libstdhl::get< StringType >();
 static const auto FLOATING = libstdhl::get< FloatingType >();
 static const auto RATIONAL = libstdhl::get< RationalType >();
 
-Constant::Constant( const std::string& name, const Type::Ptr& type,
-    const libstdhl::Type::Layout& data, const Value::Ptr& value, u1 defined,
-    u1 symbolic, Value::ID id )
-: Value( name, type, id )
-, m_data( data )
-, m_value( value )
-, m_defined( defined )
-, m_symbolic( symbolic )
-{
-}
-
 Constant::Constant( const Type::Ptr& type, const libstdhl::Type::Layout& data,
     const Value::Ptr& value, u1 defined, u1 symbolic, Value::ID id )
-: Value( EMPTY, type, id )
+: Value( type, id )
 , m_data( data )
 , m_value( value )
 , m_defined( defined )
@@ -764,8 +752,8 @@ u1 BitConstant::classof( Value const* obj )
 
 StringConstant::StringConstant(
     const std::string& value, u1 defined, u1 symbolic )
-: Constant( value, STRING, libstdhl::Type::Layout(), nullptr, defined, symbolic,
-      classid() )
+: Constant( STRING, libstdhl::Type::Layout( (void*)&value ), nullptr, defined,
+      symbolic, classid() )
 {
 }
 
@@ -775,7 +763,7 @@ StringConstant::StringConstant( const std::string& value )
 }
 
 StringConstant::StringConstant( void )
-: StringConstant( undef_str, false, false )
+: Constant( STRING, libstdhl::Type::Layout(), nullptr, false, false, classid() )
 {
 }
 
@@ -786,7 +774,15 @@ std::string StringConstant::value( void ) const
 
 std::string StringConstant::name( void ) const
 {
-    return _name();
+    auto ptr = m_data.ptr();
+    if( ptr != nullptr )
+    {
+        return *( (std::string*)ptr );
+    }
+    else
+    {
+        return undef_str;
+    }
 }
 
 void StringConstant::accept( Visitor& visitor )
@@ -971,7 +967,7 @@ u1 RationalConstant::classof( Value const* obj )
 
 EnumerationConstant::EnumerationConstant( const EnumerationType::Ptr& type,
     const std::string& value, u1 defined, u1 symbolic, Value::ID id )
-: Constant( value, type,
+: Constant( type,
       defined ? libstdhl::Type::Binary( type->kind().encode( value ) )
               : libstdhl::Type::Layout(),
       nullptr, defined, symbolic, id )
@@ -1007,7 +1003,8 @@ const libstdhl::Type::Binary& EnumerationConstant::value( void ) const
 
 std::string EnumerationConstant::name( void ) const
 {
-    return _name();
+    return static_cast< const EnumerationType& >( type() ).kind().decode(
+        m_data.value() );
 }
 
 void EnumerationConstant::accept( Visitor& visitor )
@@ -1195,14 +1192,14 @@ u1 RuleReferenceConstant::classof( Value const* obj )
 //
 
 Identifier::Identifier( const std::string& value, const Type::Ptr& type )
-: Constant(
-      value, type, libstdhl::Type::Layout(), nullptr, true, false, classid() )
+: Constant( type, libstdhl::Type::Layout( (void*)&value ), nullptr, true, false,
+      classid() )
 {
 }
 
 std::string Identifier::name( void ) const
 {
-    return _name();
+    return *( (std::string*)m_data.ptr() );
 }
 
 void Identifier::accept( Visitor& visitor )

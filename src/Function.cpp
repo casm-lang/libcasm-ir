@@ -26,13 +26,14 @@
 using namespace libcasm_ir;
 
 Function::Function( const std::string& name, const Type::Ptr& type )
-: User( name, type, classid() )
+: User( type, classid() )
+, m_name( name )
 {
 }
 
 std::string Function::name( void ) const
 {
-    return _name();
+    return m_name;
 }
 
 void Function::accept( Visitor& visitor )
