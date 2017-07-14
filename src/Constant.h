@@ -46,7 +46,9 @@ namespace libcasm_ir
 
       protected:
         Constant( const Type::Ptr& type, const libstdhl::Type::Layout& data,
-            const Value::Ptr& value, u1 defined, u1 symbolic, Value::ID id );
+            Value::ID id );
+
+        Constant( const Type::Ptr& type, Value::ID id );
 
       public:
         explicit Constant( void );
@@ -56,6 +58,8 @@ namespace libcasm_ir
         u1 defined( void ) const;
 
         u1 symbolic( void ) const;
+
+        const libstdhl::Type::Layout& data( void ) const;
 
         std::string name( void ) const override;
 
@@ -80,13 +84,6 @@ namespace libcasm_ir
 
       protected:
         libstdhl::Type::Layout m_data;
-
-        Value::Ptr m_value;
-
-      private:
-        u1 m_defined;
-
-        u1 m_symbolic;
 
       public:
         std::unordered_map< std::string, Constant::Ptr >& make_cache( void )
@@ -128,11 +125,9 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< BooleanConstant >;
 
-      private:
-        BooleanConstant( u1 value, u1 defined, u1 symbolic );
-
       public:
         BooleanConstant( u1 value );
+
         BooleanConstant( void );
 
         u1 value( void ) const;
@@ -158,16 +153,16 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< IntegerConstant >;
 
-      private:
-        IntegerConstant(
-            const libstdhl::Type::Layout& value, u1 defined, u1 symbolic );
-
       public:
         IntegerConstant( const std::string& value,
             const libstdhl::Type::Radix radix = libstdhl::Type::DECIMAL );
+
         IntegerConstant( const BitConstant& value );
+
         IntegerConstant( const libstdhl::Type::Integer& value );
+
         IntegerConstant( i64 value );
+
         IntegerConstant( void );
 
         std::string literal(
@@ -198,23 +193,16 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< BitConstant >;
 
-      private:
-        BitConstant(
-            const BitType::Ptr& type, u64 value, u1 defined, u1 symbolic );
-
-        BitConstant( const BitType::Ptr& type, const std::string& value,
-            const libstdhl::Type::Radix radix );
-
       public:
+        BitConstant( const std::string& value,
+            const libstdhl::Type::Radix radix = libstdhl::Type::BINARY );
+
         BitConstant(
             const Type::Ptr& type, const libstdhl::Type::Binary& value );
 
         BitConstant( const BitType::Ptr& type, u64 value );
 
         BitConstant( const BitType::Ptr& type );
-
-        BitConstant( const std::string& value,
-            const libstdhl::Type::Radix radix = libstdhl::Type::BINARY );
 
         BitConstant( u16 bitsize, u64 value );
 
@@ -248,9 +236,6 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< StringConstant >;
 
-      private:
-        StringConstant( const std::string& value, u1 defined, u1 symbolic );
-
       public:
         StringConstant( const std::string& value );
 
@@ -279,14 +264,13 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< FloatingConstant >;
 
-      private:
-        FloatingConstant(
-            const libstdhl::Type::Layout& value, u1 defined, u1 symbolic );
-
       public:
-        FloatingConstant( const libstdhl::Type::Layout& value );
+        FloatingConstant( const libstdhl::Type::Floating& value );
+
         FloatingConstant( const std::string& value );
+
         FloatingConstant( const double value );
+
         FloatingConstant( void );
 
         const libstdhl::Type::Floating& value( void ) const;
@@ -312,13 +296,11 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< RationalConstant >;
 
-      private:
-        RationalConstant(
-            const libstdhl::Type::Layout& value, u1 defined, u1 symbolic );
-
       public:
-        RationalConstant( const libstdhl::Type::Layout& value );
         RationalConstant( const std::string& value );
+
+        RationalConstant( const libstdhl::Type::Rational& value );
+
         RationalConstant( void );
 
         const libstdhl::Type::Rational& value( void ) const;
@@ -344,19 +326,14 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< EnumerationConstant >;
 
-      private:
-        EnumerationConstant( const EnumerationType::Ptr& type,
-            const std::string& value, u1 defined, u1 symbolic,
-            Value::ID id = classid() );
-
       public:
         EnumerationConstant(
             const EnumerationType::Ptr& type, const std::string& value );
 
-        EnumerationConstant( const EnumerationType::Ptr& type );
-
         EnumerationConstant(
             const Enumeration::Ptr& kind, const std::string& value );
+
+        EnumerationConstant( const EnumerationType::Ptr& type );
 
         EnumerationConstant( const Enumeration::Ptr& kind );
 
@@ -382,10 +359,6 @@ namespace libcasm_ir
     {
       public:
         using Ptr = std::shared_ptr< RangeConstant >;
-
-      private:
-        RangeConstant( const Type::Ptr& type, const Range::Ptr& value,
-            u1 defined, u1 symbolic, Value::ID id = classid() );
 
       public:
         RangeConstant( const RangeType::Ptr& type, const Range::Ptr& value );
@@ -429,18 +402,23 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< ReferenceConstant >;
 
       protected:
-        inline ReferenceConstant( const Type::Ptr& type,
-            const typename T::Ptr& value, u1 defined, u1 symbolic,
-            Value::ID id )
-        : Constant(
-              type, libstdhl::Type::Layout(), value, defined, symbolic, id )
+        inline ReferenceConstant(
+            const Type::Ptr& type, const typename T::Ptr& value, Value::ID id )
+        : Constant( type,
+              libstdhl::Type::Layout( static_cast< void* >( value.get() ) ),
+              id )
+        {
+        }
+
+        inline ReferenceConstant( const Type::Ptr& type, Value::ID id )
+        : Constant( type, id )
         {
         }
 
       public:
-        typename T::Ptr value( void ) const
+        T* value( void ) const
         {
-            return std::static_pointer_cast< T >( m_value );
+            return static_cast< T* >( m_data.ptr() );
         }
     };
 
@@ -449,12 +427,9 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< RuleReferenceConstant >;
 
-      private:
-        RuleReferenceConstant( const Type::Ptr& type, const Rule::Ptr& value,
-            u1 defined, u1 symbolic );
-
       public:
         RuleReferenceConstant( const Rule::Ptr& value );
+
         RuleReferenceConstant( const Type::Ptr& type );
 
         std::string name( void ) const override;
@@ -508,7 +483,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< Identifier >;
 
-        Identifier( const std::string& value, const Type::Ptr& type );
+        Identifier( const Type::Ptr& type, const std::string& value );
 
         std::string name( void ) const override;
 
