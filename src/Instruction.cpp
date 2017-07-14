@@ -326,7 +326,7 @@ u1 MergeInstruction::classof( Value const* obj )
 //
 
 LookupInstruction::LookupInstruction( const Value::Ptr& location )
-: Instruction( location->ptr_type()->ptr_result(), classid(), { location } )
+: Instruction( location->type().ptr_result(), classid(), { location } )
 {
 }
 
@@ -346,7 +346,7 @@ u1 LookupInstruction::classof( Value const* obj )
 
 UpdateInstruction::UpdateInstruction(
     const Value::Ptr& location, const Value::Ptr& expr )
-: Instruction( expr->ptr_type(), classid(), { location, expr } )
+: Instruction( expr->type().ptr_type(), classid(), { location, expr } )
 {
 }
 
@@ -366,7 +366,7 @@ u1 UpdateInstruction::classof( Value const* obj )
 
 LocalInstruction::LocalInstruction(
     const Value::Ptr& ident, const Value::Ptr& expr )
-: Instruction( expr->ptr_type(), classid(), { ident, expr } )
+: Instruction( expr->type().ptr_type(), classid(), { ident, expr } )
 {
 }
 
@@ -386,7 +386,7 @@ u1 LocalInstruction::classof( Value const* obj )
 
 LocationInstruction::LocationInstruction(
     const Value::Ptr& function, const std::vector< Value::Ptr >& operands )
-: Instruction( function->ptr_type(), classid(), { function } )
+: Instruction( function->type().ptr_type(), classid(), { function } )
 {
     assert( isa< Function >( function ) );
 
@@ -412,7 +412,7 @@ u1 LocationInstruction::classof( Value const* obj )
 
 CallInstruction::CallInstruction(
     const Value::Ptr& symbol, const std::vector< Value::Ptr >& operands )
-: Instruction( symbol->ptr_type()->ptr_result(), classid(), { symbol } )
+: Instruction( symbol->type().ptr_result(), classid(), { symbol } )
 {
     assert( isa< Rule >( symbol ) or isa< Derived >( symbol )
             or isa< Builtin >( symbol ) );
@@ -505,7 +505,7 @@ u1 ArithmeticInstruction::classof( Value const* obj )
 //
 
 InvInstruction::InvInstruction( const Value::Ptr& lhs )
-: ArithmeticInstruction( lhs->ptr_type(), classid(), { lhs } )
+: ArithmeticInstruction( lhs->type().ptr_type(), classid(), { lhs } )
 {
 }
 
@@ -567,7 +567,7 @@ u1 InvInstruction::classof( Value const* obj )
 //
 
 AddInstruction::AddInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: ArithmeticInstruction( lhs->ptr_type(), classid(), { lhs, rhs } )
+: ArithmeticInstruction( lhs->type().ptr_type(), classid(), { lhs, rhs } )
 {
 }
 
@@ -640,7 +640,7 @@ u1 AddInstruction::classof( Value const* obj )
 //
 
 SubInstruction::SubInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: ArithmeticInstruction( lhs->ptr_type(), classid(), { lhs, rhs } )
+: ArithmeticInstruction( lhs->type().ptr_type(), classid(), { lhs, rhs } )
 {
 }
 
@@ -708,7 +708,7 @@ u1 SubInstruction::classof( Value const* obj )
 //
 
 MulInstruction::MulInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: ArithmeticInstruction( lhs->ptr_type(), classid(), { lhs, rhs } )
+: ArithmeticInstruction( lhs->type().ptr_type(), classid(), { lhs, rhs } )
 {
 }
 
@@ -776,7 +776,7 @@ u1 MulInstruction::classof( Value const* obj )
 //
 
 ModInstruction::ModInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: ArithmeticInstruction( lhs->ptr_type(), classid(), { lhs, rhs } )
+: ArithmeticInstruction( lhs->type().ptr_type(), classid(), { lhs, rhs } )
 {
 }
 
@@ -829,7 +829,7 @@ u1 ModInstruction::classof( Value const* obj )
 //
 
 DivInstruction::DivInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: ArithmeticInstruction( lhs->ptr_type(), classid(), { lhs, rhs } )
+: ArithmeticInstruction( lhs->type().ptr_type(), classid(), { lhs, rhs } )
 {
 }
 
@@ -887,7 +887,7 @@ u1 DivInstruction::classof( Value const* obj )
 //
 
 PowInstruction::PowInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: ArithmeticInstruction( lhs->ptr_type(), classid(), { lhs, rhs } )
+: ArithmeticInstruction( lhs->type().ptr_type(), classid(), { lhs, rhs } )
 {
 }
 
@@ -979,8 +979,8 @@ u1 LogicalInstruction::classof( Value const* obj )
 //
 
 AndInstruction::AndInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: LogicalInstruction(
-      lhs->type().isBit() ? lhs->ptr_type() : BOOLEAN, classid(), { lhs, rhs } )
+: LogicalInstruction( lhs->type().isBit() ? lhs->type().ptr_type() : BOOLEAN,
+      classid(), { lhs, rhs } )
 {
 }
 
@@ -1040,8 +1040,8 @@ u1 AndInstruction::classof( Value const* obj )
 //
 
 XorInstruction::XorInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: LogicalInstruction(
-      lhs->type().isBit() ? lhs->ptr_type() : BOOLEAN, classid(), { lhs, rhs } )
+: LogicalInstruction( lhs->type().isBit() ? lhs->type().ptr_type() : BOOLEAN,
+      classid(), { lhs, rhs } )
 {
 }
 
@@ -1101,8 +1101,8 @@ u1 XorInstruction::classof( Value const* obj )
 //
 
 OrInstruction::OrInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: LogicalInstruction(
-      lhs->type().isBit() ? lhs->ptr_type() : BOOLEAN, classid(), { lhs, rhs } )
+: LogicalInstruction( lhs->type().isBit() ? lhs->type().ptr_type() : BOOLEAN,
+      classid(), { lhs, rhs } )
 {
 }
 
@@ -1162,8 +1162,8 @@ u1 OrInstruction::classof( Value const* obj )
 //
 
 ImpInstruction::ImpInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
-: LogicalInstruction(
-      lhs->type().isBit() ? lhs->ptr_type() : BOOLEAN, classid(), { lhs, rhs } )
+: LogicalInstruction( lhs->type().isBit() ? lhs->type().ptr_type() : BOOLEAN,
+      classid(), { lhs, rhs } )
 {
 }
 
@@ -1218,8 +1218,8 @@ u1 ImpInstruction::classof( Value const* obj )
 //
 
 NotInstruction::NotInstruction( const Value::Ptr& lhs )
-: LogicalInstruction(
-      lhs->type().isBit() ? lhs->ptr_type() : BOOLEAN, classid(), { lhs } )
+: LogicalInstruction( lhs->type().isBit() ? lhs->type().ptr_type() : BOOLEAN,
+      classid(), { lhs } )
 {
 }
 

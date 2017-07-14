@@ -31,10 +31,11 @@
 #include "Rule.h"
 
 #include "../stdhl/cpp/type/Binary.h"
-#include "../stdhl/cpp/type/FloatingPoint.h"
+#include "../stdhl/cpp/type/Floating.h"
 #include "../stdhl/cpp/type/Integer.h"
 #include "../stdhl/cpp/type/Layout.h"
 #include "../stdhl/cpp/type/Rational.h"
+#include "../stdhl/cpp/type/String.h"
 
 namespace libcasm_ir
 {
@@ -252,6 +253,7 @@ namespace libcasm_ir
 
       public:
         StringConstant( const std::string& value );
+
         StringConstant( void );
 
         std::string value( void ) const;
@@ -287,7 +289,7 @@ namespace libcasm_ir
         FloatingConstant( const double value );
         FloatingConstant( void );
 
-        const libstdhl::Type::FloatingPoint& value( void ) const;
+        const libstdhl::Type::Floating& value( void ) const;
 
         std::string name( void ) const override;
 

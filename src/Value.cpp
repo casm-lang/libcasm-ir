@@ -38,8 +38,8 @@
 
 using namespace libcasm_ir;
 
-Value::Value( const Type::Ptr& type, ID id )
-: m_type( type )
+Value::Value( const Type::Ptr& type, const ID id )
+: m_type( type.get() )
 , m_id( id )
 {
     assert( type );
@@ -52,12 +52,7 @@ std::string Value::description( void ) const
 
 const Type& Value::type( void ) const
 {
-    return *m_type.get();
-}
-
-Type::Ptr Value::ptr_type( void ) const
-{
-    return m_type;
+    return *m_type;
 }
 
 Value::ID Value::id( void ) const

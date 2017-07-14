@@ -419,12 +419,6 @@ u64 ConsistencyCheckVisitor::errors( void ) const
 template < typename T >
 void ConsistencyCheckVisitor::verify( Value& value )
 {
-    if( not value.ptr_type() )
-    {
-        m_log.error( "value with no type found" );
-        m_err++;
-    }
-
     if( not isa< T >( value ) )
     {
         m_log.error( "inconsistent class value '%u' found", value.id() );

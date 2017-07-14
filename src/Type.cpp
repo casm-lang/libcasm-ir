@@ -64,6 +64,11 @@ Type::Ptr Type::ptr_result( void ) const
     return ptr_this< Type >();
 }
 
+Type::Ptr Type::ptr_type( void ) const
+{
+    return ptr_this< Type >();
+}
+
 const Types& Type::arguments( void ) const
 {
     return m_arguments;
@@ -996,7 +1001,7 @@ RangeType::RangeType( const Range::Ptr& range )
 : ComposedType( Type::RANGE )
 , m_range( range )
 {
-    m_result = range->ptr_type();
+    m_result = range->type().ptr_type();
 }
 
 RangeType::RangeType( const Type::Ptr& type )

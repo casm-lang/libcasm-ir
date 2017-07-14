@@ -27,6 +27,8 @@ using namespace libcasm_ir;
 using namespace libstdhl;
 using namespace libpass;
 
+static const auto VOID = make< VoidType >();
+
 TEST( libcasm_ir__transform_BranchEliminationPass, case_true )
 {
     BranchEliminationPass pass;
@@ -38,7 +40,7 @@ TEST( libcasm_ir__transform_BranchEliminationPass, case_true )
     IRDumpSourceVisitor dump( std::cerr );
 #endif
 
-    auto rule = make< Rule >( TEST_NAME, make< VoidType >() );
+    auto rule = make< Rule >( TEST_NAME, VOID );
     rule->setContext( ParallelBlock::create() );
 
     auto val_T = get< BooleanConstant >( true );
@@ -87,7 +89,7 @@ TEST( libcasm_ir__transform_BranchEliminationPass, case_false )
     IRDumpSourceVisitor dump( std::cerr );
 #endif
 
-    auto rule = make< Rule >( TEST_NAME, make< VoidType >() );
+    auto rule = make< Rule >( TEST_NAME, VOID );
     rule->setContext( ParallelBlock::create() );
 
     auto val_T = get< BooleanConstant >( true );
@@ -136,7 +138,7 @@ TEST( libcasm_ir__transform_BranchEliminationPass, case_true_to_skip )
     IRDumpSourceVisitor dump( std::cerr );
 #endif
 
-    auto rule = make< Rule >( TEST_NAME, make< VoidType >() );
+    auto rule = make< Rule >( TEST_NAME, VOID );
     rule->setContext( ParallelBlock::create() );
 
     auto val_T = get< BooleanConstant >( true );
@@ -181,7 +183,7 @@ TEST( libcasm_ir__transform_BranchEliminationPass, case_false_to_skip )
     IRDumpSourceVisitor dump( std::cerr );
 #endif
 
-    auto rule = make< Rule >( TEST_NAME, make< VoidType >() );
+    auto rule = make< Rule >( TEST_NAME, VOID );
     rule->setContext( ParallelBlock::create() );
 
     auto val_T = get< BooleanConstant >( true );

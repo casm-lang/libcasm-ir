@@ -196,7 +196,7 @@ namespace libcasm_ir
             _SIZE_
         };
 
-        Value( const Type::Ptr& type, ID id );
+        Value( const Type::Ptr& type, const ID id );
 
         virtual ~Value( void ) = default;
 
@@ -205,8 +205,6 @@ namespace libcasm_ir
         std::string description( void ) const;
 
         const Type& type( void ) const;
-
-        Type::Ptr ptr_type( void ) const;
 
         ID id() const;
 
@@ -225,9 +223,8 @@ namespace libcasm_ir
             return !operator==( rhs );
         }
 
-        virtual void iterate(
-            const Traversal order, std::function< void( Value& ) > callback )
-            final;
+        virtual void iterate( const Traversal order,
+            std::function< void( Value& ) > callback ) final;
 
         virtual void accept( Visitor& visitor ) = 0;
 
@@ -245,7 +242,7 @@ namespace libcasm_ir
         }
 
       private:
-        Type::Ptr m_type;
+        Type* m_type;
 
         ID m_id;
 

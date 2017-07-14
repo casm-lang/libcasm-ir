@@ -752,8 +752,8 @@ u1 BitConstant::classof( Value const* obj )
 
 StringConstant::StringConstant(
     const std::string& value, u1 defined, u1 symbolic )
-: Constant( STRING, libstdhl::Type::Layout( (void*)&value ), nullptr, defined,
-      symbolic, classid() )
+: Constant( STRING, libstdhl::Type::String( value ), nullptr, defined, symbolic,
+      classid() )
 {
 }
 
@@ -775,9 +775,9 @@ std::string StringConstant::value( void ) const
 std::string StringConstant::name( void ) const
 {
     auto ptr = m_data.ptr();
-    if( ptr != nullptr )
+    if( ptr )
     {
-        return *( (std::string*)ptr );
+        return std::string( (char*)ptr );
     }
     else
     {
@@ -834,12 +834,12 @@ FloatingConstant::FloatingConstant( const libstdhl::Type::Layout& value )
 }
 
 FloatingConstant::FloatingConstant( const std::string& value )
-: FloatingConstant( libstdhl::Type::FloatingPoint( value ), true, false )
+: FloatingConstant( libstdhl::Type::Floating( value ), true, false )
 {
 }
 
 FloatingConstant::FloatingConstant( const double value )
-: FloatingConstant( libstdhl::Type::FloatingPoint( value ), true, false )
+: FloatingConstant( libstdhl::Type::Floating( value ), true, false )
 {
 }
 
@@ -848,9 +848,9 @@ FloatingConstant::FloatingConstant( void )
 {
 }
 
-const libstdhl::Type::FloatingPoint& FloatingConstant::value( void ) const
+const libstdhl::Type::Floating& FloatingConstant::value( void ) const
 {
-    return static_cast< const libstdhl::Type::FloatingPoint& >( m_data );
+    return static_cast< const libstdhl::Type::Floating& >( m_data );
 }
 
 std::string FloatingConstant::name( void ) const
@@ -1139,7 +1139,8 @@ RuleReferenceConstant::RuleReferenceConstant(
 RuleReferenceConstant::RuleReferenceConstant( const Rule::Ptr& value )
 : RuleReferenceConstant(
       std::static_pointer_cast< Type >( libstdhl::make< RuleReferenceType >(
-          std::static_pointer_cast< RelationType >( value->ptr_type() ) ) ),
+          std::static_pointer_cast< RelationType >(
+              value->type().ptr_type() ) ) ),
       value, true, false )
 {
 }
@@ -1192,8 +1193,8 @@ u1 RuleReferenceConstant::classof( Value const* obj )
 //
 
 Identifier::Identifier( const std::string& value, const Type::Ptr& type )
-: Constant( type, libstdhl::Type::Layout( (void*)&value ), nullptr, true, false,
-      classid() )
+: Constant(
+      type, libstdhl::Type::String( value ), nullptr, true, false, classid() )
 {
 }
 
