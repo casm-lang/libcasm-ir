@@ -1090,13 +1090,6 @@ u1 BinBuiltin::classof( Value const* obj )
     return obj->id() == classid();
 }
 
-// Math built-ins:
-
-// pow  : Integer * Integer -> Integer
-// //     base      exponent
-// rand : Integer * Integer -> Integer
-// //     start     end
-
 //
 // OperatorBuiltin
 //
@@ -1782,6 +1775,13 @@ u1 ClsBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
 }
+
+// Math built-ins:
+
+// pow  : Integer * Integer -> Integer
+// //     base      exponent
+// rand : Integer * Integer -> Integer
+// //     start     end
 
 // List built-ins:
 

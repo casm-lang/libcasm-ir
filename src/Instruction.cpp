@@ -423,6 +423,11 @@ CallInstruction::CallInstruction(
     }
 }
 
+CallInstruction::CallInstruction( const Type::Ptr& type )
+: Instruction( type, classid() )
+{
+}
+
 Value::Ptr CallInstruction::callee( void ) const
 {
     return operand( 0 );

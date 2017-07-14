@@ -221,6 +221,8 @@ namespace libcasm_ir
         CallInstruction( const Value::Ptr& symbol,
             const std::vector< Value::Ptr >& operands = {} );
 
+        CallInstruction( const Type::Ptr& type );
+
         Value::Ptr callee( void ) const;
 
         void accept( Visitor& visitor ) override final;

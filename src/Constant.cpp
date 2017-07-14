@@ -999,7 +999,7 @@ u1 EnumerationConstant::classof( Value const* obj )
 
 RangeConstant::RangeConstant(
     const RangeType::Ptr& type, const Range::Ptr& value )
-: Constant( type, libstdhl::Type::Layout( 0 ), classid() )
+: Constant( type, libstdhl::Type::Layout( 0, false ), classid() )
 {
     static_cast< RangeType& >( *type ).setRange( value );
 }
@@ -1011,7 +1011,7 @@ RangeConstant::RangeConstant( const RangeType::Ptr& type )
 
 RangeConstant::RangeConstant(
     const Type::Ptr& type, const Constant& from, const Constant& to )
-: Constant( type, libstdhl::Type::Layout( 0 ), classid() )
+: Constant( type, libstdhl::Type::Layout( 0, false ), classid() )
 {
     assert( type->isRange() );
     static_cast< RangeType& >( *type ).setRange(
