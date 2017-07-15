@@ -1075,9 +1075,9 @@ void RangeType::foreach(
 
 Constant RangeType::choose( void ) const
 {
-    assert( m_range );
     if( type().isInteger() )
     {
+        assert( m_range );
         const auto& a
             = static_cast< IntegerConstant& >( *range().from() ).value_i64();
         const auto& b
@@ -1085,10 +1085,27 @@ Constant RangeType::choose( void ) const
 
         return IntegerConstant( libstdhl::Random::uniform< i64 >( a, b ) );
     }
+    else if( type().isBoolean() )
+    {
+        if( m_range )
+        {
+            const auto& a
+                = static_cast< BooleanConstant& >( *range().from() ).value();
+            const auto& b
+                = static_cast< BooleanConstant& >( *range().to() ).value();
+
+            return BooleanConstant( libstdhl::Random::uniform< u8 >( a, b ) );
+        }
+        else
+        {
+            return BooleanConstant(
+                libstdhl::Random::uniform< u8 >( false, true ) );
+        }
+    }
     else
     {
         throw std::domain_error(
-            "unimplemented 'foreach' of range type '" + name() + "'" );
+            "unimplemented 'choose' of range type '" + name() + "'" );
         return VoidConstant();
     }
 }
