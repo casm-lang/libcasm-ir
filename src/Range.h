@@ -35,6 +35,8 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< Range >;
 
+        Range( const RangeType::Ptr& type );
+
         Range( const Value::Ptr& from, const Value::Ptr& to );
 
         Range( const Constant& from, const Constant& to );
