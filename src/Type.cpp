@@ -1053,17 +1053,40 @@ std::string RangeType::description( void ) const
 void RangeType::foreach(
     const std::function< void( const Constant& constant ) >& callback ) const
 {
-    assert( m_range );
     if( type().isInteger() )
     {
-        const auto& a
-            = static_cast< IntegerConstant& >( *range().from() ).value_i64();
-        const auto& b
-            = static_cast< IntegerConstant& >( *range().to() ).value_i64();
+        const auto a = m_range
+            ? static_cast< IntegerConstant& >( *range().from() ).value()
+            : libstdhl::Limits< libstdhl::Integer >::min();
 
-        for( i64 i = a; i <= b; i++ )
+        const auto b = m_range
+            ? static_cast< IntegerConstant& >( *range().to() ).value()
+            : libstdhl::Limits< libstdhl::Integer >::max();
+
+        for( auto i = a; i <= b; ++i )
         {
             callback( IntegerConstant( i ) );
+        }
+    }
+    else if( type().isBoolean() )
+    {
+        if( m_range )
+        {
+            const bool a
+                = static_cast< BooleanConstant& >( *range().from() ).value();
+            const bool b
+                = static_cast< BooleanConstant& >( *range().to() ).value();
+
+            callback( BooleanConstant( a ) );
+            if( a != b )
+            {
+                callback( BooleanConstant( b ) );
+            }
+        }
+        else
+        {
+            callback( BooleanConstant( false ) );
+            callback( BooleanConstant( true ) );
         }
     }
     else
@@ -1075,22 +1098,60 @@ void RangeType::foreach(
 
 Constant RangeType::choose( void ) const
 {
-    assert( m_range );
     if( type().isInteger() )
     {
-        const auto& a
-            = static_cast< IntegerConstant& >( *range().from() ).value_i64();
-        const auto& b
-            = static_cast< IntegerConstant& >( *range().to() ).value_i64();
+        if( m_range )
+        {
+            const auto& a
+                = static_cast< IntegerConstant& >( *range().from() ).value();
+            const auto& b
+                = static_cast< IntegerConstant& >( *range().to() ).value();
 
-        return IntegerConstant( libstdhl::Random::uniform< i64 >( a, b ) );
+            return IntegerConstant( libstdhl::Random::uniform<>( a, b ) );
+        }
+        else
+        {
+            return IntegerConstant( libstdhl::Random::uniform< libstdhl::Integer >() );
+        }
     }
-    else
+    else if( type().isFloating() )
     {
-        throw std::domain_error(
-            "unimplemented 'foreach' of range type '" + name() + "'" );
-        return VoidConstant();
+        if( m_range )
+        {
+            const auto& a
+                = static_cast< FloatingConstant& >( *range().from() ).value();
+            const auto& b
+                = static_cast< FloatingConstant& >( *range().to() ).value();
+
+            return FloatingConstant( libstdhl::Random::uniform<>( a, b ) );
+        }
+        else
+        {
+            return FloatingConstant(
+                libstdhl::Random::uniform< libstdhl::FloatingPoint >() );
+        }
     }
+    else if( type().isBoolean() )
+    {
+        if( m_range )
+        {
+            const auto a
+                = static_cast< BooleanConstant& >( *range().from() ).value();
+            const auto b
+                = static_cast< BooleanConstant& >( *range().to() ).value();
+
+            return BooleanConstant( libstdhl::Random::uniform< u8 >( a, b ) );
+        }
+        else
+        {
+            return BooleanConstant(
+                libstdhl::Random::uniform< u8 >( false, true ) );
+        }
+    }
+
+    throw std::domain_error(
+        "unimplemented 'choose' of range type '" + name() + "'" );
+    return VoidConstant();
 }
 
 void RangeType::validate( const Constant& constant ) const
