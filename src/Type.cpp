@@ -1057,12 +1057,12 @@ void RangeType::foreach(
     {
         if( m_range )
         {
-            const auto a
-                = static_cast< IntegerConstant& >( *range().from() ).value_i64();
-            const auto b
-                = static_cast< IntegerConstant& >( *range().to() ).value_i64();
+            const auto& a
+                = static_cast< IntegerConstant& >( *range().from() ).value();
+            const auto& b
+                = static_cast< IntegerConstant& >( *range().to() ).value();
 
-            for( i64 i = a; i <= b; i++ )
+            for( auto i = a; i <= b; ++i )
             {
                 callback( IntegerConstant( i ) );
             }
