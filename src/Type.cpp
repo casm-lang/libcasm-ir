@@ -1106,16 +1106,16 @@ Constant RangeType::choose( void ) const
     {
         if( m_range )
         {
-            const auto a
-                = static_cast< IntegerConstant& >( *range().from() ).value_i64();
-            const auto b
-                = static_cast< IntegerConstant& >( *range().to() ).value_i64();
+            const auto& a
+                = static_cast< IntegerConstant& >( *range().from() ).value();
+            const auto& b
+                = static_cast< IntegerConstant& >( *range().to() ).value();
 
-            return IntegerConstant( libstdhl::Random::uniform< i64 >( a, b ) );
+            return IntegerConstant( libstdhl::Random::uniform<>( a, b ) );
         }
         else
         {
-            // TODO
+            return IntegerConstant( libstdhl::Random::uniform< libstdhl::Integer >() );
         }
     }
     else if( type().isBoolean() )
