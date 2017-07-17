@@ -1118,6 +1118,23 @@ Constant RangeType::choose( void ) const
             return IntegerConstant( libstdhl::Random::uniform< libstdhl::Integer >() );
         }
     }
+    else if( type().isFloating() )
+    {
+        if( m_range )
+        {
+            const auto& a
+                = static_cast< FloatingConstant& >( *range().from() ).value();
+            const auto& b
+                = static_cast< FloatingConstant& >( *range().to() ).value();
+
+            return FloatingConstant( libstdhl::Random::uniform<>( a, b ) );
+        }
+        else
+        {
+            return FloatingConstant(
+                libstdhl::Random::uniform< libstdhl::FloatingPoint >() );
+        }
+    }
     else if( type().isBoolean() )
     {
         if( m_range )
