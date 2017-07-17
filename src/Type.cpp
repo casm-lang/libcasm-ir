@@ -1053,17 +1053,23 @@ std::string RangeType::description( void ) const
 void RangeType::foreach(
     const std::function< void( const Constant& constant ) >& callback ) const
 {
-    assert( m_range );
     if( type().isInteger() )
     {
-        const auto& a
-            = static_cast< IntegerConstant& >( *range().from() ).value_i64();
-        const auto& b
-            = static_cast< IntegerConstant& >( *range().to() ).value_i64();
-
-        for( i64 i = a; i <= b; i++ )
+        if( m_range )
         {
-            callback( IntegerConstant( i ) );
+            const auto a
+                = static_cast< IntegerConstant& >( *range().from() ).value_i64();
+            const auto b
+                = static_cast< IntegerConstant& >( *range().to() ).value_i64();
+
+            for( i64 i = a; i <= b; i++ )
+            {
+                callback( IntegerConstant( i ) );
+            }
+        }
+        else
+        {
+            // TODO
         }
     }
     else
@@ -1077,21 +1083,27 @@ Constant RangeType::choose( void ) const
 {
     if( type().isInteger() )
     {
-        assert( m_range );
-        const auto& a
-            = static_cast< IntegerConstant& >( *range().from() ).value_i64();
-        const auto& b
-            = static_cast< IntegerConstant& >( *range().to() ).value_i64();
+        if( m_range )
+        {
+            const auto a
+                = static_cast< IntegerConstant& >( *range().from() ).value_i64();
+            const auto b
+                = static_cast< IntegerConstant& >( *range().to() ).value_i64();
 
-        return IntegerConstant( libstdhl::Random::uniform< i64 >( a, b ) );
+            return IntegerConstant( libstdhl::Random::uniform< i64 >( a, b ) );
+        }
+        else
+        {
+            // TODO
+        }
     }
     else if( type().isBoolean() )
     {
         if( m_range )
         {
-            const auto& a
+            const auto a
                 = static_cast< BooleanConstant& >( *range().from() ).value();
-            const auto& b
+            const auto b
                 = static_cast< BooleanConstant& >( *range().to() ).value();
 
             return BooleanConstant( libstdhl::Random::uniform< u8 >( a, b ) );
