@@ -1055,21 +1055,17 @@ void RangeType::foreach(
 {
     if( type().isInteger() )
     {
-        if( m_range )
-        {
-            const auto& a
-                = static_cast< IntegerConstant& >( *range().from() ).value();
-            const auto& b
-                = static_cast< IntegerConstant& >( *range().to() ).value();
+        const auto a = m_range
+            ? static_cast< IntegerConstant& >( *range().from() ).value()
+            : libstdhl::Limits< libstdhl::Integer >::min();
 
-            for( auto i = a; i <= b; ++i )
-            {
-                callback( IntegerConstant( i ) );
-            }
-        }
-        else
+        const auto b = m_range
+            ? static_cast< IntegerConstant& >( *range().to() ).value()
+            : libstdhl::Limits< libstdhl::Integer >::max();
+
+        for( auto i = a; i <= b; ++i )
         {
-            // TODO
+            callback( IntegerConstant( i ) );
         }
     }
     else if( type().isBoolean() )
