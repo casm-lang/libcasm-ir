@@ -1135,12 +1135,10 @@ Constant RangeType::choose( void ) const
                 libstdhl::Random::uniform< u8 >( false, true ) );
         }
     }
-    else
-    {
-        throw std::domain_error(
-            "unimplemented 'choose' of range type '" + name() + "'" );
-        return VoidConstant();
-    }
+
+    throw std::domain_error(
+        "unimplemented 'choose' of range type '" + name() + "'" );
+    return VoidConstant();
 }
 
 void RangeType::validate( const Constant& constant ) const
