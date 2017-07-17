@@ -1072,6 +1072,27 @@ void RangeType::foreach(
             // TODO
         }
     }
+    else if( type().isBoolean() )
+    {
+        if( m_range )
+        {
+            const bool a
+                = static_cast< BooleanConstant& >( *range().from() ).value();
+            const bool b
+                = static_cast< BooleanConstant& >( *range().to() ).value();
+
+            callback( BooleanConstant( a ) );
+            if( a != b )
+            {
+                callback( BooleanConstant( b ) );
+            }
+        }
+        else
+        {
+            callback( BooleanConstant( false ) );
+            callback( BooleanConstant( true ) );
+        }
+    }
     else
     {
         throw std::domain_error(
