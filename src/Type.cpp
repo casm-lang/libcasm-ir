@@ -884,12 +884,13 @@ void RationalType::foreach(
 Constant RationalType::choose( void ) const
 {
     const auto n
-        = libstdhl::Type::Integer( libstdhl::Random::uniform< i64 >() );
-    const auto d
-        = libstdhl::Type::Integer( libstdhl::Random::uniform< i64 >() + 1 );
+        = libstdhl::Type::createInteger( libstdhl::Random::uniform< i64 >() );
+
+    const auto d = libstdhl::Type::createInteger(
+        libstdhl::Random::uniform< i64 >() + 1 );
     // d = randomvalue + 1 to avoid that the denominator is zero!
 
-    return RationalConstant( libstdhl::Type::Rational( n, d ) );
+    return RationalConstant( libstdhl::Type::createRational( n, d ) );
 }
 
 void RationalType::validate( const Constant& constant ) const

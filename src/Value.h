@@ -39,6 +39,9 @@
 
 namespace libcasm_ir
 {
+    /**
+       @extends CasmIR
+     */
     class Value : public CasmIR, public std::enable_shared_from_this< Value >
     {
       public:
@@ -199,6 +202,14 @@ namespace libcasm_ir
         Value( const Type::Ptr& type, const ID id );
 
         virtual ~Value( void ) = default;
+
+        // Value( const Value& other );
+
+        // Value( Value&& other ) noexcept;
+
+        // Value& operator=( const Value& other );
+
+        // Value& operator=( Value&& other ) noexcept;
 
         virtual std::string name( void ) const = 0;
 

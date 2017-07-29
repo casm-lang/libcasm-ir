@@ -25,27 +25,29 @@
 
 using namespace libcasm_ir;
 
+TEST( libcasm_ir__constant_undef, IntegerType_test )
+{
+    const auto t = libstdhl::get< IntegerType >();
+    const auto u = Constant::undef( t );
+
+    EXPECT_TRUE( u == IntegerConstant() );
+}
+
 #define LIB_CASMIR_UTS_CONSTANT_UNDEF( TYPE, ARGS )                            \
     TEST( libcasm_ir__constant_undef, TYPE##Type )                             \
     {                                                                          \
-        const auto t = libstdhl::get< TYPE##Type >();                          \
+        const auto t = libstdhl::get< TYPE##Type >( ARGS );                    \
         const auto u = Constant::undef( t );                                   \
                                                                                \
         EXPECT_TRUE( u == TYPE##Constant( ARGS ) );                            \
     }
 
 LIB_CASMIR_UTS_CONSTANT_UNDEF( Integer, );
-LIB_CASMIR_UTS_CONSTANT_UNDEF( Boolean, );
+LIB_CASMIR_UTS_CONSTANT_UNDEF( Rational, );
+LIB_CASMIR_UTS_CONSTANT_UNDEF( Bit, 1 );
 LIB_CASMIR_UTS_CONSTANT_UNDEF( Floating, );
 LIB_CASMIR_UTS_CONSTANT_UNDEF( String, );
-
-// TEST( libcasm_ir__constant_undef, IntegerType )
-// {
-//     const auto t = libstdhl::get< IntegerType >();
-//     const auto u = Constant::undef( t );
-
-//     EXPECT_TRUE( u == IntegerConstant() );
-// }
+LIB_CASMIR_UTS_CONSTANT_UNDEF( Boolean, );
 
 //
 //  Local variables:

@@ -30,10 +30,13 @@
 #include "Range.h"
 #include "Rule.h"
 
-#include "../stdhl/cpp/type/Binary.h"
+#include "../stdhl/cpp/Type.h"
+#include "../stdhl/cpp/type/Boolean.h"
+#include "../stdhl/cpp/type/Data.h"
 #include "../stdhl/cpp/type/Floating.h"
 #include "../stdhl/cpp/type/Integer.h"
 #include "../stdhl/cpp/type/Layout.h"
+#include "../stdhl/cpp/type/Natural.h"
 #include "../stdhl/cpp/type/Rational.h"
 #include "../stdhl/cpp/type/String.h"
 
@@ -45,7 +48,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< Constant >;
 
       protected:
-        Constant( const Type::Ptr& type, const libstdhl::Type::Layout& data,
+        Constant( const Type::Ptr& type,
+            const libstdhl::Type::Data& data,
             Value::ID id );
 
         Constant( const Type::Ptr& type, Value::ID id );
@@ -55,11 +59,19 @@ namespace libcasm_ir
 
         virtual ~Constant( void ) = default;
 
+        // Constant( const Constant& other );
+
+        // Constant( Constant&& other ) noexcept;
+
+        // Constant& operator=( const Constant& other );
+
+        // Constant& operator=( Constant&& other ) noexcept;
+
         u1 defined( void ) const;
 
         u1 symbolic( void ) const;
 
-        const libstdhl::Type::Layout& data( void ) const;
+        const libstdhl::Type::Data& data( void ) const;
 
         std::string name( void ) const override;
 
@@ -83,7 +95,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
 
       protected:
-        libstdhl::Type::Layout m_data;
+        libstdhl::Type::Data m_data;
 
       public:
         std::unordered_map< std::string, Constant::Ptr >& make_cache( void )
@@ -126,11 +138,15 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< BooleanConstant >;
 
       public:
-        BooleanConstant( u1 value );
+        BooleanConstant( const std::string& value );
+
+        BooleanConstant( const libstdhl::Type::Boolean& value );
+
+        BooleanConstant( const u1 value );
 
         BooleanConstant( void );
 
-        u1 value( void ) const;
+        const libstdhl::Type::Boolean& value( void ) const;
 
         std::string name( void ) const override;
 
@@ -161,7 +177,7 @@ namespace libcasm_ir
 
         IntegerConstant( const libstdhl::Type::Integer& value );
 
-        IntegerConstant( i64 value );
+        IntegerConstant( const i64 value );
 
         IntegerConstant( void );
 
@@ -198,22 +214,22 @@ namespace libcasm_ir
             const libstdhl::Type::Radix radix = libstdhl::Type::BINARY );
 
         BitConstant(
-            const Type::Ptr& type, const libstdhl::Type::Binary& value );
+            const Type::Ptr& type, const libstdhl::Type::Natural& value );
 
         BitConstant( const BitType::Ptr& type, u64 value );
 
         BitConstant( const BitType::Ptr& type );
 
-        BitConstant( u16 bitsize, u64 value );
+        BitConstant( const u16 bitsize, const u64 value );
 
-        BitConstant( u16 bitsize );
+        BitConstant( const u16 bitsize );
 
         std::string literal(
             libstdhl::Type::Radix radix = libstdhl::Type::HEXADECIMAL ) const;
 
         u64 value_u64( void ) const;
 
-        const libstdhl::Type::Binary& value( void ) const;
+        const libstdhl::Type::Natural& value( void ) const;
 
         std::string name( void ) const override;
 
@@ -237,11 +253,13 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< StringConstant >;
 
       public:
+        StringConstant( const libstdhl::Type::String& value );
+
         StringConstant( const std::string& value );
 
         StringConstant( void );
 
-        std::string value( void ) const;
+        const libstdhl::Type::String& value( void ) const;
 
         std::string name( void ) const override;
 
@@ -337,7 +355,7 @@ namespace libcasm_ir
 
         EnumerationConstant( const Enumeration::Ptr& kind );
 
-        const libstdhl::Type::Binary& value( void ) const;
+        const libstdhl::Type::Natural& value( void ) const;
 
         std::string name( void ) const override;
 
@@ -404,9 +422,8 @@ namespace libcasm_ir
       protected:
         inline ReferenceConstant(
             const Type::Ptr& type, const typename T::Ptr& value, Value::ID id )
-        : Constant( type,
-              libstdhl::Type::Layout( static_cast< void* >( value.get() ) ),
-              id )
+        : Constant(
+              type, libstdhl::Type::Data( ( u64 )( value.get() ), false ), id )
         {
         }
 
@@ -418,7 +435,7 @@ namespace libcasm_ir
       public:
         T* value( void ) const
         {
-            return static_cast< T* >( m_data.ptr() );
+            return (T*)( m_data.value() );
         }
     };
 

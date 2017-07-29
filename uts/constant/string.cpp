@@ -50,6 +50,13 @@ static void libcasm_ir__constant_string_test( const std::string& s )
     EXPECT_TRUE( *a == *b );
 }
 
+TEST( libcasm_ir__constant_string, copy_move_test )
+{
+    StringConstant x( "asdf" );
+    StringConstant y = x;
+    StringConstant z = std::move( x );
+}
+
 TEST( libcasm_ir__constant_string, create_hello_world_on_stack )
 {
     StringConstant v( "hello world!" );
