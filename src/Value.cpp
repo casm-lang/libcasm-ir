@@ -45,40 +45,6 @@ Value::Value( const Type::Ptr& type, const ID id )
     assert( type );
 }
 
-// Value::Value( const Value& other )
-// : m_id( other.m_id )
-// {
-//     m_type = other.m_type;
-// }
-
-// Value::Value( Value&& other ) noexcept
-// : m_id( other.m_id )
-// {
-//     std::swap( m_type, other.m_type );
-// }
-
-// Value& Value::operator=( const Value& other )
-// {
-//     if( this != &other )
-//     {
-//         m_type = other.m_type;
-//         m_id = other.m_id;
-//     }
-
-//     return *this;
-// }
-
-// Value& Value::operator=( Value&& other ) noexcept
-// {
-//     if( this != &other )
-//     {
-//         std::swap( m_type, other.m_type );
-//         std::swap( m_id, other.m_id );
-//     }
-
-//     return *this;
-// }
-
 std::string Value::description( void ) const
 {
     return type().name() + " " + name();

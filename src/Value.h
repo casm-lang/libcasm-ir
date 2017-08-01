@@ -203,14 +203,6 @@ namespace libcasm_ir
 
         virtual ~Value( void ) = default;
 
-        // Value( const Value& other );
-
-        // Value( Value&& other ) noexcept;
-
-        // Value& operator=( const Value& other );
-
-        // Value& operator=( Value&& other ) noexcept;
-
         virtual std::string name( void ) const = 0;
 
         std::string description( void ) const;
