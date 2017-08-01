@@ -27,6 +27,11 @@
 
 using namespace libcasm_ir;
 
+Range::Range( const RangeType::Ptr& type )
+: Value( "", type, classid() )
+{
+}
+
 Range::Range( const Value::Ptr& from, const Value::Ptr& to )
 : Value( from->type().ptr_type(), classid() )
 , m_from( from )
