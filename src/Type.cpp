@@ -1061,13 +1061,14 @@ void RangeType::foreach(
 {
     if( type().isInteger() )
     {
-        const auto a = m_range
-            ? static_cast< IntegerConstant& >( *range().from() ).value()
-            : libstdhl::Limits< libstdhl::Integer >::min();
+        const auto a
+            = m_range
+                  ? static_cast< IntegerConstant& >( *range().from() ).value()
+                  : libstdhl::Limits< libstdhl::Type::Integer >::min();
 
-        const auto b = m_range
-            ? static_cast< IntegerConstant& >( *range().to() ).value()
-            : libstdhl::Limits< libstdhl::Integer >::max();
+        const auto b
+            = m_range ? static_cast< IntegerConstant& >( *range().to() ).value()
+                      : libstdhl::Limits< libstdhl::Type::Integer >::max();
 
         for( auto i = a; i <= b; ++i )
         {
@@ -1078,12 +1079,13 @@ void RangeType::foreach(
     {
         if( m_range )
         {
-            const bool a
+            const auto& a
                 = static_cast< BooleanConstant& >( *range().from() ).value();
-            const bool b
+            const auto& b
                 = static_cast< BooleanConstant& >( *range().to() ).value();
 
             callback( BooleanConstant( a ) );
+
             if( a != b )
             {
                 callback( BooleanConstant( b ) );
@@ -1117,7 +1119,8 @@ Constant RangeType::choose( void ) const
         }
         else
         {
-            return IntegerConstant( libstdhl::Random::uniform< libstdhl::Integer >() );
+            return IntegerConstant(
+                libstdhl::Random::uniform< libstdhl::Type::Integer >() );
         }
     }
     else if( type().isFloating() )
@@ -1134,17 +1137,19 @@ Constant RangeType::choose( void ) const
         else
         {
             return FloatingConstant(
-                libstdhl::Random::uniform< libstdhl::FloatingPoint >() );
+                libstdhl::Random::uniform< libstdhl::Type::Floating >() );
         }
     }
     else if( type().isBoolean() )
     {
         if( m_range )
         {
-            const auto a
-                = static_cast< BooleanConstant& >( *range().from() ).value();
-            const auto b
-                = static_cast< BooleanConstant& >( *range().to() ).value();
+            const auto a = static_cast< BooleanConstant& >( *range().from() )
+                               .value()
+                               .value();
+            const auto b = static_cast< BooleanConstant& >( *range().to() )
+                               .value()
+                               .value();
 
             return BooleanConstant( libstdhl::Random::uniform< u8 >( a, b ) );
         }
