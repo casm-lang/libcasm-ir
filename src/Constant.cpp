@@ -533,15 +533,14 @@ BooleanConstant::BooleanConstant( void )
 {
 }
 
-u1 BooleanConstant::value( void ) const
+const libstdhl::Type::Boolean& BooleanConstant::value( void ) const
 {
-    assert( m_data.trivial() );
-    return static_cast< u1 >( m_data.value() );
+    return static_cast< const libstdhl::Type::Boolean& >( m_data );
 }
 
 std::string BooleanConstant::name( void ) const
 {
-    return ( defined() ? ( value() ? "true" : "false" ) : undef_str );
+    return ( defined() ? ( value() == true ? "true" : "false" ) : undef_str );
 }
 
 void BooleanConstant::accept( Visitor& visitor )
@@ -552,7 +551,7 @@ void BooleanConstant::accept( Visitor& visitor )
 std::size_t BooleanConstant::hash( void ) const
 {
     const auto h = ( ( (std::size_t)classid() ) << 1 ) | defined();
-    return libstdhl::Hash::combine( h, value() );
+    return libstdhl::Hash::combine( h, value().value() );
 }
 
 u1 BooleanConstant::operator==( const Value& rhs ) const
