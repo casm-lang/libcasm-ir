@@ -55,37 +55,43 @@ Constant::Constant( void )
 {
 }
 
-// Constant::Constant( const Constant& other )
-// : Value( other.type().ptr_type(), other.id() )
-// , m_data( other.m_data )
-// {
-// }
+Constant::~Constant( void )
+{
+}
 
-// Constant::Constant( Constant&& other ) noexcept
-// : Value( other.type().ptr_type(), other.id() )
-// , m_data( other.m_data )
-// {
-// }
+Constant::Constant( const Constant& other )
+: Constant()
+{
+    *this = other;
+}
 
-// Constant& Constant::operator=( const Constant& other )
-// {
-//     if( this != &other )
-//     {
-//         m_data = other.m_data;
-//     }
+Constant::Constant( Constant&& other ) noexcept
+: Constant()
+{
+    *this = std::move( other );
+}
 
-//     return *this;
-// }
+Constant& Constant::operator=( const Constant& other )
+{
+    if( this != &other )
+    {
+        Value::operator=( other );
+        m_data = other.m_data;
+    }
 
-// Constant& Constant::operator=( Constant&& other ) noexcept
-// {
-//     if( this != &other )
-//     {
-//         std::swap( m_data, other.m_data );
-//     }
+    return *this;
+}
 
-//     return *this;
-// }
+Constant& Constant::operator=( Constant&& other ) noexcept
+{
+    if( this != &other )
+    {
+        Value::operator=( std::move( other ) );
+        m_data = std::move( other.m_data );
+    }
+
+    return *this;
+}
 
 u1 Constant::defined( void ) const
 {
@@ -1127,7 +1133,7 @@ RuleReferenceConstant::RuleReferenceConstant( const Rule::Ptr& value )
       std::static_pointer_cast< Type >( libstdhl::make< RuleReferenceType >(
           std::static_pointer_cast< RelationType >(
               value->type().ptr_type() ) ) ),
-      value, classid() )
+      value.get(), classid() )
 {
 }
 

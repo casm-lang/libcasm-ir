@@ -57,15 +57,15 @@ namespace libcasm_ir
       public:
         explicit Constant( void );
 
-        virtual ~Constant( void ) = default;
+        virtual ~Constant( void );
 
-        // Constant( const Constant& other );
+        Constant( const Constant& other );
 
-        // Constant( Constant&& other ) noexcept;
+        Constant( Constant&& other ) noexcept;
 
-        // Constant& operator=( const Constant& other );
+        Constant& operator=( const Constant& other );
 
-        // Constant& operator=( Constant&& other ) noexcept;
+        Constant& operator=( Constant&& other ) noexcept;
 
         u1 defined( void ) const;
 
@@ -421,9 +421,8 @@ namespace libcasm_ir
 
       protected:
         inline ReferenceConstant(
-            const Type::Ptr& type, const typename T::Ptr& value, Value::ID id )
-        : Constant(
-              type, libstdhl::Type::Data( ( u64 )( value.get() ), false ), id )
+            const Type::Ptr& type, const T* value, Value::ID id )
+        : Constant( type, libstdhl::Type::Data( ( u64 )( value ), false ), id )
         {
         }
 
