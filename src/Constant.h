@@ -105,6 +105,45 @@ namespace libcasm_ir
         }
 
         static Constant undef( const Type::Ptr& type );
+
+        class Registry
+        {
+        };
+
+        template < typename T >
+        static Registry registerConstant( void )
+        {
+            auto& registeredConstants = m_registeredConstants();
+
+            auto result = registeredConstants.emplace(
+                T::classid(), []( const Constant& constant ) -> std::string {
+                    return static_cast< const T& >( constant ).name();
+                } );
+
+            assert(
+                result.second == true && " already registered constant ID " );
+
+            return Registry{};
+        }
+
+      private:
+        static std::string name( const Constant& constant )
+        {
+            const auto& registeredConstants = m_registeredConstants();
+            const auto result = registeredConstants.find( constant.id() );
+            assert( result != registeredConstants.end() );
+            return result->second( constant );
+        }
+
+        static std::unordered_map< u64,
+            const std::function< std::string( const Constant& ) > >&
+        m_registeredConstants( void )
+        {
+            static std::unordered_map< u64,
+                const std::function< std::string( const Constant& ) > >
+                cache;
+            return cache;
+        }
     };
 
     using Constants = ValueList< Constant >;

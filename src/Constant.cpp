@@ -154,12 +154,9 @@ std::string Constant::name( void ) const
         }
         default:
         {
-            break;
+            return Constant::name( *this );
         }
     }
-
-    assert( !" invalid constant to dispatch 'name' found! " );
-    return "";
 }
 
 void Constant::accept( Visitor& visitor )
