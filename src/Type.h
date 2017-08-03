@@ -584,7 +584,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< TupleType >;
 
-        TupleType( const Types& types );
+        explicit TupleType( const Types& types );
 
         template < typename... Args >
         inline TupleType( Args&&... args )

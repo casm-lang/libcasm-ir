@@ -585,14 +585,18 @@ IntegerType::IntegerType( const RangeType::Ptr& range )
             "range '" + range->name() + "' has to be of type 'Integer'" );
     }
 
-    // if( TODO )
-    // {
-    //     throw std::domain_error(
-    //         "range '"
-    //         + range->name()
-    //         + "' violates monotonically nondecreasing property of 'Integer'
-    //         type" );
-    // }
+    const auto& a
+        = static_cast< IntegerConstant& >( *range->range().from() ).value();
+    const auto& b
+        = static_cast< IntegerConstant& >( *range->range().to() ).value();
+
+    if( a > b )
+    {
+        throw std::domain_error(
+            "range '"
+            + range->name()
+            + "' violates monotonically nondecreasing property of 'Integer' type" );
+    }
 }
 
 u1 IntegerType::constrained( void ) const
