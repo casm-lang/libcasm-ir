@@ -646,6 +646,8 @@ namespace libcasm_ir
 
         ReferenceType( Type::ID id, const RelationType::Ptr& type );
 
+        Type::Ptr dereference( void ) const;
+
         std::string description( void ) const override;
 
         void foreach(

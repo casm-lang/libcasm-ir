@@ -1323,6 +1323,11 @@ ReferenceType::ReferenceType( const Type::ID id, const RelationType::Ptr& type )
     m_result = type;
 }
 
+Type::Ptr ReferenceType::dereference( void ) const
+{
+    return m_result;
+}
+
 std::string ReferenceType::description( void ) const
 {
     return token( id() ) + m_result->description();
