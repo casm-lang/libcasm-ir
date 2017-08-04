@@ -694,16 +694,32 @@ BitConstant::BitConstant(
 {
     assert( this->type().isBit() );
     const auto& t = static_cast< const BitType& >( this->type() );
+
     if( t.bitsize() > BitType::SizeMax )
     {
         throw std::domain_error( "invalid bit size '"
                                  + std::to_string( t.bitsize() )
                                  + "' to create BitConstant" );
     }
+
+    assert( value.trivial() and " TODO: PPA: FIXME:" );
+    const u64 bitsize
+        = static_cast< u64 >( std::log2(
+              (double)( value.value() > 0 ? value.value() - 1 : 0 ) ) )
+          + 1;
+
+    if( t.bitsize() < bitsize )
+    {
+        throw std::invalid_argument( "value bit-size '"
+                                     + std::to_string( bitsize )
+                                     + "' does not fit into bit-size '"
+                                     + std::to_string( t.bitsize() )
+                                     + "'" );
+    }
 }
 
 BitConstant::BitConstant( const BitType::Ptr& type, u64 value )
-: Constant( type, libstdhl::Type::createNatural( value ), classid() )
+: BitConstant( type, libstdhl::Type::createNatural( value ) )
 {
 }
 
