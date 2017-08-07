@@ -1307,7 +1307,15 @@ static auto compare_instruction_inference
 
     if( *lhs != *rhs )
     {
-        return nullptr;
+        if( lhs->isInteger() and rhs->isInteger() )
+        {
+            // relaxation: if mixed ranged and non-ranged integer are compared,
+            //             the inference shall return a Boolean type
+        }
+        else
+        {
+            return nullptr;
+        }
     }
 
     return BOOLEAN;
