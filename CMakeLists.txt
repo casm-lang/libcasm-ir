@@ -20,98 +20,139 @@
 #   You should have received a copy of the GNU General Public License
 #   along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 #
+#   Additional permission under GNU GPL version 3 section 7
+#
+#   libcasm-ir is distributed under the terms of the GNU General Public License
+#   with the following clarification and special exception: Linking libcasm-ir
+#   statically or dynamically with other modules is making a combined work
+#   based on libcasm-ir. Thus, the terms and conditions of the GNU General
+#   Public License cover the whole combination. As a special exception,
+#   the copyright holders of libcasm-ir give you permission to link libcasm-ir
+#   with independent modules to produce an executable, regardless of the
+#   license terms of these independent modules, and to copy and distribute
+#   the resulting executable under terms of your choice, provided that you
+#   also meet, for each linked independent module, the terms and conditions
+#   of the license of that module. An independent module is a module which
+#   is not derived from or based on libcasm-ir. If you modify libcasm-ir, you
+#   may extend this exception to your version of the library, but you are
+#   not obliged to do so. If you do not wish to do so, delete this exception
+#   statement from your version.
+#
 
-cmake_minimum_required( VERSION 3.1 )
+set( PROJECT libcasm-ir )
+cmake_minimum_required( VERSION ${CMAKE_VERSION} )
 
-if( EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../gtest" )
-  set( LIBS .. )
-else()
-  set( LIBS lib )
-endif()
+set( CMAKE_VERSION 3.2 )
+set( CMAKE_INCLUDE_CURRENT_DIR ON )
 
-foreach( DEPENDENCY
-    stdhl
-    pass
-    )
-  if( NOT TARGET ${DEPENDENCY} )
-    add_subdirectory( ${LIBS}/${DEPENDENCY} lib/${DEPENDENCY} )
-  endif()  
-endforeach()
+set( CMAKE_CXX_STANDARD 11 )
+project( ${PROJECT} LANGUAGES CXX )
 
-
-file( GLOB_RECURSE CXX_SRC_FILES "src/*.cpp" )
-file( GLOB_RECURSE CXX_UTS_FILES "uts/*.cpp" )
-
-
-set( TARGET casm-ir )
-project( ${TARGET} )
-
-
-include_directories(
-  .
-  src
-  ${LIBS}/gtest/googletest
-  ${LIBS}/gtest/googletest/include
-  ${LIBS}/hayai/src
-  ${LIBS}/stdhl
-  ${LIBS}/pass
-)
-
-
-set( CMAKE_CXX_FLAGS          "${CMAKE_CXX_FLAGS}          -std=c++11 -Wall" )
-
-set( CMAKE_CXX_FLAGS_DEBUG    "${CMAKE_CXX_FLAGS_DEBUG}    -O0" )
-set( CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE}  -O3" )
-set( CMAKE_CXX_FLAGS_SANITIZE "${CMAKE_CXX_FLAGS_SANITIZE} -O1 -Wextra -g -fno-omit-frame-pointer -fno-optimize-sibling-calls -fsanitize=undefined -fsanitize=address" )
-
-
-add_library( ${TARGET} STATIC
-  ${CXX_SRC_FILES}
-)
-
-
-add_library( ${TARGET}-test OBJECT
-  ${CXX_UTS_FILES}
-)
-
-add_executable( ${TARGET}-check
-  ${LIBS}/gtest/googletest/src/gtest_main.cc
-  ${LIBS}/gtest/googletest/src/gtest-all.cc
-  $<TARGET_OBJECTS:${TARGET}-test>
-)
-
-target_link_libraries( ${TARGET}-check
-  ${TARGET}
-  pass
-  stdhl
-  pthread
-)
-
-
-add_library( ${TARGET}-benchmark OBJECT
-  uts/main.cpp
-)
-  
-add_executable( ${TARGET}-run
-  ${LIBS}/hayai/src/hayai_posix_main.cpp
-  ${LIBS}/gtest/googletest/src/gtest-all.cc
-  $<TARGET_OBJECTS:${TARGET}-benchmark>
-)
-
-target_link_libraries( ${TARGET}-run
-  ${TARGET}
-  pass
-  stdhl
-  pthread
-)
-
-
-if( NOT CMAKE_BUILD_TYPE )
-  set( CMAKE_BUILD_TYPE Debug
-    CACHE STRING "Choose the type of build : debug sanitize release."
-    FORCE
+find_package( ECM REQUIRED CONFIG QUIET )
+set( CMAKE_MODULE_PATH
+  ${ECM_MODULE_PATH}
+  ${${PROJECT}_SOURCE_DIR}/.cmake
   )
-endif( NOT CMAKE_BUILD_TYPE )
+
+include( ECMGenerateHeaders )
+include( FeatureSummary )
+include( GenerateExportHeader )
+include( CPack )
+include( LibPackage )
+
+package_git( ${PROJECT} )
+
+package_print_path( CMAKE_MODULE_PATH )
+package_print_path( CMAKE_INSTALL_PREFIX )
+
+package_find_git( libstdhl master REQUIRED "../stdhl;lib/stdhl" obj )
+package_find_git( libpass  master REQUIRED "../pass; lib/pass"  obj )
+package_find_git( GTest    1.8    REQUIRED "../gtest;lib/gtest" build )
+package_find_git( Hayai    1.0.1  REQUIRED "../hayai;lib/hayai" build )
+
+add_subdirectory( src )
+add_subdirectory( etc )
 
 
-message( "* ${CMAKE_BUILD_TYPE} : ${TARGET} : ${LIBS}" )
+#
+# library
+#
+
+add_library( ${PROJECT} STATIC
+  $<TARGET_OBJECTS:${PROJECT}-cpp>
+  )
+
+set( ${PROJECT}_VERSION ${GIT_REVTAG} )
+set_property( TARGET ${PROJECT} PROPERTY VERSION   ${PROJECT}_VERSION )
+set_property( TARGET ${PROJECT} PROPERTY PREFIX "" )
+
+install(
+  TARGETS  ${PROJECT}
+  EXPORT   ${PROJECT}Targets
+  LIBRARY  DESTINATION lib
+  ARCHIVE  DESTINATION lib
+  RUNTIME  DESTINATION bin
+  INCLUDES DESTINATION include
+  )
+
+generate_export_header( ${PROJECT} )
+
+install(
+  FILES
+  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT}_export.h"
+  DESTINATION
+  "include/${PROJECT}"
+  )
+
+#
+# test
+# 
+
+add_executable( ${PROJECT}-check
+  $<TARGET_OBJECTS:${PROJECT}-test>
+  )
+
+target_link_libraries( ${PROJECT}-check
+  ${PROJECT}
+  ${LIBPASS_LIBRARY}
+  ${LIBSTDHL_LIBRARY}
+  GTest::GTest
+  GTest::Main
+  )
+
+
+#
+# benchmark
+#
+
+add_executable( ${PROJECT}-run
+  $<TARGET_OBJECTS:${PROJECT}-benchmark>
+  )
+
+target_link_libraries( ${PROJECT}-run
+  ${PROJECT}
+  ${LIBPASS_LIBRARY}
+  ${LIBSTDHL_LIBRARY}
+  ${HAYAI_LIBRARY}
+  )
+
+
+#
+# cmake
+#
+
+install(
+  FILES
+    .cmake/Find${PROJECT}.cmake
+  DESTINATION
+    "share/cmake/Module/${PROJECT}"
+  )
+
+#
+# build features and checks
+#
+
+include( LibCompile )
+compile_flags( CXX )
+compile_check()
+feature_summary( WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES )

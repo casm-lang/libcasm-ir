@@ -20,21 +20,39 @@
 //  You should have received a copy of the GNU General Public License
 //  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //
+//  Additional permission under GNU GPL version 3 section 7
+//
+//  libcasm-ir is distributed under the terms of the GNU General Public License
+//  with the following clarification and special exception: Linking libcasm-ir
+//  statically or dynamically with other modules is making a combined work
+//  based on libcasm-ir. Thus, the terms and conditions of the GNU General
+//  Public License cover the whole combination. As a special exception,
+//  the copyright holders of libcasm-ir give you permission to link libcasm-ir
+//  with independent modules to produce an executable, regardless of the
+//  license terms of these independent modules, and to copy and distribute
+//  the resulting executable under terms of your choice, provided that you
+//  also meet, for each linked independent module, the terms and conditions
+//  of the license of that module. An independent module is a module which
+//  is not derived from or based on libcasm-ir. If you modify libcasm-ir, you
+//  may extend this exception to your version of the library, but you are
+//  not obliged to do so. If you do not wish to do so, delete this exception
+//  statement from your version.
+//
 
 #include "Constant.h"
 
-#include "../stdhl/cpp/Math.h"
+#include <cmath>
 
 using namespace libcasm_ir;
 
 static constexpr const char* undef_str = "undef";
 
-static const auto VOID = libstdhl::get< VoidType >();
-static const auto BOOLEAN = libstdhl::get< BooleanType >();
-static const auto INTEGER = libstdhl::get< IntegerType >();
-static const auto FLOATING = libstdhl::get< FloatingType >();
-static const auto RATIONAL = libstdhl::get< RationalType >();
-static const auto STRING = libstdhl::get< StringType >();
+static const auto VOID = libstdhl::Memory::get< VoidType >();
+static const auto BOOLEAN = libstdhl::Memory::get< BooleanType >();
+static const auto INTEGER = libstdhl::Memory::get< IntegerType >();
+static const auto FLOATING = libstdhl::Memory::get< FloatingType >();
+static const auto RATIONAL = libstdhl::Memory::get< RationalType >();
+static const auto STRING = libstdhl::Memory::get< StringType >();
 
 Constant::Constant(
     const Type::Ptr& type, const libstdhl::Type::Data& data, Value::ID id )
@@ -675,7 +693,7 @@ u1 IntegerConstant::classof( Value const* obj )
 
 BitConstant::BitConstant(
     const std::string& value, const libstdhl::Type::Radix radix )
-: Constant( libstdhl::get< BitType >( value, radix ),
+: Constant( libstdhl::Memory::get< BitType >( value, radix ),
       libstdhl::Type::createNatural( value, radix ), classid() )
 {
     assert( this->type().isBit() );
@@ -705,10 +723,10 @@ BitConstant::BitConstant(
     assert( value.trivial() and " TODO: PPA: FIXME:" );
     const u64 bitsize
         = static_cast< u64 >( std::log2(
-              (double)( value.value() > 0 ? value.value() - 1 : 0 ) ) )
+              (double)( value.value() > 1 ? value.value() - 1 : 1 ) ) )
           + 1;
 
-    if( t.bitsize() < bitsize )
+    if( bitsize > t.bitsize() )
     {
         throw std::invalid_argument( "value bit-size '"
                                      + std::to_string( bitsize )
@@ -729,12 +747,12 @@ BitConstant::BitConstant( const BitType::Ptr& type )
 }
 
 BitConstant::BitConstant( const u16 bitsize, const u64 value )
-: BitConstant( libstdhl::get< BitType >( bitsize ), value )
+: BitConstant( libstdhl::Memory::get< BitType >( bitsize ), value )
 {
 }
 
 BitConstant::BitConstant( const u16 bitsize )
-: BitConstant( libstdhl::get< BitType >( bitsize ) )
+: BitConstant( libstdhl::Memory::get< BitType >( bitsize ) )
 {
 }
 
@@ -999,7 +1017,7 @@ EnumerationConstant::EnumerationConstant(
 
 EnumerationConstant::EnumerationConstant(
     const Enumeration::Ptr& kind, const std::string& value )
-: Constant( libstdhl::get< EnumerationType >( kind ),
+: Constant( libstdhl::Memory::get< EnumerationType >( kind ),
       libstdhl::Type::createNatural( kind->encode( value ) ), classid() )
 {
 }
@@ -1010,7 +1028,7 @@ EnumerationConstant::EnumerationConstant( const EnumerationType::Ptr& type )
 }
 
 EnumerationConstant::EnumerationConstant( const Enumeration::Ptr& kind )
-: Constant( libstdhl::get< EnumerationType >( kind ), classid() )
+: Constant( libstdhl::Memory::get< EnumerationType >( kind ), classid() )
 {
 }
 
@@ -1080,7 +1098,7 @@ RangeConstant::RangeConstant(
 {
     assert( type->isRange() );
     static_cast< RangeType& >( *type ).setRange(
-        libstdhl::make_unique< Range >( from, to ) );
+        libstdhl::Memory::make_unique< Range >( from, to ) );
 }
 
 Range::Ptr RangeConstant::value( void ) const
@@ -1142,10 +1160,10 @@ u1 RangeConstant::classof( Value const* obj )
 //
 
 RuleReferenceConstant::RuleReferenceConstant( const Rule::Ptr& value )
-: ReferenceConstant(
-      std::static_pointer_cast< Type >( libstdhl::make< RuleReferenceType >(
-          std::static_pointer_cast< RelationType >(
-              value->type().ptr_type() ) ) ),
+: ReferenceConstant( std::static_pointer_cast< Type >(
+                         libstdhl::Memory::make< RuleReferenceType >(
+                             std::static_pointer_cast< RelationType >(
+                                 value->type().ptr_type() ) ) ),
       value.get(), classid() )
 {
 }

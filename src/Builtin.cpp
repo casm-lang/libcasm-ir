@@ -20,6 +20,24 @@
 //  You should have received a copy of the GNU General Public License
 //  along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
 //
+//  Additional permission under GNU GPL version 3 section 7
+//
+//  libcasm-ir is distributed under the terms of the GNU General Public License
+//  with the following clarification and special exception: Linking libcasm-ir
+//  statically or dynamically with other modules is making a combined work
+//  based on libcasm-ir. Thus, the terms and conditions of the GNU General
+//  Public License cover the whole combination. As a special exception,
+//  the copyright holders of libcasm-ir give you permission to link libcasm-ir
+//  with independent modules to produce an executable, regardless of the
+//  license terms of these independent modules, and to copy and distribute
+//  the resulting executable under terms of your choice, provided that you
+//  also meet, for each linked independent module, the terms and conditions
+//  of the license of that module. An independent module is a module which
+//  is not derived from or based on libcasm-ir. If you modify libcasm-ir, you
+//  may extend this exception to your version of the library, but you are
+//  not obliged to do so. If you do not wish to do so, delete this exception
+//  statement from your version.
+//
 
 #include "Builtin.h"
 
@@ -27,12 +45,12 @@
 
 using namespace libcasm_ir;
 
-static const auto VOID = libstdhl::get< VoidType >();
-static const auto BOOLEAN = libstdhl::get< BooleanType >();
-static const auto INTEGER = libstdhl::get< IntegerType >();
-static const auto FLOATING = libstdhl::get< FloatingType >();
-static const auto RATIONAL = libstdhl::get< RationalType >();
-static const auto STRING = libstdhl::get< StringType >();
+static const auto VOID = libstdhl::Memory::get< VoidType >();
+static const auto BOOLEAN = libstdhl::Memory::get< BooleanType >();
+static const auto INTEGER = libstdhl::Memory::get< IntegerType >();
+static const auto FLOATING = libstdhl::Memory::get< FloatingType >();
+static const auto RATIONAL = libstdhl::Memory::get< RationalType >();
+static const auto STRING = libstdhl::Memory::get< StringType >();
 
 Builtin::Builtin( const Type::Ptr& type, const Value::ID id )
 : User( type, id )
@@ -177,15 +195,15 @@ Builtin::Ptr Builtin::create( const Value::ID id, const Type::Ptr& type )
         }
         case Value::IS_SYMBOLIC_BUILTIN:
         {
-            return libstdhl::make< IsSymbolicBuiltin >( type );
+            return libstdhl::Memory::make< IsSymbolicBuiltin >( type );
         }
         case Value::ABORT_BUILTIN:
         {
-            return libstdhl::make< AbortBuiltin >( type );
+            return libstdhl::Memory::make< AbortBuiltin >( type );
         }
         case Value::ASSERT_BUILTIN:
         {
-            return libstdhl::make< AssertBuiltin >( type );
+            return libstdhl::Memory::make< AssertBuiltin >( type );
         }
 
         case Value::OUTPUT_BUILTIN:
@@ -194,11 +212,11 @@ Builtin::Ptr Builtin::create( const Value::ID id, const Type::Ptr& type )
         }
         case Value::PRINT_BUILTIN:
         {
-            return libstdhl::make< PrintBuiltin >( type );
+            return libstdhl::Memory::make< PrintBuiltin >( type );
         }
         case Value::PRINTLN_BUILTIN:
         {
-            return libstdhl::make< PrintLnBuiltin >( type );
+            return libstdhl::Memory::make< PrintLnBuiltin >( type );
         }
 
         case Value::CASTING_BUILTIN:
@@ -207,31 +225,31 @@ Builtin::Ptr Builtin::create( const Value::ID id, const Type::Ptr& type )
         }
         case Value::AS_BOOLEAN_BUILTIN:
         {
-            return libstdhl::make< AsBooleanBuiltin >( type );
+            return libstdhl::Memory::make< AsBooleanBuiltin >( type );
         }
         case Value::AS_INTEGER_BUILTIN:
         {
-            return libstdhl::make< AsIntegerBuiltin >( type );
+            return libstdhl::Memory::make< AsIntegerBuiltin >( type );
         }
         case Value::AS_BIT_BUILTIN:
         {
-            return libstdhl::make< AsBitBuiltin >( type );
+            return libstdhl::Memory::make< AsBitBuiltin >( type );
         }
         case Value::AS_STRING_BUILTIN:
         {
-            return libstdhl::make< AsStringBuiltin >( type );
+            return libstdhl::Memory::make< AsStringBuiltin >( type );
         }
         case Value::AS_FLOATING_BUILTIN:
         {
-            return libstdhl::make< AsFloatingBuiltin >( type );
+            return libstdhl::Memory::make< AsFloatingBuiltin >( type );
         }
         case Value::AS_RATIONAL_BUILTIN:
         {
-            return libstdhl::make< AsRationalBuiltin >( type );
+            return libstdhl::Memory::make< AsRationalBuiltin >( type );
         }
         case Value::AS_ENUMERATION_BUILTIN:
         {
-            return libstdhl::make< AsEnumerationBuiltin >( type );
+            return libstdhl::Memory::make< AsEnumerationBuiltin >( type );
         }
 
         case Value::STRINGIFY_BUILTIN:
@@ -240,19 +258,19 @@ Builtin::Ptr Builtin::create( const Value::ID id, const Type::Ptr& type )
         }
         case Value::DEC_BUILTIN:
         {
-            return libstdhl::make< DecBuiltin >( type );
+            return libstdhl::Memory::make< DecBuiltin >( type );
         }
         case Value::HEX_BUILTIN:
         {
-            return libstdhl::make< HexBuiltin >( type );
+            return libstdhl::Memory::make< HexBuiltin >( type );
         }
         case Value::OCT_BUILTIN:
         {
-            return libstdhl::make< OctBuiltin >( type );
+            return libstdhl::Memory::make< OctBuiltin >( type );
         }
         case Value::BIN_BUILTIN:
         {
-            return libstdhl::make< BinBuiltin >( type );
+            return libstdhl::Memory::make< BinBuiltin >( type );
         }
 
         case Value::OPERATOR_BUILTIN: // [fallthrough]
@@ -262,27 +280,27 @@ Builtin::Ptr Builtin::create( const Value::ID id, const Type::Ptr& type )
         }
         case Value::ADDU_BUILTIN:
         {
-            return libstdhl::make< AdduBuiltin >( type );
+            return libstdhl::Memory::make< AdduBuiltin >( type );
         }
         case Value::ADDS_BUILTIN:
         {
-            return libstdhl::make< AddsBuiltin >( type );
+            return libstdhl::Memory::make< AddsBuiltin >( type );
         }
         case Value::SUBU_BUILTIN:
         {
-            return libstdhl::make< SubuBuiltin >( type );
+            return libstdhl::Memory::make< SubuBuiltin >( type );
         }
         case Value::SUBS_BUILTIN:
         {
-            return libstdhl::make< SubsBuiltin >( type );
+            return libstdhl::Memory::make< SubsBuiltin >( type );
         }
         case Value::MULU_BUILTIN:
         {
-            return libstdhl::make< MuluBuiltin >( type );
+            return libstdhl::Memory::make< MuluBuiltin >( type );
         }
         case Value::MULS_BUILTIN:
         {
-            return libstdhl::make< MulsBuiltin >( type );
+            return libstdhl::Memory::make< MulsBuiltin >( type );
         }
 
         case Value::COMPARE_BUILTIN:
@@ -291,35 +309,35 @@ Builtin::Ptr Builtin::create( const Value::ID id, const Type::Ptr& type )
         }
         case Value::LESU_BUILTIN:
         {
-            return libstdhl::make< LesuBuiltin >( type );
+            return libstdhl::Memory::make< LesuBuiltin >( type );
         }
         case Value::LESS_BUILTIN:
         {
-            return libstdhl::make< LessBuiltin >( type );
+            return libstdhl::Memory::make< LessBuiltin >( type );
         }
         case Value::LEQU_BUILTIN:
         {
-            return libstdhl::make< LequBuiltin >( type );
+            return libstdhl::Memory::make< LequBuiltin >( type );
         }
         case Value::LEQS_BUILTIN:
         {
-            return libstdhl::make< LeqsBuiltin >( type );
+            return libstdhl::Memory::make< LeqsBuiltin >( type );
         }
         case Value::GREU_BUILTIN:
         {
-            return libstdhl::make< GreuBuiltin >( type );
+            return libstdhl::Memory::make< GreuBuiltin >( type );
         }
         case Value::GRES_BUILTIN:
         {
-            return libstdhl::make< GresBuiltin >( type );
+            return libstdhl::Memory::make< GresBuiltin >( type );
         }
         case Value::GEQU_BUILTIN:
         {
-            return libstdhl::make< GequBuiltin >( type );
+            return libstdhl::Memory::make< GequBuiltin >( type );
         }
         case Value::GEQS_BUILTIN:
         {
-            return libstdhl::make< GeqsBuiltin >( type );
+            return libstdhl::Memory::make< GeqsBuiltin >( type );
         }
 
         case Value::BIT_BUILTIN:
@@ -328,39 +346,39 @@ Builtin::Ptr Builtin::create( const Value::ID id, const Type::Ptr& type )
         }
         case Value::ZEXT_BUILTIN:
         {
-            return libstdhl::make< ZextBuiltin >( type );
+            return libstdhl::Memory::make< ZextBuiltin >( type );
         }
         case Value::SEXT_BUILTIN:
         {
-            return libstdhl::make< SextBuiltin >( type );
+            return libstdhl::Memory::make< SextBuiltin >( type );
         }
         case Value::TRUNC_BUILTIN:
         {
-            return libstdhl::make< TruncBuiltin >( type );
+            return libstdhl::Memory::make< TruncBuiltin >( type );
         }
         case Value::SHL_BUILTIN:
         {
-            return libstdhl::make< ShlBuiltin >( type );
+            return libstdhl::Memory::make< ShlBuiltin >( type );
         }
         case Value::SHR_BUILTIN:
         {
-            return libstdhl::make< ShrBuiltin >( type );
+            return libstdhl::Memory::make< ShrBuiltin >( type );
         }
         case Value::ASHR_BUILTIN:
         {
-            return libstdhl::make< AshrBuiltin >( type );
+            return libstdhl::Memory::make< AshrBuiltin >( type );
         }
         case Value::CLZ_BUILTIN:
         {
-            return libstdhl::make< ClzBuiltin >( type );
+            return libstdhl::Memory::make< ClzBuiltin >( type );
         }
         case Value::CLO_BUILTIN:
         {
-            return libstdhl::make< CloBuiltin >( type );
+            return libstdhl::Memory::make< CloBuiltin >( type );
         }
         case Value::CLS_BUILTIN:
         {
-            return libstdhl::make< ClsBuiltin >( type );
+            return libstdhl::Memory::make< ClsBuiltin >( type );
         }
 
         case Value::_SIZE_:

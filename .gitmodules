@@ -1,12 +1,16 @@
 [submodule "lib/gtest"]
 	path = lib/gtest
 	url = https://github.com/google/googletest
+	branch = master
 [submodule "lib/hayai"]
 	path = lib/hayai
 	url = https://github.com/nickbruun/hayai
+	branch = master
 [submodule "lib/stdhl"]
 	path = lib/stdhl
 	url = https://github.com/ppaulweber/libstdhl
+	branch = master
 [submodule "lib/pass"]
 	path = lib/pass
 	url = https://github.com/ppaulweber/libpass
+	branch = master
