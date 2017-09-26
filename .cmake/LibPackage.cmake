@@ -40,27 +40,12 @@
 #
 
 #
-#   Copyright (c) 2014-2017 Philipp Paulweber
-#   All rights reserved.
+# LibPackage
 #
-#   Developed by: Philipp Paulweber
-#                 Emmanuel Pescosta
-#                 https://github.com/ppaulweber/libstdhl
-#
-#   This file is part of libstdhl.
-#
-#   libstdhl is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   libstdhl is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-#   GNU General Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License
-#   along with libstdhl. If not, see <http://www.gnu.org/licenses/>.
+# This CMake library contains besides the embedded 'LibFindMacros.cmake' some
+# small and basic functions to define git-based projects with sub-module
+# dependencies. The origin of this file is located at:
+# https://github.com/ppaulweber/libstdhl/blob/master/.cmake/LibPackage.cmake
 #
 
 ################################################################################
@@ -272,7 +257,7 @@ function (libfind_process PREFIX)
       mark_as_advanced(${i})
     endforeach()
     if (NOT quiet)
-      message(STATUS "Found ${PREFIX} ${${PREFIX}_VERSION}")
+      #message(STATUS "Found ${PREFIX} ${${PREFIX}_VERSION}")
       if (LIBFIND_DEBUG)
         message(STATUS "  ${PREFIX}_DEPENDENCIES=${${PREFIX}_DEPENDENCIES}")
         message(STATUS "  ${PREFIX}_INCLUDE_OPTS=${includeopts}")
@@ -330,9 +315,9 @@ function (libfind_process PREFIX)
     message(FATAL_ERROR "${msg}\n${vars}")
   endif()
   # Otherwise just print a nasty warning
-  if (NOT quiet)
-    message(WARNING "WARNING: MISSING PACKAGE\n${msg} This package is NOT REQUIRED and you may ignore this warning but by doing so you may miss some functionality of ${CMAKE_PROJECT_NAME}. \n${vars}")
-  endif()
+  #if (NOT quiet)
+  #  message(WARNING "WARNING: MISSING PACKAGE\n${msg} This package is NOT REQUIRED and you may ignore this warning but by doing so you may miss some functionality of ${CMAKE_PROJECT_NAME}. \n${vars}")
+  #endif()
 endfunction()
 
 ################################################################################
@@ -391,91 +376,111 @@ function( package_print_path PATHS )
 endfunction()
 
 
+
 #
-# package_find_git
+# package_git_submodule
 #
 
-function( package_find_git PREFIX VERSION MODE PATHS TMP )
-  message( "-- Package: ${PREFIX} ${VERSION} ${MODE} ${PATHS}" )
-  
+include( ExternalProject )
+
+function( package_git_submodule PREFIX VERSION MODE TMP ) # ${ARGN} search paths
+  string( TOUPPER ${PREFIX} PREFIX_NAME )
+  string( REPLACE "-" "_"   PREFIX_NAME ${PREFIX_NAME} )
+
+  message( "-- Package: ${PREFIX} Module @ ${VERSION} ${MODE} '${TMP}' [${ARGN}] [${PREFIX_NAME}]" )
+
+  set( PREFIX_LIBRARY ${PREFIX_NAME}_LIBRARY )
+  set( PREFIX_INCLUDE ${PREFIX_NAME}_INCLUDE_DIR )
+
   find_package(
     ${PREFIX}
-    ${${PREFIX}_VERSION}
     QUIET
     )
 
-  if( ${PREFIX}_FOUND )
-    message( "-- Package: ${PREFIX}" )
-  else()
-    foreach( path ${PATHS} )
-      set( ${PREFIX}_REPO_DIR ${PROJECT_SOURCE_DIR}/${path} )
-      set( ${PREFIX}_MAKE_DIR ${${PREFIX}_REPO_DIR}/${TMP} )
-      set( ${PREFIX}_ROOT_DIR ${${PREFIX}_MAKE_DIR}/install )
-      
-      if( EXISTS ${${PREFIX}_REPO_DIR} )
-	message( "-- Package: ${PREFIX} @ '${${PREFIX}_REPO_DIR}'" )
+  set( PREFIX_FOUND FALSE )
 
-	# if( NOT EXISTS ${${PREFIX}_REPO_DIR}/.git )
-	#   execute_process(
-	#     COMMAND             git submodule update --init --remote ${path}
-	#     WORKING_DIRECTORY   ${PROJECT_SOURCE_DIR}
-	#     )
-	# endif()
-	
-	execute_process(
-	  COMMAND             git status
-	  WORKING_DIRECTORY   ${${PREFIX}_REPO_DIR}
-	  )
+  if( EXISTS "${${PREFIX_LIBRARY}}" AND EXISTS "${${PREFIX_INCLUDE}}" )
+    set( PREFIX_FOUND TRUE )
+  endif()
 
-	file( MAKE_DIRECTORY  ${${PREFIX}_MAKE_DIR} )
+  foreach( PATH ${ARGN} )
+    string( STRIP ${PATH} PREFIX_PATH )
+    set( ${PREFIX}_REPO_DIR ${PROJECT_SOURCE_DIR}/${PREFIX_PATH} )
+    set( ${PREFIX}_MAKE_DIR ${${PREFIX}_REPO_DIR}/${TMP} )
+    set( ${PREFIX}_ROOT_DIR ${${PREFIX}_MAKE_DIR}/install )
+    set( ${PREFIX}_STAM_DIR ${${PREFIX}_MAKE_DIR}/stamp )
 
-	execute_process(
-	  COMMAND             ${CMAKE_COMMAND} -DCMAKE_INSTALL_PREFIX=${${PREFIX}_ROOT_DIR} ..
-	  WORKING_DIRECTORY   ${${PREFIX}_MAKE_DIR}
-	  )
+    #message( "   + ${${PREFIX}_REPO_DIR}" )
+    #message( "   + ${${PREFIX}_MAKE_DIR}" )
+    #message( "   + ${${PREFIX}_ROOT_DIR}" )
 
-	execute_process(
-	  COMMAND             make -s install
-	  WORKING_DIRECTORY   ${${PREFIX}_MAKE_DIR}
-	  )
+    if( EXISTS ${${PREFIX}_REPO_DIR} )
+      # PPA: add a better check in the future!
+      message( "-- Package: ${PREFIX} Found  @ '${${PREFIX}_REPO_DIR}'" )
 
-	message( "${${PREFIX}_REPO_DIR}" )
-	message( "${${PREFIX}_MAKE_DIR}" )
-	message( "${${PREFIX}_ROOT_DIR}" )
+      Externalproject_Add( ${PREFIX}
+	SOURCE_DIR      ${${PREFIX}_REPO_DIR}
+	BINARY_DIR      ${${PREFIX}_MAKE_DIR}
+	INSTALL_DIR     ${${PREFIX}_ROOT_DIR}
+	STAMP_DIR       ${${PREFIX}_STAM_DIR}
+	CMAKE_ARGS
+	-DCMAKE_INSTALL_PREFIX=${${PREFIX}_ROOT_DIR}
+	-DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+	-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+	-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+	)
+	#BUILD_ALWAYS    1
+	#INSTALL_COMMAND ""
 
-	if( EXISTS ${${PREFIX}_REPO_DIR}/.cmake )
-	  message( "${${PREFIX}_REPO_DIR}/.cmake" )
-	  set( CMAKE_MODULE_PATH
-	    ${CMAKE_MODULE_PATH}
-	    ${${PREFIX}_REPO_DIR}/.cmake
-	    )
-	endif()
-
-	set( CMAKE_PREFIX_PATH ${${PREFIX}_ROOT_DIR} )
-	
-	package_print_path( CMAKE_MODULE_PATH )
-	package_print_path( CMAKE_PREFIX_PATH )
-	
-	find_package(
-	  ${PREFIX}
-	  #   #${${PREFIX}_VERSION}
-	  ${MODE}
-	  )
-
+      if( EXISTS ${${PREFIX}_REPO_DIR}/.cmake )
 	set( CMAKE_MODULE_PATH
-	    ${CMAKE_MODULE_PATH}
-	    PARENT_SCOPE
-	    )
-	
-	break()
+	  ${CMAKE_MODULE_PATH}
+	  ${${PREFIX}_REPO_DIR}/.cmake
+	  )
       endif()
-    endforeach()
+
+      if( EXISTS ${${PREFIX}_ROOT_DIR}/share/cmake/Module/${PREFIX} )
+	set( CMAKE_MODULE_PATH
+	  ${CMAKE_MODULE_PATH}
+	  ${${PREFIX}_ROOT_DIR}/share/cmake/Module/${PREFIX}
+	  )
+      endif()
+
+      set( CMAKE_PREFIX_PATH ${${PREFIX}_ROOT_DIR} )
+
+      find_package(
+	${PREFIX}
+	QUIET
+	)
+
+      if( "${${PREFIX_LIBRARY}}" STREQUAL "${PREFIX_LIBRARY}-NOTFOUND" AND
+	  "${${PREFIX_INCLUDE}}" STREQUAL "${PREFIX_INCLUDE}-NOTFOUND"
+	  )
+	set( ${PREFIX_INCLUDE} ${PROJECT_SOURCE_DIR} )
+	set( ${PREFIX_INCLUDE} ${PROJECT_SOURCE_DIR} PARENT_SCOPE )
+	set( ${PREFIX_NAME}_FOUND FALSE )
+	set( ${PREFIX_NAME}_FOUND FALSE PARENT_SCOPE )
+      else()
+	set( ${PREFIX_NAME}_FOUND TRUE )
+	set( ${PREFIX_NAME}_FOUND TRUE PARENT_SCOPE )
+      endif()
+
+      message( "   ${PREFIX_INCLUDE} = ${${PREFIX_INCLUDE}}" )
+      message( "   ${PREFIX_LIBRARY} = ${${PREFIX_LIBRARY}}" )
+      message( "   ${PREFIX_NAME}_FOUND = ${${PREFIX_NAME}_FOUND}" )
+
+      set( CMAKE_MODULE_PATH
+	${CMAKE_MODULE_PATH}
+	PARENT_SCOPE
+	)
+
+      return()
+    endif()
+  endforeach()
+
+  if( ${PREFIX_FOUND} )
+    message( "-- Package: ${PREFIX} Found [installed]" )
+  else()
+    message( "-- Package: ${PREFIX} NOT Found!" )
   endif()
 endfunction()
-
-# execute_process(
-#   COMMAND             cmd
-#   WORKING_DIRECTORY   path
-#   #OUTPUT_QUIET
-#   #ERROR_QUIET
-# )

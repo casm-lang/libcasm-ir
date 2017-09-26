@@ -41,7 +41,9 @@
 
 include_directories(
   ${PROJECT_BINARY_DIR}/src
-  ${HAYAI_INCLUDE_DIR}
+  ${LIBHAYAI_INCLUDE_DIR}
+  ${LIBSTDHL_INCLUDE_DIR}
+  ${LIBPASS_INCLUDE_DIR}
   )
 
 add_library( ${PROJECT}-benchmark OBJECT

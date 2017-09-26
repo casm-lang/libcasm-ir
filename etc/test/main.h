@@ -42,7 +42,7 @@
 #ifndef _LIBCASMIR_UTS_MAIN_H_
 #define _LIBCASMIR_UTS_MAIN_H_
 
-#include <libstdhl/test/main>
+#include <libstdhl/Test>
 
 #include <libcasm-ir/libcasm-ir>
 
