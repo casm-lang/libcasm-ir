@@ -44,6 +44,7 @@ ifndef TARGET
 endif
 
 OBJ = obj
+BIN = install
 .PHONY: $(OBJ)
 .NOTPARALLEL: $(OBJ)
 
@@ -85,6 +86,7 @@ TYPES = debug sanitize release
 SYNCS = $(TYPES:%=%-sync)
 TESTS = $(TYPES:%=%-test)
 BENCH = $(TYPES:%=%-benchmark)
+INSTA = $(TYPES:%=%-install)
 ANALY = $(TYPES:%=%-analyze)
 ALL   = $(TYPES:%=%-all)
 
@@ -94,23 +96,27 @@ ifeq ("$(wildcard $(OBJ)/CMakeCache.txt)","")
 	@(\
 	cd $(OBJ); \
 	cmake \
+	-D CMAKE_INSTALL_PREFIX=$(BIN) \
+	-D CMAKE_BUILD_TYPE=$(TYPE) \
 	-D CMAKE_C_COMPILER=$(CC) \
 	-D CMAKE_CXX_COMPILER=$(CXX) \
-	-D CMAKE_BUILD_TYPE=$(TYPE) .. \
+	.. \
 	)
 else
-	@$(MAKE) $(MFLAGS) --no-print-directory TYPE=$(patsubst %-sync,%,$@) -C $(OBJ) rebuild_cache
+	@$(MAKE) $(MFLAGS) --no-print-directory -C $(OBJ) rebuild_cache
 endif
 
 
 sync: debug-sync
 
-$(SYNCS):%-sync:
+sync-all: $(TYPES:%=%-sync)
+
+$(SYNCS):%-sync: $(OBJ)
 	@$(MAKE) $(MFLAGS) --no-print-directory TYPE=$(patsubst %-sync,%,$@) $(OBJ)/Makefile
+
 
 $(TYPES):%: %-sync
 	@$(MAKE) $(MFLAGS) --no-print-directory -C $(OBJ) ${TARGET}
-
 
 all: debug-all
 
@@ -140,6 +146,14 @@ $(BENCH):%-benchmark: %
 	@$(ENV_FLAGS) ./$(OBJ)/$(TARGET)-run -o console -o json:obj/report.json $(ENV_ARGS)
 
 
+install: debug-install
+
+install-all: $(TYPES:%=%-install)
+
+$(INSTA):%-install: %
+	@$(MAKE) $(MFLAGS) --no-print-directory -C $(OBJ) install
+
+
 analyze: debug-analyze
 
 analyze-all: $(TYPES:%=%-analyze)
@@ -165,7 +179,7 @@ CPPCHECK_REPORT = ./$(OBJ)/.cppcheck.xml
 	--report-progress \
 	--enable=all \
 	-I . \
-	./src
+	./src/c**
 
 	cppcheck \
 	-v \
@@ -175,7 +189,7 @@ CPPCHECK_REPORT = ./$(OBJ)/.cppcheck.xml
 	--force \
 	--enable=all \
 	-I . \
-	./src > $(CPPCHECK_REPORT)
+	./src/c** > $(CPPCHECK_REPORT)
 
 
 analyze-iwyu: debug-analyze-iwyu
@@ -185,8 +199,8 @@ IWYU_REPORT = ./$(OBJ)/.iwyu.txt
 %-analyze-iwyu:
 	@echo "-- Running 'iwyu' $(patsubst %-analyze-iwyu,%,$@)"
 	@echo -n "" > $(IWYU_REPORT)
-	@for i in `find ./src`; do include-what-you-use $$i; done
-	@for i in `find ./src`; do include-what-you-use $$i >> $(IWYU_REPORT); done
+	@for i in `find ./c*`; do include-what-you-use $$i; done
+	@for i in `find ./c*`; do include-what-you-use $$i >> $(IWYU_REPORT); done
 
 
 analyze-scan-build: debug-analyze-scan-build

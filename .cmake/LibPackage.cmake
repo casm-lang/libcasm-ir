@@ -332,23 +332,23 @@ endfunction()
 
 function( package_git NAME )
   execute_process(
-    COMMAND                               git describe --always --tags --dirty
-    WORKING_DIRECTORY                     ${CMAKE_SOURCE_DIR}
-    OUTPUT_VARIABLE                       GIT_REVTAG
+    COMMAND             git describe --always --tags --dirty
+    WORKING_DIRECTORY   ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE     GIT_REVTAG
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )
 
   execute_process(
-    COMMAND                               git log -1 --format=%h
-    WORKING_DIRECTORY                     ${CMAKE_SOURCE_DIR}
-    OUTPUT_VARIABLE                       GIT_COMMIT
+    COMMAND             git log -1 --format=%h
+    WORKING_DIRECTORY   ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE     GIT_COMMIT
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )
 
   execute_process(
-    COMMAND                               git rev-parse --abbrev-ref HEAD
-    WORKING_DIRECTORY                     ${CMAKE_SOURCE_DIR}
-    OUTPUT_VARIABLE                       GIT_BRANCH
+    COMMAND             git rev-parse --abbrev-ref HEAD
+    WORKING_DIRECTORY   ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE     GIT_BRANCH
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )
 
@@ -361,6 +361,7 @@ function( package_git NAME )
   set( GIT_REVTAG ${GIT_REVTAG} PARENT_SCOPE )
   set( GIT_COMMIT ${GIT_COMMIT} PARENT_SCOPE )
   set( GIT_BRANCH ${GIT_BRANCH} PARENT_SCOPE )
+
 endfunction()
 
 
@@ -387,8 +388,8 @@ function( package_git_submodule PREFIX VERSION MODE TMP ) # ${ARGN} search paths
   string( TOUPPER ${PREFIX} PREFIX_NAME )
   string( REPLACE "-" "_"   PREFIX_NAME ${PREFIX_NAME} )
 
-  message( "-- Package: ${PREFIX} Module @ ${VERSION} ${MODE} '${TMP}' [${ARGN}] [${PREFIX_NAME}]" )
-
+  #message( "-- Package: ${PREFIX} Module @ ${VERSION} ${MODE} '${TMP}' [${ARGN}] [${PREFIX_NAME}]" )
+  
   set( PREFIX_LIBRARY ${PREFIX_NAME}_LIBRARY )
   set( PREFIX_INCLUDE ${PREFIX_NAME}_INCLUDE_DIR )
 
@@ -398,8 +399,11 @@ function( package_git_submodule PREFIX VERSION MODE TMP ) # ${ARGN} search paths
     )
 
   set( PREFIX_FOUND FALSE )
-
-  if( EXISTS "${${PREFIX_LIBRARY}}" AND EXISTS "${${PREFIX_INCLUDE}}" )
+  if( EXISTS "${${PREFIX_LIBRARY}}" AND
+      EXISTS "${${PREFIX_INCLUDE}}" AND
+      ${${PREFIX_LIBRARY}} AND
+      ${${PREFIX_INCLUDE}}
+      )
     set( PREFIX_FOUND TRUE )
   endif()
 
@@ -408,30 +412,73 @@ function( package_git_submodule PREFIX VERSION MODE TMP ) # ${ARGN} search paths
     set( ${PREFIX}_REPO_DIR ${PROJECT_SOURCE_DIR}/${PREFIX_PATH} )
     set( ${PREFIX}_MAKE_DIR ${${PREFIX}_REPO_DIR}/${TMP} )
     set( ${PREFIX}_ROOT_DIR ${${PREFIX}_MAKE_DIR}/install )
-    set( ${PREFIX}_STAM_DIR ${${PREFIX}_MAKE_DIR}/stamp )
-
-    #message( "   + ${${PREFIX}_REPO_DIR}" )
-    #message( "   + ${${PREFIX}_MAKE_DIR}" )
-    #message( "   + ${${PREFIX}_ROOT_DIR}" )
+    #set( ${PREFIX}_STAM_DIR ${${PREFIX}_MAKE_DIR}/stamp )
 
     if( EXISTS ${${PREFIX}_REPO_DIR} )
-      # PPA: add a better check in the future!
-      message( "-- Package: ${PREFIX} Found  @ '${${PREFIX}_REPO_DIR}'" )
+      if( NOT EXISTS ${${PREFIX}_REPO_DIR}/.git )
+	message( FATAL_ERROR "package '${PREFIX}' is not a 'git' repository" )
+      endif()
+
+      message( "-- Package: ${PREFIX} Found [git] @ '${${PREFIX}_REPO_DIR}'" )
 
       Externalproject_Add( ${PREFIX}
 	SOURCE_DIR      ${${PREFIX}_REPO_DIR}
 	BINARY_DIR      ${${PREFIX}_MAKE_DIR}
 	INSTALL_DIR     ${${PREFIX}_ROOT_DIR}
-	STAMP_DIR       ${${PREFIX}_STAM_DIR}
 	CMAKE_ARGS
-	-DCMAKE_INSTALL_PREFIX=${${PREFIX}_ROOT_DIR}
-	-DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-	-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-	-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+	-DCMAKE_INSTALL_PREFIX:PATH=${${PREFIX}_ROOT_DIR}
+	-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+	-DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
+	-DCMAKE_C_FLAGS_INIT:STRING=${CMAKE_C_FLAGS_INIT}
+	-DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
+	-DCMAKE_CXX_FLAGS_INIT:STRING=${CMAKE_CXX_FLAGS_INIT}
 	)
-	#BUILD_ALWAYS    1
-	#INSTALL_COMMAND ""
+      # -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+      # LOG_BUILD       1
+      # LOG_INSTALL     1
+      # UPDATE_COMMAND  ""
+      # BUILD_ALWAYS    1
+      # STAMP_DIR       ${${PREFIX}_STAM_DIR}
 
+      # ExternalProject_Add_Step(${PREFIX} forcebuild
+      # 	COMMAND ${CMAKE_COMMAND} -E echo_append ""
+      # #   COMMAND ${CMAKE_COMMAND} -E remove ${${PREFIX}_STAM_DIR}/${PREFIX}-build
+      # 	COMMENT "Forcing build step for '${PREFIX}'"
+      # 	DEPENDEES configure
+      # 	DEPENDERS build
+      # 	ALWAYS 1
+      # 	)
+      # endif()
+
+
+      # execute_process(
+      # 	COMMAND                               git diff
+      # 	WORKING_DIRECTORY                     ${CMAKE_SOURCE_DIR}
+      # 	OUTPUT_VARIABLE                       REPO_DIFF_CURDIR
+      # 	OUTPUT_STRIP_TRAILING_WHITESPACE
+      # 	)
+      # if( "${REPO_DIFF_CURDIR}" STREQUAL "" )
+      # 	set( REPO_DIFF_CURDIR "." )
+      # endif()
+
+      # file( WRITE
+      # 	${CMAKE_BINARY_DIR}
+      # 	${REPO_DIFF_CURDIR}
+      # 	)
+
+      # execute_process(
+      # 	COMMAND                               git diff --staged
+      # 	WORKING_DIRECTORY                     ${CMAKE_SOURCE_DIR}
+      # 	OUTPUT_VARIABLE                       REPO_DIFF_STAGED
+      # 	OUTPUT_STRIP_TRAILING_WHITESPACE
+      # 	)
+
+      # file( WRITE
+      # 	${CMAKE_BINARY_DIR}/CMakeLibPackageGit_REPO_DIFF_STAGED
+      # 	${REPO_DIFF_STAGED}
+      # 	)
+
+      
       if( EXISTS ${${PREFIX}_REPO_DIR}/.cmake )
 	set( CMAKE_MODULE_PATH
 	  ${CMAKE_MODULE_PATH}
@@ -453,24 +500,91 @@ function( package_git_submodule PREFIX VERSION MODE TMP ) # ${ARGN} search paths
 	QUIET
 	)
 
-      if( "${${PREFIX_LIBRARY}}" STREQUAL "${PREFIX_LIBRARY}-NOTFOUND" AND
-	  "${${PREFIX_INCLUDE}}" STREQUAL "${PREFIX_INCLUDE}-NOTFOUND"
-	  )
-	set( ${PREFIX_INCLUDE} ${PROJECT_SOURCE_DIR} )
-	set( ${PREFIX_INCLUDE} ${PROJECT_SOURCE_DIR} PARENT_SCOPE )
-	set( ${PREFIX_NAME}_FOUND FALSE )
-	set( ${PREFIX_NAME}_FOUND FALSE PARENT_SCOPE )
+      set( MAKE_DIFF_PATH
+	${${PREFIX}_MAKE_DIR}/CMakeLibPackageGitDiff
+	)
+
+      ExternalProject_Add_Step(${PREFIX} git-diff
+      	COMMAND             git diff > ${MAKE_DIFF_PATH} && git diff --staged >> ${MAKE_DIFF_PATH}
+      	COMMENT             "[Syncing] '${PREFIX}'"
+      	DEPENDEES           build
+	WORKING_DIRECTORY   ${${PREFIX}_REPO_DIR}
+	ALWAYS              1
+      	)
+
+      set( MAKE_DIFF "." )
+      if( EXISTS ${MAKE_DIFF_PATH} )
+	file( READ ${MAKE_DIFF_PATH} MAKE_DIFF_FILE )
+	if( NOT "${MAKE_DIFF_FILE}" STREQUAL "" )
+	  set( MAKE_DIFF "${MAKE_DIFF_FILE}" )
+	endif()
       else()
-	set( ${PREFIX_NAME}_FOUND TRUE )
-	set( ${PREFIX_NAME}_FOUND TRUE PARENT_SCOPE )
+      endif()
+      string( SHA512 MAKE_DIFF_HASH "${MAKE_DIFF}" )
+
+      execute_process(
+	COMMAND             git diff
+	WORKING_DIRECTORY   ${${PREFIX}_REPO_DIR}
+	OUTPUT_VARIABLE     REPO_DIFF_CURDIR
+	)
+      execute_process(
+	COMMAND             git diff --staged
+	WORKING_DIRECTORY   ${${PREFIX}_REPO_DIR}
+	OUTPUT_VARIABLE     REPO_DIFF_STAGED
+	)
+
+      set( REPO_DIFF "${REPO_DIFF_CURDIR}${REPO_DIFF_STAGED}" )      
+      if( "${REPO_DIFF}" STREQUAL "" )
+	set( REPO_DIFF "." )
+      endif()
+      string( SHA512 REPO_DIFF_HASH "${REPO_DIFF}" )
+
+      # message( ">>> MAKE_DIFF" )
+      # message( "${MAKE_DIFF}" )
+      # message( "<<< MAKE_DIFF" )
+
+      # message( ">>> REPO_DIFF" )
+      # message( "${REPO_DIFF}" )
+      # message( "<<< REPO_DIFF" )
+
+      message( "            src: ${REPO_DIFF_HASH}" )
+      message( "            bin: ${MAKE_DIFF_HASH}" )
+      
+      if( NOT "${MAKE_DIFF_HASH}" STREQUAL "${REPO_DIFF_HASH}" )
+	message( "        >>> rebuild required!" )
+
+	ExternalProject_Add_Step(${PREFIX} force-build
+      	  COMMAND             ${CMAKE_COMMAND} -E remove ${MAKE_DIFF_PATH}
+      	  COMMENT             "Forcing build step for '${PREFIX}'"
+      	  DEPENDEES           configure
+      	  DEPENDERS           build
+	  ALWAYS              1
+      	  )
       endif()
 
-      message( "   ${PREFIX_INCLUDE} = ${${PREFIX_INCLUDE}}" )
-      message( "   ${PREFIX_LIBRARY} = ${${PREFIX_LIBRARY}}" )
-      message( "   ${PREFIX_NAME}_FOUND = ${${PREFIX_NAME}_FOUND}" )
+      if( "${${PREFIX_LIBRARY}}" STREQUAL "${PREFIX_LIBRARY}-NOTFOUND" OR
+      	  "${${PREFIX_INCLUDE}}" STREQUAL "${PREFIX_INCLUDE}-NOTFOUND"
+      	  )
+       	set( ${PREFIX_INCLUDE} ${PROJECT_SOURCE_DIR} )
+      	set( ${PREFIX_INCLUDE} ${PROJECT_SOURCE_DIR} PARENT_SCOPE )
+      	set( ${PREFIX_NAME}_FOUND FALSE )
+      	set( ${PREFIX_NAME}_FOUND FALSE PARENT_SCOPE )
+      else()
+      	set( ${PREFIX_NAME}_FOUND TRUE )
+      	set( ${PREFIX_NAME}_FOUND TRUE PARENT_SCOPE )
+      endif()
+
+      message( "            ${PREFIX_INCLUDE} = ${${PREFIX_INCLUDE}}" )
+      message( "            ${PREFIX_LIBRARY}     = ${${PREFIX_LIBRARY}}" )
+      message( "            ${PREFIX_NAME}_FOUND       = ${${PREFIX_NAME}_FOUND}" )
 
       set( CMAKE_MODULE_PATH
 	${CMAKE_MODULE_PATH}
+	PARENT_SCOPE
+	)
+
+      set( ${PREFIX_NAME}_FOUND
+	${${PREFIX_NAME}_FOUND}
 	PARENT_SCOPE
 	)
 
@@ -478,9 +592,17 @@ function( package_git_submodule PREFIX VERSION MODE TMP ) # ${ARGN} search paths
     endif()
   endforeach()
 
-  if( ${PREFIX_FOUND} )
+  if( ${${PREFIX_NAME}_FOUND} )
     message( "-- Package: ${PREFIX} Found [installed]" )
+    add_custom_target( ${PREFIX}
+      COMMENT "Package ${PREFIX}"
+      )
   else()
     message( "-- Package: ${PREFIX} NOT Found!" )
   endif()
+
+  set( ${PREFIX_NAME}_FOUND
+    ${${PREFIX_NAME}_FOUND}
+    PARENT_SCOPE
+    )
 endfunction()
