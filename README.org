@@ -6,8 +6,8 @@ TBD
 
 ** Copyright and License
 
-The copyright holder of libstdhl is the CASM organization (@casm-lang) 
-and the used license of libstdhl is a [[https://www.gnu.org/licenses/gpl-3.0.html][GNU GPLv3+]]
+The copyright holder of libcasm-ir is the CASM organization (@casm-lang) 
+and the used license of libcasm-ir is a [[https://www.gnu.org/licenses/gpl-3.0.html][GNU GPLv3+]]
 with an additional permission ("GPL Linking Exception").
 
 *** Notice
