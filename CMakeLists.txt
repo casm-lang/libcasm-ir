@@ -40,18 +40,14 @@
 #
 
 set( PROJECT libcasm-ir )
+
 cmake_minimum_required( VERSION ${CMAKE_VERSION} )
 
+project( ${PROJECT} LANGUAGES C CXX )
+set( CMAKE_CXX_STANDARD 11 )
 set( CMAKE_VERSION 3.2 )
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
-
-set( CMAKE_CXX_STANDARD 11 )
-project( ${PROJECT} LANGUAGES C CXX )
-
-set( CMAKE_MODULE_PATH
-  ${ECM_MODULE_PATH}
-  ${${PROJECT}_SOURCE_DIR}/.cmake
-  )
+set( CMAKE_MODULE_PATH ${${PROJECT}_SOURCE_DIR}/.cmake )
 
 include( LibPackage )
 

@@ -535,10 +535,10 @@ function( package_git_submodule PREFIX VERSION MODE TMP ) # ${ARGN} search paths
       	set( ${PREFIX_NAME}_FOUND TRUE )
       	set( ${PREFIX_NAME}_FOUND TRUE PARENT_SCOPE )
 
-	find_package(
-	  ${PREFIX}
-	  ${MODE}
-	  )
+	# find_package(
+	#   ${PREFIX}
+	#   ${MODE}
+	#   )
       endif()
 
       # message( "            ${PREFIX_INCLUDE} = ${${PREFIX_INCLUDE}}" )
