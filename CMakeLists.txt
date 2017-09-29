@@ -46,28 +46,27 @@ set( CMAKE_VERSION 3.2 )
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
 
 set( CMAKE_CXX_STANDARD 11 )
-project( ${PROJECT} LANGUAGES CXX )
+project( ${PROJECT} LANGUAGES C CXX )
 
-find_package( ECM REQUIRED CONFIG QUIET )
 set( CMAKE_MODULE_PATH
   ${ECM_MODULE_PATH}
   ${${PROJECT}_SOURCE_DIR}/.cmake
   )
 
-set( THREADS_PREFER_PTHREAD_FLAG ON )
+include( LibPackage )
+
+package_git( ${PROJECT} )
+package_git_submodule( libstdhl master REQUIRED obj   ../stdhl lib/stdhl )
+package_git_submodule( libpass  master REQUIRED obj   ../pass  lib/pass  )
+package_git_submodule( libgtest master REQUIRED build ../gtest lib/gtest )
+package_git_submodule( libhayai master REQUIRED build ../hayai lib/hayai )
+
 find_package( Threads REQUIRED )
 
 include( ECMGenerateHeaders )
 include( FeatureSummary )
 include( GenerateExportHeader )
 include( CPack )
-include( LibPackage )
-
-package_git( ${PROJECT} )
-package_git_submodule( libstdhl master REQUIRED obj   ../stdhl lib/stdhl )
-package_git_submodule( libgtest master REQUIRED build ../gtest lib/gtest )
-package_git_submodule( libhayai master REQUIRED build ../hayai lib/hayai )
-package_git_submodule( libpass  master REQUIRED obj   ../pass  lib/pass  )
 
 add_subdirectory( src )
 add_subdirectory( etc
@@ -129,11 +128,15 @@ install(
   "include/${PROJECT}"
   )
 
+export(
+  TARGETS ${PROJECT}
+  FILE    ${PROJECT}Config.cmake
+  )
+
 
 #
 # test
 # 
-
 
 add_executable( ${PROJECT}-check
   EXCLUDE_FROM_ALL
@@ -148,6 +151,7 @@ if( ${LIBGTEST_FOUND} )
     Threads::Threads
     )
 endif()
+
 
 #
 # benchmark
@@ -176,6 +180,7 @@ install(
   DESTINATION
     "share/cmake/Module/${PROJECT}"
   )
+
 
 #
 # build features and checks
