@@ -46,22 +46,23 @@ using namespace libcasm_ir;
 TEST( libcasm_ir__type_tuple, make_and_get )
 {
     auto i = libstdhl::Memory::make< IntegerType >();
+    auto t = Types( { i, i, i } );
 
-    auto v = libstdhl::Memory::make< TupleType >( i, i, i );
+    auto v = libstdhl::Memory::make< TupleType >( t );
     ASSERT_TRUE( v != nullptr );
 
     EXPECT_STREQ( v->name().c_str(), "t<i,i,i>" );
     EXPECT_STREQ(
         v->description().c_str(), "Tuple< Integer, Integer, Integer >" );
 
-    auto w = libstdhl::Memory::make< TupleType >( i, i, i );
+    auto w = libstdhl::Memory::make< TupleType >( t );
     ASSERT_TRUE( w != nullptr );
 
     EXPECT_TRUE( v != w );
     EXPECT_TRUE( *w == *w );
 
-    auto a = libstdhl::Memory::get< TupleType >( i, i, i );
-    auto b = libstdhl::Memory::get< TupleType >( i, i, i );
+    auto a = libstdhl::Memory::get< TupleType >( t );
+    auto b = libstdhl::Memory::get< TupleType >( t );
     ASSERT_TRUE( a != nullptr );
     ASSERT_TRUE( b != nullptr );
 

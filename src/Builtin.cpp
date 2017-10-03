@@ -43,6 +43,8 @@
 
 #include "Exception.h"
 
+#include <cassert>
+
 using namespace libcasm_ir;
 
 static const auto VOID = libstdhl::Memory::get< VoidType >();
@@ -459,7 +461,10 @@ const Annotation IsSymbolicBuiltin::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
-        assert( types.size() == 1 );
+        if( types.size() != 1 )
+        {
+            throw InternalException( "types.size() != 1" );
+        }
         return BOOLEAN;
     } );
 
@@ -485,7 +490,10 @@ const Annotation AbortBuiltin::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
-        assert( types.size() == 0 );
+        if( types.size() != 0 )
+        {
+            throw InternalException( "types.size() != 0" );
+        }
         return VOID;
     } );
 
@@ -518,7 +526,10 @@ const Annotation AssertBuiltin::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
-        assert( types.size() >= 1 and types.size() <= 2 );
+        if( types.size() < 1 or types.size() > 2 )
+        {
+            throw InternalException( "types.size() < 1 or types.size() > 2" );
+        }
         return VOID;
     } );
 
@@ -575,9 +586,11 @@ const Annotation PrintBuiltin::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
-        assert( types.size() == 1 );
+        if( types.size() != 1 )
+        {
+            throw InternalException( "types.size() != 1" );
+        }
         const auto& argumentType = types[ 0 ];
-        assert( argumentType );
 
         if( not argumentType->isString() )
         {
@@ -616,9 +629,11 @@ const Annotation PrintLnBuiltin::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
-        assert( types.size() == 1 );
+        if( types.size() != 1 )
+        {
+            throw InternalException( "types.size() != 1" );
+        }
         const auto& argumentType = types[ 0 ];
-        assert( argumentType );
 
         if( not argumentType->isString() )
         {
@@ -687,7 +702,10 @@ const Annotation AsBooleanBuiltin::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
-        assert( types.size() == 1 );
+        if( types.size() != 1 )
+        {
+            throw InternalException( "types.size() != 1" );
+        }
         return BOOLEAN;
     } );
 
@@ -736,13 +754,18 @@ const Annotation AsIntegerBuiltin::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
-        assert( types.size() == 1 );
+        if( types.size() != 1 )
+        {
+            throw InternalException( "types.size() != 1" );
+        }
         const auto& arg = types[ 0 ];
         if( arg->isInteger() )
         {
             const auto& integerType = static_cast< const IntegerType& >( *arg );
-            assert( not integerType
-                            .range() ); // TODO: PPA: handle integer range case!
+            if( integerType.range() )
+            {
+                throw InternalException( "unimplemented" );
+            }
         }
         return INTEGER;
     } );
@@ -792,7 +815,11 @@ const Annotation AsBitBuiltin::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
-        assert( types.size() == 2 );
+        if( types.size() != 2 )
+        {
+            throw InternalException( "types.size() != 2" );
+        }
+
         const auto& lhs = types[ 0 ];
         const auto& rhs = types[ 1 ];
         if( *lhs == *rhs )
@@ -860,7 +887,10 @@ const Annotation AsStringBuiltin::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
-        assert( types.size() == 1 );
+        if( types.size() != 1 )
+        {
+            throw InternalException( "types.size() != 1" );
+        }
         return STRING;
     } );
 
@@ -909,7 +939,10 @@ const Annotation AsFloatingBuiltin::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
-        assert( types.size() == 1 );
+        if( types.size() != 1 )
+        {
+            throw InternalException( "types.size() != 1" );
+        }
         return FLOATING;
     } );
 
@@ -939,7 +972,10 @@ const Annotation AsRationalBuiltin::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
-        assert( types.size() == 1 );
+        if( types.size() != 1 )
+        {
+            throw InternalException( "types.size() != 1" );
+        }
         return RATIONAL;
     } );
 
@@ -973,7 +1009,10 @@ const Annotation AsEnumerationBuiltin::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
-        assert( types.size() == 1 );
+        if( types.size() != 1 )
+        {
+            throw InternalException( "types.size() != 1" );
+        }
         return nullptr; // TODO: PPA: fetch through values a enumeration kind
                         // hint and return its type!
     } );
@@ -1036,7 +1075,10 @@ static const Annotation::Data stringify_builtin_data = {
 static const auto stringify_builtin_inference
     = []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
-    assert( types.size() == 1 );
+    if( types.size() != 1 )
+    {
+        throw InternalException( "types.size() != 1" );
+    }
     return STRING;
 };
 
@@ -1149,7 +1191,10 @@ static const Annotation::Data arithmetic_builtin_data = {
 static const auto arithmetic_builtin_inference
     = []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
-    assert( types.size() == 2 );
+    if( types.size() != 2 )
+    {
+        throw InternalException( "types.size() != 2" );
+    }
     const auto& lhs = types[ 0 ];
     const auto& rhs = types[ 1 ];
     if( *lhs == *rhs )
@@ -1309,7 +1354,10 @@ const Annotation::Data compare_builtin_data = {
 static const auto compare_builtin_inference
     = []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
-    assert( types.size() == 2 );
+    if( types.size() != 2 )
+    {
+        throw InternalException( "types.size() != 2" );
+    }
     const auto& lhs = types[ 0 ];
     const auto& rhs = types[ 1 ];
     if( *lhs == *rhs )
@@ -1506,8 +1554,14 @@ const Annotation ZextBuiltin::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
-        assert( types.size() == 2 );
-        assert( values.size() == 1 );
+        if( types.size() != 2 )
+        {
+            throw InternalException( "types.size() != 2" );
+        }
+        if( values.size() != 1 )
+        {
+            throw InternalException( "values.size() != 1" );
+        }
         return nullptr; // TODO: PPA: fetch through values a integer constant
                         // which defines the new bitsize
     } );
@@ -1537,8 +1591,14 @@ const Annotation SextBuiltin::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
-        assert( types.size() == 2 );
-        assert( values.size() == 1 );
+        if( types.size() != 2 )
+        {
+            throw InternalException( "types.size() != 2" );
+        }
+        if( values.size() != 1 )
+        {
+            throw InternalException( "values.size() != 1" );
+        }
         return nullptr; // TODO: PPA: fetch through values a integer constant
                         // which defines the new bitsize
     } );
@@ -1568,8 +1628,14 @@ const Annotation TruncBuiltin::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
-        assert( types.size() == 2 );
-        assert( values.size() == 1 );
+        if( types.size() != 2 )
+        {
+            throw InternalException( "types.size() != 2" );
+        }
+        if( values.size() != 1 )
+        {
+            throw InternalException( "values.size() != 1" );
+        }
         return nullptr; // TODO: PPA: fetch through values a integer constant
                         // which defines the new bitsize
     } );
@@ -1603,7 +1669,10 @@ const Annotation ShlBuiltin::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
-        assert( types.size() == 2 );
+        if( types.size() != 2 )
+        {
+            throw InternalException( "types.size() != 2" );
+        }
         const auto& lhs = types[ 0 ];
         const auto& rhs = types[ 1 ];
         if( rhs->isBit() )
@@ -1646,7 +1715,10 @@ const Annotation ShrBuiltin::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
-        assert( types.size() == 2 );
+        if( types.size() != 2 )
+        {
+            throw InternalException( "types.size() != 2" );
+        }
         const auto& lhs = types[ 0 ];
         const auto& rhs = types[ 1 ];
         if( rhs->isBit() )
@@ -1689,7 +1761,10 @@ const Annotation AshrBuiltin::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
-        assert( types.size() == 2 );
+        if( types.size() != 2 )
+        {
+            throw InternalException( "types.size() != 2" );
+        }
         const auto& lhs = types[ 0 ];
         const auto& rhs = types[ 1 ];
         if( rhs->isBit() )
@@ -1727,7 +1802,10 @@ const Annotation ClzBuiltin::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
-        assert( types.size() == 1 );
+        if( types.size() != 1 )
+        {
+            throw InternalException( "types.size() != 1" );
+        }
         return INTEGER;
     } );
 
@@ -1756,7 +1834,10 @@ const Annotation CloBuiltin::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
-        assert( types.size() == 1 );
+        if( types.size() != 1 )
+        {
+            throw InternalException( "types.size() != 1" );
+        }
         return INTEGER;
     } );
 
@@ -1785,7 +1866,10 @@ const Annotation ClsBuiltin::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
-        assert( types.size() == 1 );
+        if( types.size() != 1 )
+        {
+            throw InternalException( "types.size() != 1" );
+        }
         return INTEGER;
     } );
 

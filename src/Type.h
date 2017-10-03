@@ -54,6 +54,7 @@
 #include <libstdhl/Log>
 #include <libstdhl/Math>
 
+#include <functional>
 #include <unordered_map>
 
 namespace libcasm_ir
@@ -605,12 +606,6 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< TupleType >;
 
         explicit TupleType( const Types& types );
-
-        template < typename... Args >
-        inline TupleType( Args&&... args )
-        : TupleType( { { std::forward< Args >( args )... } } )
-        {
-        }
 
         std::string name( void ) const override;
 

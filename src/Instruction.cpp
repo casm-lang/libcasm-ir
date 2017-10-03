@@ -43,6 +43,7 @@
 
 #include "Builtin.h"
 #include "Derived.h"
+#include "Exception.h"
 #include "Function.h"
 #include "Rule.h"
 #include "Statement.h"
@@ -568,7 +569,10 @@ const Annotation InvInstruction::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
-        assert( types.size() == 1 );
+        if( types.size() != 1 )
+        {
+            throw InternalException( "types.size() != 1" );
+        }
 
         const auto& lhs = types[ 0 ];
 
@@ -635,7 +639,10 @@ const Annotation AddInstruction::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
-        assert( types.size() == 2 );
+        if( types.size() != 2 )
+        {
+            throw InternalException( "types.size() != 2" );
+        }
 
         const auto& lhs = types[ 0 ];
         const auto& rhs = types[ 1 ];
@@ -703,7 +710,10 @@ const Annotation SubInstruction::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
-        assert( types.size() == 2 );
+        if( types.size() != 2 )
+        {
+            throw InternalException( "types.size() != 2" );
+        }
 
         const auto& lhs = types[ 0 ];
         const auto& rhs = types[ 1 ];
@@ -771,7 +781,10 @@ const Annotation MulInstruction::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
-        assert( types.size() == 2 );
+        if( types.size() != 2 )
+        {
+            throw InternalException( "types.size() != 2" );
+        }
 
         const auto& lhs = types[ 0 ];
         const auto& rhs = types[ 1 ];
@@ -824,7 +837,10 @@ const Annotation ModInstruction::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
-        assert( types.size() == 2 );
+        if( types.size() != 2 )
+        {
+            throw InternalException( "types.size() != 2" );
+        }
 
         const auto& lhs = types[ 0 ];
         const auto& rhs = types[ 1 ];
@@ -882,7 +898,10 @@ const Annotation DivInstruction::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
-        assert( types.size() == 2 );
+        if( types.size() != 2 )
+        {
+            throw InternalException( "types.size() != 2" );
+        }
 
         const auto& lhs = types[ 0 ];
         const auto& rhs = types[ 1 ];
@@ -950,7 +969,10 @@ const Annotation PowInstruction::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
-        assert( types.size() == 2 );
+        if( types.size() != 2 )
+        {
+            throw InternalException( "types.size() != 2" );
+        }
 
         const auto& lhs = types[ 0 ];
         const auto& rhs = types[ 1 ];
@@ -1033,7 +1055,10 @@ const Annotation AndInstruction::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
-        assert( types.size() == 2 );
+        if( types.size() != 2 )
+        {
+            throw InternalException( "types.size() != 2" );
+        }
 
         const auto& lhs = types[ 0 ];
         const auto& rhs = types[ 1 ];
@@ -1094,7 +1119,10 @@ const Annotation XorInstruction::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
-        assert( types.size() == 2 );
+        if( types.size() != 2 )
+        {
+            throw InternalException( "types.size() != 2" );
+        }
 
         const auto& lhs = types[ 0 ];
         const auto& rhs = types[ 1 ];
@@ -1155,7 +1183,10 @@ const Annotation OrInstruction::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
-        assert( types.size() == 2 );
+        if( types.size() != 2 )
+        {
+            throw InternalException( "types.size() != 2" );
+        }
 
         const auto& lhs = types[ 0 ];
         const auto& rhs = types[ 1 ];
@@ -1211,7 +1242,10 @@ const Annotation ImpInstruction::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
-        assert( types.size() == 2 );
+        if( types.size() != 2 )
+        {
+            throw InternalException( "types.size() != 2" );
+        }
 
         const auto& lhs = types[ 0 ];
         const auto& rhs = types[ 1 ];
@@ -1277,7 +1311,10 @@ const Annotation NotInstruction::info( classid(),
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
-        assert( types.size() == 1 );
+        if( types.size() != 1 )
+        {
+            throw InternalException( "types.size() != 1" );
+        }
 
         const auto& lhs = types[ 0 ];
 
@@ -1319,7 +1356,10 @@ u1 CompareInstruction::classof( Value const* obj )
 static auto compare_instruction_inference
     = []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
-    assert( types.size() == 2 );
+    if( types.size() != 2 )
+    {
+        throw InternalException( "types.size() != 2" );
+    }
     const auto& lhs = types[ 0 ];
     const auto& rhs = types[ 1 ];
 
