@@ -44,6 +44,8 @@
 
 #include <libcasm-ir/CasmIR>
 
+#include <functional>
+
 namespace libcasm_ir
 {
     class Specification;
