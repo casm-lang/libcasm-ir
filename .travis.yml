@@ -1,0 +1,226 @@
+#
+#   Copyright (c) 2015-2017 CASM Organization
+#   All rights reserved.
+#
+#   Developed by: Philipp Paulweber
+#                 https://github.com/casm-lang/libcasm-ir
+#
+#   This file is part of libcasm-ir.
+#
+#   libcasm-ir is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   libcasm-ir is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
+#
+#   Additional permission under GNU GPL version 3 section 7
+#
+#   libcasm-ir is distributed under the terms of the GNU General Public License
+#   with the following clarification and special exception: Linking libcasm-ir
+#   statically or dynamically with other modules is making a combined work
+#   based on libcasm-ir. Thus, the terms and conditions of the GNU General
+#   Public License cover the whole combination. As a special exception,
+#   the copyright holders of libcasm-ir give you permission to link libcasm-ir
+#   with independent modules to produce an executable, regardless of the
+#   license terms of these independent modules, and to copy and distribute
+#   the resulting executable under terms of your choice, provided that you
+#   also meet, for each linked independent module, the terms and conditions
+#   of the license of that module. An independent module is a module which
+#   is not derived from or based on libcasm-ir. If you modify libcasm-ir, you
+#   may extend this exception to your version of the library, but you are
+#   not obliged to do so. If you do not wish to do so, delete this exception
+#   statement from your version.
+#
+
+language: cpp
+
+dist: trusty
+sudo: required
+
+git:
+    submodules: false
+
+matrix:
+  include:
+    - os: linux
+      compiler: clang
+      addons: &addons_clang_5_0
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-5.0
+          packages:
+            - gcc-6
+            - g++-6
+            - clang-5.0
+      env: ENV_CC="clang-5.0" ENV_CXX="clang++-5.0" BUILD="debug"
+    - os: linux
+      compiler: clang
+      addons: *addons_clang_5_0
+      env: ENV_CC="clang-5.0" ENV_CXX="clang++-5.0" BUILD="sanitize"
+    - os: linux
+      compiler: clang
+      addons: *addons_clang_5_0
+      env: ENV_CC="clang-5.0" ENV_CXX="clang++-5.0" BUILD="release"
+
+    - os: linux
+      compiler: clang
+      addons: &addons_clang_4_0
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-4.0
+          packages:
+            - gcc-6
+            - g++-6
+            - clang-4.0
+      env: ENV_CC="clang-4.0" ENV_CXX="clang++-4.0" BUILD="debug"
+#   - os: linux
+#     compiler: clang
+#     addons: *addons_clang_4_0
+#     env: ENV_CC="clang-4.0" ENV_CXX="clang++-4.0" BUILD="sanitize"
+#   - os: linux
+#     compiler: clang
+#     addons: *addons_clang_4_0
+#     env: ENV_CC="clang-4.0" ENV_CXX="clang++-4.0" BUILD="release"
+
+    - os: linux
+      compiler: clang
+      addons: &addons_clang_3_9
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-3.9
+          packages:
+            - gcc-6
+            - g++-6
+            - clang-3.9
+      env: ENV_CC="clang-3.9" ENV_CXX="clang++-3.9" BUILD="debug"
+#   - os: linux
+#     compiler: clang
+#     addons: *addons_clang_3_9
+#     env: ENV_CC="clang-3.9" ENV_CXX="clang++-3.9" BUILD="release"
+
+    - os: linux
+      compiler: clang
+      addons: &addons_clang_3_8
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.8
+          packages:
+            - gcc-6
+            - g++-6
+            - clang-3.8
+      env: ENV_CC="clang-3.8" ENV_CXX="clang++-3.8" BUILD="debug"
+#   - os: linux
+#     compiler: clang
+#     addons: *addons_clang_3_8
+#     env: ENV_CC="clang-3.8" ENV_CXX="clang++-3.8" BUILD="release"
+
+    - os: linux
+      compiler: clang
+      addons: &addons_clang_3_7
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.7
+          packages:
+            - gcc-5
+            - g++-5
+            - clang-3.7
+      env: ENV_CC="clang-3.7" ENV_CXX="clang++-3.7" BUILD="debug"
+#   - os: linux
+#     compiler: clang
+#     addons: *addons_clang_3_7
+#     env: ENV_CC="clang-3.7" ENV_CXX="clang++-3.7" BUILD="release"
+
+    - os: linux
+      compiler: gcc
+      addons: &addons_gcc_7
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - sourceline: "ppa:jonathonf/binutils"
+          packages:
+            - gcc-7
+            - g++-7
+            - binutils
+      env: ENV_CC="gcc-7" ENV_CXX="g++-7" BUILD="debug"
+    - os: linux
+      compiler: gcc
+      addons: *addons_gcc_7
+      env: ENV_CC="gcc-7" ENV_CXX="g++-7" BUILD="sanitize"
+    - os: linux
+      compiler: gcc
+      addons: *addons_gcc_7
+      env: ENV_CC="gcc-7" ENV_CXX="g++-7" BUILD="release"
+
+    - os: linux
+      compiler: gcc
+      addons: &addons_gcc_6
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - sourceline: "ppa:jonathonf/binutils"
+          packages:
+            - gcc-6
+            - g++-6
+            - binutils
+      env: ENV_CC="gcc-6" ENV_CXX="g++-6" BUILD="debug"
+#   - os: linux
+#     compiler: gcc
+#     addons: *addons_gcc_6
+#     env: ENV_CC="gcc-6" ENV_CXX="g++-6" BUILD="release"
+
+    - os: linux
+      compiler: gcc
+      addons: &addons_gcc_5
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-5
+            - g++-5
+      env: ENV_CC="gcc-5" ENV_CXX="g++-5" BUILD="debug"
+#   - os: linux
+#     compiler: gcc
+#     addons: *addons_gcc_5
+#     env: ENV_CC="gcc-5" ENV_CXX="g++-5" BUILD="release"
+
+  allow_failures:
+
+    - os: osx
+      osx_image: xcode8
+      compiler: clang
+
+    - os: osx
+      osx_image: xcode8
+      compiler: gcc
+
+before_install:
+  - git submodule update --init --remote
+
+install:
+  - echo ${TRAVIS_OS_NAME}
+  - make  --version
+  - cmake --version
+  - ${CC} --version
+  - ${CXX} --version
+  - ld --version
+  - echo ${BUILD}
+
+script:
+  - make ${BUILD}
+  - make ${BUILD}-test
+  - make ${BUILD}-benchmark
+
+after_success:
+  - make ${BUILD}-analyze
