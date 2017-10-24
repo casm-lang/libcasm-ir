@@ -233,8 +233,6 @@ namespace libcasm_ir
 
         std::string dump( void ) const;
 
-        std::string make_hash( void ) const;
-
         std::string label( void ) const;
 
         virtual std::size_t hash( void ) const = 0;

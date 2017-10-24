@@ -43,23 +43,27 @@
 
 using namespace libcasm_ir;
 
-TEST( libcasm_ir__type_range, of_integer_constants )
+TEST( libcasm_ir__type_id, sequence )
 {
-    const auto m = libstdhl::Memory::make< IntegerConstant >( -4 );
-    const auto n = libstdhl::Memory::make< IntegerConstant >( 13 );
+    auto v = libstdhl::Memory::get< VoidType >();
+    auto i = libstdhl::Memory::get< IntegerType >();
+    auto s = libstdhl::Memory::get< StringType >();
+    auto b = libstdhl::Memory::get< BooleanType >();
 
-    const auto R = libstdhl::Memory::make< Range >( m, n );
-    const auto v = libstdhl::Memory::get< RangeType >( R );
-    ASSERT_TRUE( v != nullptr );
+    auto vid = v->id();
+    auto iid = i->id();
+    auto sid = s->id();
+    auto bid = b->id();
 
-    EXPECT_STREQ( v->name().c_str(), "[-4..13]" );
-    EXPECT_STREQ( v->description().c_str(), "[-4..13]" );
+    std::cout << std::to_string( vid ) << "\n";
+    std::cout << std::to_string( iid ) << "\n";
+    std::cout << std::to_string( sid ) << "\n";
+    std::cout << std::to_string( bid ) << "\n";
 
-    v->foreach( []( const Constant& constant ) {
-        std::cerr << constant.name() << "\n";
-    } );
-
-    std::cerr << v->choose().name() << "\n";
+    EXPECT_EQ( v, libcasm_ir::Type::fromID( vid ) );
+    EXPECT_EQ( i, libcasm_ir::Type::fromID( iid ) );
+    EXPECT_EQ( s, libcasm_ir::Type::fromID( sid ) );
+    EXPECT_EQ( b, libcasm_ir::Type::fromID( bid ) );
 }
 
 //

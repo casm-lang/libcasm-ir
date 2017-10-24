@@ -70,20 +70,20 @@ namespace libcasm_ir
         // format is: < result type <-- < arg1_type, arg2_type, ... > >
         struct Relation
         {
-            Type::ID result;
-            std::vector< Type::ID > argument;
+            Type::Kind result;
+            std::vector< Type::Kind > argument;
         };
 
         using Data = std::vector< Relation >;
-        using Set = std::set< Type::ID >;
-        using Map = std::unordered_map< Type::ID, std::vector< Set > >;
+        using Set = std::set< Type::Kind >;
+        using Map = std::unordered_map< Type::Kind, std::vector< Set > >;
 
         Annotation( const Value::ID id, const Data& info,
             const std::function< Type::Ptr( const std::vector< Type::Ptr >&,
                 const std::vector< Value::Ptr >& ) >
                 inference
             = []( const std::vector< Type::Ptr >&,
-                const std::vector< Value::Ptr >& ) -> Type::Ptr {
+                  const std::vector< Value::Ptr >& ) -> Type::Ptr {
                 return nullptr;
             } );
 
@@ -91,11 +91,11 @@ namespace libcasm_ir
 
         void checkTypeRelation( const Type::Ptr& type ) const;
 
-        Type::ID resolveTypeRelation(
+        Type::Kind resolveTypeRelation(
             const std::vector< Value::Ptr >& operands ) const;
 
         const Relation* resultTypeForRelation(
-            const std::vector< Type::ID > arguments ) const;
+            const std::vector< Type::Kind > arguments ) const;
 
         const Set& resultTypes( void ) const;
 

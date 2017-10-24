@@ -70,6 +70,7 @@ add_library( ${PROJECT}-test OBJECT
   type/boolean.cpp
   type/enum.cpp
   type/file.cpp
+  type/id.cpp
   type/integer.cpp
   type/list.cpp
   type/port.cpp

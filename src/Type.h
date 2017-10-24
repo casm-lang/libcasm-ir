@@ -77,10 +77,10 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< Type >;
 
-        enum ID : libstdhl::u8
-        {
-            _BOTTOM_ = 0,
+        using ID = u64;
 
+        enum class Kind
+        {
             // synthetic
             VOID,
             LABEL,
@@ -109,10 +109,10 @@ namespace libcasm_ir
             FILE,
             PORT,
 
-            _TOP_
+            _TOP_,
         };
 
-        Type( ID id );
+        Type( Kind kind );
 
         virtual ~Type( void ) = default;
 
@@ -128,7 +128,9 @@ namespace libcasm_ir
 
         virtual void validate( const Constant& constant ) const = 0;
 
-        ID id( void ) const;
+        Kind kind( void ) const;
+
+        ID id( void );
 
         const Type& result( void ) const;
 
@@ -138,15 +140,13 @@ namespace libcasm_ir
 
         const Types& arguments( void ) const;
 
-        std::string make_hash( void ) const;
-
         virtual std::size_t hash( void ) const = 0;
 
         inline u1 operator==( const Type& rhs ) const
         {
             if( this != &rhs )
             {
-                if( this->id() != rhs.id() or this->hash() != rhs.hash() )
+                if( this->m_id != rhs.m_id or this->hash() != rhs.hash() )
                 {
                     return false;
                 }
@@ -187,6 +187,12 @@ namespace libcasm_ir
         u1 isFile( void ) const;
         u1 isPort( void ) const;
 
+        std::unordered_map< std::size_t, Type::Ptr >& cache( void )
+        {
+            static std::unordered_map< std::size_t, Type::Ptr > obj = {};
+            return obj;
+        }
+
       protected:
         template < typename T >
         inline typename T::Ptr ptr_this( void )
@@ -204,22 +210,24 @@ namespace libcasm_ir
         Types m_arguments;
 
       private:
+        Kind m_kind;
         ID m_id;
 
       public:
-        static std::string token( const Type::ID id );
+        static Type::Ptr fromID( const Type::ID id );
 
-        std::unordered_map< std::string, Type::Ptr >& make_cache( void )
-        {
-            static std::unordered_map< std::string, Type::Ptr > cache;
-            return cache;
-        }
+        static std::string token( const Type::Kind kind );
+
+      private:
+        static std::unordered_map< std::size_t, Type::Ptr >
+            s_registered_type_hash2ptr;
+        static std::unordered_map< u64, std::size_t > s_registered_type_id2hash;
     };
 
     class SyntheticType : public Type
     {
       public:
-        SyntheticType( Type::ID id );
+        SyntheticType( Kind kind );
     };
 
     class VoidType final : public SyntheticType
@@ -243,9 +251,9 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::VOID;
+            return Type::Kind::VOID;
         }
     };
 
@@ -270,9 +278,9 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::LABEL;
+            return Type::Kind::LABEL;
         }
     };
 
@@ -297,9 +305,9 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::LOCATION;
+            return Type::Kind::LOCATION;
         }
     };
 
@@ -324,16 +332,16 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::RELATION;
+            return Type::Kind::RELATION;
         }
     };
 
     class PrimitiveType : public Type
     {
       public:
-        PrimitiveType( Type::ID id );
+        PrimitiveType( Kind kind );
     };
 
     class BooleanType final : public PrimitiveType
@@ -357,9 +365,9 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::BOOLEAN;
+            return Type::Kind::BOOLEAN;
         }
     };
 
@@ -390,9 +398,9 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::INTEGER;
+            return Type::Kind::INTEGER;
         }
 
       private:
@@ -428,9 +436,9 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::BIT;
+            return Type::Kind::BIT;
         }
 
       private:
@@ -458,9 +466,9 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::STRING;
+            return Type::Kind::STRING;
         }
     };
 
@@ -485,9 +493,9 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::FLOATING;
+            return Type::Kind::FLOATING;
         }
     };
 
@@ -512,16 +520,16 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::RATIONAL;
+            return Type::Kind::RATIONAL;
         }
     };
 
     class ComposedType : public Type
     {
       public:
-        ComposedType( Type::ID id );
+        ComposedType( Kind kind );
     };
 
     class EnumerationType final : public ComposedType
@@ -549,9 +557,9 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::ENUMERATION;
+            return Type::Kind::ENUMERATION;
         }
 
       private:
@@ -591,9 +599,9 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::RANGE;
+            return Type::Kind::RANGE;
         }
 
       private:
@@ -621,9 +629,9 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::TUPLE;
+            return Type::Kind::TUPLE;
         }
     };
 
@@ -648,9 +656,9 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::LIST;
+            return Type::Kind::LIST;
         }
     };
 
@@ -659,7 +667,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< ReferenceType >;
 
-        ReferenceType( Type::ID id, const RelationType::Ptr& type );
+        ReferenceType( Kind kind, const RelationType::Ptr& type );
 
         Type::Ptr dereference( void ) const;
 
@@ -689,9 +697,9 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::RULE_REFERENCE;
+            return Type::Kind::RULE_REFERENCE;
         }
     };
 
@@ -711,16 +719,16 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::FUNCTION_REFERENCE;
+            return Type::Kind::FUNCTION_REFERENCE;
         }
     };
 
     class AbstractionType : public Type
     {
       public:
-        AbstractionType( Type::ID id );
+        AbstractionType( Kind kind );
     };
 
     class FileType final : public AbstractionType
@@ -744,9 +752,9 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::FILE;
+            return Type::Kind::FILE;
         }
     };
 
@@ -771,19 +779,24 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::PORT;
+            return Type::Kind::PORT;
         }
     };
 }
 
 namespace std
 {
-    template <>
-    struct hash< libcasm_ir::Type::ID >
+    static std::string to_string( const libcasm_ir::Type::Kind value )
     {
-        inline size_t operator()( const libcasm_ir::Type::ID value ) const
+        return libcasm_ir::Type::token( value );
+    };
+
+    template <>
+    struct hash< libcasm_ir::Type::Kind >
+    {
+        inline size_t operator()( const libcasm_ir::Type::Kind value ) const
         {
             return static_cast< size_t >( value );
         }

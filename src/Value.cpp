@@ -125,11 +125,6 @@ std::string Value::dump( void ) const
     return tmp;
 }
 
-std::string Value::make_hash( void ) const
-{
-    return "v:" + std::to_string( id() ) + ":" + description();
-}
-
 std::string Value::label( void ) const
 {
     static std::unordered_map< u8, u64 > cnt;

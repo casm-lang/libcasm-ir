@@ -57,7 +57,7 @@ Annotation::Annotation( const Value::ID id, const Data& info,
 
     for( const auto& relation : m_info )
     {
-        Type::ID rt = relation.result;
+        Type::Kind rt = relation.result;
 
         m_type_set.front().emplace( rt );
 
@@ -74,8 +74,8 @@ Annotation::Annotation( const Value::ID id, const Data& info,
                 m_type_set.emplace_back( Set() );
             }
 
-            Type::ID at = relation.argument[ i ];
-            assert( at != libcasm_ir::Type::RELATION );
+            Type::Kind at = relation.argument[ i ];
+            assert( at != libcasm_ir::Type::Kind::RELATION );
 
             m_type_set[ i + 1 ].emplace( at );
 
@@ -197,8 +197,8 @@ void Annotation::checkTypeRelation( const Type::Ptr& type ) const
     std::string key = "";
     for( auto argTy : type->arguments() )
     {
-        const auto arg = argTy->id();
-        assert( arg != libcasm_ir::Type::RELATION );
+        const auto arg = argTy->kind();
+        assert( arg != libcasm_ir::Type::Kind::RELATION );
         key += std::to_string( arg ) + ";";
     }
 
@@ -207,29 +207,27 @@ void Annotation::checkTypeRelation( const Type::Ptr& type ) const
     {
         throw std::domain_error( "no type relation '" + type->description()
                                  + "' defined in annotation for '"
-                                 + Value::token( id() )
-                                 + "'" );
+                                 + Value::token( id() ) + "'" );
     }
 
-    if( result->second->result != type->result().id() )
+    if( result->second->result != type->result().kind() )
     {
         throw std::domain_error( "return of type relation '"
                                  + type->description()
                                  + "' does not match the annotation for '"
-                                 + Value::token( id() )
-                                 + "'" );
+                                 + Value::token( id() ) + "'" );
     }
 }
 
-Type::ID Annotation::resolveTypeRelation(
+Type::Kind Annotation::resolveTypeRelation(
     const std::vector< Value::Ptr >& operands ) const
 {
     std::string key;
 
     for( auto argTy : operands )
     {
-        const auto arg = argTy->type().id();
-        assert( arg != libcasm_ir::Type::RELATION );
+        const auto arg = argTy->type().kind();
+        assert( arg != libcasm_ir::Type::Kind::RELATION );
         key += std::to_string( arg ) + ";";
     }
 
@@ -237,15 +235,14 @@ Type::ID Annotation::resolveTypeRelation(
     if( result == m_relation_to_type.end() )
     {
         throw std::domain_error( "no type relation found for annotation of '"
-                                 + Value::token( id() )
-                                 + "'" );
+                                 + Value::token( id() ) + "'" );
     }
 
     return result->second->result;
 }
 
 const Annotation::Relation* Annotation::resultTypeForRelation(
-    const std::vector< Type::ID > arguments ) const
+    const std::vector< Type::Kind > arguments ) const
 {
     std::string key;
 
@@ -253,10 +250,10 @@ const Annotation::Relation* Annotation::resultTypeForRelation(
     std::size_t idx = 0;
     for( auto arg : arguments )
     {
-        assert( arg != libcasm_ir::Type::RELATION );
+        assert( arg != libcasm_ir::Type::Kind::RELATION );
         key += std::to_string( arg ) + ";";
 
-        if( arg == libcasm_ir::Type::_TOP_ )
+        if( arg == libcasm_ir::Type::Kind::_TOP_ )
         {
             if( pos != -1 )
             {
@@ -315,10 +312,8 @@ const Annotation& Annotation::find( const Value::ID id )
     if( result == mapping.end() )
     {
         throw std::domain_error( "no annotation defined for Value::ID '"
-                                 + std::to_string( id )
-                                 + "' (aka. '"
-                                 + Value::token( id )
-                                 + "')" );
+                                 + std::to_string( id ) + "' (aka. '"
+                                 + Value::token( id ) + "')" );
     }
     return *result->second;
 }

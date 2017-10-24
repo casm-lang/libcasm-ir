@@ -55,7 +55,15 @@ TEST( libcasm_ir__type_bit, make_valid )
         EXPECT_TRUE( v != nullptr );
         EXPECT_TRUE( w != nullptr );
 
+        EXPECT_STREQ( v->name().c_str(),
+            std::string( "u" + std::to_string( c ) ).c_str() );
+        EXPECT_STREQ( v->description().c_str(),
+            std::string( "Bit'" + std::to_string( c ) ).c_str() );
+        EXPECT_STREQ( v->name().c_str(), w->name().c_str() );
+        EXPECT_STREQ( v->description().c_str(), w->description().c_str() );
+
         EXPECT_TRUE( v != w );
+        EXPECT_EQ( v->id(), w->id() );
 
         auto r = cache.find( v->name() );
         EXPECT_TRUE( r == cache.end() );
@@ -63,7 +71,7 @@ TEST( libcasm_ir__type_bit, make_valid )
 
         EXPECT_EQ( v->bitsize(), c );
 
-        EXPECT_EQ( v->id(), libcasm_ir::Type::BIT );
+        EXPECT_EQ( v->kind(), libcasm_ir::Type::Kind::BIT );
     }
 }
 
@@ -79,10 +87,18 @@ TEST( libcasm_ir__type_bit, get_valid )
         EXPECT_TRUE( v != nullptr );
         EXPECT_TRUE( w != nullptr );
 
+        EXPECT_STREQ( v->name().c_str(),
+            std::string( "u" + std::to_string( c ) ).c_str() );
+        EXPECT_STREQ( v->description().c_str(),
+            std::string( "Bit'" + std::to_string( c ) ).c_str() );
+        EXPECT_STREQ( v->name().c_str(), w->name().c_str() );
+        EXPECT_STREQ( v->description().c_str(), w->description().c_str() );
+
         EXPECT_TRUE( v == w );
+        EXPECT_EQ( v->id(), w->id() );
 
         EXPECT_EQ( v->bitsize(), c );
-        EXPECT_EQ( v->id(), libcasm_ir::Type::BIT );
+        EXPECT_EQ( v->kind(), libcasm_ir::Type::Kind::BIT );
 
         v->foreach( []( const Constant& constant ) {
             std::cerr << constant.name() << "\n";
@@ -92,21 +108,12 @@ TEST( libcasm_ir__type_bit, get_valid )
     }
 }
 
-TEST( libcasm_ir__type_bit, get_valid_2 )
-{
-    std::unordered_map< std::string, BitType::Ptr > cache;
-
-    for( u16 c = 1; c <= BitType::SizeMax; c++ )
-    {
-        auto v = libstdhl::Memory::get< BitType >( c );
-        auto w = libstdhl::Memory::get< BitType >( c );
-
-        EXPECT_TRUE( v != nullptr );
-        EXPECT_TRUE( w != nullptr );
-
-        EXPECT_TRUE( v == w );
-
-        EXPECT_EQ( v->bitsize(), c );
-        EXPECT_EQ( v->id(), libcasm_ir::Type::BIT );
-    }
-}
+//
+//  Local variables:
+//  mode: c++
+//  indent-tabs-mode: nil
+//  c-basic-offset: 4
+//  tab-width: 4
+//  End:
+//  vim:noexpandtab:sw=4:ts=4:
+//

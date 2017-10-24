@@ -546,24 +546,24 @@ void InvInstruction::accept( Visitor& visitor )
 const Annotation InvInstruction::info( classid(),
     Annotation::Data{
 
-        { Type::INTEGER,
+        { Type::Kind::INTEGER,
             {
-                Type::INTEGER,
+                Type::Kind::INTEGER,
             } },
 
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::BIT,
+                Type::Kind::BIT,
             } },
 
-        { Type::FLOATING,
+        { Type::Kind::FLOATING,
             {
-                Type::FLOATING,
+                Type::Kind::FLOATING,
             } },
 
-        { Type::RATIONAL,
+        { Type::Kind::RATIONAL,
             {
-                Type::RATIONAL,
+                Type::Kind::RATIONAL,
             } },
 
     },
@@ -611,29 +611,29 @@ void AddInstruction::accept( Visitor& visitor )
 const Annotation AddInstruction::info( classid(),
     Annotation::Data{
 
-        { Type::INTEGER,
+        { Type::Kind::INTEGER,
             {
-                Type::INTEGER, Type::INTEGER, // signed integer add no wrap
+                Type::Kind::INTEGER, Type::Kind::INTEGER, // signed integer add no wrap
             } },
 
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::BIT, Type::BIT, // unsigned bit add with wrap
+                Type::Kind::BIT, Type::Kind::BIT, // unsigned bit add with wrap
             } },
 
-        { Type::RATIONAL,
+        { Type::Kind::RATIONAL,
             {
-                Type::RATIONAL, Type::RATIONAL, // signed rational add no wrap
+                Type::Kind::RATIONAL, Type::Kind::RATIONAL, // signed rational add no wrap
             } },
 
-        { Type::FLOATING,
+        { Type::Kind::FLOATING,
             {
-                Type::FLOATING, Type::FLOATING, // signed floating add no wrap
+                Type::Kind::FLOATING, Type::Kind::FLOATING, // signed floating add no wrap
             } },
 
-        { Type::STRING,
+        { Type::Kind::STRING,
             {
-                Type::STRING, Type::STRING, // concatenation
+                Type::Kind::STRING, Type::Kind::STRING, // concatenation
             } },
 
     },
@@ -687,24 +687,24 @@ void SubInstruction::accept( Visitor& visitor )
 const Annotation SubInstruction::info( classid(),
     Annotation::Data{
 
-        { Type::INTEGER,
+        { Type::Kind::INTEGER,
             {
-                Type::INTEGER, Type::INTEGER, // signed integer sub no wrap
+                Type::Kind::INTEGER, Type::Kind::INTEGER, // signed integer sub no wrap
             } },
 
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::BIT, Type::BIT, // unsigned bit sub with wrap
+                Type::Kind::BIT, Type::Kind::BIT, // unsigned bit sub with wrap
             } },
 
-        { Type::RATIONAL,
+        { Type::Kind::RATIONAL,
             {
-                Type::RATIONAL, Type::RATIONAL, // signed rational sub no wrap
+                Type::Kind::RATIONAL, Type::Kind::RATIONAL, // signed rational sub no wrap
             } },
 
-        { Type::FLOATING,
+        { Type::Kind::FLOATING,
             {
-                Type::FLOATING, Type::FLOATING, // signed floating sub no wrap
+                Type::Kind::FLOATING, Type::Kind::FLOATING, // signed floating sub no wrap
             } },
 
     },
@@ -758,24 +758,24 @@ void MulInstruction::accept( Visitor& visitor )
 const Annotation MulInstruction::info( classid(),
     Annotation::Data{
 
-        { Type::INTEGER,
+        { Type::Kind::INTEGER,
             {
-                Type::INTEGER, Type::INTEGER, // signed integer mul no wrap
+                Type::Kind::INTEGER, Type::Kind::INTEGER, // signed integer mul no wrap
             } },
 
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::BIT, Type::BIT, // unsigned integer mul with wrap
+                Type::Kind::BIT, Type::Kind::BIT, // unsigned integer mul with wrap
             } },
 
-        { Type::RATIONAL,
+        { Type::Kind::RATIONAL,
             {
-                Type::RATIONAL, Type::RATIONAL, // signed rational mul no wrap
+                Type::Kind::RATIONAL, Type::Kind::RATIONAL, // signed rational mul no wrap
             } },
 
-        { Type::FLOATING,
+        { Type::Kind::FLOATING,
             {
-                Type::FLOATING, Type::FLOATING, // signed floating mul no wrap
+                Type::Kind::FLOATING, Type::Kind::FLOATING, // signed floating mul no wrap
             } },
 
     },
@@ -829,9 +829,9 @@ void ModInstruction::accept( Visitor& visitor )
 const Annotation ModInstruction::info( classid(),
     Annotation::Data{
 
-        { Type::INTEGER,
+        { Type::Kind::INTEGER,
             {
-                Type::INTEGER, Type::INTEGER, // signed integer mod no wrap
+                Type::Kind::INTEGER, Type::Kind::INTEGER, // signed integer mod no wrap
             } },
 
     },
@@ -885,14 +885,14 @@ void DivInstruction::accept( Visitor& visitor )
 const Annotation DivInstruction::info( classid(),
     Annotation::Data{
 
-        { Type::INTEGER,
+        { Type::Kind::INTEGER,
             {
-                Type::INTEGER, Type::INTEGER, // signed integer div no wrap
+                Type::Kind::INTEGER, Type::Kind::INTEGER, // signed integer div no wrap
             } },
 
-        { Type::RATIONAL,
+        { Type::Kind::RATIONAL,
             {
-                Type::RATIONAL, Type::RATIONAL, // signed rational div no wrap
+                Type::Kind::RATIONAL, Type::Kind::RATIONAL, // signed rational div no wrap
             } },
 
     },
@@ -946,24 +946,24 @@ void PowInstruction::accept( Visitor& visitor )
 const Annotation PowInstruction::info( classid(),
     Annotation::Data{
 
-        { Type::INTEGER,
+        { Type::Kind::INTEGER,
             {
-                Type::INTEGER, Type::INTEGER, // signed integer pow no wrap
+                Type::Kind::INTEGER, Type::Kind::INTEGER, // signed integer pow no wrap
             } },
 
-        // { Type::RATIONAL, // TODO: PPA: enable this after clear semantics
+        // { Type::Kind::RATIONAL, // TODO: PPA: enable this after clear semantics
         //     {
-        //         Type::RATIONAL, Type::INTEGER,
+        //         Type::Kind::RATIONAL, Type::Kind::INTEGER,
         //     } },
 
-        // { Type::FLOATING, // TODO: PPA: enable this after clear semantics
+        // { Type::Kind::FLOATING, // TODO: PPA: enable this after clear semantics
         //     {
-        //         Type::FLOATING, Type::FLOATING,
+        //         Type::Kind::FLOATING, Type::Kind::FLOATING,
         //     } },
 
-        { Type::FLOATING,
+        { Type::Kind::FLOATING,
             {
-                Type::FLOATING, Type::INTEGER,
+                Type::Kind::FLOATING, Type::Kind::INTEGER,
             } },
 
     },
@@ -1042,14 +1042,14 @@ void AndInstruction::accept( Visitor& visitor )
 const Annotation AndInstruction::info( classid(),
     Annotation::Data{
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::BOOLEAN, Type::BOOLEAN,
+                Type::Kind::BOOLEAN, Type::Kind::BOOLEAN,
             } },
 
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::BIT, Type::BIT,
+                Type::Kind::BIT, Type::Kind::BIT,
             } },
 
     },
@@ -1106,14 +1106,14 @@ void XorInstruction::accept( Visitor& visitor )
 const Annotation XorInstruction::info( classid(),
     Annotation::Data{
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::BOOLEAN, Type::BOOLEAN,
+                Type::Kind::BOOLEAN, Type::Kind::BOOLEAN,
             } },
 
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::BIT, Type::BIT,
+                Type::Kind::BIT, Type::Kind::BIT,
             } },
 
     },
@@ -1170,14 +1170,14 @@ void OrInstruction::accept( Visitor& visitor )
 const Annotation OrInstruction::info( classid(),
     Annotation::Data{
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::BOOLEAN, Type::BOOLEAN,
+                Type::Kind::BOOLEAN, Type::Kind::BOOLEAN,
             } },
 
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::BIT, Type::BIT,
+                Type::Kind::BIT, Type::Kind::BIT,
             } },
 
     },
@@ -1234,9 +1234,9 @@ void ImpInstruction::accept( Visitor& visitor )
 const Annotation ImpInstruction::info( classid(),
     Annotation::Data{
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::BOOLEAN, Type::BOOLEAN,
+                Type::Kind::BOOLEAN, Type::Kind::BOOLEAN,
             } },
 
     },
@@ -1293,19 +1293,19 @@ void NotInstruction::accept( Visitor& visitor )
 const Annotation NotInstruction::info( classid(),
     Annotation::Data{
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::BOOLEAN,
+                Type::Kind::BOOLEAN,
             } },
 
-        // { Type::BOOLEAN, // TODO: PPA: should we really allow this?
+        // { Type::Kind::BOOLEAN, // TODO: PPA: should we really allow this?
         //     {
-        //         Type::INTEGER,
+        //         Type::Kind::INTEGER,
         //     } },
 
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::BIT,
+                Type::Kind::BIT,
             } },
 
     },
@@ -1402,39 +1402,39 @@ void EquInstruction::accept( Visitor& visitor )
 const Annotation EquInstruction::info( classid(),
     Annotation::Data{
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::BOOLEAN, Type::BOOLEAN,
+                Type::Kind::BOOLEAN, Type::Kind::BOOLEAN,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::INTEGER, Type::INTEGER,
+                Type::Kind::INTEGER, Type::Kind::INTEGER,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::BIT, Type::BIT,
+                Type::Kind::BIT, Type::Kind::BIT,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::STRING, Type::STRING,
+                Type::Kind::STRING, Type::Kind::STRING,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::RATIONAL, Type::RATIONAL,
+                Type::Kind::RATIONAL, Type::Kind::RATIONAL,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::ENUMERATION, Type::ENUMERATION,
+                Type::Kind::ENUMERATION, Type::Kind::ENUMERATION,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::RULE_REFERENCE, Type::RULE_REFERENCE,
+                Type::Kind::RULE_REFERENCE, Type::Kind::RULE_REFERENCE,
             } },
 
     },
@@ -1468,39 +1468,39 @@ void NeqInstruction::accept( Visitor& visitor )
 const Annotation NeqInstruction::info( classid(),
     Annotation::Data{
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::BOOLEAN, Type::BOOLEAN,
+                Type::Kind::BOOLEAN, Type::Kind::BOOLEAN,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::INTEGER, Type::INTEGER,
+                Type::Kind::INTEGER, Type::Kind::INTEGER,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::BIT, Type::BIT,
+                Type::Kind::BIT, Type::Kind::BIT,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::STRING, Type::STRING,
+                Type::Kind::STRING, Type::Kind::STRING,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::RATIONAL, Type::RATIONAL,
+                Type::Kind::RATIONAL, Type::Kind::RATIONAL,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::ENUMERATION, Type::ENUMERATION,
+                Type::Kind::ENUMERATION, Type::Kind::ENUMERATION,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::RULE_REFERENCE, Type::RULE_REFERENCE,
+                Type::Kind::RULE_REFERENCE, Type::Kind::RULE_REFERENCE,
             } },
 
     },
@@ -1534,19 +1534,19 @@ void LthInstruction::accept( Visitor& visitor )
 const Annotation LthInstruction::info( classid(),
     Annotation::Data{
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::INTEGER, Type::INTEGER,
+                Type::Kind::INTEGER, Type::Kind::INTEGER,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::RATIONAL, Type::RATIONAL,
+                Type::Kind::RATIONAL, Type::Kind::RATIONAL,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::FLOATING, Type::FLOATING,
+                Type::Kind::FLOATING, Type::Kind::FLOATING,
             } },
 
     },
@@ -1580,19 +1580,19 @@ void LeqInstruction::accept( Visitor& visitor )
 const Annotation LeqInstruction::info( classid(),
     Annotation::Data{
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::INTEGER, Type::INTEGER,
+                Type::Kind::INTEGER, Type::Kind::INTEGER,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::RATIONAL, Type::RATIONAL,
+                Type::Kind::RATIONAL, Type::Kind::RATIONAL,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::FLOATING, Type::FLOATING,
+                Type::Kind::FLOATING, Type::Kind::FLOATING,
             } },
 
     },
@@ -1626,19 +1626,19 @@ void GthInstruction::accept( Visitor& visitor )
 const Annotation GthInstruction::info( classid(),
     Annotation::Data{
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::INTEGER, Type::INTEGER,
+                Type::Kind::INTEGER, Type::Kind::INTEGER,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::RATIONAL, Type::RATIONAL,
+                Type::Kind::RATIONAL, Type::Kind::RATIONAL,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::FLOATING, Type::FLOATING,
+                Type::Kind::FLOATING, Type::Kind::FLOATING,
             } },
 
     },
@@ -1672,19 +1672,19 @@ void GeqInstruction::accept( Visitor& visitor )
 const Annotation GeqInstruction::info( classid(),
     Annotation::Data{
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::INTEGER, Type::INTEGER,
+                Type::Kind::INTEGER, Type::Kind::INTEGER,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::RATIONAL, Type::RATIONAL,
+                Type::Kind::RATIONAL, Type::Kind::RATIONAL,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::FLOATING, Type::FLOATING,
+                Type::Kind::FLOATING, Type::Kind::FLOATING,
             } },
 
     },

@@ -48,17 +48,18 @@ TEST( libcasm_ir__constant_range, of_integer_constants )
     const auto i = libstdhl::Memory::get< IntegerType >();
     const auto t = libstdhl::Memory::make< RangeType >( i );
 
-    const auto m = libstdhl::Memory::get< IntegerConstant >( -4 );
-    const auto n = libstdhl::Memory::get< IntegerConstant >( 13 );
+    const auto m = libstdhl::Memory::make< IntegerConstant >( -4 );
+    const auto n = libstdhl::Memory::make< IntegerConstant >( 13 );
 
-    const auto v = libstdhl::Memory::get< RangeConstant >( t, *m, *n );
+    const auto v = libstdhl::Memory::make< RangeConstant >( t, *m, *n );
     ASSERT_TRUE( v != nullptr );
 
     EXPECT_STREQ( v->name().c_str(), "[-4..13]" );
     EXPECT_STREQ( v->description().c_str(), "[-4..13] [-4..13]" );
 
-    v->foreach( [](
-        const Constant& constant ) { std::cerr << constant.name() << "\n"; } );
+    v->foreach( []( const Constant& constant ) {
+        std::cerr << constant.name() << "\n";
+    } );
 
     std::cerr << v->choose().name() << "\n";
 }

@@ -116,10 +116,10 @@ namespace libcasm_ir
         libstdhl::Type::Data m_data;
 
       public:
-        std::unordered_map< std::string, Constant::Ptr >& make_cache( void )
+        std::unordered_map< std::size_t, Constant::Ptr >& cache( void )
         {
-            static std::unordered_map< std::string, Constant::Ptr > cache;
-            return cache;
+            static std::unordered_map< std::size_t, Constant::Ptr > s_cache;
+            return s_cache;
         }
 
         static Constant undef( const Type::Ptr& type );
