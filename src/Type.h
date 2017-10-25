@@ -77,6 +77,9 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< Type >;
 
+        /**
+           Represents the various types recognized by the IR type system
+        */
         enum class Kind : u8
         {
             // synthetic
@@ -113,6 +116,9 @@ namespace libcasm_ir
         static_assert( sizeof( Kind ) == 1,
             "size of 'Type::Kind' shall be 8 bits (1 byte)" );
 
+        /**
+           Represents a unique number of a derived flavor of a Type::Kind
+        */
         class ID
         {
           public:
@@ -159,6 +165,11 @@ namespace libcasm_ir
             inline u1 operator!=( const ID& rhs ) const
             {
                 return !operator==( rhs );
+            }
+
+            inline u1 operator<( const ID& rhs ) const
+            {
+                return this->hash() < rhs.hash();
             }
 
           private:
