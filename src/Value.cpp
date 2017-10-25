@@ -66,7 +66,7 @@ Value::Value( const Type::ID type, const ID id )
 : m_type( type )
 , m_id( id )
 {
-    assert( type != 0 );
+    assert( type.flavor() != 0 );
 }
 
 std::string Value::description( void ) const
@@ -77,6 +77,11 @@ std::string Value::description( void ) const
 const Type& Value::type( void ) const
 {
     return *Type::fromID( m_type );
+}
+
+Type::ID Value::typeId( void ) const
+{
+    return m_type;
 }
 
 Value::ID Value::id( void ) const

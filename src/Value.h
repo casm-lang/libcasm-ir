@@ -231,7 +231,9 @@ namespace libcasm_ir
 
         const Type& type( void ) const;
 
-        ID id() const;
+        Type::ID typeId( void ) const;
+
+        ID id( void ) const;
 
         std::string dump( void ) const;
 

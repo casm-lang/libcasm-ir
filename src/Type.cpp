@@ -55,22 +55,22 @@ using namespace libcasm_ir;
 static const auto VOID_TYPE = libstdhl::Memory::get< VoidType >();
 
 Type::Type( Type::Kind kind )
-: m_kind( kind )
-, m_id( 0 )
+: m_id( kind )
 {
 }
 
 Type::Kind Type::kind( void ) const
 {
-    return m_kind;
+    return m_id.kind();
 }
 
 Type::ID Type::id( void )
 {
-    if( m_id == 0 )
+    if( m_id.flavor() == 0 )
     {
         // type ID counter, 0 is an invalid/unregistered/unset type ID!
-        static Type::ID type_id = 0;
+        static std::array< u64, (std::size_t)Type::Kind::_TOP_ > type_flavor
+            = { 0 };
 
         const auto type_hash = this->hash();
         auto result = s_registered_type_hash2ptr().emplace(
@@ -84,11 +84,11 @@ Type::ID Type::id( void )
         {
             // NOT found, registered this as new type in hash2ptr,
             // allocate new ID, set it to this type, and link it in id2hash
-            type_id++;
-            m_id = type_id;
+            type_flavor[ (std::size_t)kind() ]++;
+            m_id.setFlavor( type_flavor[ (std::size_t)kind() ] );
 
             auto type_id2hash
-                = s_registered_type_id2hash().emplace( m_id, type_hash );
+                = s_registered_type_id2hash().emplace( m_id.hash(), type_hash );
             if( not type_id2hash.second )
             {
                 assert( !" inconsistent state of the registered types! " );
@@ -247,7 +247,7 @@ u1 Type::isPort( void ) const
 
 Type::Ptr Type::fromID( const Type::ID id )
 {
-    auto type_id2hash = s_registered_type_id2hash().find( id );
+    auto type_id2hash = s_registered_type_id2hash().find( id.hash() );
     if( type_id2hash == s_registered_type_id2hash().end() )
     {
         throw InternalException(

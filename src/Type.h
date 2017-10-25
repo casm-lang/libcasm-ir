@@ -77,9 +77,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< Type >;
 
-        using ID = u64;
-
-        enum class Kind
+        enum class Kind : u8
         {
             // synthetic
             VOID,
@@ -111,6 +109,66 @@ namespace libcasm_ir
 
             _TOP_,
         };
+
+        static_assert( sizeof( Kind ) == 1,
+            "size of 'Type::Kind' shall be 8 bits (1 byte)" );
+
+        class ID
+        {
+          public:
+            ID( u64 flavor, Kind kind )
+            : m_flavor( flavor )
+            , m_kind( kind ){};
+
+            ID( Kind kind )
+            : ID{ 0, kind } {};
+
+            u64 flavor( void ) const
+            {
+                return m_flavor;
+            }
+
+            void setFlavor( const u64 flavor )
+            {
+                m_flavor = flavor;
+            }
+
+            Kind kind( void ) const
+            {
+                return m_kind;
+            }
+
+            std::size_t hash( void ) const
+            {
+                return std::hash< u64 >()(
+                    ( ( u64 )( m_flavor ) << 8 ) | (u64)m_kind );
+            }
+
+            inline u1 operator==( const ID& rhs ) const
+            {
+                if( this != &rhs )
+                {
+                    if( this->hash() != rhs.hash() )
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            inline u1 operator!=( const ID& rhs ) const
+            {
+                return !operator==( rhs );
+            }
+
+          private:
+            u64 m_flavor : 56;
+            Kind m_kind : 8;
+        };
+
+        static_assert( sizeof( ID ) == ( sizeof( Kind ) + 7 ),
+            "size of 'Type::ID' shall be 64 bits (8 bytes, 1 byte (kind) + 7 "
+            "bytes (flavor) )" );
 
         Type( Kind kind );
 
@@ -209,7 +267,6 @@ namespace libcasm_ir
         Types m_arguments;
 
       private:
-        Kind m_kind;
         ID m_id;
 
       public:
@@ -809,9 +866,26 @@ namespace std
     template <>
     struct hash< libcasm_ir::Type::Kind >
     {
-        inline size_t operator()( const libcasm_ir::Type::Kind value ) const
+        inline std::size_t operator()(
+            const libcasm_ir::Type::Kind value ) const
         {
-            return static_cast< size_t >( value );
+            return static_cast< std::size_t >( value );
+        }
+    };
+
+    static std::string to_string( const libcasm_ir::Type::ID value )
+    {
+        return std::to_string( value.flavor() ) + "'"
+               + std::to_string( (libstdhl::u8)value.kind() ) + " ("
+               + std::to_string( value.kind() ) + ")";
+    };
+
+    template <>
+    struct hash< libcasm_ir::Type::ID >
+    {
+        inline std::size_t operator()( const libcasm_ir::Type::ID value ) const
+        {
+            return value.hash();
         }
     };
 }
