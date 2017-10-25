@@ -45,7 +45,7 @@ using namespace libcasm_ir;
 
 TEST( libcasm_ir__Type, id_to_token_string )
 {
-    for( u64 c = 0; c < (u64)libcasm_ir::Type::Kind::_TOP_; c++ )
+    for( u64 c = 0; c < (u64)libcasm_ir::Type::Kind::_SIZE_; c++ )
     {
         libcasm_ir::Type::Kind id = (libcasm_ir::Type::Kind)c;
 
@@ -156,9 +156,9 @@ TEST( libcasm_ir__Type, id_to_token_string )
                 break;
             }
 
-            case libcasm_ir::Type::Kind::_TOP_:
+            case libcasm_ir::Type::Kind::_SIZE_:
             {
-                EXPECT_STREQ( libcasm_ir::Type::token( id ).c_str(), "_TOP_" );
+                EXPECT_STREQ( libcasm_ir::Type::token( id ).c_str(), "_SIZE_" );
                 break;
             }
         }

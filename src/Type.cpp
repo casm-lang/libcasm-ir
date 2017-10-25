@@ -68,8 +68,8 @@ Type::ID Type::id( void )
 {
     if( m_id.flavor() == 0 )
     {
-        // type ID counter, 0 is an invalid/unregistered/unset type ID!
-        static std::array< u64, (std::size_t)Type::Kind::_TOP_ > type_flavor
+        // type flavor is 0 ==> invalid/unregistered/unset type ID!
+        static std::array< u64, (std::size_t)Type::Kind::_SIZE_ > type_flavor
             = { 0 };
 
         const auto type_hash = this->hash();
@@ -352,9 +352,9 @@ std::string Type::token( const Type::Kind kind )
             return "Port";
         }
 
-        case Type::Kind::_TOP_:
+        case Type::Kind::_SIZE_:
         {
-            return "_TOP_";
+            return "_SIZE_";
         }
     }
 

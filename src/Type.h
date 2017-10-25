@@ -110,8 +110,12 @@ namespace libcasm_ir
             FILE,
             PORT,
 
-            _TOP_,
+            // size of all type kinds
+            _SIZE_,
         };
+
+        static_assert( (std::size_t)Kind::_SIZE_ == 18,
+            "length of 'Type::Kind' shall be 18" );
 
         static_assert( sizeof( Kind ) == 1,
             "size of 'Type::Kind' shall be 8 bits (1 byte)" );
