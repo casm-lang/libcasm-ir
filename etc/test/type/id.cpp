@@ -60,10 +60,10 @@ TEST( libcasm_ir__type_id, sequence )
     std::cout << std::to_string( sid ) << "\n";
     std::cout << std::to_string( bid ) << "\n";
 
-    EXPECT_EQ( v, libcasm_ir::Type::fromID( vid ) );
-    EXPECT_EQ( i, libcasm_ir::Type::fromID( iid ) );
-    EXPECT_EQ( s, libcasm_ir::Type::fromID( sid ) );
-    EXPECT_EQ( b, libcasm_ir::Type::fromID( bid ) );
+    EXPECT_EQ( v.get(), libcasm_ir::Type::fromID( vid ).get() );
+    EXPECT_EQ( i.get(), libcasm_ir::Type::fromID( iid ).get() );
+    EXPECT_EQ( s.get(), libcasm_ir::Type::fromID( sid ).get() );
+    EXPECT_EQ( b.get(), libcasm_ir::Type::fromID( bid ).get() );
 }
 
 //

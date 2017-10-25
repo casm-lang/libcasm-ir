@@ -221,6 +221,8 @@ namespace libcasm_ir
 
         Value( const Type::Ptr& type, const ID id );
 
+        Value( const Type::ID type, const ID id );
+
         virtual ~Value( void ) = default;
 
         virtual std::string name( void ) const = 0;
@@ -264,7 +266,7 @@ namespace libcasm_ir
         }
 
       private:
-        Type* m_type;
+        Type::ID m_type;
 
         ID m_id;
 

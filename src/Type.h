@@ -187,10 +187,9 @@ namespace libcasm_ir
         u1 isFile( void ) const;
         u1 isPort( void ) const;
 
-        std::unordered_map< std::size_t, Type::Ptr >& cache( void )
+        inline std::unordered_map< std::size_t, Type::Ptr >& cache( void )
         {
-            static std::unordered_map< std::size_t, Type::Ptr > obj = {};
-            return obj;
+            return s_cache();
         }
 
       protected:
@@ -219,9 +218,23 @@ namespace libcasm_ir
         static std::string token( const Type::Kind kind );
 
       private:
-        static std::unordered_map< std::size_t, Type::Ptr >
-            s_registered_type_hash2ptr;
-        static std::unordered_map< u64, std::size_t > s_registered_type_id2hash;
+        static std::unordered_map< std::size_t, Type::Ptr >& s_cache( void )
+        {
+            static std::unordered_map< std::size_t, Type::Ptr > obj = {};
+            return obj;
+        }
+        static std::unordered_map< std::size_t, Type::Ptr >&
+        s_registered_type_hash2ptr( void )
+        {
+            static std::unordered_map< std::size_t, Type::Ptr > obj = {};
+            return obj;
+        }
+        static std::unordered_map< u64, std::size_t >&
+        s_registered_type_id2hash( void )
+        {
+            static std::unordered_map< u64, std::size_t > obj = {};
+            return obj;
+        }
     };
 
     class SyntheticType : public Type

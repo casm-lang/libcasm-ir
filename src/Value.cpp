@@ -57,10 +57,16 @@
 using namespace libcasm_ir;
 
 Value::Value( const Type::Ptr& type, const ID id )
-: m_type( type.get() )
+: m_type( type->id() )
 , m_id( id )
 {
-    assert( type );
+}
+
+Value::Value( const Type::ID type, const ID id )
+: m_type( type )
+, m_id( id )
+{
+    assert( type != 0 );
 }
 
 std::string Value::description( void ) const
@@ -70,7 +76,7 @@ std::string Value::description( void ) const
 
 const Type& Value::type( void ) const
 {
-    return *m_type;
+    return *Type::fromID( m_type );
 }
 
 Value::ID Value::id( void ) const
@@ -670,18 +676,18 @@ std::string Value::token( const Value::ID id )
             return "cls";
         }
 
-        // case Value::MATH_BUILTIN:
-        // {
-        //     return "MathBuiltin";
-        // }
-        // case Value::POW_BUILTIN:
-        // {
-        //     return "pow";
-        // }
-        // case Value::RAND_BUILTIN:
-        // {
-        //     return "rand";
-        // }
+            // case Value::MATH_BUILTIN:
+            // {
+            //     return "MathBuiltin";
+            // }
+            // case Value::POW_BUILTIN:
+            // {
+            //     return "pow";
+            // }
+            // case Value::RAND_BUILTIN:
+            // {
+            //     return "rand";
+            // }
 
         case Value::_SIZE_:
         {

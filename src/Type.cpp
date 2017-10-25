@@ -54,9 +54,6 @@ using namespace libcasm_ir;
 
 static const auto VOID_TYPE = libstdhl::Memory::get< VoidType >();
 
-std::unordered_map< std::size_t, Type::Ptr > Type::s_registered_type_hash2ptr;
-std::unordered_map< u64, std::size_t > Type::s_registered_type_id2hash;
-
 Type::Type( Type::Kind kind )
 : m_kind( kind )
 , m_id( 0 )
@@ -76,7 +73,7 @@ Type::ID Type::id( void )
         static Type::ID type_id = 0;
 
         const auto type_hash = this->hash();
-        auto result = s_registered_type_hash2ptr.emplace(
+        auto result = s_registered_type_hash2ptr().emplace(
             type_hash, this->ptr_type() );
         if( not result.second )
         {
@@ -91,7 +88,7 @@ Type::ID Type::id( void )
             m_id = type_id;
 
             auto type_id2hash
-                = s_registered_type_id2hash.emplace( m_id, type_hash );
+                = s_registered_type_id2hash().emplace( m_id, type_hash );
             if( not type_id2hash.second )
             {
                 assert( !" inconsistent state of the registered types! " );
@@ -250,21 +247,27 @@ u1 Type::isPort( void ) const
 
 Type::Ptr Type::fromID( const Type::ID id )
 {
-    auto type_id2hash = s_registered_type_id2hash.find( id );
-    if( type_id2hash == s_registered_type_id2hash.end() )
+    auto type_id2hash = s_registered_type_id2hash().find( id );
+    if( type_id2hash == s_registered_type_id2hash().end() )
     {
         throw InternalException(
             "type id '" + std::to_string( id ) + "' is not registered" );
     }
 
-    auto type_hash2ptr
-        = s_registered_type_hash2ptr.find( type_id2hash->second );
-    if( type_hash2ptr == s_registered_type_hash2ptr.end() )
+    auto type_cache = s_cache().find( type_id2hash->second );
+    if( type_cache == s_cache().end() )
     {
-        assert( !" inconsistent state of the registered types! " );
+        auto type_hash2ptr
+            = s_registered_type_hash2ptr().find( type_id2hash->second );
+        if( type_hash2ptr == s_registered_type_hash2ptr().end() )
+        {
+            assert( !" inconsistent state of the registered types! " );
+        }
+
+        return type_hash2ptr->second;
     }
 
-    return type_hash2ptr->second;
+    return type_cache->second;
 }
 
 std::string Type::token( const Type::Kind kind )
