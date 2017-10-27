@@ -252,18 +252,12 @@ u1 BinaryInstruction::classof( Value const* obj )
         }
 
         if( AddInstruction::classof( obj ) or SubInstruction::classof( obj )
-            or MulInstruction::classof( obj )
-            or DivInstruction::classof( obj )
-            or PowInstruction::classof( obj )
-            or ModInstruction::classof( obj )
-            or OrInstruction::classof( obj )
-            or XorInstruction::classof( obj )
-            or AndInstruction::classof( obj )
-            or NotInstruction::classof( obj )
-            or OrInstruction::classof( obj )
-            or ImpInstruction::classof( obj )
-            or XorInstruction::classof( obj )
-            or AndInstruction::classof( obj )
+            or MulInstruction::classof( obj ) or DivInstruction::classof( obj )
+            or PowInstruction::classof( obj ) or ModInstruction::classof( obj )
+            or OrInstruction::classof( obj ) or XorInstruction::classof( obj )
+            or AndInstruction::classof( obj ) or NotInstruction::classof( obj )
+            or OrInstruction::classof( obj ) or ImpInstruction::classof( obj )
+            or XorInstruction::classof( obj ) or AndInstruction::classof( obj )
             or CompareInstruction::classof( obj ) )
         {
             return true;
@@ -524,6 +518,23 @@ u1 ArithmeticInstruction::classof( Value const* obj )
            or AndInstruction::classof( obj );
 }
 
+static const auto arithmetic_instruction_resolve
+    = []( std::vector< Type::Ptr >& types ) {
+          if( types.size() != 2 )
+          {
+              throw InternalException( "types.size() != 2" );
+          }
+
+          if( not types[ 0 ] )
+          {
+              types[ 0 ] = types[ 1 ];
+          }
+          else if( not types[ 1 ] )
+          {
+              types[ 1 ] = types[ 0 ];
+          }
+      };
+
 //
 // Inv Instruction
 //
@@ -543,30 +554,31 @@ void InvInstruction::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
-const Annotation InvInstruction::info( classid(),
-    Annotation::Data{
+const Annotation InvInstruction::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::INTEGER,
+        { Type::Kind::INTEGER,
             {
-                Type::INTEGER,
+                Type::Kind::INTEGER,
             } },
 
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::BIT,
+                Type::Kind::BIT,
             } },
 
-        { Type::FLOATING,
+        { Type::Kind::FLOATING,
             {
-                Type::FLOATING,
+                Type::Kind::FLOATING,
             } },
 
-        { Type::RATIONAL,
+        { Type::Kind::RATIONAL,
             {
-                Type::RATIONAL,
+                Type::Kind::RATIONAL,
             } },
 
     },
+    []( std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
         if( types.size() != 1 )
@@ -608,35 +620,39 @@ void AddInstruction::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
-const Annotation AddInstruction::info( classid(),
-    Annotation::Data{
+const Annotation AddInstruction::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::INTEGER,
+        { Type::Kind::INTEGER,
             {
-                Type::INTEGER, Type::INTEGER, // signed integer add no wrap
+                Type::Kind::INTEGER,
+                Type::Kind::INTEGER, // signed integer add no wrap
             } },
 
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::BIT, Type::BIT, // unsigned bit add with wrap
+                Type::Kind::BIT, Type::Kind::BIT, // unsigned bit add with wrap
             } },
 
-        { Type::RATIONAL,
+        { Type::Kind::RATIONAL,
             {
-                Type::RATIONAL, Type::RATIONAL, // signed rational add no wrap
+                Type::Kind::RATIONAL,
+                Type::Kind::RATIONAL, // signed rational add no wrap
             } },
 
-        { Type::FLOATING,
+        { Type::Kind::FLOATING,
             {
-                Type::FLOATING, Type::FLOATING, // signed floating add no wrap
+                Type::Kind::FLOATING,
+                Type::Kind::FLOATING, // signed floating add no wrap
             } },
 
-        { Type::STRING,
+        { Type::Kind::STRING,
             {
-                Type::STRING, Type::STRING, // concatenation
+                Type::Kind::STRING, Type::Kind::STRING, // concatenation
             } },
 
     },
+    arithmetic_instruction_resolve,
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
         if( types.size() != 2 )
@@ -684,30 +700,34 @@ void SubInstruction::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
-const Annotation SubInstruction::info( classid(),
-    Annotation::Data{
+const Annotation SubInstruction::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::INTEGER,
+        { Type::Kind::INTEGER,
             {
-                Type::INTEGER, Type::INTEGER, // signed integer sub no wrap
+                Type::Kind::INTEGER,
+                Type::Kind::INTEGER, // signed integer sub no wrap
             } },
 
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::BIT, Type::BIT, // unsigned bit sub with wrap
+                Type::Kind::BIT, Type::Kind::BIT, // unsigned bit sub with wrap
             } },
 
-        { Type::RATIONAL,
+        { Type::Kind::RATIONAL,
             {
-                Type::RATIONAL, Type::RATIONAL, // signed rational sub no wrap
+                Type::Kind::RATIONAL,
+                Type::Kind::RATIONAL, // signed rational sub no wrap
             } },
 
-        { Type::FLOATING,
+        { Type::Kind::FLOATING,
             {
-                Type::FLOATING, Type::FLOATING, // signed floating sub no wrap
+                Type::Kind::FLOATING,
+                Type::Kind::FLOATING, // signed floating sub no wrap
             } },
 
     },
+    arithmetic_instruction_resolve,
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
         if( types.size() != 2 )
@@ -755,30 +775,35 @@ void MulInstruction::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
-const Annotation MulInstruction::info( classid(),
-    Annotation::Data{
+const Annotation MulInstruction::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::INTEGER,
+        { Type::Kind::INTEGER,
             {
-                Type::INTEGER, Type::INTEGER, // signed integer mul no wrap
+                Type::Kind::INTEGER,
+                Type::Kind::INTEGER, // signed integer mul no wrap
             } },
 
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::BIT, Type::BIT, // unsigned integer mul with wrap
+                Type::Kind::BIT,
+                Type::Kind::BIT, // unsigned integer mul with wrap
             } },
 
-        { Type::RATIONAL,
+        { Type::Kind::RATIONAL,
             {
-                Type::RATIONAL, Type::RATIONAL, // signed rational mul no wrap
+                Type::Kind::RATIONAL,
+                Type::Kind::RATIONAL, // signed rational mul no wrap
             } },
 
-        { Type::FLOATING,
+        { Type::Kind::FLOATING,
             {
-                Type::FLOATING, Type::FLOATING, // signed floating mul no wrap
+                Type::Kind::FLOATING,
+                Type::Kind::FLOATING, // signed floating mul no wrap
             } },
 
     },
+    arithmetic_instruction_resolve,
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
         if( types.size() != 2 )
@@ -826,15 +851,17 @@ void ModInstruction::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
-const Annotation ModInstruction::info( classid(),
-    Annotation::Data{
+const Annotation ModInstruction::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::INTEGER,
+        { Type::Kind::INTEGER,
             {
-                Type::INTEGER, Type::INTEGER, // signed integer mod no wrap
+                Type::Kind::INTEGER,
+                Type::Kind::INTEGER, // signed integer mod no wrap
             } },
 
     },
+    arithmetic_instruction_resolve,
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
         if( types.size() != 2 )
@@ -882,20 +909,23 @@ void DivInstruction::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
-const Annotation DivInstruction::info( classid(),
-    Annotation::Data{
+const Annotation DivInstruction::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::INTEGER,
+        { Type::Kind::INTEGER,
             {
-                Type::INTEGER, Type::INTEGER, // signed integer div no wrap
+                Type::Kind::INTEGER,
+                Type::Kind::INTEGER, // signed integer div no wrap
             } },
 
-        { Type::RATIONAL,
+        { Type::Kind::RATIONAL,
             {
-                Type::RATIONAL, Type::RATIONAL, // signed rational div no wrap
+                Type::Kind::RATIONAL,
+                Type::Kind::RATIONAL, // signed rational div no wrap
             } },
 
     },
+    arithmetic_instruction_resolve,
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
         if( types.size() != 2 )
@@ -943,30 +973,35 @@ void PowInstruction::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
-const Annotation PowInstruction::info( classid(),
-    Annotation::Data{
+const Annotation PowInstruction::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::INTEGER,
+        { Type::Kind::INTEGER,
             {
-                Type::INTEGER, Type::INTEGER, // signed integer pow no wrap
+                Type::Kind::INTEGER,
+                Type::Kind::INTEGER, // signed integer pow no wrap
             } },
 
-        // { Type::RATIONAL, // TODO: PPA: enable this after clear semantics
+        // { Type::Kind::RATIONAL, // TODO: PPA: enable this after clear
+        // semantics
         //     {
-        //         Type::RATIONAL, Type::INTEGER,
+        //         Type::Kind::RATIONAL, Type::Kind::INTEGER,
         //     } },
 
-        // { Type::FLOATING, // TODO: PPA: enable this after clear semantics
+        // { Type::Kind::FLOATING, // TODO: PPA: enable this after clear
+        // semantics
         //     {
-        //         Type::FLOATING, Type::FLOATING,
+        //         Type::Kind::FLOATING, Type::Kind::FLOATING,
         //     } },
 
-        { Type::FLOATING,
+        { Type::Kind::FLOATING,
             {
-                Type::FLOATING, Type::INTEGER,
+                Type::Kind::FLOATING,
+                Type::Kind::INTEGER,
             } },
 
     },
+    arithmetic_instruction_resolve,
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
         if( types.size() != 2 )
@@ -1019,6 +1054,8 @@ u1 LogicalInstruction::classof( Value const* obj )
            or AndInstruction::classof( obj ) or NotInstruction::classof( obj );
 }
 
+static const auto logic_instruction_resolve = arithmetic_instruction_resolve;
+
 //
 // And Instruction
 //
@@ -1039,20 +1076,23 @@ void AndInstruction::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
-const Annotation AndInstruction::info( classid(),
-    Annotation::Data{
+const Annotation AndInstruction::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::BOOLEAN, Type::BOOLEAN,
+                Type::Kind::BOOLEAN,
+                Type::Kind::BOOLEAN,
             } },
 
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::BIT, Type::BIT,
+                Type::Kind::BIT,
+                Type::Kind::BIT,
             } },
 
     },
+    logic_instruction_resolve,
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
         if( types.size() != 2 )
@@ -1103,20 +1143,23 @@ void XorInstruction::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
-const Annotation XorInstruction::info( classid(),
-    Annotation::Data{
+const Annotation XorInstruction::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::BOOLEAN, Type::BOOLEAN,
+                Type::Kind::BOOLEAN,
+                Type::Kind::BOOLEAN,
             } },
 
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::BIT, Type::BIT,
+                Type::Kind::BIT,
+                Type::Kind::BIT,
             } },
 
     },
+    logic_instruction_resolve,
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
         if( types.size() != 2 )
@@ -1167,20 +1210,23 @@ void OrInstruction::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
-const Annotation OrInstruction::info( classid(),
-    Annotation::Data{
+const Annotation OrInstruction::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::BOOLEAN, Type::BOOLEAN,
+                Type::Kind::BOOLEAN,
+                Type::Kind::BOOLEAN,
             } },
 
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::BIT, Type::BIT,
+                Type::Kind::BIT,
+                Type::Kind::BIT,
             } },
 
     },
+    logic_instruction_resolve,
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
         if( types.size() != 2 )
@@ -1231,15 +1277,17 @@ void ImpInstruction::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
-const Annotation ImpInstruction::info( classid(),
-    Annotation::Data{
+const Annotation ImpInstruction::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::BOOLEAN, Type::BOOLEAN,
+                Type::Kind::BOOLEAN,
+                Type::Kind::BOOLEAN,
             } },
 
     },
+    logic_instruction_resolve,
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
         if( types.size() != 2 )
@@ -1290,25 +1338,26 @@ void NotInstruction::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
-const Annotation NotInstruction::info( classid(),
-    Annotation::Data{
+const Annotation NotInstruction::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::BOOLEAN,
+                Type::Kind::BOOLEAN,
             } },
 
-        // { Type::BOOLEAN, // TODO: PPA: should we really allow this?
+        // { Type::Kind::BOOLEAN, // TODO: PPA: should we really allow this?
         //     {
-        //         Type::INTEGER,
+        //         Type::Kind::INTEGER,
         //     } },
 
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::BIT,
+                Type::Kind::BIT,
             } },
 
     },
+    []( const std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
         if( types.size() != 1 )
@@ -1353,9 +1402,11 @@ u1 CompareInstruction::classof( Value const* obj )
            or GeqInstruction::classof( obj );
 }
 
+static const auto compare_instruction_resolve = arithmetic_instruction_resolve;
+
 static auto compare_instruction_inference
     = []( const std::vector< Type::Ptr >& types,
-        const std::vector< Value::Ptr >& ) -> Type::Ptr {
+          const std::vector< Value::Ptr >& ) -> Type::Ptr {
     if( types.size() != 2 )
     {
         throw InternalException( "types.size() != 2" );
@@ -1399,45 +1450,53 @@ void EquInstruction::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
-const Annotation EquInstruction::info( classid(),
-    Annotation::Data{
+const Annotation EquInstruction::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::BOOLEAN, Type::BOOLEAN,
+                Type::Kind::BOOLEAN,
+                Type::Kind::BOOLEAN,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::INTEGER, Type::INTEGER,
+                Type::Kind::INTEGER,
+                Type::Kind::INTEGER,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::BIT, Type::BIT,
+                Type::Kind::BIT,
+                Type::Kind::BIT,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::STRING, Type::STRING,
+                Type::Kind::STRING,
+                Type::Kind::STRING,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::RATIONAL, Type::RATIONAL,
+                Type::Kind::RATIONAL,
+                Type::Kind::RATIONAL,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::ENUMERATION, Type::ENUMERATION,
+                Type::Kind::ENUMERATION,
+                Type::Kind::ENUMERATION,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::RULE_REFERENCE, Type::RULE_REFERENCE,
+                Type::Kind::RULE_REFERENCE,
+                Type::Kind::RULE_REFERENCE,
             } },
 
     },
+    compare_instruction_resolve,
     compare_instruction_inference );
 
 u1 EquInstruction::classof( Value const* obj )
@@ -1465,45 +1524,53 @@ void NeqInstruction::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
-const Annotation NeqInstruction::info( classid(),
-    Annotation::Data{
+const Annotation NeqInstruction::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::BOOLEAN, Type::BOOLEAN,
+                Type::Kind::BOOLEAN,
+                Type::Kind::BOOLEAN,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::INTEGER, Type::INTEGER,
+                Type::Kind::INTEGER,
+                Type::Kind::INTEGER,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::BIT, Type::BIT,
+                Type::Kind::BIT,
+                Type::Kind::BIT,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::STRING, Type::STRING,
+                Type::Kind::STRING,
+                Type::Kind::STRING,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::RATIONAL, Type::RATIONAL,
+                Type::Kind::RATIONAL,
+                Type::Kind::RATIONAL,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::ENUMERATION, Type::ENUMERATION,
+                Type::Kind::ENUMERATION,
+                Type::Kind::ENUMERATION,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::RULE_REFERENCE, Type::RULE_REFERENCE,
+                Type::Kind::RULE_REFERENCE,
+                Type::Kind::RULE_REFERENCE,
             } },
 
     },
+    compare_instruction_resolve,
     compare_instruction_inference );
 
 u1 NeqInstruction::classof( Value const* obj )
@@ -1531,25 +1598,29 @@ void LthInstruction::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
-const Annotation LthInstruction::info( classid(),
-    Annotation::Data{
+const Annotation LthInstruction::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::INTEGER, Type::INTEGER,
+                Type::Kind::INTEGER,
+                Type::Kind::INTEGER,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::RATIONAL, Type::RATIONAL,
+                Type::Kind::RATIONAL,
+                Type::Kind::RATIONAL,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::FLOATING, Type::FLOATING,
+                Type::Kind::FLOATING,
+                Type::Kind::FLOATING,
             } },
 
     },
+    compare_instruction_resolve,
     compare_instruction_inference );
 
 u1 LthInstruction::classof( Value const* obj )
@@ -1577,25 +1648,29 @@ void LeqInstruction::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
-const Annotation LeqInstruction::info( classid(),
-    Annotation::Data{
+const Annotation LeqInstruction::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::INTEGER, Type::INTEGER,
+                Type::Kind::INTEGER,
+                Type::Kind::INTEGER,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::RATIONAL, Type::RATIONAL,
+                Type::Kind::RATIONAL,
+                Type::Kind::RATIONAL,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::FLOATING, Type::FLOATING,
+                Type::Kind::FLOATING,
+                Type::Kind::FLOATING,
             } },
 
     },
+    compare_instruction_resolve,
     compare_instruction_inference );
 
 u1 LeqInstruction::classof( Value const* obj )
@@ -1623,25 +1698,29 @@ void GthInstruction::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
-const Annotation GthInstruction::info( classid(),
-    Annotation::Data{
+const Annotation GthInstruction::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::INTEGER, Type::INTEGER,
+                Type::Kind::INTEGER,
+                Type::Kind::INTEGER,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::RATIONAL, Type::RATIONAL,
+                Type::Kind::RATIONAL,
+                Type::Kind::RATIONAL,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::FLOATING, Type::FLOATING,
+                Type::Kind::FLOATING,
+                Type::Kind::FLOATING,
             } },
 
     },
+    compare_instruction_resolve,
     compare_instruction_inference );
 
 u1 GthInstruction::classof( Value const* obj )
@@ -1669,25 +1748,29 @@ void GeqInstruction::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
-const Annotation GeqInstruction::info( classid(),
-    Annotation::Data{
+const Annotation GeqInstruction::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::INTEGER, Type::INTEGER,
+                Type::Kind::INTEGER,
+                Type::Kind::INTEGER,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::RATIONAL, Type::RATIONAL,
+                Type::Kind::RATIONAL,
+                Type::Kind::RATIONAL,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::FLOATING, Type::FLOATING,
+                Type::Kind::FLOATING,
+                Type::Kind::FLOATING,
             } },
 
     },
+    compare_instruction_resolve,
     compare_instruction_inference );
 
 u1 GeqInstruction::classof( Value const* obj )

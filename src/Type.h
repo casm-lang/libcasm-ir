@@ -77,10 +77,11 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< Type >;
 
-        enum ID : libstdhl::u8
+        /**
+           Represents the various types recognized by the IR type system
+        */
+        enum class Kind : u8
         {
-            _BOTTOM_ = 0,
-
             // synthetic
             VOID,
             LABEL,
@@ -90,10 +91,10 @@ namespace libcasm_ir
             // primitive
             BOOLEAN,
             INTEGER,
-            BIT,
-            STRING,
-            FLOATING,
             RATIONAL,
+            BIT,
+            FLOATING,
+            STRING,
 
             // composed
             ENUMERATION,
@@ -109,10 +110,82 @@ namespace libcasm_ir
             FILE,
             PORT,
 
-            _TOP_
+            // size of all type kinds
+            _SIZE_,
         };
 
-        Type( ID id );
+        static_assert( (std::size_t)Kind::_SIZE_ == 18,
+            "length of 'Type::Kind' shall be 18" );
+
+        static_assert( sizeof( Kind ) == 1,
+            "size of 'Type::Kind' shall be 8 bits (1 byte)" );
+
+        /**
+           Represents a unique number of a derived flavor of a Type::Kind
+        */
+        class ID
+        {
+          public:
+            ID( u64 flavor, Kind kind )
+            : m_flavor( flavor )
+            , m_kind( kind ){};
+
+            ID( Kind kind )
+            : ID{ 0, kind } {};
+
+            u64 flavor( void ) const
+            {
+                return m_flavor;
+            }
+
+            void setFlavor( const u64 flavor )
+            {
+                m_flavor = flavor;
+            }
+
+            Kind kind( void ) const
+            {
+                return m_kind;
+            }
+
+            std::size_t hash( void ) const
+            {
+                return std::hash< u64 >()(
+                    ( ( u64 )( m_flavor ) << 8 ) | (u64)m_kind );
+            }
+
+            inline u1 operator==( const ID& rhs ) const
+            {
+                if( this != &rhs )
+                {
+                    if( this->hash() != rhs.hash() )
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            inline u1 operator!=( const ID& rhs ) const
+            {
+                return !operator==( rhs );
+            }
+
+            inline u1 operator<( const ID& rhs ) const
+            {
+                return this->hash() < rhs.hash();
+            }
+
+          private:
+            u64 m_flavor : 56;
+            Kind m_kind : 8;
+        };
+
+        static_assert( sizeof( ID ) == ( sizeof( Kind ) + 7 ),
+            "size of 'Type::ID' shall be 64 bits (8 bytes, 1 byte (kind) + 7 "
+            "bytes (flavor) )" );
+
+        Type( Kind kind );
 
         virtual ~Type( void ) = default;
 
@@ -128,7 +201,9 @@ namespace libcasm_ir
 
         virtual void validate( const Constant& constant ) const = 0;
 
-        ID id( void ) const;
+        Kind kind( void ) const;
+
+        ID id( void );
 
         const Type& result( void ) const;
 
@@ -138,15 +213,13 @@ namespace libcasm_ir
 
         const Types& arguments( void ) const;
 
-        std::string make_hash( void ) const;
-
         virtual std::size_t hash( void ) const = 0;
 
         inline u1 operator==( const Type& rhs ) const
         {
             if( this != &rhs )
             {
-                if( this->id() != rhs.id() or this->hash() != rhs.hash() )
+                if( this->hash() != rhs.hash() )
                 {
                     return false;
                 }
@@ -168,10 +241,10 @@ namespace libcasm_ir
         u1 isPrimitive( void ) const;
         u1 isBoolean( void ) const;
         u1 isInteger( void ) const;
-        u1 isBit( void ) const;
-        u1 isString( void ) const;
-        u1 isFloating( void ) const;
         u1 isRational( void ) const;
+        u1 isBit( void ) const;
+        u1 isFloating( void ) const;
+        u1 isString( void ) const;
 
         u1 isComposed( void ) const;
         u1 isEnumeration( void ) const;
@@ -186,6 +259,11 @@ namespace libcasm_ir
         u1 isAbstraction( void ) const;
         u1 isFile( void ) const;
         u1 isPort( void ) const;
+
+        inline std::unordered_map< std::size_t, Type::Ptr >& cache( void )
+        {
+            return s_cache();
+        }
 
       protected:
         template < typename T >
@@ -207,19 +285,36 @@ namespace libcasm_ir
         ID m_id;
 
       public:
-        static std::string token( const Type::ID id );
+        static const std::vector< Type::ID >& fromKind( const Type::Kind kind );
 
-        std::unordered_map< std::string, Type::Ptr >& make_cache( void )
+        static Type::Ptr fromID( const Type::ID id );
+
+        static std::string token( const Type::Kind kind );
+
+      private:
+        static std::unordered_map< std::size_t, Type::Ptr >& s_cache( void )
         {
-            static std::unordered_map< std::string, Type::Ptr > cache;
-            return cache;
+            static std::unordered_map< std::size_t, Type::Ptr > obj = {};
+            return obj;
+        }
+        static std::unordered_map< std::size_t, Type::Ptr >&
+        s_registered_type_hash2ptr( void )
+        {
+            static std::unordered_map< std::size_t, Type::Ptr > obj = {};
+            return obj;
+        }
+        static std::unordered_map< u64, std::size_t >&
+        s_registered_type_id2hash( void )
+        {
+            static std::unordered_map< u64, std::size_t > obj = {};
+            return obj;
         }
     };
 
     class SyntheticType : public Type
     {
       public:
-        SyntheticType( Type::ID id );
+        SyntheticType( Kind kind );
     };
 
     class VoidType final : public SyntheticType
@@ -243,9 +338,9 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::VOID;
+            return Type::Kind::VOID;
         }
     };
 
@@ -270,9 +365,9 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::LABEL;
+            return Type::Kind::LABEL;
         }
     };
 
@@ -297,9 +392,9 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::LOCATION;
+            return Type::Kind::LOCATION;
         }
     };
 
@@ -324,16 +419,16 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::RELATION;
+            return Type::Kind::RELATION;
         }
     };
 
     class PrimitiveType : public Type
     {
       public:
-        PrimitiveType( Type::ID id );
+        PrimitiveType( Kind kind );
     };
 
     class BooleanType final : public PrimitiveType
@@ -357,9 +452,9 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::BOOLEAN;
+            return Type::Kind::BOOLEAN;
         }
     };
 
@@ -390,13 +485,40 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::INTEGER;
+            return Type::Kind::INTEGER;
         }
 
       private:
         std::shared_ptr< RangeType > m_range;
+    };
+
+    class RationalType final : public PrimitiveType
+    {
+      public:
+        using Ptr = std::shared_ptr< RationalType >;
+
+        RationalType( void );
+
+        std::string name( void ) const override;
+
+        std::string description( void ) const override;
+
+        void foreach(
+            const std::function< void( const Constant& constant ) >& callback )
+            const override;
+
+        Constant choose( void ) const override;
+
+        void validate( const Constant& constant ) const override;
+
+        std::size_t hash( void ) const override;
+
+        static inline Type::Kind classid( void )
+        {
+            return Type::Kind::RATIONAL;
+        }
     };
 
     class BitType final : public PrimitiveType
@@ -428,40 +550,13 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::BIT;
+            return Type::Kind::BIT;
         }
 
       private:
         u16 m_bitsize;
-    };
-
-    class StringType final : public PrimitiveType
-    {
-      public:
-        using Ptr = std::shared_ptr< StringType >;
-
-        StringType( void );
-
-        std::string name( void ) const override;
-
-        std::string description( void ) const override;
-
-        void foreach(
-            const std::function< void( const Constant& constant ) >& callback )
-            const override;
-
-        Constant choose( void ) const override;
-
-        void validate( const Constant& constant ) const override;
-
-        std::size_t hash( void ) const override;
-
-        static inline Type::ID classid( void )
-        {
-            return Type::STRING;
-        }
     };
 
     class FloatingType final : public PrimitiveType
@@ -485,18 +580,18 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::FLOATING;
+            return Type::Kind::FLOATING;
         }
     };
 
-    class RationalType final : public PrimitiveType
+    class StringType final : public PrimitiveType
     {
       public:
-        using Ptr = std::shared_ptr< RationalType >;
+        using Ptr = std::shared_ptr< StringType >;
 
-        RationalType( void );
+        StringType( void );
 
         std::string name( void ) const override;
 
@@ -512,16 +607,16 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::RATIONAL;
+            return Type::Kind::STRING;
         }
     };
 
     class ComposedType : public Type
     {
       public:
-        ComposedType( Type::ID id );
+        ComposedType( Kind kind );
     };
 
     class EnumerationType final : public ComposedType
@@ -549,9 +644,9 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::ENUMERATION;
+            return Type::Kind::ENUMERATION;
         }
 
       private:
@@ -591,9 +686,9 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::RANGE;
+            return Type::Kind::RANGE;
         }
 
       private:
@@ -621,9 +716,9 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::TUPLE;
+            return Type::Kind::TUPLE;
         }
     };
 
@@ -648,9 +743,9 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::LIST;
+            return Type::Kind::LIST;
         }
     };
 
@@ -659,7 +754,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< ReferenceType >;
 
-        ReferenceType( Type::ID id, const RelationType::Ptr& type );
+        ReferenceType( Kind kind, const RelationType::Ptr& type );
 
         Type::Ptr dereference( void ) const;
 
@@ -689,9 +784,9 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::RULE_REFERENCE;
+            return Type::Kind::RULE_REFERENCE;
         }
     };
 
@@ -711,16 +806,16 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::FUNCTION_REFERENCE;
+            return Type::Kind::FUNCTION_REFERENCE;
         }
     };
 
     class AbstractionType : public Type
     {
       public:
-        AbstractionType( Type::ID id );
+        AbstractionType( Kind kind );
     };
 
     class FileType final : public AbstractionType
@@ -744,9 +839,9 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::FILE;
+            return Type::Kind::FILE;
         }
     };
 
@@ -771,21 +866,43 @@ namespace libcasm_ir
 
         std::size_t hash( void ) const override;
 
-        static inline Type::ID classid( void )
+        static inline Type::Kind classid( void )
         {
-            return Type::PORT;
+            return Type::Kind::PORT;
         }
     };
 }
 
 namespace std
 {
+    static std::string to_string( const libcasm_ir::Type::Kind value )
+    {
+        return libcasm_ir::Type::token( value );
+    };
+
+    template <>
+    struct hash< libcasm_ir::Type::Kind >
+    {
+        inline std::size_t operator()(
+            const libcasm_ir::Type::Kind value ) const
+        {
+            return static_cast< std::size_t >( value );
+        }
+    };
+
+    static std::string to_string( const libcasm_ir::Type::ID value )
+    {
+        return std::to_string( value.flavor() ) + "'"
+               + std::to_string( (libstdhl::u8)value.kind() ) + " ("
+               + std::to_string( value.kind() ) + ")";
+    };
+
     template <>
     struct hash< libcasm_ir::Type::ID >
     {
-        inline size_t operator()( const libcasm_ir::Type::ID value ) const
+        inline std::size_t operator()( const libcasm_ir::Type::ID value ) const
         {
-            return static_cast< size_t >( value );
+            return value.hash();
         }
     };
 }

@@ -45,8 +45,8 @@ using namespace libcasm_ir;
 
 TEST( libcasm_ir__type_ranged_integer, make_and_get )
 {
-    const auto m = libstdhl::Memory::get< IntegerConstant >( -4 );
-    const auto n = libstdhl::Memory::get< IntegerConstant >( 13 );
+    const auto m = libstdhl::Memory::make< IntegerConstant >( -4 );
+    const auto n = libstdhl::Memory::make< IntegerConstant >( 13 );
 
     const auto R = libstdhl::Memory::make< Range >( m, n );
 
@@ -72,26 +72,27 @@ TEST( libcasm_ir__type_ranged_integer, make_and_get )
     EXPECT_TRUE( a == b );
     EXPECT_TRUE( *a == *b );
 
-    v->foreach( [](
-        const Constant& constant ) { std::cerr << constant.name() << "\n"; } );
+    v->foreach( []( const Constant& constant ) {
+        std::cerr << constant.name() << "\n";
+    } );
 
     std::cerr << v->choose().name() << "\n";
 }
 
 TEST( libcasm_ir__type_ranged_integer, valid_check )
 {
-    const auto a = libstdhl::Memory::get< IntegerConstant >( -4 );
-    const auto b = libstdhl::Memory::get< IntegerConstant >( 13 );
+    const auto a = libstdhl::Memory::make< IntegerConstant >( -4 );
+    const auto b = libstdhl::Memory::make< IntegerConstant >( 13 );
     const auto R = libstdhl::Memory::make< Range >( a, b );
     const auto r = libstdhl::Memory::make< RangeType >( R );
 
-    const auto x0 = libstdhl::Memory::get< IntegerConstant >( -4321 );
-    const auto x1 = libstdhl::Memory::get< IntegerConstant >( -5 );
-    const auto x2 = libstdhl::Memory::get< IntegerConstant >( -3 );
-    const auto x3 = libstdhl::Memory::get< IntegerConstant >( 0 );
-    const auto x4 = libstdhl::Memory::get< IntegerConstant >( 12 );
-    const auto x5 = libstdhl::Memory::get< IntegerConstant >( 14 );
-    const auto x6 = libstdhl::Memory::get< IntegerConstant >( 4321 );
+    const auto x0 = libstdhl::Memory::make< IntegerConstant >( -4321 );
+    const auto x1 = libstdhl::Memory::make< IntegerConstant >( -5 );
+    const auto x2 = libstdhl::Memory::make< IntegerConstant >( -3 );
+    const auto x3 = libstdhl::Memory::make< IntegerConstant >( 0 );
+    const auto x4 = libstdhl::Memory::make< IntegerConstant >( 12 );
+    const auto x5 = libstdhl::Memory::make< IntegerConstant >( 14 );
+    const auto x6 = libstdhl::Memory::make< IntegerConstant >( 4321 );
 
     EXPECT_THROW( r->validate( *x0 );, ValidationException );
     EXPECT_THROW( r->validate( *x1 );, ValidationException );

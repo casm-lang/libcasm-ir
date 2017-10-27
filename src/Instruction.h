@@ -82,19 +82,20 @@ namespace libcasm_ir
 
         u1 operator==( const Value& rhs ) const override;
 
-        static inline Value::ID classid( void )
-        {
-            return Value::INSTRUCTION;
-        }
-
-        static u1 classof( Value const* obj );
-
       private:
         std::vector< Value::Ptr > m_operands;
 
         std::weak_ptr< Statement > m_statement;
 
         std::weak_ptr< Instruction > m_next;
+
+      public:
+        static inline Value::ID classid( void )
+        {
+            return Value::INSTRUCTION;
+        }
+
+        static u1 classof( Value const* obj );
     };
 
     using Instructions = ValueList< Instruction >;
@@ -120,6 +121,7 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
+      public:
         static inline Value::ID classid( void )
         {
             return Value::SKIP_INSTRUCTION;
@@ -137,6 +139,7 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
+      public:
         static inline Value::ID classid( void )
         {
             return Value::FORK_INSTRUCTION;
@@ -154,6 +157,7 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
+      public:
         static inline Value::ID classid( void )
         {
             return Value::MERGE_INSTRUCTION;
@@ -171,6 +175,7 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
+      public:
         static inline Value::ID classid( void )
         {
             return Value::LOOKUP_INSTRUCTION;
@@ -188,6 +193,7 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
+      public:
         static inline Value::ID classid( void )
         {
             return Value::UPDATE_INSTRUCTION;
@@ -205,6 +211,7 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
+      public:
         static inline Value::ID classid( void )
         {
             return Value::LOCAL_INSTRUCTION;
@@ -223,6 +230,7 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
+      public:
         static inline Value::ID classid( void )
         {
             return Value::LOCATION_INSTRUCTION;
@@ -245,6 +253,7 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
+      public:
         static inline Value::ID classid( void )
         {
             return Value::CALL_INSTRUCTION;
@@ -263,6 +272,7 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
+      public:
         static inline Value::ID classid( void )
         {
             return Value::SELECT_INSTRUCTION;
@@ -279,6 +289,7 @@ namespace libcasm_ir
         OperatorInstruction( const Type::Ptr& type, const Value::ID id,
             const std::vector< Value::Ptr >& operands = {} );
 
+      public:
         static inline Value::ID classid( void )
         {
             return Value::OPERATOR_INSTRUCTION;
@@ -299,6 +310,7 @@ namespace libcasm_ir
         ArithmeticInstruction( const Type::Ptr& type, const Value::ID id,
             const std::vector< Value::Ptr >& operands = {} );
 
+      public:
         static inline Value::ID classid( void )
         {
             return Value::ARITHMETIC_INSTRUCTION;
@@ -318,14 +330,16 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
-        static const Annotation info;
-
+      public:
         static inline Value::ID classid( void )
         {
             return Value::INV_INSTRUCTION;
         }
 
         static u1 classof( Value const* obj );
+
+      public:
+        static const Annotation annotation;
     };
 
     class AddInstruction final : public ArithmeticInstruction
@@ -339,14 +353,16 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
-        static const Annotation info;
-
+      public:
         static inline Value::ID classid( void )
         {
             return Value::ADD_INSTRUCTION;
         }
 
         static u1 classof( Value const* obj );
+
+      public:
+        static const Annotation annotation;
     };
 
     class SubInstruction final : public ArithmeticInstruction
@@ -360,14 +376,16 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
-        static const Annotation info;
-
+      public:
         static inline Value::ID classid( void )
         {
             return Value::SUB_INSTRUCTION;
         }
 
         static u1 classof( Value const* obj );
+
+      public:
+        static const Annotation annotation;
     };
 
     class MulInstruction final : public ArithmeticInstruction
@@ -381,14 +399,16 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
-        static const Annotation info;
-
+      public:
         static inline Value::ID classid( void )
         {
             return Value::MUL_INSTRUCTION;
         }
 
         static u1 classof( Value const* obj );
+
+      public:
+        static const Annotation annotation;
     };
 
     class ModInstruction final : public ArithmeticInstruction
@@ -402,14 +422,16 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
-        static const Annotation info;
-
+      public:
         static inline Value::ID classid( void )
         {
             return Value::MOD_INSTRUCTION;
         }
 
         static u1 classof( Value const* obj );
+
+      public:
+        static const Annotation annotation;
     };
 
     class DivInstruction final : public ArithmeticInstruction
@@ -423,7 +445,7 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
-        static const Annotation info;
+        static const Annotation annotation;
 
         static inline Value::ID classid( void )
         {
@@ -444,14 +466,16 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
-        static const Annotation info;
-
+      public:
         static inline Value::ID classid( void )
         {
             return Value::POW_INSTRUCTION;
         }
 
         static u1 classof( Value const* obj );
+
+      public:
+        static const Annotation annotation;
     };
 
     //
@@ -466,6 +490,7 @@ namespace libcasm_ir
         LogicalInstruction( const Type::Ptr& type, const Value::ID id,
             const std::vector< Value::Ptr >& operands = {} );
 
+      public:
         static inline Value::ID classid( void )
         {
             return Value::LOGICAL_INSTRUCTION;
@@ -485,14 +510,16 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
-        static const Annotation info;
-
+      public:
         static inline Value::ID classid( void )
         {
             return Value::AND_INSTRUCTION;
         }
 
         static u1 classof( Value const* obj );
+
+      public:
+        static const Annotation annotation;
     };
 
     class XorInstruction final : public LogicalInstruction
@@ -506,14 +533,16 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
-        static const Annotation info;
-
+      public:
         static inline Value::ID classid( void )
         {
             return Value::XOR_INSTRUCTION;
         }
 
         static u1 classof( Value const* obj );
+
+      public:
+        static const Annotation annotation;
     };
 
     class OrInstruction final : public LogicalInstruction
@@ -527,14 +556,16 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
-        static const Annotation info;
-
+      public:
         static inline Value::ID classid( void )
         {
             return Value::OR_INSTRUCTION;
         }
 
         static u1 classof( Value const* obj );
+
+      public:
+        static const Annotation annotation;
     };
 
     class ImpInstruction final : public LogicalInstruction
@@ -548,14 +579,16 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
-        static const Annotation info;
-
+      public:
         static inline Value::ID classid( void )
         {
             return Value::IMP_INSTRUCTION;
         }
 
         static u1 classof( Value const* obj );
+
+      public:
+        static const Annotation annotation;
     };
 
     class NotInstruction final : public LogicalInstruction
@@ -569,14 +602,16 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
-        static const Annotation info;
-
+      public:
         static inline Value::ID classid( void )
         {
             return Value::NOT_INSTRUCTION;
         }
 
         static u1 classof( Value const* obj );
+
+      public:
+        static const Annotation annotation;
     };
 
     //
@@ -591,6 +626,7 @@ namespace libcasm_ir
         CompareInstruction( const Type::Ptr& type, const Value::ID id,
             const std::vector< Value::Ptr >& operands = {} );
 
+      public:
         static inline Value::ID classid( void )
         {
             return Value::COMPARE_INSTRUCTION;
@@ -610,14 +646,16 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
-        static const Annotation info;
-
+      public:
         static inline Value::ID classid( void )
         {
             return Value::EQU_INSTRUCTION;
         }
 
         static u1 classof( Value const* obj );
+
+      public:
+        static const Annotation annotation;
     };
 
     class NeqInstruction final : public CompareInstruction
@@ -631,14 +669,16 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
-        static const Annotation info;
-
+      public:
         static inline Value::ID classid( void )
         {
             return Value::NEQ_INSTRUCTION;
         }
 
         static u1 classof( Value const* obj );
+
+      public:
+        static const Annotation annotation;
     };
 
     class LthInstruction final : public CompareInstruction
@@ -652,14 +692,16 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
-        static const Annotation info;
-
+      public:
         static inline Value::ID classid( void )
         {
             return Value::LTH_INSTRUCTION;
         }
 
         static u1 classof( Value const* obj );
+
+      public:
+        static const Annotation annotation;
     };
 
     class LeqInstruction final : public CompareInstruction
@@ -673,14 +715,16 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
-        static const Annotation info;
-
+      public:
         static inline Value::ID classid( void )
         {
             return Value::LEQ_INSTRUCTION;
         }
 
         static u1 classof( Value const* obj );
+
+      public:
+        static const Annotation annotation;
     };
 
     class GthInstruction final : public CompareInstruction
@@ -694,14 +738,16 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
-        static const Annotation info;
-
+      public:
         static inline Value::ID classid( void )
         {
             return Value::GTH_INSTRUCTION;
         }
 
         static u1 classof( Value const* obj );
+
+      public:
+        static const Annotation annotation;
     };
 
     class GeqInstruction final : public CompareInstruction
@@ -715,14 +761,16 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
-        static const Annotation info;
-
+      public:
         static inline Value::ID classid( void )
         {
             return Value::GEQ_INSTRUCTION;
         }
 
         static u1 classof( Value const* obj );
+
+      public:
+        static const Annotation annotation;
     };
 }
 

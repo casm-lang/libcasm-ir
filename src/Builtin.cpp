@@ -94,7 +94,8 @@ void Builtin::accept( Visitor& visitor )
 u1 Builtin::classof( Value const* obj )
 {
     return obj->id() == classid() or GeneralBuiltin::classof( obj )
-           or CastingBuiltin::classof( obj ) or StringifyBuiltin::classof( obj )
+           or CastingBuiltin::classof( obj )
+           or StringifyBuiltin::classof( obj )
            // or MathBuiltin::classof( obj )
            or OperatorBuiltin::classof( obj ) or BitBuiltin::classof( obj );
 }
@@ -420,45 +421,46 @@ IsSymbolicBuiltin::IsSymbolicBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation IsSymbolicBuiltin::info( classid(),
-    Annotation::Data{
+const Annotation IsSymbolicBuiltin::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::BOOLEAN,
+                Type::Kind::BOOLEAN,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::INTEGER,
+                Type::Kind::INTEGER,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::BIT,
+                Type::Kind::BIT,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::FLOATING,
+                Type::Kind::FLOATING,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::STRING,
+                Type::Kind::STRING,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::RATIONAL,
+                Type::Kind::RATIONAL,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::ENUMERATION,
+                Type::Kind::ENUMERATION,
             } },
 
     },
+    []( std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
         if( types.size() != 1 )
@@ -482,12 +484,13 @@ AbortBuiltin::AbortBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation AbortBuiltin::info( classid(),
-    Annotation::Data{
+const Annotation AbortBuiltin::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::VOID, {} },
+        { Type::Kind::VOID, {} },
 
     },
+    []( std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
         if( types.size() != 0 )
@@ -511,19 +514,21 @@ AssertBuiltin::AssertBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation AssertBuiltin::info( classid(),
-    Annotation::Data{
+const Annotation AssertBuiltin::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::VOID,
+        { Type::Kind::VOID,
             {
-                Type::BOOLEAN,
+                Type::Kind::BOOLEAN,
             } },
 
-        { Type::VOID,
+        { Type::Kind::VOID,
             {
-                Type::BOOLEAN, Type::STRING,
+                Type::Kind::BOOLEAN,
+                Type::Kind::STRING,
             } },
     },
+    []( std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
         if( types.size() < 1 or types.size() > 2 )
@@ -575,15 +580,16 @@ PrintBuiltin::PrintBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation PrintBuiltin::info( classid(),
-    Annotation::Data{
+const Annotation PrintBuiltin::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::VOID,
+        { Type::Kind::VOID,
             {
-                Type::STRING,
+                Type::Kind::STRING,
             } }
 
     },
+    []( std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
         if( types.size() != 1 )
@@ -596,8 +602,7 @@ const Annotation PrintBuiltin::info( classid(),
         {
             throw TypeArgumentException( "found '" + argumentType->description()
                                              + "', but expects '"
-                                             + STRING->description()
-                                             + "'",
+                                             + STRING->description() + "'",
                 0 );
         }
 
@@ -618,15 +623,16 @@ PrintLnBuiltin::PrintLnBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation PrintLnBuiltin::info( classid(),
-    Annotation::Data{
+const Annotation PrintLnBuiltin::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::VOID,
+        { Type::Kind::VOID,
             {
-                Type::STRING,
+                Type::Kind::STRING,
             } }
 
     },
+    []( std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
         if( types.size() != 1 )
@@ -639,8 +645,7 @@ const Annotation PrintLnBuiltin::info( classid(),
         {
             throw TypeArgumentException( "found '" + argumentType->description()
                                              + "', but expects '"
-                                             + STRING->description()
-                                             + "'",
+                                             + STRING->description() + "'",
                 0 );
         }
 
@@ -681,25 +686,26 @@ AsBooleanBuiltin::AsBooleanBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation AsBooleanBuiltin::info( classid(),
-    Annotation::Data{
+const Annotation AsBooleanBuiltin::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::BOOLEAN,
+                Type::Kind::BOOLEAN,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::INTEGER,
+                Type::Kind::INTEGER,
             } },
 
-        { Type::BOOLEAN,
+        { Type::Kind::BOOLEAN,
             {
-                Type::BIT,
+                Type::Kind::BIT,
             } },
 
     },
+    []( std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
         if( types.size() != 1 )
@@ -723,35 +729,36 @@ AsIntegerBuiltin::AsIntegerBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation AsIntegerBuiltin::info( classid(),
-    Annotation::Data{
+const Annotation AsIntegerBuiltin::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::INTEGER,
+        { Type::Kind::INTEGER,
             {
-                Type::INTEGER,
+                Type::Kind::INTEGER,
             } },
 
-        { Type::INTEGER,
+        { Type::Kind::INTEGER,
             {
-                Type::BOOLEAN,
+                Type::Kind::BOOLEAN,
             } },
 
-        { Type::INTEGER,
+        { Type::Kind::INTEGER,
             {
-                Type::FLOATING,
+                Type::Kind::FLOATING,
             } },
 
-        { Type::INTEGER,
+        { Type::Kind::INTEGER,
             {
-                Type::BIT,
+                Type::Kind::BIT,
             } },
 
-        { Type::INTEGER,
+        { Type::Kind::INTEGER,
             {
-                Type::ENUMERATION,
+                Type::Kind::ENUMERATION,
             } }
 
     },
+    []( std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
         if( types.size() != 1 )
@@ -784,35 +791,41 @@ AsBitBuiltin::AsBitBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation AsBitBuiltin::info( classid(),
-    Annotation::Data{
+const Annotation AsBitBuiltin::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::BIT, Type::INTEGER,
+                Type::Kind::BIT,
+                Type::Kind::INTEGER,
             } },
 
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::INTEGER, Type::INTEGER,
+                Type::Kind::INTEGER,
+                Type::Kind::INTEGER,
             } },
 
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::BOOLEAN, Type::INTEGER,
+                Type::Kind::BOOLEAN,
+                Type::Kind::INTEGER,
             } },
 
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::FLOATING, Type::INTEGER,
+                Type::Kind::FLOATING,
+                Type::Kind::INTEGER,
             } },
 
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::ENUMERATION, Type::INTEGER,
+                Type::Kind::ENUMERATION,
+                Type::Kind::INTEGER,
             } }
 
     },
+    []( std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
         if( types.size() != 2 )
@@ -846,45 +859,46 @@ AsStringBuiltin::AsStringBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation AsStringBuiltin::info( classid(),
-    Annotation::Data{
+const Annotation AsStringBuiltin::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::STRING,
+        { Type::Kind::STRING,
             {
-                Type::STRING,
+                Type::Kind::STRING,
             } },
 
-        { Type::STRING,
+        { Type::Kind::STRING,
             {
-                Type::INTEGER,
+                Type::Kind::INTEGER,
             } },
 
-        { Type::STRING,
+        { Type::Kind::STRING,
             {
-                Type::BOOLEAN,
+                Type::Kind::BOOLEAN,
             } },
 
-        { Type::STRING,
+        { Type::Kind::STRING,
             {
-                Type::BIT,
+                Type::Kind::BIT,
             } },
 
-        { Type::STRING,
+        { Type::Kind::STRING,
             {
-                Type::FLOATING,
+                Type::Kind::FLOATING,
             } },
 
-        { Type::STRING,
+        { Type::Kind::STRING,
             {
-                Type::RATIONAL,
+                Type::Kind::RATIONAL,
             } },
 
-        { Type::STRING,
+        { Type::Kind::STRING,
             {
-                Type::ENUMERATION,
+                Type::Kind::ENUMERATION,
             } }
 
     },
+    []( std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
         if( types.size() != 1 )
@@ -908,35 +922,36 @@ AsFloatingBuiltin::AsFloatingBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation AsFloatingBuiltin::info( classid(),
-    Annotation::Data{
+const Annotation AsFloatingBuiltin::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::FLOATING,
+        { Type::Kind::FLOATING,
             {
-                Type::FLOATING,
+                Type::Kind::FLOATING,
             } },
 
-        { Type::FLOATING,
+        { Type::Kind::FLOATING,
             {
-                Type::INTEGER,
+                Type::Kind::INTEGER,
             } },
 
-        { Type::FLOATING,
+        { Type::Kind::FLOATING,
             {
-                Type::BOOLEAN,
+                Type::Kind::BOOLEAN,
             } },
 
-        { Type::FLOATING,
+        { Type::Kind::FLOATING,
             {
-                Type::BIT,
+                Type::Kind::BIT,
             } },
 
-        { Type::FLOATING,
+        { Type::Kind::FLOATING,
             {
-                Type::ENUMERATION,
+                Type::Kind::ENUMERATION,
             } }
 
     },
+    []( std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
         if( types.size() != 1 )
@@ -960,16 +975,17 @@ AsRationalBuiltin::AsRationalBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation AsRationalBuiltin::info( classid(),
-    Annotation::Data{
+const Annotation AsRationalBuiltin::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::RATIONAL,
+        { Type::Kind::RATIONAL,
             {
-                Type::RATIONAL,
+                Type::Kind::RATIONAL,
             } }
 
         // TODO: PPA: add more relations for possible input types!
     },
+    []( std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
         if( types.size() != 1 )
@@ -993,20 +1009,21 @@ AsEnumerationBuiltin::AsEnumerationBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation AsEnumerationBuiltin::info( classid(),
-    Annotation::Data{
+const Annotation AsEnumerationBuiltin::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::ENUMERATION,
+        { Type::Kind::ENUMERATION,
             {
-                Type::INTEGER,
+                Type::Kind::INTEGER,
             } },
 
-        { Type::ENUMERATION,
+        { Type::Kind::ENUMERATION,
             {
-                Type::BIT,
+                Type::Kind::BIT,
             } }
 
     },
+    []( std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
         if( types.size() != 1 )
@@ -1038,43 +1055,46 @@ u1 StringifyBuiltin::classof( Value const* obj )
            or BinBuiltin::classof( obj );
 }
 
-static const Annotation::Data stringify_builtin_data = {
+static const Annotation::Relations stringify_builtin_data = {
 
-    { Type::STRING,
+    { Type::Kind::STRING,
         {
-            Type::BOOLEAN,
+            Type::Kind::BOOLEAN,
         } },
 
-    { Type::STRING,
+    { Type::Kind::STRING,
         {
-            Type::INTEGER,
+            Type::Kind::INTEGER,
         } },
 
-    { Type::STRING,
+    { Type::Kind::STRING,
         {
-            Type::BIT,
+            Type::Kind::BIT,
         } },
 
-    { Type::STRING,
+    { Type::Kind::STRING,
         {
-            Type::FLOATING,
+            Type::Kind::FLOATING,
         } },
 
-    { Type::STRING,
+    { Type::Kind::STRING,
         {
-            Type::RATIONAL,
+            Type::Kind::RATIONAL,
         } },
 
-    { Type::STRING,
+    { Type::Kind::STRING,
         {
-            Type::ENUMERATION,
+            Type::Kind::ENUMERATION,
         } }
 
 };
 
+static const auto stringify_builtin_resolve
+    = []( std::vector< Type::Ptr >& types ) {};
+
 static const auto stringify_builtin_inference
     = []( const std::vector< Type::Ptr >& types,
-        const std::vector< Value::Ptr >& values ) -> Type::Ptr {
+          const std::vector< Value::Ptr >& values ) -> Type::Ptr {
     if( types.size() != 1 )
     {
         throw InternalException( "types.size() != 1" );
@@ -1091,8 +1111,8 @@ DecBuiltin::DecBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation DecBuiltin::info(
-    classid(), stringify_builtin_data, stringify_builtin_inference );
+const Annotation DecBuiltin::annotation( classid(), stringify_builtin_data,
+    stringify_builtin_resolve, stringify_builtin_inference );
 
 u1 DecBuiltin::classof( Value const* obj )
 {
@@ -1108,8 +1128,8 @@ HexBuiltin::HexBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation HexBuiltin::info(
-    classid(), stringify_builtin_data, stringify_builtin_inference );
+const Annotation HexBuiltin::annotation( classid(), stringify_builtin_data,
+    stringify_builtin_resolve, stringify_builtin_inference );
 
 u1 HexBuiltin::classof( Value const* obj )
 {
@@ -1125,8 +1145,8 @@ OctBuiltin::OctBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation OctBuiltin::info(
-    classid(), stringify_builtin_data, stringify_builtin_inference );
+const Annotation OctBuiltin::annotation( classid(), stringify_builtin_data,
+    stringify_builtin_resolve, stringify_builtin_inference );
 
 u1 OctBuiltin::classof( Value const* obj )
 {
@@ -1142,8 +1162,8 @@ BinBuiltin::BinBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation BinBuiltin::info(
-    classid(), stringify_builtin_data, stringify_builtin_inference );
+const Annotation BinBuiltin::annotation( classid(), stringify_builtin_data,
+    stringify_builtin_resolve, stringify_builtin_inference );
 
 u1 BinBuiltin::classof( Value const* obj )
 {
@@ -1175,22 +1195,41 @@ ArithmeticBuiltin::ArithmeticBuiltin(
 {
 }
 
-static const Annotation::Data arithmetic_builtin_data = {
+static const Annotation::Relations arithmetic_builtin_data = {
 
-    { Type::INTEGER,
+    { Type::Kind::INTEGER,
         {
-            Type::INTEGER, Type::INTEGER,
+            Type::Kind::INTEGER,
+            Type::Kind::INTEGER,
         } },
 
-    { Type::BIT,
+    { Type::Kind::BIT,
         {
-            Type::BIT, Type::BIT,
+            Type::Kind::BIT,
+            Type::Kind::BIT,
         } }
 };
 
+static const auto arithmetic_builtin_resolve
+    = []( std::vector< Type::Ptr >& types ) {
+          if( types.size() != 2 )
+          {
+              throw InternalException( "types.size() != 2" );
+          }
+
+          if( not types[ 0 ] )
+          {
+              types[ 0 ] = types[ 1 ];
+          }
+          else if( not types[ 1 ] )
+          {
+              types[ 1 ] = types[ 0 ];
+          }
+      };
+
 static const auto arithmetic_builtin_inference
     = []( const std::vector< Type::Ptr >& types,
-        const std::vector< Value::Ptr >& ) -> Type::Ptr {
+          const std::vector< Value::Ptr >& ) -> Type::Ptr {
     if( types.size() != 2 )
     {
         throw InternalException( "types.size() != 2" );
@@ -1224,8 +1263,8 @@ AdduBuiltin::AdduBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation AdduBuiltin::info(
-    classid(), arithmetic_builtin_data, arithmetic_builtin_inference );
+const Annotation AdduBuiltin::annotation( classid(), arithmetic_builtin_data,
+    arithmetic_builtin_resolve, arithmetic_builtin_inference );
 
 u1 AdduBuiltin::classof( Value const* obj )
 {
@@ -1241,8 +1280,8 @@ AddsBuiltin::AddsBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation AddsBuiltin::info(
-    classid(), arithmetic_builtin_data, arithmetic_builtin_inference );
+const Annotation AddsBuiltin::annotation( classid(), arithmetic_builtin_data,
+    arithmetic_builtin_resolve, arithmetic_builtin_inference );
 
 u1 AddsBuiltin::classof( Value const* obj )
 {
@@ -1258,8 +1297,8 @@ SubuBuiltin::SubuBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation SubuBuiltin::info(
-    classid(), arithmetic_builtin_data, arithmetic_builtin_inference );
+const Annotation SubuBuiltin::annotation( classid(), arithmetic_builtin_data,
+    arithmetic_builtin_resolve, arithmetic_builtin_inference );
 
 u1 SubuBuiltin::classof( Value const* obj )
 {
@@ -1275,8 +1314,8 @@ SubsBuiltin::SubsBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation SubsBuiltin::info(
-    classid(), arithmetic_builtin_data, arithmetic_builtin_inference );
+const Annotation SubsBuiltin::annotation( classid(), arithmetic_builtin_data,
+    arithmetic_builtin_resolve, arithmetic_builtin_inference );
 
 u1 SubsBuiltin::classof( Value const* obj )
 {
@@ -1292,8 +1331,8 @@ MuluBuiltin::MuluBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation MuluBuiltin::info(
-    classid(), arithmetic_builtin_data, arithmetic_builtin_inference );
+const Annotation MuluBuiltin::annotation( classid(), arithmetic_builtin_data,
+    arithmetic_builtin_resolve, arithmetic_builtin_inference );
 
 u1 MuluBuiltin::classof( Value const* obj )
 {
@@ -1309,8 +1348,8 @@ MulsBuiltin::MulsBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation MulsBuiltin::info(
-    classid(), arithmetic_builtin_data, arithmetic_builtin_inference );
+const Annotation MulsBuiltin::annotation( classid(), arithmetic_builtin_data,
+    arithmetic_builtin_resolve, arithmetic_builtin_inference );
 
 u1 MulsBuiltin::classof( Value const* obj )
 {
@@ -1326,34 +1365,40 @@ CompareBuiltin::CompareBuiltin( const Type::Ptr& type, const Value::ID id )
 {
 }
 
-const Annotation::Data compare_builtin_data = {
+const Annotation::Relations compare_builtin_data = {
 
-    { Type::BOOLEAN,
+    { Type::Kind::BOOLEAN,
         {
-            Type::INTEGER, Type::INTEGER,
+            Type::Kind::INTEGER,
+            Type::Kind::INTEGER,
         } },
 
-    { Type::BOOLEAN,
+    { Type::Kind::BOOLEAN,
         {
-            Type::BIT, Type::BIT,
+            Type::Kind::BIT,
+            Type::Kind::BIT,
         } },
 
-    { Type::BOOLEAN,
+    { Type::Kind::BOOLEAN,
         {
-            Type::RATIONAL, Type::RATIONAL,
+            Type::Kind::RATIONAL,
+            Type::Kind::RATIONAL,
         } },
 
-    { Type::BOOLEAN,
+    { Type::Kind::BOOLEAN,
         {
-            Type::STRING, Type::STRING,
+            Type::Kind::STRING,
+            Type::Kind::STRING,
         } },
 
     // TODO: PPA: add more?
 };
 
+static const auto compare_builtin_resolve = arithmetic_builtin_resolve;
+
 static const auto compare_builtin_inference
     = []( const std::vector< Type::Ptr >& types,
-        const std::vector< Value::Ptr >& ) -> Type::Ptr {
+          const std::vector< Value::Ptr >& ) -> Type::Ptr {
     if( types.size() != 2 )
     {
         throw InternalException( "types.size() != 2" );
@@ -1388,8 +1433,8 @@ LesuBuiltin::LesuBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation LesuBuiltin::info(
-    classid(), compare_builtin_data, compare_builtin_inference );
+const Annotation LesuBuiltin::annotation( classid(), compare_builtin_data,
+    compare_builtin_resolve, compare_builtin_inference );
 
 u1 LesuBuiltin::classof( Value const* obj )
 {
@@ -1405,8 +1450,8 @@ LessBuiltin::LessBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation LessBuiltin::info(
-    classid(), compare_builtin_data, compare_builtin_inference );
+const Annotation LessBuiltin::annotation( classid(), compare_builtin_data,
+    compare_builtin_resolve, compare_builtin_inference );
 
 u1 LessBuiltin::classof( Value const* obj )
 {
@@ -1422,8 +1467,8 @@ LequBuiltin::LequBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation LequBuiltin::info(
-    classid(), compare_builtin_data, compare_builtin_inference );
+const Annotation LequBuiltin::annotation( classid(), compare_builtin_data,
+    compare_builtin_resolve, compare_builtin_inference );
 
 u1 LequBuiltin::classof( Value const* obj )
 {
@@ -1439,8 +1484,8 @@ LeqsBuiltin::LeqsBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation LeqsBuiltin::info(
-    classid(), compare_builtin_data, compare_builtin_inference );
+const Annotation LeqsBuiltin::annotation( classid(), compare_builtin_data,
+    compare_builtin_resolve, compare_builtin_inference );
 
 u1 LeqsBuiltin::classof( Value const* obj )
 {
@@ -1456,8 +1501,8 @@ GreuBuiltin::GreuBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation GreuBuiltin::info(
-    classid(), compare_builtin_data, compare_builtin_inference );
+const Annotation GreuBuiltin::annotation( classid(), compare_builtin_data,
+    compare_builtin_resolve, compare_builtin_inference );
 
 u1 GreuBuiltin::classof( Value const* obj )
 {
@@ -1473,8 +1518,8 @@ GresBuiltin::GresBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation GresBuiltin::info(
-    classid(), compare_builtin_data, compare_builtin_inference );
+const Annotation GresBuiltin::annotation( classid(), compare_builtin_data,
+    compare_builtin_resolve, compare_builtin_inference );
 
 u1 GresBuiltin::classof( Value const* obj )
 {
@@ -1490,8 +1535,8 @@ GequBuiltin::GequBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation GequBuiltin::info(
-    classid(), compare_builtin_data, compare_builtin_inference );
+const Annotation GequBuiltin::annotation( classid(), compare_builtin_data,
+    compare_builtin_resolve, compare_builtin_inference );
 
 u1 GequBuiltin::classof( Value const* obj )
 {
@@ -1507,8 +1552,8 @@ GeqsBuiltin::GeqsBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation GeqsBuiltin::info(
-    classid(), compare_builtin_data, compare_builtin_inference );
+const Annotation GeqsBuiltin::annotation( classid(), compare_builtin_data,
+    compare_builtin_resolve, compare_builtin_inference );
 
 u1 GeqsBuiltin::classof( Value const* obj )
 {
@@ -1542,16 +1587,17 @@ ZextBuiltin::ZextBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation ZextBuiltin::info( classid(),
+const Annotation ZextBuiltin::annotation( classid(),
+    Annotation::Relations{
 
-    Annotation::Data{
-
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::BIT, Type::INTEGER,
+                Type::Kind::BIT,
+                Type::Kind::INTEGER,
             } }
 
     },
+    []( std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
         if( types.size() != 2 )
@@ -1580,15 +1626,17 @@ SextBuiltin::SextBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation SextBuiltin::info( classid(),
-    Annotation::Data{
+const Annotation SextBuiltin::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::BIT, Type::INTEGER,
+                Type::Kind::BIT,
+                Type::Kind::INTEGER,
             } }
 
     },
+    []( std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
         if( types.size() != 2 )
@@ -1617,15 +1665,17 @@ TruncBuiltin::TruncBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation TruncBuiltin::info( classid(),
-    Annotation::Data{
+const Annotation TruncBuiltin::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::BIT, Type::INTEGER,
+                Type::Kind::BIT,
+                Type::Kind::INTEGER,
             } }
 
     },
+    []( std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
         if( types.size() != 2 )
@@ -1654,19 +1704,23 @@ ShlBuiltin::ShlBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation ShlBuiltin::info( classid(),
-    Annotation::Data{
+const Annotation ShlBuiltin::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::BIT, Type::INTEGER,
+                Type::Kind::BIT,
+                Type::Kind::INTEGER,
             } },
-        { Type::BIT,
+
+        { Type::Kind::BIT,
             {
-                Type::BIT, Type::BIT,
+                Type::Kind::BIT,
+                Type::Kind::BIT,
             } }
 
     },
+    []( std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
         if( types.size() != 2 )
@@ -1699,20 +1753,23 @@ ShrBuiltin::ShrBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation ShrBuiltin::info( classid(),
-    Annotation::Data{
+const Annotation ShrBuiltin::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::BIT, Type::INTEGER,
+                Type::Kind::BIT,
+                Type::Kind::INTEGER,
             } },
 
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::BIT, Type::BIT,
+                Type::Kind::BIT,
+                Type::Kind::BIT,
             } }
 
     },
+    []( std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
         if( types.size() != 2 )
@@ -1745,20 +1802,23 @@ AshrBuiltin::AshrBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation AshrBuiltin::info( classid(),
-    Annotation::Data{
+const Annotation AshrBuiltin::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::BIT, Type::INTEGER,
+                Type::Kind::BIT,
+                Type::Kind::INTEGER,
             } },
 
-        { Type::BIT,
+        { Type::Kind::BIT,
             {
-                Type::BIT, Type::BIT,
+                Type::Kind::BIT,
+                Type::Kind::BIT,
             } }
 
     },
+    []( std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
         if( types.size() != 2 )
@@ -1791,15 +1851,16 @@ ClzBuiltin::ClzBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation ClzBuiltin::info( classid(),
-    Annotation::Data{
+const Annotation ClzBuiltin::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::INTEGER,
+        { Type::Kind::INTEGER,
             {
-                Type::BIT,
+                Type::Kind::BIT,
             } }
 
     },
+    []( std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
         if( types.size() != 1 )
@@ -1823,15 +1884,16 @@ CloBuiltin::CloBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation CloBuiltin::info( classid(),
-    Annotation::Data{
+const Annotation CloBuiltin::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::INTEGER,
+        { Type::Kind::INTEGER,
             {
-                Type::BIT,
+                Type::Kind::BIT,
             } }
 
     },
+    []( std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
         if( types.size() != 1 )
@@ -1855,15 +1917,16 @@ ClsBuiltin::ClsBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation ClsBuiltin::info( classid(),
-    Annotation::Data{
+const Annotation ClsBuiltin::annotation( classid(),
+    Annotation::Relations{
 
-        { Type::INTEGER,
+        { Type::Kind::INTEGER,
             {
-                Type::BIT,
+                Type::Kind::BIT,
             } }
 
     },
+    []( std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
         if( types.size() != 1 )

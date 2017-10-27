@@ -221,6 +221,8 @@ namespace libcasm_ir
 
         Value( const Type::Ptr& type, const ID id );
 
+        Value( const Type::ID type, const ID id );
+
         virtual ~Value( void ) = default;
 
         virtual std::string name( void ) const = 0;
@@ -229,11 +231,11 @@ namespace libcasm_ir
 
         const Type& type( void ) const;
 
-        ID id() const;
+        Type::ID typeId( void ) const;
+
+        ID id( void ) const;
 
         std::string dump( void ) const;
-
-        std::string make_hash( void ) const;
 
         std::string label( void ) const;
 
@@ -266,7 +268,7 @@ namespace libcasm_ir
         }
 
       private:
-        Type* m_type;
+        Type::ID m_type;
 
         ID m_id;
 
@@ -367,6 +369,23 @@ namespace libcasm_ir
     };
 
     using Values = ValueList< Value >;
+}
+
+namespace std
+{
+    static std::string to_string( const libcasm_ir::Value::ID value )
+    {
+        return libcasm_ir::Value::token( value );
+    };
+
+    template <>
+    struct hash< libcasm_ir::Value::ID >
+    {
+        inline std::size_t operator()( const libcasm_ir::Value::ID value ) const
+        {
+            return std::hash< std::size_t >()( (std::size_t)value );
+        }
+    };
 }
 
 #endif // _LIBCASM_IR_VALUE_H_

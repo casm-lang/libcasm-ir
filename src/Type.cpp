@@ -52,15 +52,66 @@
 
 using namespace libcasm_ir;
 
-static const auto VOID_TYPE = libstdhl::Memory::get< VoidType >();
+static const auto TYPE_VOID = libstdhl::Memory::get< libcasm_ir::VoidType >();
+static const auto TYPE_LABEL = libstdhl::Memory::get< libcasm_ir::LabelType >();
+static const auto TYPE_LOCATION
+    = libstdhl::Memory::get< libcasm_ir::LocationType >();
+static const auto TYPE_BOOLEAN
+    = libstdhl::Memory::get< libcasm_ir::BooleanType >();
+static const auto TYPE_INTEGER
+    = libstdhl::Memory::get< libcasm_ir::IntegerType >();
+static const auto TYPE_RATIONAL
+    = libstdhl::Memory::get< libcasm_ir::RationalType >();
+static const auto TYPE_FLOATING
+    = libstdhl::Memory::get< libcasm_ir::FloatingType >();
+static const auto TYPE_STRING
+    = libstdhl::Memory::get< libcasm_ir::StringType >();
 
-Type::Type( Type::ID id )
-: m_id( id )
+static std::array< std::vector< Type::ID >,
+    (std::size_t)Type::Kind::_SIZE_ + 1 >
+    s_typeIDs = {};
+
+Type::Type( Type::Kind kind )
+: m_id( kind )
 {
 }
 
-Type::ID Type::id( void ) const
+Type::Kind Type::kind( void ) const
 {
+    return m_id.kind();
+}
+
+Type::ID Type::id( void )
+{
+    if( m_id.flavor() == 0 )
+    {
+        const auto type_hash = this->hash();
+        auto result = s_registered_type_hash2ptr().emplace(
+            type_hash, this->ptr_type() );
+
+        if( not result.second )
+        {
+            // found already allocated type with set ID!
+            return result.first->second->id();
+        }
+        else
+        {
+            // NOT found, registered this as new type in hash2ptr,
+            // allocate new ID, set it to this type, and link it in id2hash
+            const auto type_flavor
+                = s_typeIDs[ (std::size_t)kind() ].size() + 1;
+            m_id.setFlavor( type_flavor );
+            s_typeIDs[ (std::size_t)kind() ].emplace_back( m_id );
+
+            auto type_id2hash
+                = s_registered_type_id2hash().emplace( m_id.hash(), type_hash );
+            if( not type_id2hash.second )
+            {
+                assert( !" inconsistent state of the registered types! " );
+            }
+        }
+    }
+
     return m_id;
 }
 
@@ -94,11 +145,6 @@ const Types& Type::arguments( void ) const
     return m_arguments;
 }
 
-std::string Type::make_hash( void ) const
-{
-    return "t:" + std::to_string( id() ) + ":" + description();
-}
-
 u1 Type::isSynthetic( void ) const
 {
     return isVoid() or isLabel() or isLocation() or isRelation();
@@ -106,58 +152,58 @@ u1 Type::isSynthetic( void ) const
 
 u1 Type::isVoid( void ) const
 {
-    return id() == Type::VOID;
+    return kind() == Type::Kind::VOID;
 }
 
 u1 Type::isLabel( void ) const
 {
-    return id() == Type::LABEL;
+    return kind() == Type::Kind::LABEL;
 }
 
 u1 Type::isLocation( void ) const
 {
-    return id() == Type::LOCATION;
+    return kind() == Type::Kind::LOCATION;
 }
 
 u1 Type::isRelation( void ) const
 {
-    return id() == Type::RELATION;
+    return kind() == Type::Kind::RELATION;
 }
 
 u1 Type::isPrimitive( void ) const
 {
-    return isBoolean() or isInteger() or isBit() or isString() or isFloating()
-           or isRational();
+    return isBoolean() or isInteger() or isRational() or isBit() or isFloating()
+           or isString();
 }
 
 u1 Type::isBoolean( void ) const
 {
-    return id() == Type::BOOLEAN;
+    return kind() == Type::Kind::BOOLEAN;
 }
 
 u1 Type::isInteger( void ) const
 {
-    return id() == Type::INTEGER;
-}
-
-u1 Type::isBit( void ) const
-{
-    return id() == Type::BIT;
-}
-
-u1 Type::isString( void ) const
-{
-    return id() == Type::STRING;
-}
-
-u1 Type::isFloating( void ) const
-{
-    return id() == Type::FLOATING;
+    return kind() == Type::Kind::INTEGER;
 }
 
 u1 Type::isRational( void ) const
 {
-    return id() == Type::RATIONAL;
+    return kind() == Type::Kind::RATIONAL;
+}
+
+u1 Type::isBit( void ) const
+{
+    return kind() == Type::Kind::BIT;
+}
+
+u1 Type::isFloating( void ) const
+{
+    return kind() == Type::Kind::FLOATING;
+}
+
+u1 Type::isString( void ) const
+{
+    return kind() == Type::Kind::STRING;
 }
 
 u1 Type::isComposed( void ) const
@@ -167,22 +213,22 @@ u1 Type::isComposed( void ) const
 
 u1 Type::isEnumeration( void ) const
 {
-    return id() == Type::ENUMERATION;
+    return kind() == Type::Kind::ENUMERATION;
 }
 
 u1 Type::isRange( void ) const
 {
-    return id() == Type::RANGE;
+    return kind() == Type::Kind::RANGE;
 }
 
 u1 Type::isTuple( void ) const
 {
-    return id() == Type::TUPLE;
+    return kind() == Type::Kind::TUPLE;
 }
 
 u1 Type::isList( void ) const
 {
-    return id() == Type::LIST;
+    return kind() == Type::Kind::LIST;
 }
 
 u1 Type::isReference( void ) const
@@ -192,12 +238,12 @@ u1 Type::isReference( void ) const
 
 u1 Type::isRuleReference( void ) const
 {
-    return id() == Type::RULE_REFERENCE;
+    return kind() == Type::Kind::RULE_REFERENCE;
 }
 
 u1 Type::isFunctionReference( void ) const
 {
-    return id() == Type::FUNCTION_REFERENCE;
+    return kind() == Type::Kind::FUNCTION_REFERENCE;
 }
 
 u1 Type::isAbstraction( void ) const
@@ -207,102 +253,195 @@ u1 Type::isAbstraction( void ) const
 
 u1 Type::isFile( void ) const
 {
-    return id() == Type::FILE;
+    return kind() == Type::Kind::FILE;
 }
 
 u1 Type::isPort( void ) const
 {
-    return id() == Type::PORT;
+    return kind() == Type::Kind::PORT;
 }
 
-std::string Type::token( const Type::ID id )
+const std::vector< Type::ID >& Type::fromKind( const Type::Kind kind )
 {
-    switch( id )
+    return s_typeIDs[ (std::size_t)kind ];
+}
+
+Type::Ptr Type::fromID( const Type::ID id )
+{
+    if( id.flavor() == 0 )
     {
-        case _BOTTOM_:
+        switch( id.kind() )
         {
-            return "_BOTTOM_";
+            case libcasm_ir::Type::Kind::VOID:
+            {
+                return TYPE_VOID;
+            }
+            case libcasm_ir::Type::Kind::LABEL:
+            {
+                return TYPE_LABEL;
+            }
+            case libcasm_ir::Type::Kind::LOCATION:
+            {
+                return TYPE_LOCATION;
+            }
+            case libcasm_ir::Type::Kind::RELATION:
+            {
+                assert( !" invalid ID!" );
+                break;
+            }
+            case libcasm_ir::Type::Kind::BOOLEAN:
+            {
+                return TYPE_BOOLEAN;
+            }
+            case libcasm_ir::Type::Kind::INTEGER:
+            {
+                return TYPE_INTEGER;
+            }
+            case libcasm_ir::Type::Kind::RATIONAL:
+            {
+                return TYPE_RATIONAL;
+            }
+            case libcasm_ir::Type::Kind::BIT:
+            {
+                assert( !" invalid ID!" );
+                break;
+            }
+            case libcasm_ir::Type::Kind::FLOATING:
+            {
+                return TYPE_FLOATING;
+            }
+            case libcasm_ir::Type::Kind::STRING:
+            {
+                return TYPE_STRING;
+            }
+            case libcasm_ir::Type::Kind::ENUMERATION:        // [fallthrough]
+            case libcasm_ir::Type::Kind::RANGE:              // [fallthrough]
+            case libcasm_ir::Type::Kind::TUPLE:              // [fallthrough]
+            case libcasm_ir::Type::Kind::LIST:               // [fallthrough]
+            case libcasm_ir::Type::Kind::RULE_REFERENCE:     // [fallthrough]
+            case libcasm_ir::Type::Kind::FUNCTION_REFERENCE: // [fallthrough]
+            case libcasm_ir::Type::Kind::FILE:               // [fallthrough]
+            case libcasm_ir::Type::Kind::PORT:
+            {
+                assert( !" invalid ID!" );
+                break;
+            }
+            case libcasm_ir::Type::Kind::_SIZE_:
+            {
+                assert( !" internal error!" );
+                break;
+            }
         }
+    }
+
+    auto type_id2hash = s_registered_type_id2hash().find( id.hash() );
+    if( type_id2hash == s_registered_type_id2hash().end() )
+    {
+        throw InternalException(
+            "type id '" + std::to_string( id ) + "' is not registered" );
+    }
+
+    auto type_cache = s_cache().find( type_id2hash->second );
+    if( type_cache == s_cache().end() )
+    {
+        auto type_hash2ptr
+            = s_registered_type_hash2ptr().find( type_id2hash->second );
+        if( type_hash2ptr == s_registered_type_hash2ptr().end() )
+        {
+            assert( !" inconsistent state of the registered types! " );
+        }
+
+        return type_hash2ptr->second;
+    }
+
+    return type_cache->second;
+}
+
+std::string Type::token( const Type::Kind kind )
+{
+    switch( kind )
+    {
         // synthetic
-        case VOID:
+        case Type::Kind::VOID:
         {
             return "Void";
         }
-        case LABEL:
+        case Type::Kind::LABEL:
         {
             return "Label";
         }
-        case LOCATION:
+        case Type::Kind::LOCATION:
         {
             return "Location";
         }
-        case RELATION:
+        case Type::Kind::RELATION:
         {
             return "Relation";
         }
         // primitive
-        case BOOLEAN:
+        case Type::Kind::BOOLEAN:
         {
             return "Boolean";
         }
-        case INTEGER:
+        case Type::Kind::INTEGER:
         {
             return "Integer";
         }
-        case BIT:
-        {
-            return "Bit";
-        }
-        case STRING:
-        {
-            return "String";
-        }
-        case FLOATING:
-        {
-            return "Floating";
-        }
-        case RATIONAL:
+        case Type::Kind::RATIONAL:
         {
             return "Rational";
         }
+        case Type::Kind::BIT:
+        {
+            return "Bit";
+        }
+        case Type::Kind::FLOATING:
+        {
+            return "Floating"; // PPA: FIXME: change this to 'Decimal'
+        }
+        case Type::Kind::STRING:
+        {
+            return "String";
+        }
         // composed
-        case ENUMERATION:
+        case Type::Kind::ENUMERATION:
         {
             return "Enumeration";
         }
-        case RANGE:
+        case Type::Kind::RANGE:
         {
             return "Range";
         }
-        case TUPLE:
+        case Type::Kind::TUPLE:
         {
             return "Tuple";
         }
-        case LIST:
+        case Type::Kind::LIST:
         {
             return "List";
         }
         // reference
-        case RULE_REFERENCE:
+        case Type::Kind::RULE_REFERENCE:
         {
             return "RuleRef";
         }
-        case FUNCTION_REFERENCE:
+        case Type::Kind::FUNCTION_REFERENCE:
         {
             return "FuncRef";
         }
         // abstraction
-        case FILE:
+        case Type::Kind::FILE:
         {
             return "File";
         }
-        case PORT:
+        case Type::Kind::PORT:
         {
             return "Port";
         }
-        case _TOP_:
+
+        case Type::Kind::_SIZE_:
         {
-            return "_TOP_";
+            return "_SIZE_";
         }
     }
 
@@ -315,17 +454,18 @@ std::string Type::token( const Type::ID id )
 // Synthetic Type
 //
 
-SyntheticType::SyntheticType( Type::ID id )
-: Type( id )
+SyntheticType::SyntheticType( Type::Kind kind )
+: Type( kind )
 {
 }
 
+//
 //
 // Void Type
 //
 
 VoidType::VoidType( void )
-: SyntheticType( Type::VOID )
+: SyntheticType( classid() )
 {
 }
 
@@ -336,7 +476,7 @@ std::string VoidType::name( void ) const
 
 std::string VoidType::description( void ) const
 {
-    return token( id() );
+    return token( kind() );
 }
 
 void VoidType::foreach(
@@ -357,16 +497,16 @@ void VoidType::validate( const Constant& constant ) const
 
 std::size_t VoidType::hash( void ) const
 {
-    return libstdhl::Hash::combine(
-        classid(), std::hash< std::string >()( name() ) );
+    return std::hash< std::string >()( name() );
 }
 
+//
 //
 // Label Type
 //
 
 LabelType::LabelType( void )
-: SyntheticType( Type::LABEL )
+: SyntheticType( classid() )
 {
 }
 
@@ -377,7 +517,7 @@ std::string LabelType::name( void ) const
 
 std::string LabelType::description( void ) const
 {
-    return token( id() );
+    return token( kind() );
 }
 
 void LabelType::foreach(
@@ -399,16 +539,16 @@ void LabelType::validate( const Constant& constant ) const
 
 std::size_t LabelType::hash( void ) const
 {
-    return libstdhl::Hash::combine(
-        classid(), std::hash< std::string >()( name() ) );
+    return std::hash< std::string >()( name() );
 }
 
+//
 //
 // Location Type
 //
 
 LocationType::LocationType( void )
-: SyntheticType( Type::LOCATION )
+: SyntheticType( classid() )
 {
 }
 
@@ -419,7 +559,7 @@ std::string LocationType::name( void ) const
 
 std::string LocationType::description( void ) const
 {
-    return token( id() );
+    return token( kind() );
 }
 
 void LocationType::foreach(
@@ -440,8 +580,7 @@ void LocationType::validate( const Constant& constant ) const
 
 std::size_t LocationType::hash( void ) const
 {
-    return libstdhl::Hash::combine(
-        classid(), std::hash< std::string >()( name() ) );
+    return std::hash< std::string >()( name() );
 }
 
 //
@@ -450,7 +589,7 @@ std::size_t LocationType::hash( void ) const
 //
 
 RelationType::RelationType( const Type::Ptr& result, const Types& arguments )
-: SyntheticType( Type::RELATION )
+: SyntheticType( classid() )
 {
     m_result = result;
     m_arguments = arguments;
@@ -526,8 +665,16 @@ void RelationType::validate( const Constant& constant ) const
 
 std::size_t RelationType::hash( void ) const
 {
-    return libstdhl::Hash::combine(
-        classid(), std::hash< std::string >()( name() ) );
+    auto tmp = std::hash< std::string >()( name() );
+
+    for( auto argument : m_arguments )
+    {
+        tmp = libstdhl::Hash::combine( tmp, argument->hash() );
+    }
+
+    tmp = libstdhl::Hash::combine( tmp, m_result->hash() );
+
+    return tmp;
 }
 
 //
@@ -535,17 +682,18 @@ std::size_t RelationType::hash( void ) const
 // Primitive Type
 //
 
-PrimitiveType::PrimitiveType( Type::ID id )
-: Type( id )
+PrimitiveType::PrimitiveType( Type::Kind kind )
+: Type( kind )
 {
 }
 
+//
 //
 // Boolean Type
 //
 
 BooleanType::BooleanType( void )
-: PrimitiveType( Type::BOOLEAN )
+: PrimitiveType( classid() )
 {
 }
 
@@ -556,7 +704,7 @@ std::string BooleanType::name( void ) const
 
 std::string BooleanType::description( void ) const
 {
-    return token( id() );
+    return token( kind() );
 }
 
 void BooleanType::foreach(
@@ -579,22 +727,22 @@ void BooleanType::validate( const Constant& constant ) const
 
 std::size_t BooleanType::hash( void ) const
 {
-    return libstdhl::Hash::combine(
-        classid(), std::hash< std::string >()( name() ) );
+    return std::hash< std::string >()( name() );
 }
 
+//
 //
 // Integer Type
 //
 
 IntegerType::IntegerType( void )
-: PrimitiveType( Type::INTEGER )
+: PrimitiveType( classid() )
 , m_range( nullptr )
 {
 }
 
 IntegerType::IntegerType( const RangeType::Ptr& range )
-: PrimitiveType( Type::INTEGER )
+: PrimitiveType( classid() )
 , m_range( range )
 {
     assert( range );
@@ -638,11 +786,11 @@ std::string IntegerType::description( void ) const
 {
     if( not m_range )
     {
-        return token( id() );
+        return token( kind() );
     }
     else
     {
-        return token( id() ) + "'" + m_range->name();
+        return token( kind() ) + "'" + m_range->name();
     }
 }
 
@@ -688,16 +836,71 @@ void IntegerType::validate( const Constant& constant ) const
 
 std::size_t IntegerType::hash( void ) const
 {
-    return libstdhl::Hash::combine(
-        classid(), std::hash< std::string >()( name() ) );
+    auto tmp = std::hash< std::string >()( name() );
+
+    if( constrained() )
+    {
+        tmp = libstdhl::Hash::combine( tmp, m_range->hash() );
+    }
+
+    return tmp;
 }
 
+//
+//
+// Rational Type
+//
+
+RationalType::RationalType( void )
+: PrimitiveType( classid() )
+{
+}
+
+std::string RationalType::name( void ) const
+{
+    return "q";
+}
+
+std::string RationalType::description( void ) const
+{
+    return token( kind() );
+}
+
+void RationalType::foreach(
+    const std::function< void( const Constant& constant ) >& callback ) const
+{
+    // this type has an infinite range to process, therefore omitted (for now)
+}
+
+Constant RationalType::choose( void ) const
+{
+    const auto n
+        = libstdhl::Type::createInteger( libstdhl::Random::uniform< i64 >() );
+
+    const auto d = libstdhl::Type::createInteger(
+        libstdhl::Random::uniform< i64 >() + 1 );
+    // d = randomvalue + 1 to avoid that the denominator is zero!
+
+    return RationalConstant( libstdhl::Type::createRational( n, d ) );
+}
+
+void RationalType::validate( const Constant& constant ) const
+{
+    assert( isa< RationalConstant >( constant ) );
+}
+
+std::size_t RationalType::hash( void ) const
+{
+    return std::hash< std::string >()( name() );
+}
+
+//
 //
 // Bit Type
 //
 
 BitType::BitType( u16 bitsize )
-: PrimitiveType( Type::BIT )
+: PrimitiveType( classid() )
 , m_bitsize( bitsize )
 {
     if( m_bitsize < 1 or m_bitsize > BitType::SizeMax )
@@ -709,7 +912,7 @@ BitType::BitType( u16 bitsize )
 }
 
 BitType::BitType( const IntegerConstant::Ptr& bitsize )
-: PrimitiveType( Type::BIT )
+: PrimitiveType( classid() )
 {
     assert( bitsize );
     if( bitsize->value().value() > BitType::SizeMax or bitsize->value().sign() )
@@ -729,7 +932,7 @@ BitType::BitType( const IntegerConstant::Ptr& bitsize )
 }
 
 BitType::BitType( const std::string& value, const libstdhl::Type::Radix radix )
-: PrimitiveType( Type::BIT )
+: PrimitiveType( classid() )
 {
     std::string tmp = value;
     tmp.erase( std::remove( tmp.begin(), tmp.end(), '\'' ), tmp.end() );
@@ -756,7 +959,7 @@ std::string BitType::name( void ) const
 
 std::string BitType::description( void ) const
 {
-    return token( id() ) + "'" + std::to_string( m_bitsize );
+    return token( kind() ) + "'" + std::to_string( m_bitsize );
 }
 
 void BitType::foreach(
@@ -792,50 +995,7 @@ void BitType::validate( const Constant& constant ) const
 
 std::size_t BitType::hash( void ) const
 {
-    return libstdhl::Hash::combine(
-        classid(), std::hash< std::string >()( name() ) );
-}
-
-//
-// String Type
-//
-
-StringType::StringType( void )
-: PrimitiveType( Type::STRING )
-{
-}
-
-std::string StringType::name( void ) const
-{
-    return "s";
-}
-
-std::string StringType::description( void ) const
-{
-    return token( id() );
-}
-
-void StringType::foreach(
-    const std::function< void( const Constant& constant ) >& callback ) const
-{
-    // this type has an infinite range to process, therefore omitted (for now)
-}
-
-Constant StringType::choose( void ) const
-{
-    // this is undefined for now
-    return StringConstant();
-}
-
-void StringType::validate( const Constant& constant ) const
-{
-    assert( isa< StringConstant >( constant ) );
-}
-
-std::size_t StringType::hash( void ) const
-{
-    return libstdhl::Hash::combine(
-        classid(), std::hash< std::string >()( name() ) );
+    return std::hash< std::string >()( name() );
 }
 
 //
@@ -843,18 +1003,18 @@ std::size_t StringType::hash( void ) const
 //
 
 FloatingType::FloatingType( void )
-: PrimitiveType( Type::FLOATING )
+: PrimitiveType( classid() )
 {
 }
 
 std::string FloatingType::name( void ) const
 {
-    return "z";
+    return "z"; // PPA: FIXME: change this to "d" for decimal
 }
 
 std::string FloatingType::description( void ) const
 {
-    return token( id() );
+    return token( kind() );
 }
 
 void FloatingType::foreach(
@@ -876,56 +1036,49 @@ void FloatingType::validate( const Constant& constant ) const
 
 std::size_t FloatingType::hash( void ) const
 {
-    return libstdhl::Hash::combine(
-        classid(), std::hash< std::string >()( name() ) );
+    return std::hash< std::string >()( name() );
 }
 
 //
-// Rational Type
+//
+// String Type
 //
 
-RationalType::RationalType( void )
-: PrimitiveType( Type::RATIONAL )
+StringType::StringType( void )
+: PrimitiveType( classid() )
 {
 }
 
-std::string RationalType::name( void ) const
+std::string StringType::name( void ) const
 {
-    return "q";
+    return "s";
 }
 
-std::string RationalType::description( void ) const
+std::string StringType::description( void ) const
 {
-    return token( id() );
+    return token( kind() );
 }
 
-void RationalType::foreach(
+void StringType::foreach(
     const std::function< void( const Constant& constant ) >& callback ) const
 {
     // this type has an infinite range to process, therefore omitted (for now)
 }
 
-Constant RationalType::choose( void ) const
+Constant StringType::choose( void ) const
 {
-    const auto n
-        = libstdhl::Type::createInteger( libstdhl::Random::uniform< i64 >() );
-
-    const auto d = libstdhl::Type::createInteger(
-        libstdhl::Random::uniform< i64 >() + 1 );
-    // d = randomvalue + 1 to avoid that the denominator is zero!
-
-    return RationalConstant( libstdhl::Type::createRational( n, d ) );
+    // this is undefined for now
+    return StringConstant();
 }
 
-void RationalType::validate( const Constant& constant ) const
+void StringType::validate( const Constant& constant ) const
 {
-    assert( isa< RationalConstant >( constant ) );
+    assert( isa< StringConstant >( constant ) );
 }
 
-std::size_t RationalType::hash( void ) const
+std::size_t StringType::hash( void ) const
 {
-    return libstdhl::Hash::combine(
-        classid(), std::hash< std::string >()( name() ) );
+    return std::hash< std::string >()( name() );
 }
 
 //
@@ -933,8 +1086,8 @@ std::size_t RationalType::hash( void ) const
 // Composed Type
 //
 
-ComposedType::ComposedType( Type::ID id )
-: Type( id )
+ComposedType::ComposedType( Type::Kind kind )
+: Type( kind )
 {
 }
 
@@ -943,7 +1096,7 @@ ComposedType::ComposedType( Type::ID id )
 //
 
 EnumerationType::EnumerationType( const Enumeration::Ptr& kind )
-: ComposedType( Type::ENUMERATION )
+: ComposedType( classid() )
 , m_kind( kind )
 {
 }
@@ -1013,8 +1166,7 @@ void EnumerationType::validate( const Constant& constant ) const
 
 std::size_t EnumerationType::hash( void ) const
 {
-    return libstdhl::Hash::combine(
-        classid(), std::hash< std::string >()( name() ) );
+    return std::hash< std::string >()( name() );
 }
 
 //
@@ -1023,14 +1175,14 @@ std::size_t EnumerationType::hash( void ) const
 //
 
 RangeType::RangeType( const Range::Ptr& range )
-: ComposedType( Type::RANGE )
+: ComposedType( classid() )
 , m_range( range )
 {
     m_result = range->type().ptr_type();
 }
 
 RangeType::RangeType( const Type::Ptr& type )
-: ComposedType( Type::RANGE )
+: ComposedType( classid() )
 , m_range( nullptr )
 {
     m_result = type;
@@ -1216,8 +1368,7 @@ void RangeType::validate( const Constant& constant ) const
 
 std::size_t RangeType::hash( void ) const
 {
-    return libstdhl::Hash::combine(
-        classid(), std::hash< std::string >()( name() ) );
+    return std::hash< std::string >()( name() );
 }
 
 //
@@ -1226,7 +1377,7 @@ std::size_t RangeType::hash( void ) const
 //
 
 TupleType::TupleType( const Types& types )
-: ComposedType( Type::TUPLE )
+: ComposedType( classid() )
 {
     m_arguments = types;
 }
@@ -1250,7 +1401,7 @@ std::string TupleType::name( void ) const
 
 std::string TupleType::description( void ) const
 {
-    std::string tmp = token( id() ) + "< ";
+    std::string tmp = token( kind() ) + "< ";
 
     u1 first = true;
     for( auto argument : m_arguments )
@@ -1284,8 +1435,7 @@ void TupleType::validate( const Constant& constant ) const
 
 std::size_t TupleType::hash( void ) const
 {
-    return libstdhl::Hash::combine(
-        classid(), std::hash< std::string >()( name() ) );
+    return std::hash< std::string >()( name() );
 }
 
 //
@@ -1294,7 +1444,7 @@ std::size_t TupleType::hash( void ) const
 //
 
 ListType::ListType( const Type::Ptr& type )
-: ComposedType( Type::LIST )
+: ComposedType( classid() )
 {
     m_result = type;
 }
@@ -1328,8 +1478,7 @@ void ListType::validate( const Constant& constant ) const
 
 std::size_t ListType::hash( void ) const
 {
-    return libstdhl::Hash::combine(
-        classid(), std::hash< std::string >()( name() ) );
+    return std::hash< std::string >()( name() );
 }
 
 //
@@ -1337,8 +1486,9 @@ std::size_t ListType::hash( void ) const
 // Reference Type
 //
 
-ReferenceType::ReferenceType( const Type::ID id, const RelationType::Ptr& type )
-: Type( id )
+ReferenceType::ReferenceType(
+    const Type::Kind kind, const RelationType::Ptr& type )
+: Type( kind )
 {
     m_result = type;
 }
@@ -1350,7 +1500,7 @@ Type::Ptr ReferenceType::dereference( void ) const
 
 std::string ReferenceType::description( void ) const
 {
-    return token( id() ) + m_result->description();
+    return token( kind() ) + m_result->description();
 }
 
 void ReferenceType::foreach(
@@ -1370,7 +1520,7 @@ Constant ReferenceType::choose( void ) const
 //
 
 RuleReferenceType::RuleReferenceType( const RelationType::Ptr& type )
-: ReferenceType( Type::RULE_REFERENCE, type )
+: ReferenceType( classid(), type )
 {
 }
 
@@ -1399,8 +1549,7 @@ void RuleReferenceType::validate( const Constant& constant ) const
 
 std::size_t RuleReferenceType::hash( void ) const
 {
-    return libstdhl::Hash::combine(
-        classid(), std::hash< std::string >()( name() ) );
+    return std::hash< std::string >()( name() );
 }
 
 //
@@ -1409,7 +1558,7 @@ std::size_t RuleReferenceType::hash( void ) const
 //
 
 FunctionReferenceType::FunctionReferenceType( const RelationType::Ptr& type )
-: ReferenceType( Type::FUNCTION_REFERENCE, type )
+: ReferenceType( classid(), type )
 {
 }
 
@@ -1422,7 +1571,8 @@ FunctionReferenceType::FunctionReferenceType(
 
 std::string FunctionReferenceType::name( void ) const
 {
-    return "f" + m_result->name();
+    return "f" + m_result->name(); // PPA: FIXME: change this to "z", when
+                                   // Decimal is introduced
 }
 
 void FunctionReferenceType::validate( const Constant& constant ) const
@@ -1432,8 +1582,7 @@ void FunctionReferenceType::validate( const Constant& constant ) const
 
 std::size_t FunctionReferenceType::hash( void ) const
 {
-    return libstdhl::Hash::combine(
-        classid(), std::hash< std::string >()( name() ) );
+    return std::hash< std::string >()( name() );
 }
 
 //
@@ -1441,8 +1590,8 @@ std::size_t FunctionReferenceType::hash( void ) const
 // Abstraction Type
 //
 
-AbstractionType::AbstractionType( Type::ID id )
-: Type( id )
+AbstractionType::AbstractionType( Type::Kind kind )
+: Type( kind )
 {
 }
 
@@ -1452,19 +1601,20 @@ AbstractionType::AbstractionType( Type::ID id )
 //
 
 FileType::FileType( void )
-: AbstractionType( Type::FILE )
+: AbstractionType( classid() )
 {
     // TODO: PPA: add file properties?
 }
 
 std::string FileType::name( void ) const
 {
-    return "file";
+    return "file"; // PPA: FIXME: change this to "f", when
+                   // Decimal is introduced
 }
 
 std::string FileType::description( void ) const
 {
-    return token( id() );
+    return token( kind() );
 }
 
 void FileType::foreach(
@@ -1485,8 +1635,7 @@ void FileType::validate( const Constant& constant ) const
 
 std::size_t FileType::hash( void ) const
 {
-    return libstdhl::Hash::combine(
-        classid(), std::hash< std::string >()( name() ) );
+    return std::hash< std::string >()( name() );
 }
 
 //
@@ -1495,19 +1644,20 @@ std::size_t FileType::hash( void ) const
 //
 
 PortType::PortType( void )
-: AbstractionType( Type::PORT )
+: AbstractionType( classid() )
 {
     // TODO: PPA: add port properties?
 }
 
 std::string PortType::name( void ) const
 {
-    return "port";
+    return "port"; // PPA: FIXME: change this to "p", when
+                   // Decimal is introduced
 }
 
 std::string PortType::description( void ) const
 {
-    return token( id() );
+    return token( kind() );
 }
 
 void PortType::foreach(
@@ -1528,8 +1678,7 @@ void PortType::validate( const Constant& constant ) const
 
 std::size_t PortType::hash( void ) const
 {
-    return libstdhl::Hash::combine(
-        classid(), std::hash< std::string >()( name() ) );
+    return std::hash< std::string >()( name() );
 }
 
 //

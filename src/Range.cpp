@@ -58,10 +58,8 @@ Range::Range( const Value::Ptr& from, const Value::Ptr& to )
     if( from->type() != to->type() )
     {
         throw std::domain_error(
-            "unable to create a range from different types '" + from->name()
-            + "' and '"
-            + to->name()
-            + "'" );
+            "unable to create a range from different types '"
+            + from->type().name() + "' and '" + to->type().name() + "'" );
     }
 }
 

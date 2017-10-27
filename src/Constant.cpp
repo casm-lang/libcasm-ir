@@ -402,77 +402,76 @@ u1 Constant::classof( Value const* obj )
 
 Constant Constant::undef( const Type::Ptr& type )
 {
-    switch( type->id() )
+    switch( type->kind() )
     {
-        case Type::ID::_BOTTOM_: // [[fallthrough]]
-        case Type::ID::LABEL:    // [[fallthrough]]
-        case Type::ID::LOCATION: // [[fallthrough]]
-        case Type::ID::RELATION:
+        case Type::Kind::LABEL:    // [[fallthrough]]
+        case Type::Kind::LOCATION: // [[fallthrough]]
+        case Type::Kind::RELATION:
         {
             break;
         }
-        case Type::ID::VOID:
+        case Type::Kind::VOID:
         {
             return VoidConstant();
         }
-        case Type::ID::BOOLEAN:
+        case Type::Kind::BOOLEAN:
         {
             return BooleanConstant();
         }
-        case Type::ID::INTEGER:
+        case Type::Kind::INTEGER:
         {
             return IntegerConstant();
         }
-        case Type::ID::BIT:
+        case Type::Kind::BIT:
         {
             return BitConstant( std::static_pointer_cast< BitType >( type ) );
         }
-        case Type::ID::STRING:
+        case Type::Kind::STRING:
         {
             return StringConstant();
         }
-        case Type::ID::FLOATING:
+        case Type::Kind::FLOATING:
         {
             return FloatingConstant();
         }
-        case Type::ID::RATIONAL:
+        case Type::Kind::RATIONAL:
         {
             return RationalConstant();
         }
-        case Type::ID::ENUMERATION:
+        case Type::Kind::ENUMERATION:
         {
             return EnumerationConstant(
                 std::static_pointer_cast< EnumerationType >( type ) );
         }
-        case Type::ID::RANGE:
+        case Type::Kind::RANGE:
         {
             break;
         }
-        case Type::ID::TUPLE:
+        case Type::Kind::TUPLE:
         {
             break;
         }
-        case Type::ID::LIST:
+        case Type::Kind::LIST:
         {
             break;
         }
-        case Type::ID::RULE_REFERENCE:
+        case Type::Kind::RULE_REFERENCE:
         {
             return RuleReferenceConstant( type );
         }
-        case Type::ID::FUNCTION_REFERENCE:
+        case Type::Kind::FUNCTION_REFERENCE:
         {
             break;
         }
-        case Type::ID::FILE:
+        case Type::Kind::FILE:
         {
             break;
         }
-        case Type::ID::PORT:
+        case Type::Kind::PORT:
         {
             break;
         }
-        case Type::ID::_TOP_:
+        case Type::Kind::_SIZE_:
         {
             break;
         }
@@ -731,8 +730,7 @@ BitConstant::BitConstant(
         throw std::invalid_argument( "value bit-size '"
                                      + std::to_string( bitsize )
                                      + "' does not fit into bit-size '"
-                                     + std::to_string( t.bitsize() )
-                                     + "'" );
+                                     + std::to_string( t.bitsize() ) + "'" );
     }
 }
 
@@ -1084,7 +1082,8 @@ RangeConstant::RangeConstant(
     const RangeType::Ptr& type, const Range::Ptr& value )
 : Constant( type, libstdhl::Type::Data( 0, false ), classid() )
 {
-    static_cast< RangeType& >( *type ).setRange( value );
+    assert( type );
+    type->setRange( value );
 }
 
 RangeConstant::RangeConstant( const RangeType::Ptr& type )
@@ -1096,6 +1095,7 @@ RangeConstant::RangeConstant(
     const Type::Ptr& type, const Constant& from, const Constant& to )
 : Constant( type, libstdhl::Type::Data( 0, false ), classid() )
 {
+    assert( type );
     assert( type->isRange() );
     static_cast< RangeType& >( *type ).setRange(
         libstdhl::Memory::make_unique< Range >( from, to ) );
