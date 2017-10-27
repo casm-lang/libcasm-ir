@@ -41,100 +41,108 @@
 
 #include "Annotation.h"
 
+#include <libstdhl/Hash>
+
 using namespace libcasm_ir;
 
-Annotation::Annotation( const Value::ID id, const Data& info,
-    const std::function< Type::Ptr(
-        const std::vector< Type::Ptr >&, const std::vector< Value::Ptr >& ) >
-        inference )
-: m_id( id )
-, m_info( info )
+static std::unordered_map< std::string, const Annotation* >& str2obj( void )
+{
+    static std::unordered_map< std::string, const Annotation* > obj = {};
+    return obj;
+}
+
+static std::unordered_map< Value::ID, const Annotation* >& id2obj( void )
+{
+    static std::unordered_map< Value::ID, const Annotation* > obj = {};
+    return obj;
+}
+
+Annotation::Annotation( const Value::ID valueId,
+    const Annotation::Relations& relations,
+    const Resolve resolve,
+    const Inference inference )
+: m_valueId( valueId )
+, m_relations( relations )
+, m_resolve( resolve )
 , m_inference( inference )
 {
-    assert( m_info.size() > 0 );
+    assert( m_relations.size() > 0 );
+    m_typeSets.emplace_back( std::set< Type::ID >{} );
 
-    m_type_set.emplace_back( Set() );
+    std::set< std::size_t > templates = {};
 
-    for( const auto& relation : m_info )
+    for( const auto& relation : m_relations )
     {
-        Type::Kind rt = relation.result;
+        Type::Kind resultTypeKind = relation.result;
+        m_typeSets.front().emplace( Type::ID{ resultTypeKind } );
+        m_argumentSizes.emplace( relation.argument.size() );
 
-        m_type_set.front().emplace( rt );
+        auto hash = libstdhl::Hash::value( relation.argument.size() );
+        hash = libstdhl::Hash::combine(
+            hash, std::hash< Type::Kind >()( resultTypeKind ) );
 
-        m_map.emplace( rt, std::initializer_list< Set >{} );
-
-        std::string key;
-
-        m_argument_sizes.emplace( relation.argument.size() );
-
-        for( u32 i = 0; i < relation.argument.size(); i++ )
+        for( std::size_t i = 0; i < relation.argument.size(); i++ )
         {
-            if( m_type_set.size() <= ( i + 1 ) )
+            if( m_typeSets.size() <= ( i + 1 ) )
             {
-                m_type_set.emplace_back( Set() );
+                m_typeSets.emplace_back( std::set< Type::ID >{} );
             }
 
-            Type::Kind at = relation.argument[ i ];
-            assert( at != libcasm_ir::Type::Kind::RELATION );
+            Type::Kind argumentTypeKind = relation.argument[ i ];
+            assert( argumentTypeKind != libcasm_ir::Type::Kind::RELATION );
+            m_typeSets[ i + 1 ].emplace( argumentTypeKind );
 
-            m_type_set[ i + 1 ].emplace( at );
-
-            key += std::to_string( at ) + ";";
-
-            if( ( i + 1 ) >= m_map[ rt ].size() )
-            {
-                m_map[ rt ].emplace_back( Set() );
-            }
-
-            m_map[ rt ][ i ].emplace( at );
+            hash = libstdhl::Hash::combine(
+                hash, std::hash< Type::Kind >()( argumentTypeKind ) );
         }
 
-        assert( m_relation_to_type.find( key ) == m_relation_to_type.end()
-                and " result type of relation already exists!" );
-        m_relation_to_type[ key ] = &relation;
+        auto result = templates.emplace( hash );
+        if( not result.second )
+        {
+            assert( !" annotation relation of return type already exists!" );
+        }
     }
 
-    auto result_str = str2obj().emplace( Value::token( id ), this );
+    auto result_str = str2obj().emplace( Value::token( valueId ), this );
     assert( result_str.second );
 
-    auto result_id = id2obj().emplace( id, this );
+    auto result_id = id2obj().emplace( valueId, this );
     assert( result_id.second );
 }
 
-Value::ID Annotation::id( void ) const
+Value::ID Annotation::valueID( void ) const
 {
-    return m_id;
+    return m_valueId;
 }
 
-const Annotation::Set& Annotation::resultTypes( void ) const
+const Annotation::Relations& Annotation::relations( void ) const
 {
-    return m_type_set[ 0 ];
+    return m_relations;
 }
 
-const Annotation::Set& Annotation::argumentTypes( u8 pos ) const
+const std::set< Type::ID >& Annotation::resultTypeIDs( void ) const
 {
-    assert( pos < ( m_type_set.size() - 1 ) );
+    return m_typeSets[ 0 ];
+}
 
-    return m_type_set[ pos + 1 ];
+const std::set< Type::ID >& Annotation::argumentTypeIDs(
+    std::size_t position ) const
+{
+    assert( position < ( m_typeSets.size() - 1 ) );
+    return m_typeSets[ position + 1 ];
 }
 
 const std::set< std::size_t >& Annotation::argumentSizes( void ) const
 {
-    return m_argument_sizes;
-}
-
-const Annotation::Map& Annotation::map( void ) const
-{
-    return m_map;
+    return m_argumentSizes;
 }
 
 libstdhl::Json::Object Annotation::json( void ) const
 {
     libstdhl::Json::Object json = {};
-    // = { "signature", { "result", { "arguments" } } };
 
     std::size_t cnt = 0;
-    for( auto relation : m_info )
+    for( auto relation : m_relations )
     {
         const auto rt = relation.result;
         const auto rs = Type::token( rt );
@@ -160,138 +168,36 @@ std::string Annotation::dump( void ) const
     return json().dump( 2 );
 }
 
-Type::Ptr Annotation::inference( const std::vector< Type::Ptr >& types,
-    const std::vector< Value::Ptr >& values ) const
+void Annotation::resolve( std::vector< Type::Ptr >& argumentTypes ) const
 {
-    u1 first = true;
+    m_resolve( argumentTypes );
+}
+
+Type::ID Annotation::inference( const std::vector< Type::Ptr >& argumentTypes,
+    const std::vector< Value::Ptr >& argumentValues ) const
+{
     std::size_t pos = 1;
-    std::string tmp = "";
-    for( auto type : types )
+    for( auto argumentType : argumentTypes )
     {
-        if( not type )
+        if( not argumentType )
         {
             throw std::invalid_argument( "argument at position "
                                          + std::to_string( pos )
                                          + " is not defined" );
         }
-
-        tmp += ( first ? "" : ", " );
-        tmp += type->result().description();
-        first = false;
         pos++;
     }
 
-    const auto resultType = m_inference( types, values );
+    const auto inferredType = m_inference( argumentTypes, argumentValues );
 
-    if( not resultType )
+    if( inferredType )
     {
-        throw std::domain_error(
-            "no type inference defined for '" + tmp + "'" );
+        return inferredType->id();
     }
-
-    return resultType;
-}
-
-void Annotation::checkTypeRelation( const Type::Ptr& type ) const
-{
-    std::string key = "";
-    for( auto argTy : type->arguments() )
+    else
     {
-        const auto arg = argTy->kind();
-        assert( arg != libcasm_ir::Type::Kind::RELATION );
-        key += std::to_string( arg ) + ";";
+        return Type::ID{ Type::Kind::_SIZE_ };
     }
-
-    auto result = m_relation_to_type.find( key );
-    if( result == m_relation_to_type.end() )
-    {
-        throw std::domain_error( "no type relation '" + type->description()
-                                 + "' defined in annotation for '"
-                                 + Value::token( id() ) + "'" );
-    }
-
-    if( result->second->result != type->result().kind() )
-    {
-        throw std::domain_error( "return of type relation '"
-                                 + type->description()
-                                 + "' does not match the annotation for '"
-                                 + Value::token( id() ) + "'" );
-    }
-}
-
-Type::Kind Annotation::resolveTypeRelation(
-    const std::vector< Value::Ptr >& operands ) const
-{
-    std::string key;
-
-    for( auto argTy : operands )
-    {
-        const auto arg = argTy->type().kind();
-        assert( arg != libcasm_ir::Type::Kind::RELATION );
-        key += std::to_string( arg ) + ";";
-    }
-
-    auto result = m_relation_to_type.find( key );
-    if( result == m_relation_to_type.end() )
-    {
-        throw std::domain_error( "no type relation found for annotation of '"
-                                 + Value::token( id() ) + "'" );
-    }
-
-    return result->second->result;
-}
-
-const Annotation::Relation* Annotation::resultTypeForRelation(
-    const std::vector< Type::Kind > arguments ) const
-{
-    std::string key;
-
-    std::size_t pos = -1;
-    std::size_t idx = 0;
-    for( auto arg : arguments )
-    {
-        assert( arg != libcasm_ir::Type::Kind::RELATION );
-        key += std::to_string( arg ) + ";";
-
-        if( arg == libcasm_ir::Type::Kind::_TOP_ )
-        {
-            if( pos != -1 )
-            {
-                throw std::invalid_argument( "multiple unbound types defined" );
-            }
-
-            pos = idx;
-        }
-
-        idx++;
-    }
-
-    auto result = m_relation_to_type.find( key );
-    if( result != m_relation_to_type.end() )
-    {
-        // found exact relation
-        return result->second;
-    }
-
-    if( pos != -1 )
-    {
-        const auto argTypes = argumentTypes( pos );
-
-        for( auto at : argTypes )
-        {
-            auto argTypesTemplate = arguments;
-            argTypesTemplate[ pos ] = at;
-
-            const auto result = resultTypeForRelation( argTypesTemplate );
-            if( result )
-            {
-                return result;
-            }
-        }
-    }
-
-    // no result found
-    return 0;
 }
 
 const Annotation& Annotation::find( const std::string& token )

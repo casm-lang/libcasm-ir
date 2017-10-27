@@ -91,10 +91,10 @@ namespace libcasm_ir
             // primitive
             BOOLEAN,
             INTEGER,
-            BIT,
-            STRING,
-            FLOATING,
             RATIONAL,
+            BIT,
+            FLOATING,
+            STRING,
 
             // composed
             ENUMERATION,
@@ -219,7 +219,7 @@ namespace libcasm_ir
         {
             if( this != &rhs )
             {
-                if( this->m_id != rhs.m_id or this->hash() != rhs.hash() )
+                if( this->hash() != rhs.hash() )
                 {
                     return false;
                 }
@@ -241,10 +241,10 @@ namespace libcasm_ir
         u1 isPrimitive( void ) const;
         u1 isBoolean( void ) const;
         u1 isInteger( void ) const;
-        u1 isBit( void ) const;
-        u1 isString( void ) const;
-        u1 isFloating( void ) const;
         u1 isRational( void ) const;
+        u1 isBit( void ) const;
+        u1 isFloating( void ) const;
+        u1 isString( void ) const;
 
         u1 isComposed( void ) const;
         u1 isEnumeration( void ) const;
@@ -285,6 +285,8 @@ namespace libcasm_ir
         ID m_id;
 
       public:
+        static const std::vector< Type::ID >& fromKind( const Type::Kind kind );
+
         static Type::Ptr fromID( const Type::ID id );
 
         static std::string token( const Type::Kind kind );
@@ -492,6 +494,33 @@ namespace libcasm_ir
         std::shared_ptr< RangeType > m_range;
     };
 
+    class RationalType final : public PrimitiveType
+    {
+      public:
+        using Ptr = std::shared_ptr< RationalType >;
+
+        RationalType( void );
+
+        std::string name( void ) const override;
+
+        std::string description( void ) const override;
+
+        void foreach(
+            const std::function< void( const Constant& constant ) >& callback )
+            const override;
+
+        Constant choose( void ) const override;
+
+        void validate( const Constant& constant ) const override;
+
+        std::size_t hash( void ) const override;
+
+        static inline Type::Kind classid( void )
+        {
+            return Type::Kind::RATIONAL;
+        }
+    };
+
     class BitType final : public PrimitiveType
     {
       public:
@@ -530,33 +559,6 @@ namespace libcasm_ir
         u16 m_bitsize;
     };
 
-    class StringType final : public PrimitiveType
-    {
-      public:
-        using Ptr = std::shared_ptr< StringType >;
-
-        StringType( void );
-
-        std::string name( void ) const override;
-
-        std::string description( void ) const override;
-
-        void foreach(
-            const std::function< void( const Constant& constant ) >& callback )
-            const override;
-
-        Constant choose( void ) const override;
-
-        void validate( const Constant& constant ) const override;
-
-        std::size_t hash( void ) const override;
-
-        static inline Type::Kind classid( void )
-        {
-            return Type::Kind::STRING;
-        }
-    };
-
     class FloatingType final : public PrimitiveType
     {
       public:
@@ -584,12 +586,12 @@ namespace libcasm_ir
         }
     };
 
-    class RationalType final : public PrimitiveType
+    class StringType final : public PrimitiveType
     {
       public:
-        using Ptr = std::shared_ptr< RationalType >;
+        using Ptr = std::shared_ptr< StringType >;
 
-        RationalType( void );
+        StringType( void );
 
         std::string name( void ) const override;
 
@@ -607,7 +609,7 @@ namespace libcasm_ir
 
         static inline Type::Kind classid( void )
         {
-            return Type::Kind::RATIONAL;
+            return Type::Kind::STRING;
         }
     };
 

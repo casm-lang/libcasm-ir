@@ -45,13 +45,13 @@ using namespace libcasm_ir;
 
 TEST( libcasm_ir_Annotation, instructions )
 {
-    Annotation::find< AddInstruction >().resultTypes();
-    Annotation::find< SubInstruction >().resultTypes();
-    Annotation::find< MulInstruction >().resultTypes();
+    Annotation::find< AddInstruction >().resultTypeIDs();
+    Annotation::find< SubInstruction >().resultTypeIDs();
+    Annotation::find< MulInstruction >().resultTypeIDs();
 }
 
 TEST( libcasm_ir_Annotation, builtin_as )
 {
-    Annotation::find< AsIntegerBuiltin >().resultTypes();
-    Annotation::find< AsEnumerationBuiltin >().resultTypes();
+    Annotation::find< AsIntegerBuiltin >().resultTypeIDs();
+    Annotation::find< AsEnumerationBuiltin >().resultTypeIDs();
 }

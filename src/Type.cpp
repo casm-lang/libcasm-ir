@@ -52,7 +52,24 @@
 
 using namespace libcasm_ir;
 
-static const auto VOID_TYPE = libstdhl::Memory::get< VoidType >();
+static const auto TYPE_VOID = libstdhl::Memory::get< libcasm_ir::VoidType >();
+static const auto TYPE_LABEL = libstdhl::Memory::get< libcasm_ir::LabelType >();
+static const auto TYPE_LOCATION
+    = libstdhl::Memory::get< libcasm_ir::LocationType >();
+static const auto TYPE_BOOLEAN
+    = libstdhl::Memory::get< libcasm_ir::BooleanType >();
+static const auto TYPE_INTEGER
+    = libstdhl::Memory::get< libcasm_ir::IntegerType >();
+static const auto TYPE_RATIONAL
+    = libstdhl::Memory::get< libcasm_ir::RationalType >();
+static const auto TYPE_FLOATING
+    = libstdhl::Memory::get< libcasm_ir::FloatingType >();
+static const auto TYPE_STRING
+    = libstdhl::Memory::get< libcasm_ir::StringType >();
+
+static std::array< std::vector< Type::ID >,
+    (std::size_t)Type::Kind::_SIZE_ + 1 >
+    s_typeIDs = {};
 
 Type::Type( Type::Kind kind )
 : m_id( kind )
@@ -68,13 +85,10 @@ Type::ID Type::id( void )
 {
     if( m_id.flavor() == 0 )
     {
-        // type flavor is 0 ==> invalid/unregistered/unset type ID!
-        static std::array< u64, (std::size_t)Type::Kind::_SIZE_ > type_flavor
-            = { 0 };
-
         const auto type_hash = this->hash();
         auto result = s_registered_type_hash2ptr().emplace(
             type_hash, this->ptr_type() );
+
         if( not result.second )
         {
             // found already allocated type with set ID!
@@ -84,8 +98,10 @@ Type::ID Type::id( void )
         {
             // NOT found, registered this as new type in hash2ptr,
             // allocate new ID, set it to this type, and link it in id2hash
-            type_flavor[ (std::size_t)kind() ]++;
-            m_id.setFlavor( type_flavor[ (std::size_t)kind() ] );
+            const auto type_flavor
+                = s_typeIDs[ (std::size_t)kind() ].size() + 1;
+            m_id.setFlavor( type_flavor );
+            s_typeIDs[ (std::size_t)kind() ].emplace_back( m_id );
 
             auto type_id2hash
                 = s_registered_type_id2hash().emplace( m_id.hash(), type_hash );
@@ -156,8 +172,8 @@ u1 Type::isRelation( void ) const
 
 u1 Type::isPrimitive( void ) const
 {
-    return isBoolean() or isInteger() or isBit() or isString() or isFloating()
-           or isRational();
+    return isBoolean() or isInteger() or isRational() or isBit() or isFloating()
+           or isString();
 }
 
 u1 Type::isBoolean( void ) const
@@ -170,14 +186,14 @@ u1 Type::isInteger( void ) const
     return kind() == Type::Kind::INTEGER;
 }
 
+u1 Type::isRational( void ) const
+{
+    return kind() == Type::Kind::RATIONAL;
+}
+
 u1 Type::isBit( void ) const
 {
     return kind() == Type::Kind::BIT;
-}
-
-u1 Type::isString( void ) const
-{
-    return kind() == Type::Kind::STRING;
 }
 
 u1 Type::isFloating( void ) const
@@ -185,9 +201,9 @@ u1 Type::isFloating( void ) const
     return kind() == Type::Kind::FLOATING;
 }
 
-u1 Type::isRational( void ) const
+u1 Type::isString( void ) const
 {
-    return kind() == Type::Kind::RATIONAL;
+    return kind() == Type::Kind::STRING;
 }
 
 u1 Type::isComposed( void ) const
@@ -245,8 +261,79 @@ u1 Type::isPort( void ) const
     return kind() == Type::Kind::PORT;
 }
 
+const std::vector< Type::ID >& Type::fromKind( const Type::Kind kind )
+{
+    return s_typeIDs[ (std::size_t)kind ];
+}
+
 Type::Ptr Type::fromID( const Type::ID id )
 {
+    if( id.flavor() == 0 )
+    {
+        switch( id.kind() )
+        {
+            case libcasm_ir::Type::Kind::VOID:
+            {
+                return TYPE_VOID;
+            }
+            case libcasm_ir::Type::Kind::LABEL:
+            {
+                return TYPE_LABEL;
+            }
+            case libcasm_ir::Type::Kind::LOCATION:
+            {
+                return TYPE_LOCATION;
+            }
+            case libcasm_ir::Type::Kind::RELATION:
+            {
+                assert( !" invalid ID!" );
+                break;
+            }
+            case libcasm_ir::Type::Kind::BOOLEAN:
+            {
+                return TYPE_BOOLEAN;
+            }
+            case libcasm_ir::Type::Kind::INTEGER:
+            {
+                return TYPE_INTEGER;
+            }
+            case libcasm_ir::Type::Kind::RATIONAL:
+            {
+                return TYPE_RATIONAL;
+            }
+            case libcasm_ir::Type::Kind::BIT:
+            {
+                assert( !" invalid ID!" );
+                break;
+            }
+            case libcasm_ir::Type::Kind::FLOATING:
+            {
+                return TYPE_FLOATING;
+            }
+            case libcasm_ir::Type::Kind::STRING:
+            {
+                return TYPE_STRING;
+            }
+            case libcasm_ir::Type::Kind::ENUMERATION:        // [fallthrough]
+            case libcasm_ir::Type::Kind::RANGE:              // [fallthrough]
+            case libcasm_ir::Type::Kind::TUPLE:              // [fallthrough]
+            case libcasm_ir::Type::Kind::LIST:               // [fallthrough]
+            case libcasm_ir::Type::Kind::RULE_REFERENCE:     // [fallthrough]
+            case libcasm_ir::Type::Kind::FUNCTION_REFERENCE: // [fallthrough]
+            case libcasm_ir::Type::Kind::FILE:               // [fallthrough]
+            case libcasm_ir::Type::Kind::PORT:
+            {
+                assert( !" invalid ID!" );
+                break;
+            }
+            case libcasm_ir::Type::Kind::_SIZE_:
+            {
+                assert( !" internal error!" );
+                break;
+            }
+        }
+    }
+
     auto type_id2hash = s_registered_type_id2hash().find( id.hash() );
     if( type_id2hash == s_registered_type_id2hash().end() )
     {
@@ -300,21 +387,21 @@ std::string Type::token( const Type::Kind kind )
         {
             return "Integer";
         }
+        case Type::Kind::RATIONAL:
+        {
+            return "Rational";
+        }
         case Type::Kind::BIT:
         {
             return "Bit";
-        }
-        case Type::Kind::STRING:
-        {
-            return "String";
         }
         case Type::Kind::FLOATING:
         {
             return "Floating"; // PPA: FIXME: change this to 'Decimal'
         }
-        case Type::Kind::RATIONAL:
+        case Type::Kind::STRING:
         {
-            return "Rational";
+            return "String";
         }
         // composed
         case Type::Kind::ENUMERATION:
@@ -373,6 +460,7 @@ SyntheticType::SyntheticType( Type::Kind kind )
 }
 
 //
+//
 // Void Type
 //
 
@@ -412,6 +500,7 @@ std::size_t VoidType::hash( void ) const
     return std::hash< std::string >()( name() );
 }
 
+//
 //
 // Label Type
 //
@@ -453,6 +542,7 @@ std::size_t LabelType::hash( void ) const
     return std::hash< std::string >()( name() );
 }
 
+//
 //
 // Location Type
 //
@@ -598,6 +688,7 @@ PrimitiveType::PrimitiveType( Type::Kind kind )
 }
 
 //
+//
 // Boolean Type
 //
 
@@ -639,6 +730,7 @@ std::size_t BooleanType::hash( void ) const
     return std::hash< std::string >()( name() );
 }
 
+//
 //
 // Integer Type
 //
@@ -755,6 +847,55 @@ std::size_t IntegerType::hash( void ) const
 }
 
 //
+//
+// Rational Type
+//
+
+RationalType::RationalType( void )
+: PrimitiveType( classid() )
+{
+}
+
+std::string RationalType::name( void ) const
+{
+    return "q";
+}
+
+std::string RationalType::description( void ) const
+{
+    return token( kind() );
+}
+
+void RationalType::foreach(
+    const std::function< void( const Constant& constant ) >& callback ) const
+{
+    // this type has an infinite range to process, therefore omitted (for now)
+}
+
+Constant RationalType::choose( void ) const
+{
+    const auto n
+        = libstdhl::Type::createInteger( libstdhl::Random::uniform< i64 >() );
+
+    const auto d = libstdhl::Type::createInteger(
+        libstdhl::Random::uniform< i64 >() + 1 );
+    // d = randomvalue + 1 to avoid that the denominator is zero!
+
+    return RationalConstant( libstdhl::Type::createRational( n, d ) );
+}
+
+void RationalType::validate( const Constant& constant ) const
+{
+    assert( isa< RationalConstant >( constant ) );
+}
+
+std::size_t RationalType::hash( void ) const
+{
+    return std::hash< std::string >()( name() );
+}
+
+//
+//
 // Bit Type
 //
 
@@ -858,47 +999,6 @@ std::size_t BitType::hash( void ) const
 }
 
 //
-// String Type
-//
-
-StringType::StringType( void )
-: PrimitiveType( classid() )
-{
-}
-
-std::string StringType::name( void ) const
-{
-    return "s";
-}
-
-std::string StringType::description( void ) const
-{
-    return token( kind() );
-}
-
-void StringType::foreach(
-    const std::function< void( const Constant& constant ) >& callback ) const
-{
-    // this type has an infinite range to process, therefore omitted (for now)
-}
-
-Constant StringType::choose( void ) const
-{
-    // this is undefined for now
-    return StringConstant();
-}
-
-void StringType::validate( const Constant& constant ) const
-{
-    assert( isa< StringConstant >( constant ) );
-}
-
-std::size_t StringType::hash( void ) const
-{
-    return std::hash< std::string >()( name() );
-}
-
-//
 // Flaoting Type
 //
 
@@ -940,48 +1040,43 @@ std::size_t FloatingType::hash( void ) const
 }
 
 //
-// Rational Type
+//
+// String Type
 //
 
-RationalType::RationalType( void )
+StringType::StringType( void )
 : PrimitiveType( classid() )
 {
 }
 
-std::string RationalType::name( void ) const
+std::string StringType::name( void ) const
 {
-    return "q";
+    return "s";
 }
 
-std::string RationalType::description( void ) const
+std::string StringType::description( void ) const
 {
     return token( kind() );
 }
 
-void RationalType::foreach(
+void StringType::foreach(
     const std::function< void( const Constant& constant ) >& callback ) const
 {
     // this type has an infinite range to process, therefore omitted (for now)
 }
 
-Constant RationalType::choose( void ) const
+Constant StringType::choose( void ) const
 {
-    const auto n
-        = libstdhl::Type::createInteger( libstdhl::Random::uniform< i64 >() );
-
-    const auto d = libstdhl::Type::createInteger(
-        libstdhl::Random::uniform< i64 >() + 1 );
-    // d = randomvalue + 1 to avoid that the denominator is zero!
-
-    return RationalConstant( libstdhl::Type::createRational( n, d ) );
+    // this is undefined for now
+    return StringConstant();
 }
 
-void RationalType::validate( const Constant& constant ) const
+void StringType::validate( const Constant& constant ) const
 {
-    assert( isa< RationalConstant >( constant ) );
+    assert( isa< StringConstant >( constant ) );
 }
 
-std::size_t RationalType::hash( void ) const
+std::size_t StringType::hash( void ) const
 {
     return std::hash< std::string >()( name() );
 }

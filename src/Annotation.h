@@ -66,81 +66,60 @@ namespace libcasm_ir
     class Annotation
     {
       public:
-        // stores a list of type relations for possible type unification etc.
-        // format is: < result type <-- < arg1_type, arg2_type, ... > >
+        /*
+          stores a list of type relations for possible type unification etc.
+          format is: < resultType <-- < argumentType1, argumentType2, ... > >
+          based on Type::Kind values
+        */
         struct Relation
         {
             Type::Kind result;
             std::vector< Type::Kind > argument;
         };
 
-        using Data = std::vector< Relation >;
-        using Set = std::set< Type::Kind >;
-        using Map = std::unordered_map< Type::Kind, std::vector< Set > >;
+        using Relations = std::vector< Relation >;
 
-        Annotation( const Value::ID id, const Data& info,
-            const std::function< Type::Ptr( const std::vector< Type::Ptr >&,
-                const std::vector< Value::Ptr >& ) >
-                inference
-            = []( const std::vector< Type::Ptr >&,
-                  const std::vector< Value::Ptr >& ) -> Type::Ptr {
-                return nullptr;
-            } );
+        using Resolve = std::function< void( std::vector< Type::Ptr >& ) >;
 
-        Value::ID id( void ) const;
+        using Inference
+            = std::function< Type::Ptr( const std::vector< Type::Ptr >&,
+                const std::vector< Value::Ptr >& ) >;
 
-        void checkTypeRelation( const Type::Ptr& type ) const;
+        Annotation( const Value::ID id, const Relations& relations,
+            const Resolve resolve, const Inference inference );
 
-        Type::Kind resolveTypeRelation(
-            const std::vector< Value::Ptr >& operands ) const;
+        Value::ID valueID( void ) const;
 
-        const Relation* resultTypeForRelation(
-            const std::vector< Type::Kind > arguments ) const;
+        const Relations& relations( void ) const;
 
-        const Set& resultTypes( void ) const;
+        const std::set< Type::ID >& resultTypeIDs( void ) const;
 
-        const Set& argumentTypes( u8 pos ) const;
+        const std::set< Type::ID >& argumentTypeIDs(
+            std::size_t position ) const;
 
         const std::set< std::size_t >& argumentSizes( void ) const;
-
-        const Map& map( void ) const;
 
         libstdhl::Json::Object json( void ) const;
 
         std::string dump( void ) const;
 
-        Type::Ptr inference( const std::vector< Type::Ptr >& types,
+        void resolve( std::vector< Type::Ptr >& argumentTypes ) const;
+
+        Type::ID inference( const std::vector< Type::Ptr >& argumentTypes,
             const std::vector< Value::Ptr >& values ) const;
 
       private:
-        Value::ID m_id;
+        Value::ID m_valueId;
 
-        const Data m_info;
+        const Relations m_relations;
 
-        const std::function< Type::Ptr( const std::vector< Type::Ptr >&,
-            const std::vector< Value::Ptr >& ) >
-            m_inference;
+        std::vector< std::set< Type::ID > > m_typeSets;
 
-        std::vector< Set > m_type_set;
+        std::set< std::size_t > m_argumentSizes;
 
-        std::set< std::size_t > m_argument_sizes;
+        const Resolve m_resolve;
 
-        std::unordered_map< std::string, const Relation* > m_relation_to_type;
-
-        Map m_map;
-
-        static std::unordered_map< std::string, const Annotation* >& str2obj(
-            void )
-        {
-            static std::unordered_map< std::string, const Annotation* > cache;
-            return cache;
-        }
-
-        static std::unordered_map< u8, const Annotation* >& id2obj( void )
-        {
-            static std::unordered_map< u8, const Annotation* > cache;
-            return cache;
-        }
+        const Inference m_inference;
 
       public:
         static const Annotation& find( const std::string& token );
@@ -150,7 +129,7 @@ namespace libcasm_ir
         template < class T >
         static const Annotation& find( void )
         {
-            return T::info;
+            return T::annotation;
         }
     };
 }

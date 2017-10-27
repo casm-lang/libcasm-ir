@@ -371,6 +371,23 @@ namespace libcasm_ir
     using Values = ValueList< Value >;
 }
 
+namespace std
+{
+    static std::string to_string( const libcasm_ir::Value::ID value )
+    {
+        return libcasm_ir::Value::token( value );
+    };
+
+    template <>
+    struct hash< libcasm_ir::Value::ID >
+    {
+        inline std::size_t operator()( const libcasm_ir::Value::ID value ) const
+        {
+            return std::hash< std::size_t >()( (std::size_t)value );
+        }
+    };
+}
+
 #endif // _LIBCASM_IR_VALUE_H_
 
 //

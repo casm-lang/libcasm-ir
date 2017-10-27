@@ -471,7 +471,7 @@ Constant Constant::undef( const Type::Ptr& type )
         {
             break;
         }
-        case Type::Kind::_TOP_:
+        case Type::Kind::_SIZE_:
         {
             break;
         }
