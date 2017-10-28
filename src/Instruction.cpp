@@ -1287,7 +1287,22 @@ const Annotation ImpInstruction::annotation( classid(),
             } },
 
     },
-    logic_instruction_resolve,
+    []( std::vector< Type::Ptr >& types ) {
+        if( types.size() != 2 )
+        {
+            throw InternalException( "types.size() != 2" );
+        }
+
+        if( not types[ 0 ] )
+        {
+            types[ 0 ] = BOOLEAN;
+        }
+
+        if( not types[ 1 ] )
+        {
+            types[ 1 ] = BOOLEAN;
+        }
+    },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
         if( types.size() != 2 )

@@ -528,7 +528,22 @@ const Annotation AssertBuiltin::annotation( classid(),
                 Type::Kind::STRING,
             } },
     },
-    []( std::vector< Type::Ptr >& types ) {},
+    []( std::vector< Type::Ptr >& types ) {
+        if( types.size() < 1 or types.size() > 2 )
+        {
+            throw InternalException( "types.size() < 1 or types.size() > 2" );
+        }
+
+        if( not types[ 0 ] )
+        {
+            types[ 0 ] = BOOLEAN;
+        }
+
+        if( types.size() == 2 and ( not types[ 1 ] ) )
+        {
+            types[ 1 ] = STRING;
+        }
+    },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
         if( types.size() < 1 or types.size() > 2 )
@@ -589,7 +604,17 @@ const Annotation PrintBuiltin::annotation( classid(),
             } }
 
     },
-    []( std::vector< Type::Ptr >& types ) {},
+    []( std::vector< Type::Ptr >& types ) {
+        if( types.size() != 1 )
+        {
+            throw InternalException( "types.size() != 1" );
+        }
+
+        if( not types[ 0 ] )
+        {
+            types[ 0 ] = STRING;
+        }
+    },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
         if( types.size() != 1 )
@@ -632,7 +657,17 @@ const Annotation PrintLnBuiltin::annotation( classid(),
             } }
 
     },
-    []( std::vector< Type::Ptr >& types ) {},
+    []( std::vector< Type::Ptr >& types ) {
+        if( types.size() != 1 )
+        {
+            throw InternalException( "types.size() != 1" );
+        }
+
+        if( not types[ 0 ] )
+        {
+            types[ 0 ] = STRING;
+        }
+    },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
         if( types.size() != 1 )
