@@ -255,9 +255,7 @@ u1 BinaryInstruction::classof( Value const* obj )
             or MulInstruction::classof( obj ) or DivInstruction::classof( obj )
             or PowInstruction::classof( obj ) or ModInstruction::classof( obj )
             or OrInstruction::classof( obj ) or XorInstruction::classof( obj )
-            or AndInstruction::classof( obj ) or NotInstruction::classof( obj )
-            or OrInstruction::classof( obj ) or ImpInstruction::classof( obj )
-            or XorInstruction::classof( obj ) or AndInstruction::classof( obj )
+            or AndInstruction::classof( obj ) or ImpInstruction::classof( obj )
             or CompareInstruction::classof( obj ) )
         {
             return true;
@@ -1001,7 +999,17 @@ const Annotation PowInstruction::annotation( classid(),
             } },
 
     },
-    arithmetic_instruction_resolve,
+    []( std::vector< Type::Ptr >& types ) {
+        if( types.size() != 2 )
+        {
+            throw InternalException( "types.size() != 2" );
+        }
+
+        if( not types[ 1 ] )
+        {
+            types[ 1 ] = INTEGER;
+        }
+    },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& ) -> Type::Ptr {
         if( types.size() != 2 )
