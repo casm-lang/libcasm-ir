@@ -1490,20 +1490,26 @@ const Annotation EquInstruction::annotation( classid(),
 
         { Type::Kind::BOOLEAN,
             {
+                Type::Kind::RATIONAL,
+                Type::Kind::RATIONAL,
+            } },
+
+        { Type::Kind::BOOLEAN,
+            {
                 Type::Kind::BIT,
                 Type::Kind::BIT,
             } },
 
         { Type::Kind::BOOLEAN,
             {
-                Type::Kind::STRING,
-                Type::Kind::STRING,
+                Type::Kind::FLOATING,
+                Type::Kind::FLOATING,
             } },
 
         { Type::Kind::BOOLEAN,
             {
-                Type::Kind::RATIONAL,
-                Type::Kind::RATIONAL,
+                Type::Kind::STRING,
+                Type::Kind::STRING,
             } },
 
         { Type::Kind::BOOLEAN,
