@@ -50,6 +50,7 @@
 
 #include <libcasm-ir/CasmIR>
 
+#include <libstdhl/Hash>
 #include <libstdhl/List>
 #include <libstdhl/Log>
 #include <libstdhl/Math>
@@ -887,6 +888,24 @@ namespace std
             const libcasm_ir::Type::Kind value ) const
         {
             return static_cast< std::size_t >( value );
+        }
+    };
+
+    template <>
+    struct hash< std::vector< libcasm_ir::Type::Kind > >
+    {
+        inline std::size_t operator()(
+            const std::vector< libcasm_ir::Type::Kind >& typeKindVector ) const
+        {
+            auto hash = static_cast< std::size_t >( typeKindVector.size() );
+
+            for( auto typeKind : typeKindVector )
+            {
+                hash = libstdhl::Hash::combine(
+                    hash, std::hash< libcasm_ir::Type::Kind >()( typeKind ) );
+            }
+
+            return hash;
         }
     };
 

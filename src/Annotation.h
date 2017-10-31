@@ -115,7 +115,8 @@ namespace libcasm_ir
 
         const Relations m_relations;
 
-        std::unordered_map< std::size_t, const Relation* > m_templates;
+        std::unordered_map< std::vector< Type::Kind >, const Relation* >
+            m_templates;
 
         std::vector< std::set< Type::ID > > m_typeSets;
 

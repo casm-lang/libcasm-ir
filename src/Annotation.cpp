@@ -75,9 +75,7 @@ Annotation::Annotation( const Value::ID valueId,
         m_typeSets.front().emplace( Type::ID{ resultTypeKind } );
         m_argumentSizes.emplace( relation.argument.size() );
 
-        auto hash = libstdhl::Hash::value( relation.argument.size() );
-        hash = libstdhl::Hash::combine(
-            hash, std::hash< Type::Kind >()( resultTypeKind ) );
+        std::vector< Type::Kind > key = { resultTypeKind };
 
         for( std::size_t i = 0; i < relation.argument.size(); i++ )
         {
@@ -90,11 +88,10 @@ Annotation::Annotation( const Value::ID valueId,
             assert( argumentTypeKind != libcasm_ir::Type::Kind::RELATION );
             m_typeSets[ i + 1 ].emplace( argumentTypeKind );
 
-            hash = libstdhl::Hash::combine(
-                hash, std::hash< Type::Kind >()( argumentTypeKind ) );
+            key.emplace_back( argumentTypeKind );
         }
 
-        auto result = m_templates.emplace( hash, &relation );
+        auto result = m_templates.emplace( key, &relation );
         if( not result.second )
         {
             assert( !" annotation relation of return type already exists!" );
@@ -201,21 +198,16 @@ Type::ID Annotation::inference( const std::vector< Type::Ptr >& argumentTypes,
 u1 Annotation::valid( const RelationType::Ptr& type ) const
 {
     const auto resultTypeKind = type->result().kind();
-    auto hash = libstdhl::Hash::value( type->arguments().size() );
-
-    hash = libstdhl::Hash::combine(
-        hash, std::hash< Type::Kind >()( resultTypeKind ) );
+    std::vector< Type::Kind > key = { resultTypeKind };
 
     const auto& argumentTypes = type->arguments();
     for( std::size_t i = 0; i < argumentTypes.size(); i++ )
     {
         Type::Kind argumentTypeKind = argumentTypes[ i ]->kind();
-
-        hash = libstdhl::Hash::combine(
-            hash, std::hash< Type::Kind >()( argumentTypeKind ) );
+        key.emplace_back( argumentTypeKind );
     }
 
-    auto result = m_templates.find( hash );
+    auto result = m_templates.find( key );
     return result != m_templates.end();
 }
 
