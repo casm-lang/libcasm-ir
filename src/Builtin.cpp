@@ -769,17 +769,12 @@ const Annotation AsIntegerBuiltin::annotation( classid(),
 
         { Type::Kind::INTEGER,
             {
-                Type::Kind::INTEGER,
-            } },
-
-        { Type::Kind::INTEGER,
-            {
                 Type::Kind::BOOLEAN,
             } },
 
         { Type::Kind::INTEGER,
             {
-                Type::Kind::FLOATING,
+                Type::Kind::INTEGER,
             } },
 
         { Type::Kind::INTEGER,
@@ -789,8 +784,8 @@ const Annotation AsIntegerBuiltin::annotation( classid(),
 
         { Type::Kind::INTEGER,
             {
-                Type::Kind::ENUMERATION,
-            } }
+                Type::Kind::FLOATING,
+            } },
 
     },
     []( std::vector< Type::Ptr >& types ) {},
