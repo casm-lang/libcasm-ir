@@ -967,23 +967,18 @@ const Annotation AsFloatingBuiltin::annotation( classid(),
 
         { Type::Kind::FLOATING,
             {
-                Type::Kind::INTEGER,
+                Type::Kind::BOOLEAN,
             } },
 
         { Type::Kind::FLOATING,
             {
-                Type::Kind::BOOLEAN,
+                Type::Kind::INTEGER,
             } },
 
         { Type::Kind::FLOATING,
             {
                 Type::Kind::BIT,
             } },
-
-        { Type::Kind::FLOATING,
-            {
-                Type::Kind::ENUMERATION,
-            } }
 
     },
     []( std::vector< Type::Ptr >& types ) {},
