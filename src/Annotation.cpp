@@ -69,8 +69,6 @@ Annotation::Annotation( const Value::ID valueId,
     assert( m_relations.size() > 0 );
     m_typeSets.emplace_back( std::set< Type::ID >{} );
 
-    std::set< std::size_t > templates = {};
-
     for( const auto& relation : m_relations )
     {
         Type::Kind resultTypeKind = relation.result;
@@ -96,7 +94,7 @@ Annotation::Annotation( const Value::ID valueId,
                 hash, std::hash< Type::Kind >()( argumentTypeKind ) );
         }
 
-        auto result = templates.emplace( hash );
+        auto result = m_templates.emplace( hash, &relation );
         if( not result.second )
         {
             assert( !" annotation relation of return type already exists!" );
@@ -198,6 +196,27 @@ Type::ID Annotation::inference( const std::vector< Type::Ptr >& argumentTypes,
     {
         return Type::ID{ Type::Kind::_SIZE_ };
     }
+}
+
+u1 Annotation::valid( const RelationType::Ptr& type ) const
+{
+    const auto resultTypeKind = type->result().kind();
+    auto hash = libstdhl::Hash::value( type->arguments().size() );
+
+    hash = libstdhl::Hash::combine(
+        hash, std::hash< Type::Kind >()( resultTypeKind ) );
+
+    const auto& argumentTypes = type->arguments();
+    for( std::size_t i = 0; i < argumentTypes.size(); i++ )
+    {
+        Type::Kind argumentTypeKind = argumentTypes[ i ]->kind();
+
+        hash = libstdhl::Hash::combine(
+            hash, std::hash< Type::Kind >()( argumentTypeKind ) );
+    }
+
+    auto result = m_templates.find( hash );
+    return result != m_templates.end();
 }
 
 const Annotation& Annotation::find( const std::string& token )

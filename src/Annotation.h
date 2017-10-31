@@ -108,10 +108,14 @@ namespace libcasm_ir
         Type::ID inference( const std::vector< Type::Ptr >& argumentTypes,
             const std::vector< Value::Ptr >& values ) const;
 
+        u1 valid( const RelationType::Ptr& type ) const;
+
       private:
         Value::ID m_valueId;
 
         const Relations m_relations;
+
+        std::unordered_map< std::size_t, const Relation* > m_templates;
 
         std::vector< std::set< Type::ID > > m_typeSets;
 
