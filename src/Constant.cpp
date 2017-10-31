@@ -876,6 +876,21 @@ u1 StringConstant::classof( Value const* obj )
 // Floating Constant
 //
 
+FloatingConstant::FloatingConstant( const libstdhl::Type::Floating& value )
+: Constant( FLOATING, value, classid() )
+{
+}
+
+FloatingConstant::FloatingConstant( const libstdhl::Type::Integer& value )
+: Constant( FLOATING, libstdhl::Type::createFloating( value ), classid() )
+{
+}
+
+FloatingConstant::FloatingConstant( const libstdhl::Type::Natural& value )
+: Constant( FLOATING, libstdhl::Type::createFloating( value ), classid() )
+{
+}
+
 FloatingConstant::FloatingConstant( const std::string& value )
 : Constant( FLOATING, libstdhl::Type::createFloating( value ), classid() )
 {
@@ -883,11 +898,6 @@ FloatingConstant::FloatingConstant( const std::string& value )
 
 FloatingConstant::FloatingConstant( const double value )
 : Constant( FLOATING, libstdhl::Type::createFloating( value ), classid() )
-{
-}
-
-FloatingConstant::FloatingConstant( const libstdhl::Type::Floating& value )
-: Constant( FLOATING, value, classid() )
 {
 }
 

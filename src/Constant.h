@@ -342,6 +342,10 @@ namespace libcasm_ir
       public:
         FloatingConstant( const libstdhl::Type::Floating& value );
 
+        FloatingConstant( const libstdhl::Type::Integer& value );
+
+        FloatingConstant( const libstdhl::Type::Natural& value );
+
         FloatingConstant( const std::string& value );
 
         FloatingConstant( const double value );
