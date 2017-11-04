@@ -312,7 +312,7 @@ void IRDumpSourceVisitor::visit( StringConstant& value )
 {
     dump( value );
 }
-void IRDumpSourceVisitor::visit( FloatingConstant& value )
+void IRDumpSourceVisitor::visit( DecimalConstant& value )
 {
     dump( value );
 }

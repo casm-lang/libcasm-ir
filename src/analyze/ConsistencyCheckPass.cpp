@@ -408,9 +408,9 @@ void ConsistencyCheckVisitor::visit( StringConstant& value )
 {
     verify< StringConstant >( value );
 }
-void ConsistencyCheckVisitor::visit( FloatingConstant& value )
+void ConsistencyCheckVisitor::visit( DecimalConstant& value )
 {
-    verify< FloatingConstant >( value );
+    verify< DecimalConstant >( value );
 }
 void ConsistencyCheckVisitor::visit( RationalConstant& value )
 {

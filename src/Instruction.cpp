@@ -565,9 +565,9 @@ const Annotation InvInstruction::annotation( classid(),
                 Type::Kind::BIT,
             } },
 
-        { Type::Kind::FLOATING,
+        { Type::Kind::DECIMAL,
             {
-                Type::Kind::FLOATING,
+                Type::Kind::DECIMAL,
             } },
 
         { Type::Kind::RATIONAL,
@@ -638,10 +638,10 @@ const Annotation AddInstruction::annotation( classid(),
                 Type::Kind::RATIONAL, // signed rational add no wrap
             } },
 
-        { Type::Kind::FLOATING,
+        { Type::Kind::DECIMAL,
             {
-                Type::Kind::FLOATING,
-                Type::Kind::FLOATING, // signed floating add no wrap
+                Type::Kind::DECIMAL,
+                Type::Kind::DECIMAL, // signed decimal add no wrap
             } },
 
         { Type::Kind::STRING,
@@ -718,10 +718,10 @@ const Annotation SubInstruction::annotation( classid(),
                 Type::Kind::RATIONAL, // signed rational sub no wrap
             } },
 
-        { Type::Kind::FLOATING,
+        { Type::Kind::DECIMAL,
             {
-                Type::Kind::FLOATING,
-                Type::Kind::FLOATING, // signed floating sub no wrap
+                Type::Kind::DECIMAL,
+                Type::Kind::DECIMAL, // signed decimal sub no wrap
             } },
 
     },
@@ -794,10 +794,10 @@ const Annotation MulInstruction::annotation( classid(),
                 Type::Kind::RATIONAL, // signed rational mul no wrap
             } },
 
-        { Type::Kind::FLOATING,
+        { Type::Kind::DECIMAL,
             {
-                Type::Kind::FLOATING,
-                Type::Kind::FLOATING, // signed floating mul no wrap
+                Type::Kind::DECIMAL,
+                Type::Kind::DECIMAL, // signed decimal mul no wrap
             } },
 
     },
@@ -986,15 +986,15 @@ const Annotation PowInstruction::annotation( classid(),
         //         Type::Kind::RATIONAL, Type::Kind::INTEGER,
         //     } },
 
-        // { Type::Kind::FLOATING, // TODO: PPA: enable this after clear
+        // { Type::Kind::DECIMAL, // TODO: PPA: enable this after clear
         // semantics
         //     {
-        //         Type::Kind::FLOATING, Type::Kind::FLOATING,
+        //         Type::Kind::DECIMAL, Type::Kind::DECIMAL,
         //     } },
 
-        { Type::Kind::FLOATING,
+        { Type::Kind::DECIMAL,
             {
-                Type::Kind::FLOATING,
+                Type::Kind::DECIMAL,
                 Type::Kind::INTEGER,
             } },
 
@@ -1502,8 +1502,8 @@ const Annotation EquInstruction::annotation( classid(),
 
         { Type::Kind::BOOLEAN,
             {
-                Type::Kind::FLOATING,
-                Type::Kind::FLOATING,
+                Type::Kind::DECIMAL,
+                Type::Kind::DECIMAL,
             } },
 
         { Type::Kind::BOOLEAN,
@@ -1644,8 +1644,8 @@ const Annotation LthInstruction::annotation( classid(),
 
         { Type::Kind::BOOLEAN,
             {
-                Type::Kind::FLOATING,
-                Type::Kind::FLOATING,
+                Type::Kind::DECIMAL,
+                Type::Kind::DECIMAL,
             } },
 
     },
@@ -1694,8 +1694,8 @@ const Annotation LeqInstruction::annotation( classid(),
 
         { Type::Kind::BOOLEAN,
             {
-                Type::Kind::FLOATING,
-                Type::Kind::FLOATING,
+                Type::Kind::DECIMAL,
+                Type::Kind::DECIMAL,
             } },
 
     },
@@ -1744,8 +1744,8 @@ const Annotation GthInstruction::annotation( classid(),
 
         { Type::Kind::BOOLEAN,
             {
-                Type::Kind::FLOATING,
-                Type::Kind::FLOATING,
+                Type::Kind::DECIMAL,
+                Type::Kind::DECIMAL,
             } },
 
     },
@@ -1794,8 +1794,8 @@ const Annotation GeqInstruction::annotation( classid(),
 
         { Type::Kind::BOOLEAN,
             {
-                Type::Kind::FLOATING,
-                Type::Kind::FLOATING,
+                Type::Kind::DECIMAL,
+                Type::Kind::DECIMAL,
             } },
 
     },

@@ -69,24 +69,24 @@ TEST( libcasm_ir__instruction_inv, integer )
     }
 }
 
-TEST( libcasm_ir__instruction_inv, floating )
+TEST( libcasm_ir__instruction_inv, decimal )
 {
     {
-        auto a = libstdhl::Memory::make< FloatingConstant >( 5.0 );
+        auto a = libstdhl::Memory::make< DecimalConstant >( 5.0 );
         auto i = InvInstruction( a );
 
         EXPECT_STREQ( i.type().name().c_str(), a->type().name().c_str() );
         EXPECT_TRUE( i.type() == a->type() );
     }
     {
-        auto a = libstdhl::Memory::get< FloatingConstant >( 5.0 );
+        auto a = libstdhl::Memory::get< DecimalConstant >( 5.0 );
         auto i = InvInstruction( a );
 
         EXPECT_STREQ( i.type().name().c_str(), a->type().name().c_str() );
         EXPECT_TRUE( i.type() == a->type() );
     }
     {
-        auto c = FloatingConstant( 5.0 );
+        auto c = DecimalConstant( 5.0 );
         auto a = libstdhl::Memory::wrap< Constant >( c );
         auto i = InvInstruction( a );
 

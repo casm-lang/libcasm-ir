@@ -415,7 +415,7 @@ void IRDumpDotVisitor::visit( StringConstant& value )
 {
     dump( value );
 }
-void IRDumpDotVisitor::visit( FloatingConstant& value )
+void IRDumpDotVisitor::visit( DecimalConstant& value )
 {
     dump( value );
 }

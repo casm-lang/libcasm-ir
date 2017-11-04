@@ -176,9 +176,9 @@ TEST( libcasm_ir_Value, id_to_token_string )
                 EXPECT_STREQ( Value::token( id ).c_str(), "StringConstant" );
                 break;
             }
-            case Value::FLOATING_CONSTANT:
+            case Value::DECIMAL_CONSTANT:
             {
-                EXPECT_STREQ( Value::token( id ).c_str(), "FloatingConstant" );
+                EXPECT_STREQ( Value::token( id ).c_str(), "DecimalConstant" );
                 break;
             }
             case Value::RATIONAL_CONSTANT:
@@ -450,9 +450,9 @@ TEST( libcasm_ir_Value, id_to_token_string )
                 EXPECT_STREQ( Value::token( id ).c_str(), "asString" );
                 break;
             }
-            case Value::AS_FLOATING_BUILTIN:
+            case Value::AS_DECIMAL_BUILTIN:
             {
-                EXPECT_STREQ( Value::token( id ).c_str(), "asFloating" );
+                EXPECT_STREQ( Value::token( id ).c_str(), "asDecimal" );
                 break;
             }
             case Value::AS_RATIONAL_BUILTIN:

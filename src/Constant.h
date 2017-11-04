@@ -50,7 +50,7 @@
 
 #include <libstdhl/type/Boolean>
 #include <libstdhl/type/Data>
-#include <libstdhl/type/Floating>
+#include <libstdhl/type/Decimal>
 #include <libstdhl/type/Integer>
 #include <libstdhl/type/Natural>
 #include <libstdhl/type/Rational>
@@ -334,25 +334,25 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class FloatingConstant final : public Constant
+    class DecimalConstant final : public Constant
     {
       public:
-        using Ptr = std::shared_ptr< FloatingConstant >;
+        using Ptr = std::shared_ptr< DecimalConstant >;
 
       public:
-        FloatingConstant( const libstdhl::Type::Floating& value );
+        DecimalConstant( const libstdhl::Type::Decimal& value );
 
-        FloatingConstant( const libstdhl::Type::Integer& value );
+        DecimalConstant( const libstdhl::Type::Integer& value );
 
-        FloatingConstant( const libstdhl::Type::Natural& value );
+        DecimalConstant( const libstdhl::Type::Natural& value );
 
-        FloatingConstant( const std::string& value );
+        DecimalConstant( const std::string& value );
 
-        FloatingConstant( const double value );
+        DecimalConstant( const double value );
 
-        FloatingConstant( void );
+        DecimalConstant( void );
 
-        const libstdhl::Type::Floating& value( void ) const;
+        const libstdhl::Type::Decimal& value( void ) const;
 
         std::string name( void ) const override;
 
@@ -364,7 +364,7 @@ namespace libcasm_ir
 
         static inline Value::ID classid( void )
         {
-            return Value::FLOATING_CONSTANT;
+            return Value::DECIMAL_CONSTANT;
         }
 
         static u1 classof( Value const* obj );

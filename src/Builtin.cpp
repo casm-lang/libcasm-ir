@@ -50,7 +50,7 @@ using namespace libcasm_ir;
 static const auto VOID = libstdhl::Memory::get< VoidType >();
 static const auto BOOLEAN = libstdhl::Memory::get< BooleanType >();
 static const auto INTEGER = libstdhl::Memory::get< IntegerType >();
-static const auto FLOATING = libstdhl::Memory::get< FloatingType >();
+static const auto DECIMAL = libstdhl::Memory::get< DecimalType >();
 static const auto RATIONAL = libstdhl::Memory::get< RationalType >();
 static const auto STRING = libstdhl::Memory::get< StringType >();
 
@@ -152,7 +152,7 @@ Builtin::Ptr Builtin::create( const Value::ID id, const Type::Ptr& type )
         case Value::INTEGER_CONSTANT:          // [fallthrough]
         case Value::BIT_CONSTANT:              // [fallthrough]
         case Value::STRING_CONSTANT:           // [fallthrough]
-        case Value::FLOATING_CONSTANT:         // [fallthrough]
+        case Value::DECIMAL_CONSTANT:          // [fallthrough]
         case Value::RATIONAL_CONSTANT:         // [fallthrough]
         case Value::ENUMERATION_CONSTANT:      // [fallthrough]
         case Value::RANGE_CONSTANT:            // [fallthrough]
@@ -242,9 +242,9 @@ Builtin::Ptr Builtin::create( const Value::ID id, const Type::Ptr& type )
         {
             return libstdhl::Memory::make< AsStringBuiltin >( type );
         }
-        case Value::AS_FLOATING_BUILTIN:
+        case Value::AS_DECIMAL_BUILTIN:
         {
-            return libstdhl::Memory::make< AsFloatingBuiltin >( type );
+            return libstdhl::Memory::make< AsDecimalBuiltin >( type );
         }
         case Value::AS_RATIONAL_BUILTIN:
         {
@@ -441,7 +441,7 @@ const Annotation IsSymbolicBuiltin::annotation( classid(),
 
         { Type::Kind::BOOLEAN,
             {
-                Type::Kind::FLOATING,
+                Type::Kind::DECIMAL,
             } },
 
         { Type::Kind::BOOLEAN,
@@ -709,7 +709,7 @@ u1 CastingBuiltin::classof( Value const* obj )
            or AsIntegerBuiltin::classof( obj ) or AsBitBuiltin::classof( obj )
            or AsEnumerationBuiltin::classof( obj )
            or AsStringBuiltin::classof( obj )
-           or AsFloatingBuiltin::classof( obj );
+           or AsDecimalBuiltin::classof( obj );
 }
 
 //
@@ -784,7 +784,7 @@ const Annotation AsIntegerBuiltin::annotation( classid(),
 
         { Type::Kind::INTEGER,
             {
-                Type::Kind::FLOATING,
+                Type::Kind::DECIMAL,
             } },
 
     },
@@ -844,7 +844,7 @@ const Annotation AsBitBuiltin::annotation( classid(),
 
         { Type::Kind::BIT,
             {
-                Type::Kind::FLOATING,
+                Type::Kind::DECIMAL,
                 Type::Kind::INTEGER,
             } },
 
@@ -914,7 +914,7 @@ const Annotation AsStringBuiltin::annotation( classid(),
 
         { Type::Kind::STRING,
             {
-                Type::Kind::FLOATING,
+                Type::Kind::DECIMAL,
             } },
 
         { Type::Kind::STRING,
@@ -944,33 +944,33 @@ u1 AsStringBuiltin::classof( Value const* obj )
 }
 
 //
-// AsFloatingBuiltin
+// AsDecimalBuiltin
 //
 
-AsFloatingBuiltin::AsFloatingBuiltin( const Type::Ptr& type )
+AsDecimalBuiltin::AsDecimalBuiltin( const Type::Ptr& type )
 : CastingBuiltin( type, classid() )
 {
 }
 
-const Annotation AsFloatingBuiltin::annotation( classid(),
+const Annotation AsDecimalBuiltin::annotation( classid(),
     Annotation::Relations{
 
-        { Type::Kind::FLOATING,
+        { Type::Kind::DECIMAL,
             {
-                Type::Kind::FLOATING,
+                Type::Kind::DECIMAL,
             } },
 
-        { Type::Kind::FLOATING,
+        { Type::Kind::DECIMAL,
             {
                 Type::Kind::BOOLEAN,
             } },
 
-        { Type::Kind::FLOATING,
+        { Type::Kind::DECIMAL,
             {
                 Type::Kind::INTEGER,
             } },
 
-        { Type::Kind::FLOATING,
+        { Type::Kind::DECIMAL,
             {
                 Type::Kind::BIT,
             } },
@@ -983,10 +983,10 @@ const Annotation AsFloatingBuiltin::annotation( classid(),
         {
             throw InternalException( "types.size() != 1" );
         }
-        return FLOATING;
+        return DECIMAL;
     } );
 
-u1 AsFloatingBuiltin::classof( Value const* obj )
+u1 AsDecimalBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
 }
@@ -1099,7 +1099,7 @@ static const Annotation::Relations stringify_builtin_data = {
 
     { Type::Kind::STRING,
         {
-            Type::Kind::FLOATING,
+            Type::Kind::DECIMAL,
         } },
 
     { Type::Kind::STRING,
