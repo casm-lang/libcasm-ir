@@ -68,6 +68,7 @@ add_library( ${PROJECT}-test OBJECT
   transform/BranchEliminationPass.cpp
   type/bit.cpp
   type/boolean.cpp
+  type/decimal.cpp
   type/enum.cpp
   type/file.cpp
   type/id.cpp

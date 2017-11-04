@@ -154,7 +154,7 @@ namespace libcasm_ir
         void visit( IntegerConstant& value ) override;
         void visit( BitConstant& value ) override;
         void visit( StringConstant& value ) override;
-        void visit( FloatingConstant& value ) override;
+        void visit( DecimalConstant& value ) override;
         void visit( RationalConstant& value ) override;
         void visit( EnumerationConstant& value ) override;
         void visit( RangeConstant& value ) override;

@@ -50,7 +50,7 @@ static constexpr const char* undef_str = "undef";
 static const auto VOID = libstdhl::Memory::get< VoidType >();
 static const auto BOOLEAN = libstdhl::Memory::get< BooleanType >();
 static const auto INTEGER = libstdhl::Memory::get< IntegerType >();
-static const auto FLOATING = libstdhl::Memory::get< FloatingType >();
+static const auto DECIMAL = libstdhl::Memory::get< DecimalType >();
 static const auto RATIONAL = libstdhl::Memory::get< RationalType >();
 static const auto STRING = libstdhl::Memory::get< StringType >();
 
@@ -150,9 +150,9 @@ std::string Constant::name( void ) const
         {
             return static_cast< const StringConstant* >( this )->name();
         }
-        case Value::FLOATING_CONSTANT:
+        case Value::DECIMAL_CONSTANT:
         {
-            return static_cast< const FloatingConstant* >( this )->name();
+            return static_cast< const DecimalConstant* >( this )->name();
         }
         case Value::RATIONAL_CONSTANT:
         {
@@ -206,9 +206,9 @@ void Constant::accept( Visitor& visitor )
             static_cast< StringConstant* >( this )->accept( visitor );
             break;
         }
-        case Value::FLOATING_CONSTANT:
+        case Value::DECIMAL_CONSTANT:
         {
-            static_cast< FloatingConstant* >( this )->accept( visitor );
+            static_cast< DecimalConstant* >( this )->accept( visitor );
             break;
         }
         case Value::RATIONAL_CONSTANT:
@@ -295,9 +295,9 @@ std::size_t Constant::hash( void ) const
         {
             return static_cast< const StringConstant* >( this )->hash();
         }
-        case Value::FLOATING_CONSTANT:
+        case Value::DECIMAL_CONSTANT:
         {
-            return static_cast< const FloatingConstant* >( this )->hash();
+            return static_cast< const DecimalConstant* >( this )->hash();
         }
         case Value::RATIONAL_CONSTANT:
         {
@@ -353,9 +353,9 @@ u1 Constant::operator==( const Value& rhs ) const
             return static_cast< const StringConstant* >( this )->operator==(
                 rhs );
         }
-        case Value::FLOATING_CONSTANT:
+        case Value::DECIMAL_CONSTANT:
         {
-            return static_cast< const FloatingConstant* >( this )->operator==(
+            return static_cast< const DecimalConstant* >( this )->operator==(
                 rhs );
         }
         case Value::RATIONAL_CONSTANT:
@@ -393,7 +393,7 @@ u1 Constant::classof( Value const* obj )
     return obj->id() == classid() or VoidConstant::classof( obj )
            or BooleanConstant::classof( obj ) or IntegerConstant::classof( obj )
            or BitConstant::classof( obj ) or StringConstant::classof( obj )
-           or FloatingConstant::classof( obj )
+           or DecimalConstant::classof( obj )
            or RationalConstant::classof( obj )
            or EnumerationConstant::classof( obj )
            or RuleReferenceConstant::classof( obj )
@@ -430,9 +430,9 @@ Constant Constant::undef( const Type::Ptr& type )
         {
             return StringConstant();
         }
-        case Type::Kind::FLOATING:
+        case Type::Kind::DECIMAL:
         {
-            return FloatingConstant();
+            return DecimalConstant();
         }
         case Type::Kind::RATIONAL:
         {
@@ -873,62 +873,64 @@ u1 StringConstant::classof( Value const* obj )
 }
 
 //
-// Floating Constant
+// Decimal Constant
 //
 
-FloatingConstant::FloatingConstant( const libstdhl::Type::Floating& value )
-: Constant( FLOATING, value, classid() )
+DecimalConstant::DecimalConstant( const libstdhl::Type::Decimal& value )
+: Constant( DECIMAL, value, classid() )
 {
 }
 
-FloatingConstant::FloatingConstant( const libstdhl::Type::Integer& value )
-: Constant( FLOATING, libstdhl::Type::createFloating( value ), classid() )
+DecimalConstant::DecimalConstant( const libstdhl::Type::Integer& value )
+: Constant( DECIMAL, libstdhl::Type::createDecimal( value ), classid() )
 {
 }
 
-FloatingConstant::FloatingConstant( const libstdhl::Type::Natural& value )
-: Constant( FLOATING, libstdhl::Type::createFloating( value ), classid() )
+DecimalConstant::DecimalConstant( const libstdhl::Type::Natural& value )
+: Constant( DECIMAL, libstdhl::Type::createDecimal( value ), classid() )
 {
 }
 
-FloatingConstant::FloatingConstant( const std::string& value )
-: Constant( FLOATING, libstdhl::Type::createFloating( value ), classid() )
+DecimalConstant::DecimalConstant( const std::string& value )
+: Constant( DECIMAL, libstdhl::Type::createDecimal( value ), classid() )
 {
 }
 
-FloatingConstant::FloatingConstant( const double value )
-: Constant( FLOATING, libstdhl::Type::createFloating( value ), classid() )
+DecimalConstant::DecimalConstant( const double value )
+: Constant( DECIMAL, libstdhl::Type::createDecimal( value ), classid() )
 {
 }
 
-FloatingConstant::FloatingConstant( void )
-: Constant( FLOATING, classid() )
+DecimalConstant::DecimalConstant( void )
+: Constant( DECIMAL, classid() )
 {
 }
 
-const libstdhl::Type::Floating& FloatingConstant::value( void ) const
+const libstdhl::Type::Decimal& DecimalConstant::value( void ) const
 {
-    return static_cast< const libstdhl::Type::Floating& >( m_data );
+    return static_cast< const libstdhl::Type::Decimal& >( m_data );
 }
 
-std::string FloatingConstant::name( void ) const
+std::string DecimalConstant::name( void ) const
 {
-    return ( defined() ? ( "TODO" ) : undef_str );
+    // return ( defined() ? ( "TODO" ) : undef_str );
+    return (
+        defined() ? ( std::to_string( (double)value().value() ) ) : undef_str );
     // TODO: PPA: use literal function from libstdhl::Type::Data
 }
 
-void FloatingConstant::accept( Visitor& visitor )
+void DecimalConstant::accept( Visitor& visitor )
 {
     visitor.visit( *this );
 }
 
-std::size_t FloatingConstant::hash( void ) const
+std::size_t DecimalConstant::hash( void ) const
 {
     const auto h = ( ( (std::size_t)classid() ) << 1 ) | defined();
     return libstdhl::Hash::combine( h, libstdhl::Hash::value( value() ) );
 }
 
-u1 FloatingConstant::operator==( const Value& rhs ) const
+u1 DecimalConstant::operator==( const Value& rhs ) const
 {
     if( this == &rhs )
     {
@@ -940,12 +942,12 @@ u1 FloatingConstant::operator==( const Value& rhs ) const
         return false;
     }
 
-    const auto& other = static_cast< const FloatingConstant& >( rhs );
+    const auto& other = static_cast< const DecimalConstant& >( rhs );
     return ( this->defined() == other.defined() )
            and ( this->value() == other.value() );
 }
 
-u1 FloatingConstant::classof( Value const* obj )
+u1 DecimalConstant::classof( Value const* obj )
 {
     return obj->id() == classid();
 }

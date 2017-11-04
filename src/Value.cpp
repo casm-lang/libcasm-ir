@@ -319,9 +319,9 @@ std::string Value::token( const Value::ID id )
         {
             return "StringConstant";
         }
-        case Value::FLOATING_CONSTANT:
+        case Value::DECIMAL_CONSTANT:
         {
-            return "FloatingConstant";
+            return "DecimalConstant";
         }
         case Value::RATIONAL_CONSTANT:
         {
@@ -536,9 +536,9 @@ std::string Value::token( const Value::ID id )
         {
             return "asString";
         }
-        case Value::AS_FLOATING_BUILTIN:
+        case Value::AS_DECIMAL_BUILTIN:
         {
-            return "asFloating";
+            return "asDecimal";
         }
         case Value::AS_RATIONAL_BUILTIN:
         {

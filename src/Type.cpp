@@ -62,8 +62,8 @@ static const auto TYPE_INTEGER
     = libstdhl::Memory::get< libcasm_ir::IntegerType >();
 static const auto TYPE_RATIONAL
     = libstdhl::Memory::get< libcasm_ir::RationalType >();
-static const auto TYPE_FLOATING
-    = libstdhl::Memory::get< libcasm_ir::FloatingType >();
+static const auto TYPE_DECIMAL
+    = libstdhl::Memory::get< libcasm_ir::DecimalType >();
 static const auto TYPE_STRING
     = libstdhl::Memory::get< libcasm_ir::StringType >();
 
@@ -172,7 +172,7 @@ u1 Type::isRelation( void ) const
 
 u1 Type::isPrimitive( void ) const
 {
-    return isBoolean() or isInteger() or isRational() or isBit() or isFloating()
+    return isBoolean() or isInteger() or isRational() or isBit() or isDecimal()
            or isString();
 }
 
@@ -196,9 +196,9 @@ u1 Type::isBit( void ) const
     return kind() == Type::Kind::BIT;
 }
 
-u1 Type::isFloating( void ) const
+u1 Type::isDecimal( void ) const
 {
-    return kind() == Type::Kind::FLOATING;
+    return kind() == Type::Kind::DECIMAL;
 }
 
 u1 Type::isString( void ) const
@@ -306,9 +306,9 @@ Type::Ptr Type::fromID( const Type::ID id )
                 assert( !" invalid ID!" );
                 break;
             }
-            case libcasm_ir::Type::Kind::FLOATING:
+            case libcasm_ir::Type::Kind::DECIMAL:
             {
-                return TYPE_FLOATING;
+                return TYPE_DECIMAL;
             }
             case libcasm_ir::Type::Kind::STRING:
             {
@@ -395,9 +395,9 @@ std::string Type::token( const Type::Kind kind )
         {
             return "Bit";
         }
-        case Type::Kind::FLOATING:
+        case Type::Kind::DECIMAL:
         {
-            return "Floating"; // PPA: FIXME: change this to 'Decimal'
+            return "Decimal";
         }
         case Type::Kind::STRING:
         {
@@ -1002,39 +1002,39 @@ std::size_t BitType::hash( void ) const
 // Flaoting Type
 //
 
-FloatingType::FloatingType( void )
+DecimalType::DecimalType( void )
 : PrimitiveType( classid() )
 {
 }
 
-std::string FloatingType::name( void ) const
+std::string DecimalType::name( void ) const
 {
-    return "z"; // PPA: FIXME: change this to "d" for decimal
+    return "d";
 }
 
-std::string FloatingType::description( void ) const
+std::string DecimalType::description( void ) const
 {
     return token( kind() );
 }
 
-void FloatingType::foreach(
+void DecimalType::foreach(
     const std::function< void( const Constant& constant ) >& callback ) const
 {
     // this type has an infinite range to process, therefore omitted (for now)
 }
 
-Constant FloatingType::choose( void ) const
+Constant DecimalType::choose( void ) const
 {
     // this is undefined for now
-    return FloatingConstant();
+    return DecimalConstant();
 }
 
-void FloatingType::validate( const Constant& constant ) const
+void DecimalType::validate( const Constant& constant ) const
 {
-    assert( isa< FloatingConstant >( constant ) );
+    assert( isa< DecimalConstant >( constant ) );
 }
 
-std::size_t FloatingType::hash( void ) const
+std::size_t DecimalType::hash( void ) const
 {
     return std::hash< std::string >()( name() );
 }
@@ -1299,21 +1299,21 @@ Constant RangeType::choose( void ) const
                 libstdhl::Random::uniform< libstdhl::Type::Integer >() );
         }
     }
-    else if( type().isFloating() )
+    else if( type().isDecimal() )
     {
         if( m_range )
         {
             const auto& a
-                = static_cast< FloatingConstant& >( *range().from() ).value();
+                = static_cast< DecimalConstant& >( *range().from() ).value();
             const auto& b
-                = static_cast< FloatingConstant& >( *range().to() ).value();
+                = static_cast< DecimalConstant& >( *range().to() ).value();
 
-            return FloatingConstant( libstdhl::Random::uniform<>( a, b ) );
+            return DecimalConstant( libstdhl::Random::uniform<>( a, b ) );
         }
         else
         {
-            return FloatingConstant(
-                libstdhl::Random::uniform< libstdhl::Type::Floating >() );
+            return DecimalConstant(
+                libstdhl::Random::uniform< libstdhl::Type::Decimal >() );
         }
     }
     else if( type().isBoolean() )

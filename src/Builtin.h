@@ -312,17 +312,17 @@ namespace libcasm_ir
         static const Annotation annotation;
     };
 
-    class AsFloatingBuiltin final : public CastingBuiltin
+    class AsDecimalBuiltin final : public CastingBuiltin
     {
       public:
-        using Ptr = std::shared_ptr< AsFloatingBuiltin >;
+        using Ptr = std::shared_ptr< AsDecimalBuiltin >;
 
-        AsFloatingBuiltin( const Type::Ptr& type );
+        AsDecimalBuiltin( const Type::Ptr& type );
 
       public:
         static inline Value::ID classid( void )
         {
-            return Value::AS_FLOATING_BUILTIN;
+            return Value::AS_DECIMAL_BUILTIN;
         }
 
         static u1 classof( Value const* obj );

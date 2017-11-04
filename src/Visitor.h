@@ -108,7 +108,7 @@ namespace libcasm_ir
     class BitConstant;
     class StringConstant;
     class RationalConstant;
-    class FloatingConstant;
+    class DecimalConstant;
     class EnumerationConstant;
     class RangeConstant;
 
@@ -194,7 +194,7 @@ namespace libcasm_ir
         virtual void visit( IntegerConstant& value ) = 0;
         virtual void visit( BitConstant& value ) = 0;
         virtual void visit( StringConstant& value ) = 0;
-        virtual void visit( FloatingConstant& value ) = 0;
+        virtual void visit( DecimalConstant& value ) = 0;
         virtual void visit( RationalConstant& value ) = 0;
         virtual void visit( EnumerationConstant& value ) = 0;
         virtual void visit( RangeConstant& value ) = 0;
@@ -274,7 +274,7 @@ namespace libcasm_ir
         virtual void visit( IntegerConstant& value ) override = 0;
         virtual void visit( BitConstant& value ) override = 0;
         virtual void visit( StringConstant& value ) override = 0;
-        virtual void visit( FloatingConstant& value ) override = 0;
+        virtual void visit( DecimalConstant& value ) override = 0;
         virtual void visit( RationalConstant& value ) override = 0;
         virtual void visit( EnumerationConstant& value ) override = 0;
         virtual void visit( RangeConstant& value ) override = 0;
@@ -367,7 +367,7 @@ namespace libcasm_ir
         void visit( IntegerConstant& value ) override;
         void visit( BitConstant& value ) override;
         void visit( StringConstant& value ) override;
-        void visit( FloatingConstant& value ) override;
+        void visit( DecimalConstant& value ) override;
         void visit( RationalConstant& value ) override;
         void visit( EnumerationConstant& value ) override;
         void visit( RangeConstant& value ) override;

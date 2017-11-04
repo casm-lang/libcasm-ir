@@ -94,7 +94,7 @@ namespace libcasm_ir
             INTEGER,
             RATIONAL,
             BIT,
-            FLOATING,
+            DECIMAL,
             STRING,
 
             // composed
@@ -244,7 +244,7 @@ namespace libcasm_ir
         u1 isInteger( void ) const;
         u1 isRational( void ) const;
         u1 isBit( void ) const;
-        u1 isFloating( void ) const;
+        u1 isDecimal( void ) const;
         u1 isString( void ) const;
 
         u1 isComposed( void ) const;
@@ -560,12 +560,12 @@ namespace libcasm_ir
         u16 m_bitsize;
     };
 
-    class FloatingType final : public PrimitiveType
+    class DecimalType final : public PrimitiveType
     {
       public:
-        using Ptr = std::shared_ptr< FloatingType >;
+        using Ptr = std::shared_ptr< DecimalType >;
 
-        FloatingType( void );
+        DecimalType( void );
 
         std::string name( void ) const override;
 
@@ -583,7 +583,7 @@ namespace libcasm_ir
 
         static inline Type::Kind classid( void )
         {
-            return Type::Kind::FLOATING;
+            return Type::Kind::DECIMAL;
         }
     };
 

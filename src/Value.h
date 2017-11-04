@@ -100,7 +100,7 @@ namespace libcasm_ir
             INTEGER_CONSTANT,
             BIT_CONSTANT,
             STRING_CONSTANT,
-            FLOATING_CONSTANT,
+            DECIMAL_CONSTANT,
             RATIONAL_CONSTANT,
             ENUMERATION_CONSTANT,
             RANGE_CONSTANT,
@@ -164,7 +164,7 @@ namespace libcasm_ir
             AS_INTEGER_BUILTIN,
             AS_BIT_BUILTIN,
             AS_STRING_BUILTIN,
-            AS_FLOATING_BUILTIN,
+            AS_DECIMAL_BUILTIN,
             AS_RATIONAL_BUILTIN,
             AS_ENUMERATION_BUILTIN,
 

@@ -43,29 +43,33 @@
 
 using namespace libcasm_ir;
 
-TEST( libcasm_ir__constant_undef, IntegerType_test )
+TEST( libcasm_ir__type_decimal, make_and_get )
 {
-    const auto t = libstdhl::Memory::get< IntegerType >();
-    const auto u = Constant::undef( t );
+    auto v = libstdhl::Memory::make< DecimalType >();
+    ASSERT_TRUE( v != nullptr );
 
-    EXPECT_TRUE( u == IntegerConstant() );
+    EXPECT_STREQ( v->name().c_str(), "d" );
+    EXPECT_STREQ( v->description().c_str(), "Decimal" );
+
+    auto w = libstdhl::Memory::make< DecimalType >();
+    ASSERT_TRUE( w != nullptr );
+
+    EXPECT_TRUE( v != w );
+    EXPECT_TRUE( *w == *w );
+
+    auto a = libstdhl::Memory::get< DecimalType >();
+    auto b = libstdhl::Memory::get< DecimalType >();
+    ASSERT_TRUE( a != nullptr );
+    ASSERT_TRUE( b != nullptr );
+
+    EXPECT_TRUE( a == b );
+    EXPECT_TRUE( *a == *b );
+
+    v->foreach( [](
+        const Constant& constant ) { std::cerr << constant.name() << "\n"; } );
+
+    std::cerr << v->choose().name() << "\n";
 }
-
-#define LIBCASM_IR_UTS_CONSTANT_UNDEF( TYPE, ARGS )                            \
-    TEST( libcasm_ir__constant_undef, TYPE##Type )                             \
-    {                                                                          \
-        const auto t = libstdhl::Memory::get< TYPE##Type >( ARGS );            \
-        const auto u = Constant::undef( t );                                   \
-                                                                               \
-        EXPECT_TRUE( u == TYPE##Constant( ARGS ) );                            \
-    }
-
-LIBCASM_IR_UTS_CONSTANT_UNDEF( Integer, );
-LIBCASM_IR_UTS_CONSTANT_UNDEF( Rational, );
-LIBCASM_IR_UTS_CONSTANT_UNDEF( Bit, 1 );
-LIBCASM_IR_UTS_CONSTANT_UNDEF( Decimal, );
-LIBCASM_IR_UTS_CONSTANT_UNDEF( String, );
-LIBCASM_IR_UTS_CONSTANT_UNDEF( Boolean, );
 
 //
 //  Local variables:

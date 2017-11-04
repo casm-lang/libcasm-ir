@@ -401,7 +401,7 @@ void TraversalVisitor::visit( StringConstant& value )
 {
     callback()( value );
 }
-void TraversalVisitor::visit( FloatingConstant& value )
+void TraversalVisitor::visit( DecimalConstant& value )
 {
     callback()( value );
 }

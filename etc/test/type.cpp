@@ -97,10 +97,10 @@ TEST( libcasm_ir__Type, id_to_token_string )
                 EXPECT_STREQ( libcasm_ir::Type::token( id ).c_str(), "String" );
                 break;
             }
-            case libcasm_ir::Type::Kind::FLOATING:
+            case libcasm_ir::Type::Kind::DECIMAL:
             {
                 EXPECT_STREQ(
-                    libcasm_ir::Type::token( id ).c_str(), "Floating" );
+                    libcasm_ir::Type::token( id ).c_str(), "Decimal" );
                 break;
             }
             case libcasm_ir::Type::Kind::RATIONAL:
