@@ -97,8 +97,6 @@ namespace libcasm_ir
         const std::set< Type::ID >& argumentTypeIDs(
             std::size_t position ) const;
 
-        const std::set< std::size_t >& argumentSizes( void ) const;
-
         libstdhl::Json::Object json( void ) const;
 
         std::string dump( void ) const;
@@ -119,8 +117,6 @@ namespace libcasm_ir
             m_templates;
 
         std::vector< std::set< Type::ID > > m_typeSets;
-
-        std::set< std::size_t > m_argumentSizes;
 
         const Resolve m_resolve;
 

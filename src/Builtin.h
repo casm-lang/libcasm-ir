@@ -77,8 +77,7 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
-        static u1 available(
-            const std::string& token, std::size_t argumentSize );
+        static u1 available( const std::string& token );
 
         static Builtin::Ptr create( const Value::ID id, const Type::Ptr& type );
     };
