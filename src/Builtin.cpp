@@ -100,17 +100,11 @@ u1 Builtin::classof( Value const* obj )
            or OperatorBuiltin::classof( obj ) or BitBuiltin::classof( obj );
 }
 
-u1 Builtin::available( const std::string& token, std::size_t argumentSize )
+u1 Builtin::available( const std::string& token )
 {
     try
     {
         const auto& annotation = Annotation::find( token );
-
-        auto result = annotation.argumentSizes().find( argumentSize );
-        if( result == annotation.argumentSizes().end() )
-        {
-            return false;
-        }
     }
     catch( const std::domain_error& e )
     {
