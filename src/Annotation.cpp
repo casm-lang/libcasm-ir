@@ -67,19 +67,21 @@ Annotation::Annotation( const Value::ID valueId,
 , m_inference( inference )
 {
     assert( m_relations.size() > 0 );
-    m_typeSets.emplace_back( std::set< Type::ID >{} );
 
-    i32 argumentSize = -1;
+    const auto firstRelationArgSize = m_relations.at( 0 ).argument.size();
+    const auto haveSameArgumentSize
+        = [firstRelationArgSize]( const Annotation::Relation& relation ) -> u1 {
+        return relation.argument.size() == firstRelationArgSize;
+    };
+
+    assert( std::all_of(
+                m_relations.cbegin(), m_relations.cend(), haveSameArgumentSize )
+            and "annotation relation type of different argument sizes are not allowed" );
+
+    m_typeSets.emplace_back( std::set< Type::ID >{} );
 
     for( const auto& relation : m_relations )
     {
-        const auto relationArgumentSize = relation.argument.size();
-        if( argumentSize >= 0 and argumentSize != relationArgumentSize )
-        {
-            assert( !" annotation relation type of different argument sizes are not allowed" );
-        }
-        argumentSize = relation.argument.size();
-
         Type::Kind resultTypeKind = relation.result;
         m_typeSets.front().emplace( Type::ID{ resultTypeKind } );
         std::vector< Type::Kind > key = { resultTypeKind };
