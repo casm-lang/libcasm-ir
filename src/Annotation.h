@@ -118,8 +118,6 @@ namespace libcasm_ir
 
         std::vector< std::set< Type::ID > > m_typeSets;
 
-        std::size_t m_argumentSize;
-
         const Resolve m_resolve;
 
         const Inference m_inference;
