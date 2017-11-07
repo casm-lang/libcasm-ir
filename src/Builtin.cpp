@@ -522,33 +522,23 @@ const Annotation AssertBuiltin::annotation( classid(),
                 Type::Kind::BOOLEAN,
             } },
 
-        { Type::Kind::VOID,
-            {
-                Type::Kind::BOOLEAN,
-                Type::Kind::STRING,
-            } },
     },
     []( std::vector< Type::Ptr >& types ) {
-        if( types.size() < 1 or types.size() > 2 )
+        if( types.size() != 1 )
         {
-            throw InternalException( "types.size() < 1 or types.size() > 2" );
+            throw InternalException( "types.size() != 1" );
         }
 
         if( not types[ 0 ] )
         {
             types[ 0 ] = BOOLEAN;
         }
-
-        if( types.size() == 2 and ( not types[ 1 ] ) )
-        {
-            types[ 1 ] = STRING;
-        }
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
-        if( types.size() < 1 or types.size() > 2 )
+        if( types.size() != 1 )
         {
-            throw InternalException( "types.size() < 1 or types.size() > 2" );
+            throw InternalException( "types.size() != 1" );
         }
         return VOID;
     } );
