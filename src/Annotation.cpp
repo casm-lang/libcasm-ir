@@ -73,8 +73,8 @@ Annotation::Annotation( const Value::ID valueId,
 
     for( const auto& relation : m_relations )
     {
-        const auto relArgSz = relation.argument.size();
-        if( argumentSize >= 0 and argumentSize != relArgSz )
+        const auto relationArgumentSize = relation.argument.size();
+        if( argumentSize >= 0 and argumentSize != relationArgumentSize )
         {
             assert( !" annotation relation type of different argument sizes are not allowed" );
         }
