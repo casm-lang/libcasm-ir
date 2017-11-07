@@ -69,12 +69,19 @@ Annotation::Annotation( const Value::ID valueId,
     assert( m_relations.size() > 0 );
     m_typeSets.emplace_back( std::set< Type::ID >{} );
 
+    i32 argumentSize = -1;
+
     for( const auto& relation : m_relations )
     {
+        const auto relArgSz = relation.argument.size();
+        if( argumentSize >= 0 and argumentSize != relArgSz )
+        {
+            assert( !" annotation relation type of different argument sizes are not allowed" );
+        }
+        argumentSize = relation.argument.size();
+
         Type::Kind resultTypeKind = relation.result;
         m_typeSets.front().emplace( Type::ID{ resultTypeKind } );
-        m_argumentSizes.emplace( relation.argument.size() );
-
         std::vector< Type::Kind > key = { resultTypeKind };
 
         for( std::size_t i = 0; i < relation.argument.size(); i++ )
@@ -125,11 +132,6 @@ const std::set< Type::ID >& Annotation::argumentTypeIDs(
 {
     assert( position < ( m_typeSets.size() - 1 ) );
     return m_typeSets[ position + 1 ];
-}
-
-const std::set< std::size_t >& Annotation::argumentSizes( void ) const
-{
-    return m_argumentSizes;
 }
 
 libstdhl::Json::Object Annotation::json( void ) const
