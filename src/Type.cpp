@@ -1493,9 +1493,9 @@ ReferenceType::ReferenceType(
     m_result = type;
 }
 
-Type::Ptr ReferenceType::dereference( void ) const
+RelationType::Ptr ReferenceType::dereference( void ) const
 {
-    return m_result;
+    return std::static_pointer_cast< RelationType >( m_result );
 }
 
 std::string ReferenceType::description( void ) const
