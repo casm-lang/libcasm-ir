@@ -757,7 +757,7 @@ namespace libcasm_ir
 
         ReferenceType( Kind kind, const RelationType::Ptr& type );
 
-        Type::Ptr dereference( void ) const;
+        RelationType::Ptr dereference( void ) const;
 
         std::string description( void ) const override;
 
