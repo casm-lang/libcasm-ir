@@ -199,12 +199,12 @@ Type::ID Annotation::inference( const std::vector< Type::Ptr >& argumentTypes,
     }
 }
 
-u1 Annotation::valid( const RelationType::Ptr& type ) const
+u1 Annotation::valid( const RelationType& type ) const
 {
-    const auto resultTypeKind = type->result().kind();
+    const auto resultTypeKind = type.result().kind();
     std::vector< Type::Kind > key = { resultTypeKind };
 
-    const auto& argumentTypes = type->arguments();
+    const auto& argumentTypes = type.arguments();
     for( std::size_t i = 0; i < argumentTypes.size(); i++ )
     {
         Type::Kind argumentTypeKind = argumentTypes[ i ]->kind();

@@ -106,7 +106,7 @@ namespace libcasm_ir
         Type::ID inference( const std::vector< Type::Ptr >& argumentTypes,
             const std::vector< Value::Ptr >& values ) const;
 
-        u1 valid( const RelationType::Ptr& type ) const;
+        u1 valid( const RelationType& type ) const;
 
       private:
         Value::ID m_valueId;
