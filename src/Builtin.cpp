@@ -832,12 +832,6 @@ const Annotation AsBitBuiltin::annotation( classid(),
                 Type::Kind::INTEGER,
             } },
 
-        { Type::Kind::BIT,
-            {
-                Type::Kind::ENUMERATION,
-                Type::Kind::INTEGER,
-            } }
-
     },
     []( std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
@@ -878,7 +872,7 @@ const Annotation AsStringBuiltin::annotation( classid(),
 
         { Type::Kind::STRING,
             {
-                Type::Kind::STRING,
+                Type::Kind::BOOLEAN,
             } },
 
         { Type::Kind::STRING,
@@ -888,7 +882,7 @@ const Annotation AsStringBuiltin::annotation( classid(),
 
         { Type::Kind::STRING,
             {
-                Type::Kind::BOOLEAN,
+                Type::Kind::RATIONAL,
             } },
 
         { Type::Kind::STRING,
@@ -903,13 +897,23 @@ const Annotation AsStringBuiltin::annotation( classid(),
 
         { Type::Kind::STRING,
             {
-                Type::Kind::RATIONAL,
+                Type::Kind::STRING,
             } },
 
         { Type::Kind::STRING,
             {
                 Type::Kind::ENUMERATION,
-            } }
+            } },
+
+        { Type::Kind::STRING,
+            {
+                Type::Kind::RULE_REFERENCE,
+            } },
+
+        { Type::Kind::STRING,
+            {
+                Type::Kind::FUNCTION_REFERENCE,
+            } },
 
     },
     []( std::vector< Type::Ptr >& types ) {},
