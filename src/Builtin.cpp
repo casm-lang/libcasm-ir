@@ -105,6 +105,18 @@ u1 Builtin::available( const std::string& token )
     try
     {
         const auto& annotation = Annotation::find( token );
+
+        const auto id = annotation.valueID();
+
+        if( id == CastingBuiltin::classid() or id == AsBooleanBuiltin::classid()
+            or id == AsIntegerBuiltin::classid()
+            or id == AsBitBuiltin::classid() or id == AsStringBuiltin::classid()
+            or id == AsDecimalBuiltin::classid()
+            or id == AsRationalBuiltin::classid()
+            or id == AsEnumerationBuiltin::classid() )
+        {
+            return false;
+        }
     }
     catch( const std::domain_error& e )
     {
@@ -811,46 +823,33 @@ const Annotation AsBitBuiltin::annotation( classid(),
         { Type::Kind::BIT,
             {
                 Type::Kind::BIT,
-                Type::Kind::INTEGER,
             } },
 
         { Type::Kind::BIT,
             {
-                Type::Kind::INTEGER,
                 Type::Kind::INTEGER,
             } },
 
         { Type::Kind::BIT,
             {
                 Type::Kind::BOOLEAN,
-                Type::Kind::INTEGER,
             } },
 
         { Type::Kind::BIT,
             {
                 Type::Kind::DECIMAL,
-                Type::Kind::INTEGER,
             } },
 
     },
     []( std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
-        if( types.size() != 2 )
+        if( types.size() != 1 )
         {
-            throw InternalException( "types.size() != 2" );
+            throw InternalException( "types.size() != 1" );
         }
 
-        const auto& lhs = types[ 0 ];
-        const auto& rhs = types[ 1 ];
-        if( *lhs == *rhs )
-        {
-            return lhs;
-        }
-        else
-        {
-            return nullptr;
-        }
+        return nullptr;
     } );
 
 u1 AsBitBuiltin::classof( Value const* obj )
