@@ -944,11 +944,6 @@ const Annotation AsDecimalBuiltin::annotation( classid(),
 
         { Type::Kind::DECIMAL,
             {
-                Type::Kind::DECIMAL,
-            } },
-
-        { Type::Kind::DECIMAL,
-            {
                 Type::Kind::BOOLEAN,
             } },
 
@@ -960,6 +955,11 @@ const Annotation AsDecimalBuiltin::annotation( classid(),
         { Type::Kind::DECIMAL,
             {
                 Type::Kind::BIT,
+            } },
+
+        { Type::Kind::DECIMAL,
+            {
+                Type::Kind::DECIMAL,
             } },
 
     },
@@ -992,10 +992,24 @@ const Annotation AsRationalBuiltin::annotation( classid(),
 
         { Type::Kind::RATIONAL,
             {
-                Type::Kind::RATIONAL,
-            } }
+                Type::Kind::BOOLEAN,
+            } },
 
-        // TODO: PPA: add more relations for possible input types!
+        { Type::Kind::RATIONAL,
+            {
+                Type::Kind::INTEGER,
+            } },
+
+        { Type::Kind::RATIONAL,
+            {
+                Type::Kind::RATIONAL,
+            } },
+
+        { Type::Kind::RATIONAL,
+            {
+                Type::Kind::BIT,
+            } },
+
     },
     []( std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
@@ -1026,13 +1040,8 @@ const Annotation AsEnumerationBuiltin::annotation( classid(),
 
         { Type::Kind::ENUMERATION,
             {
-                Type::Kind::INTEGER,
+                Type::Kind::ENUMERATION,
             } },
-
-        { Type::Kind::ENUMERATION,
-            {
-                Type::Kind::BIT,
-            } }
 
     },
     []( std::vector< Type::Ptr >& types ) {},
