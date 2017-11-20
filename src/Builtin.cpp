@@ -1396,23 +1396,22 @@ const Annotation::Relations compare_builtin_data = {
 
     { Type::Kind::BOOLEAN,
         {
-            Type::Kind::BIT,
-            Type::Kind::BIT,
-        } },
-
-    { Type::Kind::BOOLEAN,
-        {
             Type::Kind::RATIONAL,
             Type::Kind::RATIONAL,
         } },
 
     { Type::Kind::BOOLEAN,
         {
-            Type::Kind::STRING,
-            Type::Kind::STRING,
+            Type::Kind::BIT,
+            Type::Kind::BIT,
         } },
 
-    // TODO: PPA: add more?
+    { Type::Kind::BOOLEAN,
+        {
+            Type::Kind::DECIMAL,
+            Type::Kind::DECIMAL,
+        } },
+
 };
 
 static const auto compare_builtin_resolve = arithmetic_builtin_resolve;
