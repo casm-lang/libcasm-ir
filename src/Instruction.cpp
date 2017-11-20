@@ -1520,8 +1520,44 @@ const Annotation EquInstruction::annotation( classid(),
 
         { Type::Kind::BOOLEAN,
             {
+                Type::Kind::RANGE,
+                Type::Kind::RANGE,
+            } },
+
+        { Type::Kind::BOOLEAN,
+            {
+                Type::Kind::TUPLE,
+                Type::Kind::TUPLE,
+            } },
+
+        { Type::Kind::BOOLEAN,
+            {
+                Type::Kind::LIST,
+                Type::Kind::LIST,
+            } },
+
+        { Type::Kind::BOOLEAN,
+            {
                 Type::Kind::RULE_REFERENCE,
                 Type::Kind::RULE_REFERENCE,
+            } },
+
+        { Type::Kind::BOOLEAN,
+            {
+                Type::Kind::FUNCTION_REFERENCE,
+                Type::Kind::FUNCTION_REFERENCE,
+            } },
+
+        { Type::Kind::BOOLEAN,
+            {
+                Type::Kind::FILE,
+                Type::Kind::FILE,
+            } },
+
+        { Type::Kind::BOOLEAN,
+            {
+                Type::Kind::PORT,
+                Type::Kind::PORT,
             } },
 
     },
@@ -1570,8 +1606,20 @@ const Annotation NeqInstruction::annotation( classid(),
 
         { Type::Kind::BOOLEAN,
             {
+                Type::Kind::RATIONAL,
+                Type::Kind::RATIONAL,
+            } },
+
+        { Type::Kind::BOOLEAN,
+            {
                 Type::Kind::BIT,
                 Type::Kind::BIT,
+            } },
+
+        { Type::Kind::BOOLEAN,
+            {
+                Type::Kind::DECIMAL,
+                Type::Kind::DECIMAL,
             } },
 
         { Type::Kind::BOOLEAN,
@@ -1582,20 +1630,50 @@ const Annotation NeqInstruction::annotation( classid(),
 
         { Type::Kind::BOOLEAN,
             {
-                Type::Kind::RATIONAL,
-                Type::Kind::RATIONAL,
-            } },
-
-        { Type::Kind::BOOLEAN,
-            {
                 Type::Kind::ENUMERATION,
                 Type::Kind::ENUMERATION,
             } },
 
         { Type::Kind::BOOLEAN,
             {
+                Type::Kind::RANGE,
+                Type::Kind::RANGE,
+            } },
+
+        { Type::Kind::BOOLEAN,
+            {
+                Type::Kind::TUPLE,
+                Type::Kind::TUPLE,
+            } },
+
+        { Type::Kind::BOOLEAN,
+            {
+                Type::Kind::LIST,
+                Type::Kind::LIST,
+            } },
+
+        { Type::Kind::BOOLEAN,
+            {
                 Type::Kind::RULE_REFERENCE,
                 Type::Kind::RULE_REFERENCE,
+            } },
+
+        { Type::Kind::BOOLEAN,
+            {
+                Type::Kind::FUNCTION_REFERENCE,
+                Type::Kind::FUNCTION_REFERENCE,
+            } },
+
+        { Type::Kind::BOOLEAN,
+            {
+                Type::Kind::FILE,
+                Type::Kind::FILE,
+            } },
+
+        { Type::Kind::BOOLEAN,
+            {
+                Type::Kind::PORT,
+                Type::Kind::PORT,
             } },
 
     },
@@ -1640,6 +1718,12 @@ const Annotation LthInstruction::annotation( classid(),
             {
                 Type::Kind::RATIONAL,
                 Type::Kind::RATIONAL,
+            } },
+
+        { Type::Kind::BOOLEAN,
+            {
+                Type::Kind::BIT,
+                Type::Kind::BIT,
             } },
 
         { Type::Kind::BOOLEAN,
@@ -1694,6 +1778,12 @@ const Annotation LeqInstruction::annotation( classid(),
 
         { Type::Kind::BOOLEAN,
             {
+                Type::Kind::BIT,
+                Type::Kind::BIT,
+            } },
+
+        { Type::Kind::BOOLEAN,
+            {
                 Type::Kind::DECIMAL,
                 Type::Kind::DECIMAL,
             } },
@@ -1744,6 +1834,12 @@ const Annotation GthInstruction::annotation( classid(),
 
         { Type::Kind::BOOLEAN,
             {
+                Type::Kind::BIT,
+                Type::Kind::BIT,
+            } },
+
+        { Type::Kind::BOOLEAN,
+            {
                 Type::Kind::DECIMAL,
                 Type::Kind::DECIMAL,
             } },
@@ -1790,6 +1886,12 @@ const Annotation GeqInstruction::annotation( classid(),
             {
                 Type::Kind::RATIONAL,
                 Type::Kind::RATIONAL,
+            } },
+
+        { Type::Kind::BOOLEAN,
+            {
+                Type::Kind::BIT,
+                Type::Kind::BIT,
             } },
 
         { Type::Kind::BOOLEAN,
