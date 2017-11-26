@@ -48,8 +48,7 @@ using namespace libcasm_ir;
 char BranchEliminationPass::id = 0;
 
 static libpass::PassRegistration< BranchEliminationPass > PASS(
-    "IRBranchEliminationPass", "removes compile-time constant branches",
-    "ir-be", 0 );
+    "IRBranchEliminationPass", "removes compile-time constant branches", "ir-be", 0 );
 
 void BranchEliminationPass::usage( libpass::PassUsage& pu )
 {
@@ -101,13 +100,11 @@ u64 BranchEliminationPass::optimize( Rule::Ptr& rule )
                         const auto lbl = instr.operand( c + 1 );
                         assert( isa< ExecutionSemanticsBlock >( lbl ) );
 
-                        log.info( "    * lhs == rhs (op" + std::to_string( c )
-                                  + ") -> "
-                                  + lbl->label() );
+                        log.info(
+                            "    * lhs == rhs (op" + std::to_string( c ) + ") -> " + lbl->label() );
 
                         instr.statement()->replaceWith(
-                            std::static_pointer_cast< ExecutionSemanticsBlock >(
-                                lbl ) );
+                            std::static_pointer_cast< ExecutionSemanticsBlock >( lbl ) );
 
                         elimination++;
 

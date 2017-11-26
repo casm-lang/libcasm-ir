@@ -123,8 +123,7 @@ std::string Specification::name( void ) const
 
 std::size_t Specification::hash( void ) const
 {
-    return libstdhl::Hash::combine(
-        classid(), std::hash< std::string >()( name() ) );
+    return libstdhl::Hash::combine( classid(), std::hash< std::string >()( name() ) );
 }
 
 u1 Specification::operator==( const Value& rhs ) const

@@ -81,16 +81,17 @@ namespace libcasm_ir
 
         using Resolve = std::function< void( std::vector< Type::Ptr >& ) >;
 
-        using Inference
-            = std::function< Type::Ptr( const std::vector< Type::Ptr >&,
-                const std::vector< Value::Ptr >& ) >;
+        using Inference = std::function< Type::Ptr(
+            const std::vector< Type::Ptr >&, const std::vector< Value::Ptr >& ) >;
 
         using Validate = std::function< u1( const RelationType& ) >;
 
-        Annotation( const Value::ID id, const Relations& relations,
-            const Resolve resolve, const Inference inference,
-            const Validate validate
-            = []( const RelationType& ) -> u1 { return true; } );
+        Annotation(
+            const Value::ID id,
+            const Relations& relations,
+            const Resolve resolve,
+            const Inference inference,
+            const Validate validate = []( const RelationType& ) -> u1 { return true; } );
 
         Value::ID valueID( void ) const;
 
@@ -98,8 +99,7 @@ namespace libcasm_ir
 
         const std::set< Type::ID >& resultTypeIDs( void ) const;
 
-        const std::set< Type::ID >& argumentTypeIDs(
-            std::size_t position ) const;
+        const std::set< Type::ID >& argumentTypeIDs( std::size_t position ) const;
 
         libstdhl::Json::Object json( void ) const;
 
@@ -107,7 +107,8 @@ namespace libcasm_ir
 
         void resolve( std::vector< Type::Ptr >& argumentTypes ) const;
 
-        Type::ID inference( const std::vector< Type::Ptr >& argumentTypes,
+        Type::ID inference(
+            const std::vector< Type::Ptr >& argumentTypes,
             const std::vector< Value::Ptr >& values ) const;
 
         u1 valid( const RelationType& type ) const;
@@ -117,8 +118,7 @@ namespace libcasm_ir
 
         const Relations m_relations;
 
-        std::unordered_map< std::vector< Type::Kind >, const Relation* >
-            m_templates;
+        std::unordered_map< std::vector< Type::Kind >, const Relation* > m_templates;
 
         std::vector< std::set< Type::ID > > m_typeSets;
 
@@ -141,7 +141,7 @@ namespace libcasm_ir
     };
 }
 
-#endif // _LIBCASM_IR_ANNOTATION_H_
+#endif  // _LIBCASM_IR_ANNOTATION_H_
 
 //
 //  Local variables:

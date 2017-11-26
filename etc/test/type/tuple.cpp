@@ -52,8 +52,7 @@ TEST( libcasm_ir__type_tuple, make_and_get )
     ASSERT_TRUE( v != nullptr );
 
     EXPECT_STREQ( v->name().c_str(), "t<i,i,i>" );
-    EXPECT_STREQ(
-        v->description().c_str(), "Tuple< Integer, Integer, Integer >" );
+    EXPECT_STREQ( v->description().c_str(), "Tuple< Integer, Integer, Integer >" );
 
     auto w = libstdhl::Memory::make< TupleType >( t );
     ASSERT_TRUE( w != nullptr );
@@ -69,8 +68,7 @@ TEST( libcasm_ir__type_tuple, make_and_get )
     EXPECT_TRUE( a == b );
     EXPECT_TRUE( *a == *b );
 
-    v->foreach( [](
-        const Constant& constant ) { std::cerr << constant.name() << "\n"; } );
+    v->foreach( []( const Constant& constant ) { std::cerr << constant.name() << "\n"; } );
 
     std::cerr << v->choose().name() << "\n";
 }

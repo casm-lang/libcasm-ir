@@ -85,7 +85,7 @@ namespace libcasm_ir
     using Deriveds = ValueList< Derived >;
 }
 
-#endif // _LIBCASM_IR_DERIVED_H_
+#endif  // _LIBCASM_IR_DERIVED_H_
 
 //
 //  Local variables:

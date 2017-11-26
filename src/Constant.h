@@ -66,9 +66,7 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< Constant >;
 
       protected:
-        Constant( const Type::Ptr& type,
-            const libstdhl::Type::Data& data,
-            Value::ID id );
+        Constant( const Type::Ptr& type, const libstdhl::Type::Data& data, Value::ID id );
 
         Constant( const Type::Ptr& type, Value::ID id );
 
@@ -95,9 +93,7 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override;
 
-        void foreach(
-            const std::function< void( const Constant& constant ) >& callback )
-            const;
+        void foreach( const std::function< void( const Constant& constant ) >& callback ) const;
 
         Constant choose( void ) const;
 
@@ -138,8 +134,7 @@ namespace libcasm_ir
                     return static_cast< const T& >( constant ).name();
                 } );
 
-            assert(
-                result.second == true && " already registered constant ID " );
+            assert( result.second == true && " already registered constant ID " );
 
             return Registry{};
         }
@@ -153,12 +148,10 @@ namespace libcasm_ir
             return result->second( constant );
         }
 
-        static std::unordered_map< u64,
-            const std::function< std::string( const Constant& ) > >&
+        static std::unordered_map< u64, const std::function< std::string( const Constant& ) > >&
         m_registeredConstants( void )
         {
-            static std::unordered_map< u64,
-                const std::function< std::string( const Constant& ) > >
+            static std::unordered_map< u64, const std::function< std::string( const Constant& ) > >
                 cache;
             return cache;
         }
@@ -227,8 +220,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< IntegerConstant >;
 
       public:
-        IntegerConstant( const std::string& value,
-            const libstdhl::Type::Radix radix = libstdhl::Type::DECIMAL );
+        IntegerConstant(
+            const std::string& value, const libstdhl::Type::Radix radix = libstdhl::Type::DECIMAL );
 
         IntegerConstant( const BitConstant& value );
 
@@ -238,8 +231,7 @@ namespace libcasm_ir
 
         IntegerConstant( void );
 
-        std::string literal(
-            libstdhl::Type::Radix radix = libstdhl::Type::DECIMAL ) const;
+        std::string literal( libstdhl::Type::Radix radix = libstdhl::Type::DECIMAL ) const;
 
         i64 value_i64( void ) const;
 
@@ -267,11 +259,10 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< BitConstant >;
 
       public:
-        BitConstant( const std::string& value,
-            const libstdhl::Type::Radix radix = libstdhl::Type::BINARY );
-
         BitConstant(
-            const Type::Ptr& type, const libstdhl::Type::Natural& value );
+            const std::string& value, const libstdhl::Type::Radix radix = libstdhl::Type::BINARY );
+
+        BitConstant( const Type::Ptr& type, const libstdhl::Type::Natural& value );
 
         BitConstant( const BitType::Ptr& type, u64 value );
 
@@ -281,8 +272,7 @@ namespace libcasm_ir
 
         BitConstant( const u16 bitsize );
 
-        std::string literal(
-            libstdhl::Type::Radix radix = libstdhl::Type::HEXADECIMAL ) const;
+        std::string literal( libstdhl::Type::Radix radix = libstdhl::Type::HEXADECIMAL ) const;
 
         u64 value_u64( void ) const;
 
@@ -406,11 +396,9 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< EnumerationConstant >;
 
       public:
-        EnumerationConstant(
-            const EnumerationType::Ptr& type, const std::string& value );
+        EnumerationConstant( const EnumerationType::Ptr& type, const std::string& value );
 
-        EnumerationConstant(
-            const Enumeration::Ptr& kind, const std::string& value );
+        EnumerationConstant( const Enumeration::Ptr& kind, const std::string& value );
 
         EnumerationConstant( const EnumerationType::Ptr& type );
 
@@ -444,8 +432,7 @@ namespace libcasm_ir
 
         RangeConstant( const RangeType::Ptr& type );
 
-        RangeConstant(
-            const Type::Ptr& type, const Constant& from, const Constant& to );
+        RangeConstant( const Type::Ptr& type, const Constant& from, const Constant& to );
 
         Range::Ptr value( void ) const;
 
@@ -453,9 +440,7 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override;
 
-        void foreach(
-            const std::function< void( const Constant& constant ) >& callback )
-            const;
+        void foreach( const std::function< void( const Constant& constant ) >& callback ) const;
 
         Constant choose( void ) const;
 
@@ -481,8 +466,7 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< ReferenceConstant >;
 
       protected:
-        inline ReferenceConstant(
-            const Type::Ptr& type, const T* value, Value::ID id )
+        inline ReferenceConstant( const Type::Ptr& type, const T* value, Value::ID id )
         : Constant( type, libstdhl::Type::Data( ( u64 )( value ), false ), id )
         {
         }
@@ -588,8 +572,7 @@ namespace libstdhl
             return constant.hash();
         }
 
-        inline std::size_t value(
-            const std::vector< libcasm_ir::Constant >& constants )
+        inline std::size_t value( const std::vector< libcasm_ir::Constant >& constants )
         {
             std::size_t hash = constants.size();
 
@@ -603,7 +586,7 @@ namespace libstdhl
     }
 }
 
-#endif // _LIBCASM_IR_CONSTANT_H_
+#endif  // _LIBCASM_IR_CONSTANT_H_
 
 //
 //  Local variables:

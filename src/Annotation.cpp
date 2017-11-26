@@ -57,7 +57,8 @@ static std::unordered_map< Value::ID, const Annotation* >& id2obj( void )
     return obj;
 }
 
-Annotation::Annotation( const Value::ID valueId,
+Annotation::Annotation(
+    const Value::ID valueId,
     const Annotation::Relations& relations,
     const Resolve resolve,
     const Inference inference,
@@ -71,14 +72,14 @@ Annotation::Annotation( const Value::ID valueId,
     assert( m_relations.size() > 0 );
 
     const auto firstRelationArgSize = m_relations.at( 0 ).argument.size();
-    const auto haveSameArgumentSize
-        = [firstRelationArgSize]( const Annotation::Relation& relation ) -> u1 {
+    const auto haveSameArgumentSize =
+        [firstRelationArgSize]( const Annotation::Relation& relation ) -> u1 {
         return relation.argument.size() == firstRelationArgSize;
     };
 
-    assert( std::all_of(
-                m_relations.cbegin(), m_relations.cend(), haveSameArgumentSize )
-            and "annotation relation type of different argument sizes are not allowed" );
+    assert(
+        std::all_of( m_relations.cbegin(), m_relations.cend(), haveSameArgumentSize ) and
+        "annotation relation type of different argument sizes are not allowed" );
 
     m_typeSets.emplace_back( std::set< Type::ID >{} );
 
@@ -131,8 +132,7 @@ const std::set< Type::ID >& Annotation::resultTypeIDs( void ) const
     return m_typeSets[ 0 ];
 }
 
-const std::set< Type::ID >& Annotation::argumentTypeIDs(
-    std::size_t position ) const
+const std::set< Type::ID >& Annotation::argumentTypeIDs( std::size_t position ) const
 {
     assert( position < ( m_typeSets.size() - 1 ) );
     return m_typeSets[ position + 1 ];
@@ -174,7 +174,8 @@ void Annotation::resolve( std::vector< Type::Ptr >& argumentTypes ) const
     m_resolve( argumentTypes );
 }
 
-Type::ID Annotation::inference( const std::vector< Type::Ptr >& argumentTypes,
+Type::ID Annotation::inference(
+    const std::vector< Type::Ptr >& argumentTypes,
     const std::vector< Value::Ptr >& argumentValues ) const
 {
     std::size_t pos = 1;
@@ -182,9 +183,8 @@ Type::ID Annotation::inference( const std::vector< Type::Ptr >& argumentTypes,
     {
         if( not argumentType )
         {
-            throw std::invalid_argument( "argument at position "
-                                         + std::to_string( pos )
-                                         + " is not defined" );
+            throw std::invalid_argument(
+                "argument at position " + std::to_string( pos ) + " is not defined" );
         }
         pos++;
     }
@@ -241,9 +241,9 @@ const Annotation& Annotation::find( const Value::ID id )
     auto result = mapping.find( id );
     if( result == mapping.end() )
     {
-        throw std::domain_error( "no annotation defined for Value::ID '"
-                                 + std::to_string( id ) + "' (aka. '"
-                                 + Value::token( id ) + "')" );
+        throw std::domain_error(
+            "no annotation defined for Value::ID '" + std::to_string( id ) + "' (aka. '" +
+            Value::token( id ) + "')" );
     }
     return *result->second;
 }

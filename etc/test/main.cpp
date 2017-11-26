@@ -43,8 +43,8 @@
 
 void libcasm_ir_main_dummy( void )
 {
-    const auto source = libstdhl::Memory::make< libstdhl::Log::Source >(
-        "libcasm-ir", "CASM IR Library" );
+    const auto source =
+        libstdhl::Memory::make< libstdhl::Log::Source >( "libcasm-ir", "CASM IR Library" );
 
     libstdhl::Log::defaultSource( source );
 }

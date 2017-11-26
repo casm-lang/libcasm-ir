@@ -60,8 +60,7 @@ namespace libcasm_ir
     class TypeArgumentException : public Exception
     {
       public:
-        TypeArgumentException(
-            const std::string& message, const std::size_t position );
+        TypeArgumentException( const std::string& message, const std::size_t position );
 
         std::size_t position( void ) const noexcept;
 
@@ -100,7 +99,7 @@ namespace libcasm_ir
     };
 }
 
-#endif // _LIBCASM_IR_EXCEPTIONS_H_
+#endif  // _LIBCASM_IR_EXCEPTIONS_H_
 
 //
 //  Local variables:

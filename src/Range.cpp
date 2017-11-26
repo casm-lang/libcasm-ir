@@ -58,13 +58,14 @@ Range::Range( const Value::Ptr& from, const Value::Ptr& to )
     if( from->type() != to->type() )
     {
         throw std::domain_error(
-            "unable to create a range from different types '"
-            + from->type().name() + "' and '" + to->type().name() + "'" );
+            "unable to create a range from different types '" + from->type().name() + "' and '" +
+            to->type().name() + "'" );
     }
 }
 
 Range::Range( const Constant& from, const Constant& to )
-: Range( libstdhl::Memory::make_unique< Constant >( from ),
+: Range(
+      libstdhl::Memory::make_unique< Constant >( from ),
       libstdhl::Memory::make_unique< Constant >( to ) )
 {
 }
@@ -86,8 +87,7 @@ std::string Range::name( void ) const
 
 std::size_t Range::hash( void ) const
 {
-    return libstdhl::Hash::combine(
-        classid(), std::hash< std::string >()( name() ) );
+    return libstdhl::Hash::combine( classid(), std::hash< std::string >()( name() ) );
 }
 
 u1 Range::operator==( const Value& rhs ) const
@@ -103,8 +103,7 @@ u1 Range::operator==( const Value& rhs ) const
     }
 
     const auto& other = static_cast< const Range& >( rhs );
-    return ( *this->from() == *other.from() )
-           and ( *this->to() == *other.to() );
+    return ( *this->from() == *other.from() ) and ( *this->to() == *other.to() );
 }
 
 void Range::accept( Visitor& visitor )

@@ -285,8 +285,7 @@ namespace libcasm_ir
     class TraversalVisitor : public Visitor
     {
       public:
-        TraversalVisitor(
-            const Traversal order, std::function< void( Value& ) > callback );
+        TraversalVisitor( const Traversal order, std::function< void( Value& ) > callback );
 
         Traversal order( void ) const;
 
@@ -376,7 +375,7 @@ namespace libcasm_ir
     };
 }
 
-#endif // _LIBCASM_IR_VISITOR_H_
+#endif  // _LIBCASM_IR_VISITOR_H_
 
 //
 //  Local variables:

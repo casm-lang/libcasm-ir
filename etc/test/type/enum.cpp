@@ -46,8 +46,7 @@ using namespace libcasm_ir;
 TEST( libcasm_ir__type_enum, make_and_get )
 {
     const std::vector< std::string > elements = { "foo", "bar", "baz" };
-    const auto example
-        = libstdhl::Memory::make< Enumeration >( "example", elements );
+    const auto example = libstdhl::Memory::make< Enumeration >( "example", elements );
     ASSERT_TRUE( example != nullptr );
 
     EXPECT_STREQ( example->name().c_str(), "example" );
@@ -73,8 +72,7 @@ TEST( libcasm_ir__type_enum, make_and_get )
     EXPECT_TRUE( a == b );
     EXPECT_TRUE( *a == *b );
 
-    v->foreach( [](
-        const Constant& constant ) { std::cerr << constant.name() << "\n"; } );
+    v->foreach( []( const Constant& constant ) { std::cerr << constant.name() << "\n"; } );
 
     std::cerr << v->choose().name() << "\n";
 }

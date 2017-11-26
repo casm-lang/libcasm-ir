@@ -47,9 +47,11 @@ using namespace libcasm_ir;
 
 char IRDumpDebugPass::id = 0;
 
-static libpass::PassRegistration< IRDumpDebugPass > PASS( "IRDumpDebugPass",
+static libpass::PassRegistration< IRDumpDebugPass > PASS(
+    "IRDumpDebugPass",
     "outputs from the CASM IR an ASCII representation for debugging",
-    "ir-dump-debug", 0 );
+    "ir-dump-debug",
+    0 );
 
 static inline std::string indention( Value& value );
 
@@ -67,11 +69,9 @@ u1 IRDumpDebugPass::run( libpass::PassResult& pr )
 
     try
     {
-        data->specification()->iterate(
-            Traversal::PREORDER, [this, &log]( Value& value ) {
-                log.info( "%p: %s%s", &value, indention( value ).c_str(),
-                    value.dump().c_str() );
-            } );
+        data->specification()->iterate( Traversal::PREORDER, [this, &log]( Value& value ) {
+            log.info( "%p: %s%s", &value, indention( value ).c_str(), value.dump().c_str() );
+        } );
     }
     catch( ... )
     {

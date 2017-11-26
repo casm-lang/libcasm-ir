@@ -57,15 +57,13 @@ void Rule::setContext( const ParallelBlock::Ptr& context )
 {
     if( not context )
     {
-        throw std::domain_error(
-            "adding a null pointer context is not allowed" );
+        throw std::domain_error( "adding a null pointer context is not allowed" );
     }
     if( context->rule() )
     {
-        throw std::domain_error( "block '" + context->dump()
-                                 + "' is already bound to rule '"
-                                 + context->rule()->dump()
-                                 + "'" );
+        throw std::domain_error(
+            "block '" + context->dump() + "' is already bound to rule '" + context->rule()->dump() +
+            "'" );
     }
 
     const auto self = ptr_this< Rule >();
@@ -87,8 +85,7 @@ std::string Rule::name( void ) const
 
 std::size_t Rule::hash( void ) const
 {
-    return libstdhl::Hash::combine(
-        classid(), std::hash< std::string >()( name() ) );
+    return libstdhl::Hash::combine( classid(), std::hash< std::string >()( name() ) );
 }
 
 u1 Rule::operator==( const Value& rhs ) const

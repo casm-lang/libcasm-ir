@@ -165,7 +165,7 @@ namespace libcasm_ir
     }
 }
 
-#endif // _LIBCASM_IR_CASMIR_H_
+#endif  // _LIBCASM_IR_CASMIR_H_
 
 //
 //  Local variables:

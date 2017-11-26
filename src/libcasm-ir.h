@@ -73,7 +73,7 @@ namespace libcasm_ir
 {
 }
 
-#endif // _LIBCASM_IR_H_
+#endif  // _LIBCASM_IR_H_
 
 //
 //  Local variables:

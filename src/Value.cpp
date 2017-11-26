@@ -98,8 +98,7 @@ std::string Value::dump( void ) const
         tmp += label() + " = ";
     }
 
-    if( isa< Constant >( this ) or isa< Builtin >( this )
-        or isa< Function >( this ) )
+    if( isa< Constant >( this ) or isa< Builtin >( this ) or isa< Function >( this ) )
     {
         tmp += type().name() + " ";
     }
@@ -160,9 +159,7 @@ std::string Value::label( void ) const
             return name();
         }
 
-        return lbl
-            .emplace( this, "%r" + std::to_string( cnt[ INSTRUCTION ]++ ) )
-            .first->second;
+        return lbl.emplace( this, "%r" + std::to_string( cnt[ INSTRUCTION ]++ ) ).first->second;
     }
     else if( isa< Block >( this ) )
     {
@@ -172,8 +169,7 @@ std::string Value::label( void ) const
             cnt[ BLOCK ] = 0;
         }
 
-        return lbl.emplace( this, "%lbl" + std::to_string( cnt[ BLOCK ]++ ) )
-            .first->second;
+        return lbl.emplace( this, "%lbl" + std::to_string( cnt[ BLOCK ]++ ) ).first->second;
     }
     else if( isa< Constant >( this ) )
     {
@@ -183,8 +179,7 @@ std::string Value::label( void ) const
             cnt[ CONSTANT ] = 0;
         }
 
-        return lbl.emplace( this, "@c" + std::to_string( cnt[ CONSTANT ]++ ) )
-            .first->second;
+        return lbl.emplace( this, "@c" + std::to_string( cnt[ CONSTANT ]++ ) ).first->second;
     }
     else if( isa< Builtin >( this ) )
     {
@@ -194,8 +189,7 @@ std::string Value::label( void ) const
             cnt[ BUILTIN ] = 0;
         }
 
-        return lbl.emplace( this, "@b" + std::to_string( cnt[ BUILTIN ]++ ) )
-            .first->second;
+        return lbl.emplace( this, "@b" + std::to_string( cnt[ BUILTIN ]++ ) ).first->second;
     }
     else
     {
@@ -208,8 +202,7 @@ u1 Value::operator==( const Value& rhs ) const
     return ( this->id() == rhs.id() ) and ( this->type() == rhs.type() );
 }
 
-void Value::iterate(
-    const Traversal order, std::function< void( Value& ) > action )
+void Value::iterate( const Traversal order, std::function< void( Value& ) > action )
 {
     TraversalVisitor visitor( order, action );
 

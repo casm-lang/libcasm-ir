@@ -45,9 +45,11 @@ using namespace libcasm_ir;
 
 char IRDumpDotPass::id = 0;
 
-static libpass::PassRegistration< IRDumpDotPass > PASS( "IRDumpDotPass",
+static libpass::PassRegistration< IRDumpDotPass > PASS(
+    "IRDumpDotPass",
     "translates the CASM IR to the ASCII source code representation",
-    "ir-dump-dot", 0 );
+    "ir-dump-dot",
+    0 );
 
 void IRDumpDotPass::usage( libpass::PassUsage& pu )
 {
@@ -56,8 +58,7 @@ void IRDumpDotPass::usage( libpass::PassUsage& pu )
 
 u1 IRDumpDotPass::run( libpass::PassResult& pr )
 {
-    libpass::PassLogger log(
-        libpass::PassRegistry::passInfo< IRDumpDotPass >(), stream() );
+    libpass::PassLogger log( libpass::PassRegistry::passInfo< IRDumpDotPass >(), stream() );
 
     log.debug( "starting" );
 
@@ -194,18 +195,15 @@ void IRDumpDotVisitor::visit( Rule& value )
     // begin (B) and end (E) connection points of the sub-graph
 
     m_stream << "  \"" << &value << "_B\" [label=\"B: " << value.dump()
-             << "\"]\n"; // TODO: , style=invis
+             << "\"]\n";  // TODO: , style=invis
 
-    m_stream << "  \"" << &value << "_E\"   [label=\"E: " << value.dump()
-             << "\"]\n";
+    m_stream << "  \"" << &value << "_E\"   [label=\"E: " << value.dump() << "\"]\n";
 
-    m_stream << "  \"" << &value << "_B\" -> \"" << value.context().get()
-             << "_B\"\n";
+    m_stream << "  \"" << &value << "_B\" -> \"" << value.context().get() << "_B\"\n";
 
     RecursiveVisitor::visit( value );
 
-    m_stream << "  \"" << value.context().get() << "_E\" -> \"" << &value
-             << "_E\"\n";
+    m_stream << "  \"" << value.context().get() << "_E\" -> \"" << &value << "_E\"\n";
 
     m_stream << "  }\n";
 }
@@ -253,8 +251,7 @@ void IRDumpDotVisitor::visit( TrivialStatement& value )
 
     RecursiveVisitor::visit( value );
 
-    m_stream << "  \"" << value.instructions().back().get() << "\" -> \""
-             << &value << "_E\"\n";
+    m_stream << "  \"" << value.instructions().back().get() << "\" -> \"" << &value << "_E\"\n";
 
     m_stream << "  }\n";
 }
@@ -447,13 +444,11 @@ void IRDumpDotVisitor::dump( ExecutionSemanticsBlock& value ) const
     // begin (B) and end (E) connection points of the sub-graph
 
     m_stream << "  \"" << &value << "_B\" [label=\"B: " << value.dump()
-             << "\"]\n"; // TODO: , style=invis
+             << "\"]\n";  // TODO: , style=invis
 
-    m_stream << "  \"" << &value << "_E\"   [label=\"E: " << value.dump()
-             << "\"]\n";
+    m_stream << "  \"" << &value << "_E\"   [label=\"E: " << value.dump() << "\"]\n";
 
-    m_stream << "  \"" << &value << "_B\" -> \"" << &value
-             << "_E\" [style=dashed, color=gray];\n";
+    m_stream << "  \"" << &value << "_B\" -> \"" << &value << "_E\" [style=dashed, color=gray];\n";
 
     // up references
 
@@ -473,8 +468,7 @@ void IRDumpDotVisitor::dump( ExecutionSemanticsBlock& value ) const
 
     if( value.entry() )
     {
-        m_stream << "  \"" << &value << "_B\" -> \"" << value.entry().get()
-                 << "_B\"\n";
+        m_stream << "  \"" << &value << "_B\" -> \"" << value.entry().get() << "_B\"\n";
     }
 
     const Block* connection_point = &value;
@@ -486,15 +480,13 @@ void IRDumpDotVisitor::dump( ExecutionSemanticsBlock& value ) const
 
     for( auto block : value.blocks() )
     {
-        m_stream << "  \"" << connection_point << "_E\" -> \"" << block.get()
-                 << "_B\"\n";
+        m_stream << "  \"" << connection_point << "_E\" -> \"" << block.get() << "_B\"\n";
 
         if( value.parallel() )
         {
             if( value.exit() )
             {
-                m_stream << "  \"" << block.get() << "_E\" -> \""
-                         << value.exit().get() << "_B\"\n";
+                m_stream << "  \"" << block.get() << "_E\" -> \"" << value.exit().get() << "_B\"\n";
             }
         }
         else
@@ -507,12 +499,11 @@ void IRDumpDotVisitor::dump( ExecutionSemanticsBlock& value ) const
     {
         if( not value.parallel() )
         {
-            m_stream << "  \"" << value.blocks().back().get() << "_E\" -> \""
-                     << value.exit().get() << "_B\"\n";
+            m_stream << "  \"" << value.blocks().back().get() << "_E\" -> \"" << value.exit().get()
+                     << "_B\"\n";
         }
 
-        m_stream << "  \"" << value.exit().get() << "_E\" -> \"" << &value
-                 << "_E\"\n";
+        m_stream << "  \"" << value.exit().get() << "_E\" -> \"" << &value << "_E\"\n";
     }
 }
 
@@ -556,10 +547,9 @@ void IRDumpDotVisitor::dump( Statement& value ) const
     // begin (B) and end (E) connection points of the sub-graph
 
     m_stream << "  \"" << &value << "_B\" [label=\"B: " << value.dump()
-             << "\"]\n"; // TODO: , style=invis
+             << "\"]\n";  // TODO: , style=invis
 
-    m_stream << "  \"" << &value << "_E\"   [label=\"E: " << value.dump()
-             << "\"]\n";
+    m_stream << "  \"" << &value << "_E\"   [label=\"E: " << value.dump() << "\"]\n";
 
     if( value.scope() )
     {
@@ -573,16 +563,14 @@ void IRDumpDotVisitor::dump( Statement& value ) const
                  << "_B\" [style=dashed, color=blue];\n";
     }
 
-    m_stream << "  \"" << &value << "_B\" -> \""
-             << value.instructions().front().get() << "\"\n";
+    m_stream << "  \"" << &value << "_B\" -> \"" << value.instructions().front().get() << "\"\n";
 
     for( auto instr : value.instructions() )
     {
         const auto next = instr->next();
         if( next )
         {
-            m_stream << "  \"" << instr.get() << "\" ->  \"" << next.get()
-                     << "\";\n";
+            m_stream << "  \"" << instr.get() << "\" ->  \"" << next.get() << "\";\n";
         }
     }
 }
@@ -591,8 +579,8 @@ void IRDumpDotVisitor::dump( Instruction& value ) const
 {
     m_stream << "  # " << value.dump() << "\n";
 
-    m_stream << "  \"" << &value << "\" [shape=box, color=red, label=\""
-             << value.dump() << "\"];\n";
+    m_stream << "  \"" << &value << "\" [shape=box, color=red, label=\"" << value.dump()
+             << "\"];\n";
 
     if( isa< ForkInstruction >( value ) or isa< MergeInstruction >( value ) )
     {
@@ -630,9 +618,8 @@ void IRDumpDotVisitor::dump( Instruction& value ) const
         }
         uses += "}";
 
-        m_stream << "  #" << indention( value ) << value.label() << " = "
-                 << value.name() << " " << tmp
-                 << "                 ;; uses = " << uses << "\n";
+        m_stream << "  #" << indention( value ) << value.label() << " = " << value.name() << " "
+                 << tmp << "                 ;; uses = " << uses << "\n";
     }
 }
 

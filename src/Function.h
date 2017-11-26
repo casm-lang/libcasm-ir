@@ -75,7 +75,7 @@ namespace libcasm_ir
     using Functions = ValueList< Function >;
 }
 
-#endif // _LIBCASM_IR_FUNCTION_H_
+#endif  // _LIBCASM_IR_FUNCTION_H_
 
 //
 //  Local variables:

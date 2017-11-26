@@ -115,11 +115,9 @@ namespace libcasm_ir
             _SIZE_,
         };
 
-        static_assert( (std::size_t)Kind::_SIZE_ == 18,
-            "length of 'Type::Kind' shall be 18" );
+        static_assert( (std::size_t)Kind::_SIZE_ == 18, "length of 'Type::Kind' shall be 18" );
 
-        static_assert( sizeof( Kind ) == 1,
-            "size of 'Type::Kind' shall be 8 bits (1 byte)" );
+        static_assert( sizeof( Kind ) == 1, "size of 'Type::Kind' shall be 8 bits (1 byte)" );
 
         /**
            Represents a unique number of a derived flavor of a Type::Kind
@@ -151,8 +149,7 @@ namespace libcasm_ir
 
             std::size_t hash( void ) const
             {
-                return std::hash< u64 >()(
-                    ( ( u64 )( m_flavor ) << 8 ) | (u64)m_kind );
+                return std::hash< u64 >()( ( ( u64 )( m_flavor ) << 8 ) | (u64)m_kind );
             }
 
             inline u1 operator==( const ID& rhs ) const
@@ -182,7 +179,8 @@ namespace libcasm_ir
             Kind m_kind : 8;
         };
 
-        static_assert( sizeof( ID ) == ( sizeof( Kind ) + 7 ),
+        static_assert(
+            sizeof( ID ) == ( sizeof( Kind ) + 7 ),
             "size of 'Type::ID' shall be 64 bits (8 bytes, 1 byte (kind) + 7 "
             "bytes (flavor) )" );
 
@@ -195,8 +193,7 @@ namespace libcasm_ir
         virtual std::string description( void ) const = 0;
 
         virtual void foreach(
-            const std::function< void( const Constant& constant ) >& callback )
-            const = 0;
+            const std::function< void( const Constant& constant ) >& callback ) const = 0;
 
         virtual Constant choose( void ) const = 0;
 
@@ -298,14 +295,12 @@ namespace libcasm_ir
             static std::unordered_map< std::size_t, Type::Ptr > obj = {};
             return obj;
         }
-        static std::unordered_map< std::size_t, Type::Ptr >&
-        s_registered_type_hash2ptr( void )
+        static std::unordered_map< std::size_t, Type::Ptr >& s_registered_type_hash2ptr( void )
         {
             static std::unordered_map< std::size_t, Type::Ptr > obj = {};
             return obj;
         }
-        static std::unordered_map< u64, std::size_t >&
-        s_registered_type_id2hash( void )
+        static std::unordered_map< u64, std::size_t >& s_registered_type_id2hash( void )
         {
             static std::unordered_map< u64, std::size_t > obj = {};
             return obj;
@@ -330,8 +325,7 @@ namespace libcasm_ir
         std::string description( void ) const override;
 
         void foreach(
-            const std::function< void( const Constant& constant ) >& callback )
-            const override;
+            const std::function< void( const Constant& constant ) >& callback ) const override;
 
         Constant choose( void ) const override;
 
@@ -357,8 +351,7 @@ namespace libcasm_ir
         std::string description( void ) const override;
 
         void foreach(
-            const std::function< void( const Constant& constant ) >& callback )
-            const override;
+            const std::function< void( const Constant& constant ) >& callback ) const override;
 
         Constant choose( void ) const override;
 
@@ -384,8 +377,7 @@ namespace libcasm_ir
         std::string description( void ) const override;
 
         void foreach(
-            const std::function< void( const Constant& constant ) >& callback )
-            const override;
+            const std::function< void( const Constant& constant ) >& callback ) const override;
 
         Constant choose( void ) const override;
 
@@ -411,8 +403,7 @@ namespace libcasm_ir
         std::string description( void ) const override;
 
         void foreach(
-            const std::function< void( const Constant& constant ) >& callback )
-            const override;
+            const std::function< void( const Constant& constant ) >& callback ) const override;
 
         Constant choose( void ) const override;
 
@@ -444,8 +435,7 @@ namespace libcasm_ir
         std::string description( void ) const override;
 
         void foreach(
-            const std::function< void( const Constant& constant ) >& callback )
-            const override;
+            const std::function< void( const Constant& constant ) >& callback ) const override;
 
         Constant choose( void ) const override;
 
@@ -477,8 +467,7 @@ namespace libcasm_ir
         std::string description( void ) const override;
 
         void foreach(
-            const std::function< void( const Constant& constant ) >& callback )
-            const override;
+            const std::function< void( const Constant& constant ) >& callback ) const override;
 
         Constant choose( void ) const override;
 
@@ -507,8 +496,7 @@ namespace libcasm_ir
         std::string description( void ) const override;
 
         void foreach(
-            const std::function< void( const Constant& constant ) >& callback )
-            const override;
+            const std::function< void( const Constant& constant ) >& callback ) const override;
 
         Constant choose( void ) const override;
 
@@ -542,8 +530,7 @@ namespace libcasm_ir
         std::string description( void ) const override;
 
         void foreach(
-            const std::function< void( const Constant& constant ) >& callback )
-            const override;
+            const std::function< void( const Constant& constant ) >& callback ) const override;
 
         Constant choose( void ) const override;
 
@@ -572,8 +559,7 @@ namespace libcasm_ir
         std::string description( void ) const override;
 
         void foreach(
-            const std::function< void( const Constant& constant ) >& callback )
-            const override;
+            const std::function< void( const Constant& constant ) >& callback ) const override;
 
         Constant choose( void ) const override;
 
@@ -599,8 +585,7 @@ namespace libcasm_ir
         std::string description( void ) const override;
 
         void foreach(
-            const std::function< void( const Constant& constant ) >& callback )
-            const override;
+            const std::function< void( const Constant& constant ) >& callback ) const override;
 
         Constant choose( void ) const override;
 
@@ -636,8 +621,7 @@ namespace libcasm_ir
         std::string description( void ) const override;
 
         void foreach(
-            const std::function< void( const Constant& constant ) >& callback )
-            const override;
+            const std::function< void( const Constant& constant ) >& callback ) const override;
 
         Constant choose( void ) const override;
 
@@ -678,8 +662,7 @@ namespace libcasm_ir
         std::string description( void ) const override;
 
         void foreach(
-            const std::function< void( const Constant& constant ) >& callback )
-            const override;
+            const std::function< void( const Constant& constant ) >& callback ) const override;
 
         Constant choose( void ) const override;
 
@@ -708,8 +691,7 @@ namespace libcasm_ir
         std::string description( void ) const override;
 
         void foreach(
-            const std::function< void( const Constant& constant ) >& callback )
-            const override;
+            const std::function< void( const Constant& constant ) >& callback ) const override;
 
         Constant choose( void ) const override;
 
@@ -735,8 +717,7 @@ namespace libcasm_ir
         std::string description( void ) const override;
 
         void foreach(
-            const std::function< void( const Constant& constant ) >& callback )
-            const override;
+            const std::function< void( const Constant& constant ) >& callback ) const override;
 
         Constant choose( void ) const override;
 
@@ -762,8 +743,7 @@ namespace libcasm_ir
         std::string description( void ) const override;
 
         void foreach(
-            const std::function< void( const Constant& constant ) >& callback )
-            const override;
+            const std::function< void( const Constant& constant ) >& callback ) const override;
 
         Constant choose( void ) const override;
     };
@@ -798,8 +778,7 @@ namespace libcasm_ir
 
         FunctionReferenceType( const RelationType::Ptr& type );
 
-        FunctionReferenceType(
-            const Type::Ptr& result, const Types& arguments );
+        FunctionReferenceType( const Type::Ptr& result, const Types& arguments );
 
         std::string name( void ) const override;
 
@@ -831,8 +810,7 @@ namespace libcasm_ir
         std::string description( void ) const override;
 
         void foreach(
-            const std::function< void( const Constant& constant ) >& callback )
-            const override;
+            const std::function< void( const Constant& constant ) >& callback ) const override;
 
         Constant choose( void ) const override;
 
@@ -858,8 +836,7 @@ namespace libcasm_ir
         std::string description( void ) const override;
 
         void foreach(
-            const std::function< void( const Constant& constant ) >& callback )
-            const override;
+            const std::function< void( const Constant& constant ) >& callback ) const override;
 
         Constant choose( void ) const override;
 
@@ -884,8 +861,7 @@ namespace std
     template <>
     struct hash< libcasm_ir::Type::Kind >
     {
-        inline std::size_t operator()(
-            const libcasm_ir::Type::Kind value ) const
+        inline std::size_t operator()( const libcasm_ir::Type::Kind value ) const
         {
             return static_cast< std::size_t >( value );
         }
@@ -911,9 +887,9 @@ namespace std
 
     static std::string to_string( const libcasm_ir::Type::ID value )
     {
-        return std::to_string( value.flavor() ) + "'"
-               + std::to_string( (libstdhl::u8)value.kind() ) + " ("
-               + std::to_string( value.kind() ) + ")";
+        return std::to_string( value.flavor() ) + "'" +
+               std::to_string( (libstdhl::u8)value.kind() ) + " (" +
+               std::to_string( value.kind() ) + ")";
     };
 
     template <>
@@ -926,7 +902,7 @@ namespace std
     };
 }
 
-#endif // _LIBCASM_IR_TYPE_H_
+#endif  // _LIBCASM_IR_TYPE_H_
 
 //
 //  Local variables:

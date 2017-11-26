@@ -69,8 +69,7 @@ std::string Derived::name( void ) const
 
 std::size_t Derived::hash( void ) const
 {
-    return libstdhl::Hash::combine(
-        classid(), std::hash< std::string >()( name() ) );
+    return libstdhl::Hash::combine( classid(), std::hash< std::string >()( name() ) );
 }
 
 u1 Derived::operator==( const Value& rhs ) const

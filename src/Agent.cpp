@@ -66,8 +66,7 @@ std::string Agent::name( void ) const
 
 std::size_t Agent::hash( void ) const
 {
-    return libstdhl::Hash::combine(
-        classid(), std::hash< std::string >()( name() ) );
+    return libstdhl::Hash::combine( classid(), std::hash< std::string >()( name() ) );
 }
 
 u1 Agent::operator==( const Value& rhs ) const

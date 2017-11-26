@@ -50,8 +50,7 @@ using namespace libcasm_ir;
 char NumericExecutionPass::id = 0;
 
 static libpass::PassRegistration< NumericExecutionPass > PASS(
-    "IRNumericExecutionPass", "execute numerically over the CASM IR",
-    "ir-exec-num", 0 );
+    "IRNumericExecutionPass", "execute numerically over the CASM IR", "ir-exec-num", 0 );
 
 void NumericExecutionPass::usage( libpass::PassUsage& pu )
 {

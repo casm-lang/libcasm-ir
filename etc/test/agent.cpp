@@ -45,8 +45,7 @@ using namespace libcasm_ir;
 
 TEST( libcasm_ir_Agent, agents_with_string )
 {
-    Agent a(
-        std::initializer_list< std::string >{ "alice", "bob", "charlie" } );
+    Agent a( std::initializer_list< std::string >{ "alice", "bob", "charlie" } );
 
     EXPECT_TRUE( a.type().isEnumeration() );
 }

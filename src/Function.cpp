@@ -61,8 +61,7 @@ void Function::accept( Visitor& visitor )
 
 std::size_t Function::hash( void ) const
 {
-    return libstdhl::Hash::combine(
-        classid(), std::hash< std::string >()( name() ) );
+    return libstdhl::Hash::combine( classid(), std::hash< std::string >()( name() ) );
 }
 
 u1 Function::operator==( const Value& rhs ) const

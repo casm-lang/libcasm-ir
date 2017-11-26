@@ -160,7 +160,7 @@ namespace libcasm_ir
     };
 }
 
-#endif // _LIBCASM_IR_IR_DUMP_DOT_PASS_H_
+#endif  // _LIBCASM_IR_IR_DUMP_DOT_PASS_H_
 
 //
 //  Local variables:

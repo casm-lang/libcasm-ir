@@ -70,8 +70,7 @@ ValidationException::ValidationException( const std::string& message )
 {
 }
 
-UndefinedConstantException::UndefinedConstantException(
-    const std::string& message )
+UndefinedConstantException::UndefinedConstantException( const std::string& message )
 : Exception( message )
 {
 }

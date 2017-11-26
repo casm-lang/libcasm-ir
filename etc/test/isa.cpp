@@ -43,14 +43,14 @@
 
 using namespace libcasm_ir;
 
-#define ISA( INSTR, LHS, RHS )                                                 \
-    TEST( libcasm_ir, isa_##INSTR )                                            \
-    {                                                                          \
-        auto a = LHS;                                                          \
-        auto b = RHS;                                                          \
-        auto i = INSTR( libstdhl::Memory::wrap< Value >( a ),                  \
-            libstdhl::Memory::wrap< Value >( b ) );                            \
-        ASSERT_EQ( isa< INSTR >( i ), true );                                  \
+#define ISA( INSTR, LHS, RHS )                                                                   \
+    TEST( libcasm_ir, isa_##INSTR )                                                              \
+    {                                                                                            \
+        auto a = LHS;                                                                            \
+        auto b = RHS;                                                                            \
+        auto i =                                                                                 \
+            INSTR( libstdhl::Memory::wrap< Value >( a ), libstdhl::Memory::wrap< Value >( b ) ); \
+        ASSERT_EQ( isa< INSTR >( i ), true );                                                    \
     }
 
 ISA( AddInstruction, IntegerConstant( 5 ), IntegerConstant( 2 ) )

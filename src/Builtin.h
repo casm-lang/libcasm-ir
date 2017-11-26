@@ -160,8 +160,11 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< OutputBuiltin >;
 
-        OutputBuiltin( const Type::Ptr& type, const std::string& channel,
-            u1 newline, const Value::ID id = classid() );
+        OutputBuiltin(
+            const Type::Ptr& type,
+            const std::string& channel,
+            u1 newline,
+            const Value::ID id = classid() );
 
         std::string channel( void ) const;
 
@@ -377,8 +380,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< StringifyBuiltin >;
 
-        StringifyBuiltin(
-            const Type::Ptr& type, const Value::ID id = classid() );
+        StringifyBuiltin( const Type::Ptr& type, const Value::ID id = classid() );
 
       public:
         static inline Value::ID classid( void )
@@ -473,8 +475,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< OperatorBuiltin >;
 
-        OperatorBuiltin(
-            const Type::Ptr& type, const Value::ID id = classid() );
+        OperatorBuiltin( const Type::Ptr& type, const Value::ID id = classid() );
 
       public:
         static inline Value::ID classid( void )
@@ -494,8 +495,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< ArithmeticBuiltin >;
 
-        ArithmeticBuiltin(
-            const Type::Ptr& type, const Value::ID id = classid() );
+        ArithmeticBuiltin( const Type::Ptr& type, const Value::ID id = classid() );
 
       public:
         static inline Value::ID classid( void )
@@ -996,7 +996,7 @@ namespace libcasm_ir
     // TODO: PPA:
 }
 
-#endif // _LIBCASM_IR_BUILTIN_H_
+#endif  // _LIBCASM_IR_BUILTIN_H_
 
 //
 //  Local variables:

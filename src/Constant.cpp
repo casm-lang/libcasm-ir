@@ -54,8 +54,7 @@ static const auto DECIMAL = libstdhl::Memory::get< DecimalType >();
 static const auto RATIONAL = libstdhl::Memory::get< RationalType >();
 static const auto STRING = libstdhl::Memory::get< StringType >();
 
-Constant::Constant(
-    const Type::Ptr& type, const libstdhl::Type::Data& data, Value::ID id )
+Constant::Constant( const Type::Ptr& type, const libstdhl::Type::Data& data, Value::ID id )
 : Value( type, id )
 , m_data( data )
 {
@@ -118,7 +117,7 @@ u1 Constant::defined( void ) const
 
 u1 Constant::symbolic( void ) const
 {
-    return false; // PPA: TODO: FIXME:
+    return false;  // PPA: TODO: FIXME:
 }
 
 const libstdhl::Type::Data& Constant::data( void ) const
@@ -238,12 +237,11 @@ void Constant::accept( Visitor& visitor )
     }
 }
 
-void Constant::foreach(
-    const std::function< void( const Constant& constant ) >& callback ) const
+void Constant::foreach( const std::function< void( const Constant& constant ) >& callback ) const
 {
-    assert( this->defined() ); // PPA: foreach only valid if a constant is
-                               // defined, please ensure the correct invocation,
-                               // a universe shall not be undefined
+    assert( this->defined() );  // PPA: foreach only valid if a constant is
+                                // defined, please ensure the correct invocation,
+                                // a universe shall not be undefined
 
     if( id() == Value::RANGE_CONSTANT )
     {
@@ -257,9 +255,9 @@ void Constant::foreach(
 
 Constant Constant::choose( void ) const
 {
-    assert( this->defined() ); // PPA: foreach only valid if a constant is
-                               // defined, please ensure the correct invocation,
-                               // a universe shall not be undefined
+    assert( this->defined() );  // PPA: foreach only valid if a constant is
+                                // defined, please ensure the correct invocation,
+                                // a universe shall not be undefined
 
     if( id() == Value::RANGE_CONSTANT )
     {
@@ -331,18 +329,15 @@ u1 Constant::operator==( const Value& rhs ) const
     {
         case Value::VOID_CONSTANT:
         {
-            return static_cast< const VoidConstant* >( this )->operator==(
-                rhs );
+            return static_cast< const VoidConstant* >( this )->operator==( rhs );
         }
         case Value::BOOLEAN_CONSTANT:
         {
-            return static_cast< const BooleanConstant* >( this )->operator==(
-                rhs );
+            return static_cast< const BooleanConstant* >( this )->operator==( rhs );
         }
         case Value::INTEGER_CONSTANT:
         {
-            return static_cast< const IntegerConstant* >( this )->operator==(
-                rhs );
+            return static_cast< const IntegerConstant* >( this )->operator==( rhs );
         }
         case Value::BIT_CONSTANT:
         {
@@ -350,33 +345,27 @@ u1 Constant::operator==( const Value& rhs ) const
         }
         case Value::STRING_CONSTANT:
         {
-            return static_cast< const StringConstant* >( this )->operator==(
-                rhs );
+            return static_cast< const StringConstant* >( this )->operator==( rhs );
         }
         case Value::DECIMAL_CONSTANT:
         {
-            return static_cast< const DecimalConstant* >( this )->operator==(
-                rhs );
+            return static_cast< const DecimalConstant* >( this )->operator==( rhs );
         }
         case Value::RATIONAL_CONSTANT:
         {
-            return static_cast< const RationalConstant* >( this )->operator==(
-                rhs );
+            return static_cast< const RationalConstant* >( this )->operator==( rhs );
         }
         case Value::ENUMERATION_CONSTANT:
         {
-            return static_cast< const EnumerationConstant* >( this )->
-            operator==( rhs );
+            return static_cast< const EnumerationConstant* >( this )->operator==( rhs );
         }
         case Value::RANGE_CONSTANT:
         {
-            return static_cast< const RangeConstant* >( this )->operator==(
-                rhs );
+            return static_cast< const RangeConstant* >( this )->operator==( rhs );
         }
         case Value::RULE_REFERENCE_CONSTANT:
         {
-            return static_cast< const RuleReferenceConstant* >( this )->
-            operator==( rhs );
+            return static_cast< const RuleReferenceConstant* >( this )->operator==( rhs );
         }
         default:
         {
@@ -390,22 +379,20 @@ u1 Constant::operator==( const Value& rhs ) const
 
 u1 Constant::classof( Value const* obj )
 {
-    return obj->id() == classid() or VoidConstant::classof( obj )
-           or BooleanConstant::classof( obj ) or IntegerConstant::classof( obj )
-           or BitConstant::classof( obj ) or StringConstant::classof( obj )
-           or DecimalConstant::classof( obj )
-           or RationalConstant::classof( obj )
-           or EnumerationConstant::classof( obj )
-           or RuleReferenceConstant::classof( obj )
-           or Identifier::classof( obj );
+    return obj->id() == classid() or VoidConstant::classof( obj ) or
+           BooleanConstant::classof( obj ) or IntegerConstant::classof( obj ) or
+           BitConstant::classof( obj ) or StringConstant::classof( obj ) or
+           DecimalConstant::classof( obj ) or RationalConstant::classof( obj ) or
+           EnumerationConstant::classof( obj ) or RuleReferenceConstant::classof( obj ) or
+           Identifier::classof( obj );
 }
 
 Constant Constant::undef( const Type::Ptr& type )
 {
     switch( type->kind() )
     {
-        case Type::Kind::LABEL:    // [[fallthrough]]
-        case Type::Kind::LOCATION: // [[fallthrough]]
+        case Type::Kind::LABEL:     // [[fallthrough]]
+        case Type::Kind::LOCATION:  // [[fallthrough]]
         case Type::Kind::RELATION:
         {
             break;
@@ -440,8 +427,7 @@ Constant Constant::undef( const Type::Ptr& type )
         }
         case Type::Kind::ENUMERATION:
         {
-            return EnumerationConstant(
-                std::static_pointer_cast< EnumerationType >( type ) );
+            return EnumerationConstant( std::static_pointer_cast< EnumerationType >( type ) );
         }
         case Type::Kind::RANGE:
         {
@@ -477,8 +463,8 @@ Constant Constant::undef( const Type::Ptr& type )
         }
     }
 
-    throw std::domain_error( "unimplemented type '" + type->description()
-                             + "' to create a 'undef' constant" );
+    throw std::domain_error(
+        "unimplemented type '" + type->description() + "' to create a 'undef' constant" );
     return VoidConstant();
 }
 
@@ -599,8 +585,7 @@ u1 BooleanConstant::classof( Value const* obj )
 // Integer Constant
 //
 
-IntegerConstant::IntegerConstant(
-    const std::string& value, const libstdhl::Type::Radix radix )
+IntegerConstant::IntegerConstant( const std::string& value, const libstdhl::Type::Radix radix )
 : Constant( INTEGER, libstdhl::Type::createInteger( value, radix ), classid() )
 {
     // TODO: PPA: force CASM integer string digit separator usage as
@@ -648,8 +633,7 @@ const libstdhl::Type::Integer& IntegerConstant::value( void ) const
 
 std::string IntegerConstant::name( void ) const
 {
-    return (
-        defined() ? ( m_data.to< libstdhl::Type::DECIMAL >() ) : undef_str );
+    return ( defined() ? ( m_data.to< libstdhl::Type::DECIMAL >() ) : undef_str );
 }
 
 void IntegerConstant::accept( Visitor& visitor )
@@ -690,23 +674,22 @@ u1 IntegerConstant::classof( Value const* obj )
 // Bit Constant
 //
 
-BitConstant::BitConstant(
-    const std::string& value, const libstdhl::Type::Radix radix )
-: Constant( libstdhl::Memory::get< BitType >( value, radix ),
-      libstdhl::Type::createNatural( value, radix ), classid() )
+BitConstant::BitConstant( const std::string& value, const libstdhl::Type::Radix radix )
+: Constant(
+      libstdhl::Memory::get< BitType >( value, radix ),
+      libstdhl::Type::createNatural( value, radix ),
+      classid() )
 {
     assert( this->type().isBit() );
     const auto& t = static_cast< const BitType& >( this->type() );
     if( t.bitsize() > BitType::SizeMax )
     {
-        throw std::domain_error( "invalid bit size '"
-                                 + std::to_string( t.bitsize() )
-                                 + "' to create BitConstant" );
+        throw std::domain_error(
+            "invalid bit size '" + std::to_string( t.bitsize() ) + "' to create BitConstant" );
     }
 }
 
-BitConstant::BitConstant(
-    const Type::Ptr& type, const libstdhl::Type::Natural& value )
+BitConstant::BitConstant( const Type::Ptr& type, const libstdhl::Type::Natural& value )
 : Constant( type, value, classid() )
 {
     assert( this->type().isBit() );
@@ -714,23 +697,20 @@ BitConstant::BitConstant(
 
     if( t.bitsize() > BitType::SizeMax )
     {
-        throw std::domain_error( "invalid bit size '"
-                                 + std::to_string( t.bitsize() )
-                                 + "' to create BitConstant" );
+        throw std::domain_error(
+            "invalid bit size '" + std::to_string( t.bitsize() ) + "' to create BitConstant" );
     }
 
     assert( value.trivial() and " TODO: PPA: FIXME:" );
-    const u64 bitsize
-        = static_cast< u64 >( std::log2(
-              (double)( value.value() > 1 ? value.value() - 1 : 1 ) ) )
-          + 1;
+    const u64 bitsize =
+        static_cast< u64 >( std::log2( (double)( value.value() > 1 ? value.value() - 1 : 1 ) ) ) +
+        1;
 
     if( bitsize > t.bitsize() )
     {
-        throw std::invalid_argument( "value bit-size '"
-                                     + std::to_string( bitsize )
-                                     + "' does not fit into bit-size '"
-                                     + std::to_string( t.bitsize() ) + "'" );
+        throw std::invalid_argument(
+            "value bit-size '" + std::to_string( bitsize ) + "' does not fit into bit-size '" +
+            std::to_string( t.bitsize() ) + "'" );
     }
 }
 
@@ -766,8 +746,7 @@ const libstdhl::Type::Natural& BitConstant::value( void ) const
 
 std::string BitConstant::name( void ) const
 {
-    return (
-        defined() ? ( m_data.to< libstdhl::Type::DECIMAL >() ) : undef_str );
+    return ( defined() ? ( m_data.to< libstdhl::Type::DECIMAL >() ) : undef_str );
 }
 
 void BitConstant::accept( Visitor& visitor )
@@ -794,8 +773,7 @@ u1 BitConstant::operator==( const Value& rhs ) const
     }
 
     const auto& other = static_cast< const BitConstant& >( rhs );
-    return ( this->defined() == other.defined() )
-           and ( this->value() == other.value() );
+    return ( this->defined() == other.defined() ) and ( this->value() == other.value() );
 }
 
 u1 BitConstant::classof( Value const* obj )
@@ -863,8 +841,7 @@ u1 StringConstant::operator==( const Value& rhs ) const
     }
 
     const auto& other = static_cast< const StringConstant& >( rhs );
-    return ( this->defined() == other.defined() )
-           and ( this->value() == other.value() );
+    return ( this->defined() == other.defined() ) and ( this->value() == other.value() );
 }
 
 u1 StringConstant::classof( Value const* obj )
@@ -914,8 +891,7 @@ const libstdhl::Type::Decimal& DecimalConstant::value( void ) const
 std::string DecimalConstant::name( void ) const
 {
     // return ( defined() ? ( "TODO" ) : undef_str );
-    return (
-        defined() ? ( std::to_string( (double)value().value() ) ) : undef_str );
+    return ( defined() ? ( std::to_string( (double)value().value() ) ) : undef_str );
     // TODO: PPA: use literal function from libstdhl::Type::Data
 }
 
@@ -943,8 +919,7 @@ u1 DecimalConstant::operator==( const Value& rhs ) const
     }
 
     const auto& other = static_cast< const DecimalConstant& >( rhs );
-    return ( this->defined() == other.defined() )
-           and ( this->value() == other.value() );
+    return ( this->defined() == other.defined() ) and ( this->value() == other.value() );
 }
 
 u1 DecimalConstant::classof( Value const* obj )
@@ -1020,15 +995,15 @@ u1 RationalConstant::classof( Value const* obj )
 
 EnumerationConstant::EnumerationConstant(
     const EnumerationType::Ptr& type, const std::string& value )
-: Constant( type, libstdhl::Type::createNatural( type->kind().encode( value ) ),
-      classid() )
+: Constant( type, libstdhl::Type::createNatural( type->kind().encode( value ) ), classid() )
 {
 }
 
-EnumerationConstant::EnumerationConstant(
-    const Enumeration::Ptr& kind, const std::string& value )
-: Constant( libstdhl::Memory::get< EnumerationType >( kind ),
-      libstdhl::Type::createNatural( kind->encode( value ) ), classid() )
+EnumerationConstant::EnumerationConstant( const Enumeration::Ptr& kind, const std::string& value )
+: Constant(
+      libstdhl::Memory::get< EnumerationType >( kind ),
+      libstdhl::Type::createNatural( kind->encode( value ) ),
+      classid() )
 {
 }
 
@@ -1049,8 +1024,7 @@ const libstdhl::Type::Natural& EnumerationConstant::value( void ) const
 
 std::string EnumerationConstant::name( void ) const
 {
-    return static_cast< const EnumerationType& >( type() ).kind().decode(
-        m_data.value() );
+    return static_cast< const EnumerationType& >( type() ).kind().decode( m_data.value() );
 }
 
 void EnumerationConstant::accept( Visitor& visitor )
@@ -1077,8 +1051,7 @@ u1 EnumerationConstant::operator==( const Value& rhs ) const
     }
 
     const auto& other = static_cast< const EnumerationConstant& >( rhs );
-    return ( this->defined() == other.defined() )
-           and ( this->value() == other.value() );
+    return ( this->defined() == other.defined() ) and ( this->value() == other.value() );
 }
 
 u1 EnumerationConstant::classof( Value const* obj )
@@ -1090,8 +1063,7 @@ u1 EnumerationConstant::classof( Value const* obj )
 // Range Constant
 //
 
-RangeConstant::RangeConstant(
-    const RangeType::Ptr& type, const Range::Ptr& value )
+RangeConstant::RangeConstant( const RangeType::Ptr& type, const Range::Ptr& value )
 : Constant( type, libstdhl::Type::Data( 0, false ), classid() )
 {
     assert( type );
@@ -1103,8 +1075,7 @@ RangeConstant::RangeConstant( const RangeType::Ptr& type )
 {
 }
 
-RangeConstant::RangeConstant(
-    const Type::Ptr& type, const Constant& from, const Constant& to )
+RangeConstant::RangeConstant( const Type::Ptr& type, const Constant& from, const Constant& to )
 : Constant( type, libstdhl::Type::Data( 0, false ), classid() )
 {
     assert( type );
@@ -1158,8 +1129,7 @@ u1 RangeConstant::operator==( const Value& rhs ) const
     }
 
     const auto& other = static_cast< const RangeConstant& >( rhs );
-    return ( this->defined() == other.defined() )
-           and ( this->value() == other.value() );
+    return ( this->defined() == other.defined() ) and ( this->value() == other.value() );
 }
 
 u1 RangeConstant::classof( Value const* obj )
@@ -1172,11 +1142,11 @@ u1 RangeConstant::classof( Value const* obj )
 //
 
 RuleReferenceConstant::RuleReferenceConstant( const Rule::Ptr& value )
-: ReferenceConstant( std::static_pointer_cast< Type >(
-                         libstdhl::Memory::make< RuleReferenceType >(
-                             std::static_pointer_cast< RelationType >(
-                                 value->type().ptr_type() ) ) ),
-      value.get(), classid() )
+: ReferenceConstant(
+      std::static_pointer_cast< Type >( libstdhl::Memory::make< RuleReferenceType >(
+          std::static_pointer_cast< RelationType >( value->type().ptr_type() ) ) ),
+      value.get(),
+      classid() )
 {
 }
 
@@ -1215,8 +1185,7 @@ u1 RuleReferenceConstant::operator==( const Value& rhs ) const
     }
 
     const auto& other = static_cast< const RuleReferenceConstant& >( rhs );
-    return ( this->defined() == other.defined() )
-           and ( this->value() == other.value() );
+    return ( this->defined() == other.defined() ) and ( this->value() == other.value() );
 }
 
 u1 RuleReferenceConstant::classof( Value const* obj )
@@ -1262,8 +1231,7 @@ u1 Identifier::operator==( const Value& rhs ) const
     }
 
     const auto& other = static_cast< const Identifier& >( rhs );
-    return ( this->defined() == other.defined() )
-           and ( this->name() == other.name() );
+    return ( this->defined() == other.defined() ) and ( this->name() == other.name() );
 }
 
 u1 Identifier::classof( Value const* obj )

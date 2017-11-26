@@ -72,9 +72,7 @@ TEST( libcasm_ir__type_ranged_integer, make_and_get )
     EXPECT_TRUE( a == b );
     EXPECT_TRUE( *a == *b );
 
-    v->foreach( []( const Constant& constant ) {
-        std::cerr << constant.name() << "\n";
-    } );
+    v->foreach( []( const Constant& constant ) { std::cerr << constant.name() << "\n"; } );
 
     std::cerr << v->choose().name() << "\n";
 }
@@ -114,8 +112,7 @@ TEST( DISABLED_libcasm_ir__type_ranged_integer, invalid_range )
 
     const auto r = libstdhl::Memory::get< RangeType >( R );
 
-    EXPECT_THROW(
-        { libstdhl::Memory::make< IntegerType >( r ); }, std::domain_error );
+    EXPECT_THROW( { libstdhl::Memory::make< IntegerType >( r ); }, std::domain_error );
 }
 
 //

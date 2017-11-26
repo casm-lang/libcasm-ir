@@ -64,14 +64,10 @@ TEST( libcasm_ir__enumeration, example )
 
 TEST( libcasm_ir__enumeration, invalid_same_values_are_not_allowed )
 {
-    const std::vector< std::string > elements
-        = { "foo", "bar", "baz", "bar", "foo" };
+    const std::vector< std::string > elements = { "foo", "bar", "baz", "bar", "foo" };
 
     EXPECT_THROW(
-        {
-            const auto e
-                = libstdhl::Memory::make< Enumeration >( "example", elements );
-        },
+        { const auto e = libstdhl::Memory::make< Enumeration >( "example", elements ); },
         std::domain_error );
 }
 

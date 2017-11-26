@@ -55,9 +55,7 @@ TEST( libcasm_ir__type_range, of_integer_constants )
     EXPECT_STREQ( v->name().c_str(), "[-4..13]" );
     EXPECT_STREQ( v->description().c_str(), "[-4..13]" );
 
-    v->foreach( []( const Constant& constant ) {
-        std::cerr << constant.name() << "\n";
-    } );
+    v->foreach( []( const Constant& constant ) { std::cerr << constant.name() << "\n"; } );
 
     std::cerr << v->choose().name() << "\n";
 }

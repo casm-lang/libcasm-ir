@@ -56,7 +56,8 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< Instruction >;
 
-        Instruction( const Type::Ptr& type,
+        Instruction(
+            const Type::Ptr& type,
             const Value::ID id,
             const std::vector< Value::Ptr >& operands = {} );
 
@@ -225,8 +226,8 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< LocationInstruction >;
 
-        LocationInstruction( const Value::Ptr& function,
-            const std::vector< Value::Ptr >& operands = {} );
+        LocationInstruction(
+            const Value::Ptr& function, const std::vector< Value::Ptr >& operands = {} );
 
         void accept( Visitor& visitor ) override final;
 
@@ -244,8 +245,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< CallInstruction >;
 
-        CallInstruction( const Value::Ptr& symbol,
-            const std::vector< Value::Ptr >& operands = {} );
+        CallInstruction( const Value::Ptr& symbol, const std::vector< Value::Ptr >& operands = {} );
 
         CallInstruction( const Type::Ptr& type );
 
@@ -267,8 +267,8 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< SelectInstruction >;
 
-        SelectInstruction( const Value::Ptr& expression,
-            const std::vector< Value::Ptr >& operands );
+        SelectInstruction(
+            const Value::Ptr& expression, const std::vector< Value::Ptr >& operands );
 
         void accept( Visitor& visitor ) override final;
 
@@ -286,7 +286,9 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< OperatorInstruction >;
 
-        OperatorInstruction( const Type::Ptr& type, const Value::ID id,
+        OperatorInstruction(
+            const Type::Ptr& type,
+            const Value::ID id,
             const std::vector< Value::Ptr >& operands = {} );
 
       public:
@@ -307,7 +309,9 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< ArithmeticInstruction >;
 
-        ArithmeticInstruction( const Type::Ptr& type, const Value::ID id,
+        ArithmeticInstruction(
+            const Type::Ptr& type,
+            const Value::ID id,
             const std::vector< Value::Ptr >& operands = {} );
 
       public:
@@ -487,7 +491,9 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< LogicalInstruction >;
 
-        LogicalInstruction( const Type::Ptr& type, const Value::ID id,
+        LogicalInstruction(
+            const Type::Ptr& type,
+            const Value::ID id,
             const std::vector< Value::Ptr >& operands = {} );
 
       public:
@@ -623,7 +629,9 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< CompareInstruction >;
 
-        CompareInstruction( const Type::Ptr& type, const Value::ID id,
+        CompareInstruction(
+            const Type::Ptr& type,
+            const Value::ID id,
             const std::vector< Value::Ptr >& operands = {} );
 
       public:
@@ -774,7 +782,7 @@ namespace libcasm_ir
     };
 }
 
-#endif // _LIBCASM_IR_INSTRUCTION_H_
+#endif  // _LIBCASM_IR_INSTRUCTION_H_
 
 //
 //  Local variables:

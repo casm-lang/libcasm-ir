@@ -86,7 +86,7 @@ namespace libcasm_ir
     };
 }
 
-#endif // _LIBCASM_IR_RANGE_H_
+#endif  // _LIBCASM_IR_RANGE_H_
 
 //
 //  Local variables:

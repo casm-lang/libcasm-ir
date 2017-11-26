@@ -99,8 +99,7 @@ std::string Block::name( void ) const
 
 std::size_t Block::hash( void ) const
 {
-    return libstdhl::Hash::combine(
-        classid(), std::hash< std::string >()( name() ) );
+    return libstdhl::Hash::combine( classid(), std::hash< std::string >()( name() ) );
 }
 
 u1 Block::operator==( const Value& rhs ) const
@@ -121,12 +120,11 @@ u1 Block::operator==( const Value& rhs ) const
 
 u1 Block::classof( Value const* obj )
 {
-    return obj->id() == classid() or ExecutionSemanticsBlock::classof( obj )
-           or Statement::classof( obj );
+    return obj->id() == classid() or ExecutionSemanticsBlock::classof( obj ) or
+           Statement::classof( obj );
 }
 
-ExecutionSemanticsBlock::ExecutionSemanticsBlock(
-    const u1 parallel, Value::ID id )
+ExecutionSemanticsBlock::ExecutionSemanticsBlock( const u1 parallel, Value::ID id )
 : Block( id )
 , m_parallel( parallel )
 , m_pseudostate( 0 )
@@ -187,10 +185,9 @@ void ExecutionSemanticsBlock::add( const Block::Ptr& block )
     }
     if( block->scope() )
     {
-        throw std::domain_error( "block '" + block->dump()
-                                 + "' is already bound to scope '"
-                                 + block->scope()->dump()
-                                 + "'" );
+        throw std::domain_error(
+            "block '" + block->dump() + "' is already bound to scope '" + block->scope()->dump() +
+            "'" );
     }
 
     const auto self = ptr_this< ExecutionSemanticsBlock >();
@@ -203,8 +200,11 @@ void ExecutionSemanticsBlock::add( const Block::Ptr& block )
 
 void ExecutionSemanticsBlock::replace( Block& from, const Block::Ptr to )
 {
-    std::replace_if( m_blocks.begin(), m_blocks.end(),
-        [&]( const Block::Ptr& v ) { return *v.get() == from; }, to );
+    std::replace_if(
+        m_blocks.begin(),
+        m_blocks.end(),
+        [&]( const Block::Ptr& v ) { return *v.get() == from; },
+        to );
 
     from.clear();
 
@@ -228,8 +228,8 @@ std::string ExecutionSemanticsBlock::name( void ) const
 
 u1 ExecutionSemanticsBlock::classof( Value const* obj )
 {
-    return obj->id() == classid() or ParallelBlock::classof( obj )
-           or SequentialBlock::classof( obj );
+    return obj->id() == classid() or ParallelBlock::classof( obj ) or
+           SequentialBlock::classof( obj );
 }
 
 //
@@ -286,8 +286,7 @@ void ParallelBlock::replaceWith( const Block::Ptr block )
         assert( parent() );
         assert( isa< ExecutionSemanticsBlock >( parent() ) );
 
-        const auto blk
-            = std::static_pointer_cast< ExecutionSemanticsBlock >( parent() );
+        const auto blk = std::static_pointer_cast< ExecutionSemanticsBlock >( parent() );
 
         blk->replace( *this, block );
     }
@@ -330,8 +329,7 @@ void SequentialBlock::replaceWith( const Block::Ptr block )
     assert( parent() );
     assert( isa< ExecutionSemanticsBlock >( parent() ) );
 
-    const auto blk
-        = std::static_pointer_cast< ExecutionSemanticsBlock >( parent() );
+    const auto blk = std::static_pointer_cast< ExecutionSemanticsBlock >( parent() );
 
     blk->replace( *this, block );
 }

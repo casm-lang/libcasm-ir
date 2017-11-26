@@ -57,7 +57,7 @@ namespace libcasm_ir
     constexpr const char* BRANCH = "@GIT_BRANCH@";
 }
 
-#endif // _LIBCASM_IR_VERSION_H_
+#endif  // _LIBCASM_IR_VERSION_H_
 
 //
 //  Local variables:

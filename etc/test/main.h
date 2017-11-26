@@ -46,7 +46,7 @@
 
 #include <libcasm-ir/libcasm-ir>
 
-#endif // _LIBCASMIR_UTS_MAIN_H_
+#endif  // _LIBCASMIR_UTS_MAIN_H_
 
 //
 //  Local variables:

@@ -65,8 +65,7 @@ namespace libcasm_ir
 
         Block::Ptr parent( void ) const;
 
-        void setScope(
-            const std::shared_ptr< ExecutionSemanticsBlock >& scope );
+        void setScope( const std::shared_ptr< ExecutionSemanticsBlock >& scope );
 
         std::shared_ptr< ExecutionSemanticsBlock > scope( void ) const;
 
@@ -98,8 +97,7 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< ExecutionSemanticsBlock >;
 
       protected:
-        ExecutionSemanticsBlock(
-            const u1 parallel, const Value::ID id = classid() );
+        ExecutionSemanticsBlock( const u1 parallel, const Value::ID id = classid() );
 
       public:
         u1 parallel( void ) const;
@@ -117,8 +115,7 @@ namespace libcasm_ir
         template < typename T, typename... Args >
         typename T::Ptr add( Args&&... args )
         {
-            auto obj = libstdhl::Memory::make< T >(
-                std::forward< Args >( args )... );
+            auto obj = libstdhl::Memory::make< T >( std::forward< Args >( args )... );
             add( obj );
             return obj;
         }
@@ -207,7 +204,7 @@ namespace libcasm_ir
     };
 }
 
-#endif // _LIBCASM_IR_BLOCK_H_
+#endif  // _LIBCASM_IR_BLOCK_H_
 
 //
 //  Local variables:

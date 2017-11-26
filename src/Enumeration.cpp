@@ -45,8 +45,7 @@
 
 using namespace libcasm_ir;
 
-Enumeration::Enumeration(
-    const std::string& name, const std::vector< std::string >& values )
+Enumeration::Enumeration( const std::string& name, const std::vector< std::string >& values )
 : Value( libstdhl::Memory::get< VoidType >(), classid() )
 , m_name( name )
 {
@@ -71,8 +70,7 @@ void Enumeration::add( const std::string& value )
     if( not result.second )
     {
         throw std::domain_error(
-            "enumeration '" + name() + "' already has a value '" + value
-            + "'" );
+            "enumeration '" + name() + "' already has a value '" + value + "'" );
     }
 }
 
@@ -90,18 +88,16 @@ u64 Enumeration::encode( const std::string& value ) const
     }
 
     throw std::domain_error(
-        "invalid value '" + value + "' to encode for enumeration '" + name()
-        + "'!" );
+        "invalid value '" + value + "' to encode for enumeration '" + name() + "'!" );
 }
 
 std::string Enumeration::decode( const u64 value ) const
 {
     if( value >= m_values.size() )
     {
-        throw std::domain_error( "invalid value '" + std::to_string( value )
-                                 + "' to decode for enumeration '"
-                                 + name()
-                                 + "'" );
+        throw std::domain_error(
+            "invalid value '" + std::to_string( value ) + "' to decode for enumeration '" + name() +
+            "'" );
     }
 
     return m_values[ value ];
@@ -114,8 +110,7 @@ std::string Enumeration::name( void ) const
 
 std::size_t Enumeration::hash( void ) const
 {
-    return libstdhl::Hash::combine(
-        classid(), std::hash< std::string >()( name() ) );
+    return libstdhl::Hash::combine( classid(), std::hash< std::string >()( name() ) );
 }
 
 u1 Enumeration::operator==( const Value& rhs ) const

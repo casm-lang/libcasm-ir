@@ -66,8 +66,7 @@ std::string Builtin::name( void ) const
 
 std::size_t Builtin::hash( void ) const
 {
-    return libstdhl::Hash::combine(
-        classid(), std::hash< std::string >()( name() ) );
+    return libstdhl::Hash::combine( classid(), std::hash< std::string >()( name() ) );
 }
 
 u1 Builtin::operator==( const Value& rhs ) const
@@ -93,9 +92,9 @@ void Builtin::accept( Visitor& visitor )
 
 u1 Builtin::classof( Value const* obj )
 {
-    return obj->id() == classid() or GeneralBuiltin::classof( obj )
-           or CastingBuiltin::classof( obj )
-           or StringifyBuiltin::classof( obj )
+    return obj->id() == classid() or GeneralBuiltin::classof( obj ) or
+           CastingBuiltin::classof( obj ) or
+           StringifyBuiltin::classof( obj )
            // or MathBuiltin::classof( obj )
            or OperatorBuiltin::classof( obj ) or BitBuiltin::classof( obj );
 }
@@ -108,12 +107,10 @@ u1 Builtin::available( const std::string& token )
 
         const auto id = annotation.valueID();
 
-        if( id == CastingBuiltin::classid() or id == AsBooleanBuiltin::classid()
-            or id == AsIntegerBuiltin::classid()
-            or id == AsBitBuiltin::classid() or id == AsStringBuiltin::classid()
-            or id == AsDecimalBuiltin::classid()
-            or id == AsRationalBuiltin::classid()
-            or id == AsEnumerationBuiltin::classid() )
+        if( id == CastingBuiltin::classid() or id == AsBooleanBuiltin::classid() or
+            id == AsIntegerBuiltin::classid() or id == AsBitBuiltin::classid() or
+            id == AsStringBuiltin::classid() or id == AsDecimalBuiltin::classid() or
+            id == AsRationalBuiltin::classid() or id == AsEnumerationBuiltin::classid() )
         {
             return false;
         }
@@ -134,70 +131,70 @@ Builtin::Ptr Builtin::create( const Value::ID id, const Type::Ptr& type )
 {
     switch( id )
     {
-        case Value::VALUE:                     // [fallthrough]
-        case Value::VALUE_LIST:                // [fallthrough]
-        case Value::USER:                      // [fallthrough]
-        case Value::SPECIFICATION:             // [fallthrough]
-        case Value::AGENT:                     // [fallthrough]
-        case Value::RULE:                      // [fallthrough]
-        case Value::DERIVED:                   // [fallthrough]
-        case Value::FUNCTION:                  // [fallthrough]
-        case Value::ENUMERATION:               // [fallthrough]
-        case Value::RANGE:                     // [fallthrough]
-        case Value::BLOCK:                     // [fallthrough]
-        case Value::EXECUTION_SEMANTICS_BLOCK: // [fallthrough]
-        case Value::PARALLEL_BLOCK:            // [fallthrough]
-        case Value::SEQUENTIAL_BLOCK:          // [fallthrough]
-        case Value::STATEMENT:                 // [fallthrough]
-        case Value::TRIVIAL_STATEMENT:         // [fallthrough]
-        case Value::BRANCH_STATEMENT:          // [fallthrough]
-        case Value::CONSTANT:                  // [fallthrough]
-        case Value::VOID_CONSTANT:             // [fallthrough]
-        case Value::RULE_REFERENCE_CONSTANT:   // [fallthrough]
-        case Value::BOOLEAN_CONSTANT:          // [fallthrough]
-        case Value::INTEGER_CONSTANT:          // [fallthrough]
-        case Value::BIT_CONSTANT:              // [fallthrough]
-        case Value::STRING_CONSTANT:           // [fallthrough]
-        case Value::DECIMAL_CONSTANT:          // [fallthrough]
-        case Value::RATIONAL_CONSTANT:         // [fallthrough]
-        case Value::ENUMERATION_CONSTANT:      // [fallthrough]
-        case Value::RANGE_CONSTANT:            // [fallthrough]
-        case Value::IDENTIFIER:                // [fallthrough]
-        case Value::INSTRUCTION:               // [fallthrough]
-        case Value::UNARY_INSTRUCTION:         // [fallthrough]
-        case Value::BINARY_INSTRUCTION:        // [fallthrough]
-        case Value::SELECT_INSTRUCTION:        // [fallthrough]
-        case Value::SKIP_INSTRUCTION:          // [fallthrough]
-        case Value::FORK_INSTRUCTION:          // [fallthrough]
-        case Value::MERGE_INSTRUCTION:         // [fallthrough]
-        case Value::LOOKUP_INSTRUCTION:        // [fallthrough]
-        case Value::UPDATE_INSTRUCTION:        // [fallthrough]
-        case Value::LOCATION_INSTRUCTION:      // [fallthrough]
-        case Value::CALL_INSTRUCTION:          // [fallthrough]
-        case Value::LOCAL_INSTRUCTION:         // [fallthrough]
-        case Value::OPERATOR_INSTRUCTION:      // [fallthrough]
-        case Value::ARITHMETIC_INSTRUCTION:    // [fallthrough]
-        case Value::INV_INSTRUCTION:           // [fallthrough]
-        case Value::ADD_INSTRUCTION:           // [fallthrough]
-        case Value::SUB_INSTRUCTION:           // [fallthrough]
-        case Value::MUL_INSTRUCTION:           // [fallthrough]
-        case Value::DIV_INSTRUCTION:           // [fallthrough]
-        case Value::POW_INSTRUCTION:           // [fallthrough]
-        case Value::MOD_INSTRUCTION:           // [fallthrough]
-        case Value::COMPARE_INSTRUCTION:       // [fallthrough]
-        case Value::EQU_INSTRUCTION:           // [fallthrough]
-        case Value::NEQ_INSTRUCTION:           // [fallthrough]
-        case Value::LTH_INSTRUCTION:           // [fallthrough]
-        case Value::LEQ_INSTRUCTION:           // [fallthrough]
-        case Value::GTH_INSTRUCTION:           // [fallthrough]
-        case Value::GEQ_INSTRUCTION:           // [fallthrough]
-        case Value::LOGICAL_INSTRUCTION:       // [fallthrough]
-        case Value::OR_INSTRUCTION:            // [fallthrough]
-        case Value::XOR_INSTRUCTION:           // [fallthrough]
-        case Value::AND_INSTRUCTION:           // [fallthrough]
-        case Value::IMP_INSTRUCTION:           // [fallthrough]
-        case Value::NOT_INSTRUCTION:           // [fallthrough]
-        case Value::BUILTIN:                   // [fallthrough]
+        case Value::VALUE:                      // [fallthrough]
+        case Value::VALUE_LIST:                 // [fallthrough]
+        case Value::USER:                       // [fallthrough]
+        case Value::SPECIFICATION:              // [fallthrough]
+        case Value::AGENT:                      // [fallthrough]
+        case Value::RULE:                       // [fallthrough]
+        case Value::DERIVED:                    // [fallthrough]
+        case Value::FUNCTION:                   // [fallthrough]
+        case Value::ENUMERATION:                // [fallthrough]
+        case Value::RANGE:                      // [fallthrough]
+        case Value::BLOCK:                      // [fallthrough]
+        case Value::EXECUTION_SEMANTICS_BLOCK:  // [fallthrough]
+        case Value::PARALLEL_BLOCK:             // [fallthrough]
+        case Value::SEQUENTIAL_BLOCK:           // [fallthrough]
+        case Value::STATEMENT:                  // [fallthrough]
+        case Value::TRIVIAL_STATEMENT:          // [fallthrough]
+        case Value::BRANCH_STATEMENT:           // [fallthrough]
+        case Value::CONSTANT:                   // [fallthrough]
+        case Value::VOID_CONSTANT:              // [fallthrough]
+        case Value::RULE_REFERENCE_CONSTANT:    // [fallthrough]
+        case Value::BOOLEAN_CONSTANT:           // [fallthrough]
+        case Value::INTEGER_CONSTANT:           // [fallthrough]
+        case Value::BIT_CONSTANT:               // [fallthrough]
+        case Value::STRING_CONSTANT:            // [fallthrough]
+        case Value::DECIMAL_CONSTANT:           // [fallthrough]
+        case Value::RATIONAL_CONSTANT:          // [fallthrough]
+        case Value::ENUMERATION_CONSTANT:       // [fallthrough]
+        case Value::RANGE_CONSTANT:             // [fallthrough]
+        case Value::IDENTIFIER:                 // [fallthrough]
+        case Value::INSTRUCTION:                // [fallthrough]
+        case Value::UNARY_INSTRUCTION:          // [fallthrough]
+        case Value::BINARY_INSTRUCTION:         // [fallthrough]
+        case Value::SELECT_INSTRUCTION:         // [fallthrough]
+        case Value::SKIP_INSTRUCTION:           // [fallthrough]
+        case Value::FORK_INSTRUCTION:           // [fallthrough]
+        case Value::MERGE_INSTRUCTION:          // [fallthrough]
+        case Value::LOOKUP_INSTRUCTION:         // [fallthrough]
+        case Value::UPDATE_INSTRUCTION:         // [fallthrough]
+        case Value::LOCATION_INSTRUCTION:       // [fallthrough]
+        case Value::CALL_INSTRUCTION:           // [fallthrough]
+        case Value::LOCAL_INSTRUCTION:          // [fallthrough]
+        case Value::OPERATOR_INSTRUCTION:       // [fallthrough]
+        case Value::ARITHMETIC_INSTRUCTION:     // [fallthrough]
+        case Value::INV_INSTRUCTION:            // [fallthrough]
+        case Value::ADD_INSTRUCTION:            // [fallthrough]
+        case Value::SUB_INSTRUCTION:            // [fallthrough]
+        case Value::MUL_INSTRUCTION:            // [fallthrough]
+        case Value::DIV_INSTRUCTION:            // [fallthrough]
+        case Value::POW_INSTRUCTION:            // [fallthrough]
+        case Value::MOD_INSTRUCTION:            // [fallthrough]
+        case Value::COMPARE_INSTRUCTION:        // [fallthrough]
+        case Value::EQU_INSTRUCTION:            // [fallthrough]
+        case Value::NEQ_INSTRUCTION:            // [fallthrough]
+        case Value::LTH_INSTRUCTION:            // [fallthrough]
+        case Value::LEQ_INSTRUCTION:            // [fallthrough]
+        case Value::GTH_INSTRUCTION:            // [fallthrough]
+        case Value::GEQ_INSTRUCTION:            // [fallthrough]
+        case Value::LOGICAL_INSTRUCTION:        // [fallthrough]
+        case Value::OR_INSTRUCTION:             // [fallthrough]
+        case Value::XOR_INSTRUCTION:            // [fallthrough]
+        case Value::AND_INSTRUCTION:            // [fallthrough]
+        case Value::IMP_INSTRUCTION:            // [fallthrough]
+        case Value::NOT_INSTRUCTION:            // [fallthrough]
+        case Value::BUILTIN:                    // [fallthrough]
         case Value::GENERAL_BUILTIN:
         {
             break;
@@ -282,7 +279,7 @@ Builtin::Ptr Builtin::create( const Value::ID id, const Type::Ptr& type )
             return libstdhl::Memory::make< BinBuiltin >( type );
         }
 
-        case Value::OPERATOR_BUILTIN: // [fallthrough]
+        case Value::OPERATOR_BUILTIN:  // [fallthrough]
         case Value::ARITHMETIC_BUILTIN:
         {
             break;
@@ -413,9 +410,9 @@ GeneralBuiltin::GeneralBuiltin( const Type::Ptr& type, const Value::ID id )
 
 u1 GeneralBuiltin::classof( Value const* obj )
 {
-    return obj->id() == classid() or IsSymbolicBuiltin::classof( obj )
-           or AbortBuiltin::classof( obj ) or AssertBuiltin::classof( obj )
-           or OutputBuiltin::classof( obj );
+    return obj->id() == classid() or IsSymbolicBuiltin::classof( obj ) or
+           AbortBuiltin::classof( obj ) or AssertBuiltin::classof( obj ) or
+           OutputBuiltin::classof( obj );
 }
 
 //
@@ -427,43 +424,44 @@ IsSymbolicBuiltin::IsSymbolicBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation IsSymbolicBuiltin::annotation( classid(),
+const Annotation IsSymbolicBuiltin::annotation(
+    classid(),
     Annotation::Relations{
 
         { Type::Kind::BOOLEAN,
-            {
-                Type::Kind::BOOLEAN,
-            } },
+          {
+              Type::Kind::BOOLEAN,
+          } },
 
         { Type::Kind::BOOLEAN,
-            {
-                Type::Kind::INTEGER,
-            } },
+          {
+              Type::Kind::INTEGER,
+          } },
 
         { Type::Kind::BOOLEAN,
-            {
-                Type::Kind::BIT,
-            } },
+          {
+              Type::Kind::BIT,
+          } },
 
         { Type::Kind::BOOLEAN,
-            {
-                Type::Kind::DECIMAL,
-            } },
+          {
+              Type::Kind::DECIMAL,
+          } },
 
         { Type::Kind::BOOLEAN,
-            {
-                Type::Kind::STRING,
-            } },
+          {
+              Type::Kind::STRING,
+          } },
 
         { Type::Kind::BOOLEAN,
-            {
-                Type::Kind::RATIONAL,
-            } },
+          {
+              Type::Kind::RATIONAL,
+          } },
 
         { Type::Kind::BOOLEAN,
-            {
-                Type::Kind::ENUMERATION,
-            } },
+          {
+              Type::Kind::ENUMERATION,
+          } },
 
     },
     []( std::vector< Type::Ptr >& types ) {},
@@ -490,7 +488,8 @@ AbortBuiltin::AbortBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation AbortBuiltin::annotation( classid(),
+const Annotation AbortBuiltin::annotation(
+    classid(),
     Annotation::Relations{
 
         { Type::Kind::VOID, {} },
@@ -520,13 +519,14 @@ AssertBuiltin::AssertBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation AssertBuiltin::annotation( classid(),
+const Annotation AssertBuiltin::annotation(
+    classid(),
     Annotation::Relations{
 
         { Type::Kind::VOID,
-            {
-                Type::Kind::BOOLEAN,
-            } },
+          {
+              Type::Kind::BOOLEAN,
+          } },
 
     },
     []( std::vector< Type::Ptr >& types ) {
@@ -558,8 +558,8 @@ u1 AssertBuiltin::classof( Value const* obj )
 // OutputBuiltin
 //
 
-OutputBuiltin::OutputBuiltin( const Type::Ptr& type, const std::string& channel,
-    u1 newline, const Value::ID id )
+OutputBuiltin::OutputBuiltin(
+    const Type::Ptr& type, const std::string& channel, u1 newline, const Value::ID id )
 : GeneralBuiltin( type, classid() )
 , m_channel( channel )
 , m_newline( newline )
@@ -578,8 +578,7 @@ u1 OutputBuiltin::newline( void ) const
 
 u1 OutputBuiltin::classof( Value const* obj )
 {
-    return obj->id() == classid() or PrintBuiltin::classof( obj )
-           or PrintLnBuiltin::classof( obj );
+    return obj->id() == classid() or PrintBuiltin::classof( obj ) or PrintLnBuiltin::classof( obj );
 }
 
 //
@@ -591,13 +590,14 @@ PrintBuiltin::PrintBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation PrintBuiltin::annotation( classid(),
+const Annotation PrintBuiltin::annotation(
+    classid(),
     Annotation::Relations{
 
         { Type::Kind::VOID,
-            {
-                Type::Kind::STRING,
-            } }
+          {
+              Type::Kind::STRING,
+          } }
 
     },
     []( std::vector< Type::Ptr >& types ) {
@@ -621,9 +621,9 @@ const Annotation PrintBuiltin::annotation( classid(),
 
         if( not argumentType->isString() )
         {
-            throw TypeArgumentException( "found '" + argumentType->description()
-                                             + "', but expects '"
-                                             + STRING->description() + "'",
+            throw TypeArgumentException(
+                "found '" + argumentType->description() + "', but expects '" +
+                    STRING->description() + "'",
                 0 );
         }
 
@@ -644,13 +644,14 @@ PrintLnBuiltin::PrintLnBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation PrintLnBuiltin::annotation( classid(),
+const Annotation PrintLnBuiltin::annotation(
+    classid(),
     Annotation::Relations{
 
         { Type::Kind::VOID,
-            {
-                Type::Kind::STRING,
-            } }
+          {
+              Type::Kind::STRING,
+          } }
 
     },
     []( std::vector< Type::Ptr >& types ) {
@@ -674,9 +675,9 @@ const Annotation PrintLnBuiltin::annotation( classid(),
 
         if( not argumentType->isString() )
         {
-            throw TypeArgumentException( "found '" + argumentType->description()
-                                             + "', but expects '"
-                                             + STRING->description() + "'",
+            throw TypeArgumentException(
+                "found '" + argumentType->description() + "', but expects '" +
+                    STRING->description() + "'",
                 0 );
         }
 
@@ -701,11 +702,10 @@ CastingBuiltin::CastingBuiltin( const Type::Ptr& type, const Value::ID id )
 
 u1 CastingBuiltin::classof( Value const* obj )
 {
-    return obj->id() == classid() or AsBooleanBuiltin::classof( obj )
-           or AsIntegerBuiltin::classof( obj ) or AsBitBuiltin::classof( obj )
-           or AsEnumerationBuiltin::classof( obj )
-           or AsStringBuiltin::classof( obj )
-           or AsDecimalBuiltin::classof( obj );
+    return obj->id() == classid() or AsBooleanBuiltin::classof( obj ) or
+           AsIntegerBuiltin::classof( obj ) or AsBitBuiltin::classof( obj ) or
+           AsEnumerationBuiltin::classof( obj ) or AsStringBuiltin::classof( obj ) or
+           AsDecimalBuiltin::classof( obj );
 }
 
 //
@@ -717,23 +717,24 @@ AsBooleanBuiltin::AsBooleanBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation AsBooleanBuiltin::annotation( classid(),
+const Annotation AsBooleanBuiltin::annotation(
+    classid(),
     Annotation::Relations{
 
         { Type::Kind::BOOLEAN,
-            {
-                Type::Kind::BOOLEAN,
-            } },
+          {
+              Type::Kind::BOOLEAN,
+          } },
 
         { Type::Kind::BOOLEAN,
-            {
-                Type::Kind::INTEGER,
-            } },
+          {
+              Type::Kind::INTEGER,
+          } },
 
         { Type::Kind::BOOLEAN,
-            {
-                Type::Kind::BIT,
-            } },
+          {
+              Type::Kind::BIT,
+          } },
 
     },
     []( std::vector< Type::Ptr >& types ) {},
@@ -760,28 +761,29 @@ AsIntegerBuiltin::AsIntegerBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation AsIntegerBuiltin::annotation( classid(),
+const Annotation AsIntegerBuiltin::annotation(
+    classid(),
     Annotation::Relations{
 
         { Type::Kind::INTEGER,
-            {
-                Type::Kind::BOOLEAN,
-            } },
+          {
+              Type::Kind::BOOLEAN,
+          } },
 
         { Type::Kind::INTEGER,
-            {
-                Type::Kind::INTEGER,
-            } },
+          {
+              Type::Kind::INTEGER,
+          } },
 
         { Type::Kind::INTEGER,
-            {
-                Type::Kind::BIT,
-            } },
+          {
+              Type::Kind::BIT,
+          } },
 
         { Type::Kind::INTEGER,
-            {
-                Type::Kind::DECIMAL,
-            } },
+          {
+              Type::Kind::DECIMAL,
+          } },
 
     },
     []( std::vector< Type::Ptr >& types ) {},
@@ -817,28 +819,29 @@ AsBitBuiltin::AsBitBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation AsBitBuiltin::annotation( classid(),
+const Annotation AsBitBuiltin::annotation(
+    classid(),
     Annotation::Relations{
 
         { Type::Kind::BIT,
-            {
-                Type::Kind::BOOLEAN,
-            } },
+          {
+              Type::Kind::BOOLEAN,
+          } },
 
         { Type::Kind::BIT,
-            {
-                Type::Kind::INTEGER,
-            } },
+          {
+              Type::Kind::INTEGER,
+          } },
 
         { Type::Kind::BIT,
-            {
-                Type::Kind::BIT,
-            } },
+          {
+              Type::Kind::BIT,
+          } },
 
         { Type::Kind::BIT,
-            {
-                Type::Kind::DECIMAL,
-            } },
+          {
+              Type::Kind::DECIMAL,
+          } },
 
     },
     []( std::vector< Type::Ptr >& types ) {},
@@ -878,53 +881,54 @@ AsStringBuiltin::AsStringBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation AsStringBuiltin::annotation( classid(),
+const Annotation AsStringBuiltin::annotation(
+    classid(),
     Annotation::Relations{
 
         { Type::Kind::STRING,
-            {
-                Type::Kind::BOOLEAN,
-            } },
+          {
+              Type::Kind::BOOLEAN,
+          } },
 
         { Type::Kind::STRING,
-            {
-                Type::Kind::INTEGER,
-            } },
+          {
+              Type::Kind::INTEGER,
+          } },
 
         { Type::Kind::STRING,
-            {
-                Type::Kind::RATIONAL,
-            } },
+          {
+              Type::Kind::RATIONAL,
+          } },
 
         { Type::Kind::STRING,
-            {
-                Type::Kind::BIT,
-            } },
+          {
+              Type::Kind::BIT,
+          } },
 
         { Type::Kind::STRING,
-            {
-                Type::Kind::DECIMAL,
-            } },
+          {
+              Type::Kind::DECIMAL,
+          } },
 
         { Type::Kind::STRING,
-            {
-                Type::Kind::STRING,
-            } },
+          {
+              Type::Kind::STRING,
+          } },
 
         { Type::Kind::STRING,
-            {
-                Type::Kind::ENUMERATION,
-            } },
+          {
+              Type::Kind::ENUMERATION,
+          } },
 
         { Type::Kind::STRING,
-            {
-                Type::Kind::RULE_REFERENCE,
-            } },
+          {
+              Type::Kind::RULE_REFERENCE,
+          } },
 
         { Type::Kind::STRING,
-            {
-                Type::Kind::FUNCTION_REFERENCE,
-            } },
+          {
+              Type::Kind::FUNCTION_REFERENCE,
+          } },
 
     },
     []( std::vector< Type::Ptr >& types ) {},
@@ -951,28 +955,29 @@ AsDecimalBuiltin::AsDecimalBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation AsDecimalBuiltin::annotation( classid(),
+const Annotation AsDecimalBuiltin::annotation(
+    classid(),
     Annotation::Relations{
 
         { Type::Kind::DECIMAL,
-            {
-                Type::Kind::BOOLEAN,
-            } },
+          {
+              Type::Kind::BOOLEAN,
+          } },
 
         { Type::Kind::DECIMAL,
-            {
-                Type::Kind::INTEGER,
-            } },
+          {
+              Type::Kind::INTEGER,
+          } },
 
         { Type::Kind::DECIMAL,
-            {
-                Type::Kind::BIT,
-            } },
+          {
+              Type::Kind::BIT,
+          } },
 
         { Type::Kind::DECIMAL,
-            {
-                Type::Kind::DECIMAL,
-            } },
+          {
+              Type::Kind::DECIMAL,
+          } },
 
     },
     []( std::vector< Type::Ptr >& types ) {},
@@ -999,28 +1004,29 @@ AsRationalBuiltin::AsRationalBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation AsRationalBuiltin::annotation( classid(),
+const Annotation AsRationalBuiltin::annotation(
+    classid(),
     Annotation::Relations{
 
         { Type::Kind::RATIONAL,
-            {
-                Type::Kind::BOOLEAN,
-            } },
+          {
+              Type::Kind::BOOLEAN,
+          } },
 
         { Type::Kind::RATIONAL,
-            {
-                Type::Kind::INTEGER,
-            } },
+          {
+              Type::Kind::INTEGER,
+          } },
 
         { Type::Kind::RATIONAL,
-            {
-                Type::Kind::RATIONAL,
-            } },
+          {
+              Type::Kind::RATIONAL,
+          } },
 
         { Type::Kind::RATIONAL,
-            {
-                Type::Kind::BIT,
-            } },
+          {
+              Type::Kind::BIT,
+          } },
 
     },
     []( std::vector< Type::Ptr >& types ) {},
@@ -1047,13 +1053,14 @@ AsEnumerationBuiltin::AsEnumerationBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation AsEnumerationBuiltin::annotation( classid(),
+const Annotation AsEnumerationBuiltin::annotation(
+    classid(),
     Annotation::Relations{
 
         { Type::Kind::ENUMERATION,
-            {
-                Type::Kind::ENUMERATION,
-            } },
+          {
+              Type::Kind::ENUMERATION,
+          } },
 
     },
     []( std::vector< Type::Ptr >& types ) {},
@@ -1063,8 +1070,8 @@ const Annotation AsEnumerationBuiltin::annotation( classid(),
         {
             throw InternalException( "types.size() != 1" );
         }
-        return nullptr; // TODO: PPA: fetch through values a enumeration kind
-                        // hint and return its type!
+        return nullptr;  // TODO: PPA: fetch through values a enumeration kind
+                         // hint and return its type!
     } );
 
 u1 AsEnumerationBuiltin::classof( Value const* obj )
@@ -1083,51 +1090,49 @@ StringifyBuiltin::StringifyBuiltin( const Type::Ptr& type, const Value::ID id )
 
 u1 StringifyBuiltin::classof( Value const* obj )
 {
-    return obj->id() == classid() or DecBuiltin::classof( obj )
-           or HexBuiltin::classof( obj ) or OctBuiltin::classof( obj )
-           or BinBuiltin::classof( obj );
+    return obj->id() == classid() or DecBuiltin::classof( obj ) or HexBuiltin::classof( obj ) or
+           OctBuiltin::classof( obj ) or BinBuiltin::classof( obj );
 }
 
 static const Annotation::Relations stringify_builtin_data = {
 
     { Type::Kind::STRING,
-        {
-            Type::Kind::BOOLEAN,
-        } },
+      {
+          Type::Kind::BOOLEAN,
+      } },
 
     { Type::Kind::STRING,
-        {
-            Type::Kind::INTEGER,
-        } },
+      {
+          Type::Kind::INTEGER,
+      } },
 
     { Type::Kind::STRING,
-        {
-            Type::Kind::BIT,
-        } },
+      {
+          Type::Kind::BIT,
+      } },
 
     { Type::Kind::STRING,
-        {
-            Type::Kind::DECIMAL,
-        } },
+      {
+          Type::Kind::DECIMAL,
+      } },
 
     { Type::Kind::STRING,
-        {
-            Type::Kind::RATIONAL,
-        } },
+      {
+          Type::Kind::RATIONAL,
+      } },
 
     { Type::Kind::STRING,
-        {
-            Type::Kind::ENUMERATION,
-        } }
+      {
+          Type::Kind::ENUMERATION,
+      } }
 
 };
 
-static const auto stringify_builtin_resolve
-    = []( std::vector< Type::Ptr >& types ) {};
+static const auto stringify_builtin_resolve = []( std::vector< Type::Ptr >& types ) {};
 
-static const auto stringify_builtin_inference
-    = []( const std::vector< Type::Ptr >& types,
-          const std::vector< Value::Ptr >& values ) -> Type::Ptr {
+static const auto stringify_builtin_inference =
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& values ) -> Type::Ptr {
     if( types.size() != 1 )
     {
         throw InternalException( "types.size() != 1" );
@@ -1144,8 +1149,8 @@ DecBuiltin::DecBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation DecBuiltin::annotation( classid(), stringify_builtin_data,
-    stringify_builtin_resolve, stringify_builtin_inference );
+const Annotation DecBuiltin::annotation(
+    classid(), stringify_builtin_data, stringify_builtin_resolve, stringify_builtin_inference );
 
 u1 DecBuiltin::classof( Value const* obj )
 {
@@ -1161,8 +1166,8 @@ HexBuiltin::HexBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation HexBuiltin::annotation( classid(), stringify_builtin_data,
-    stringify_builtin_resolve, stringify_builtin_inference );
+const Annotation HexBuiltin::annotation(
+    classid(), stringify_builtin_data, stringify_builtin_resolve, stringify_builtin_inference );
 
 u1 HexBuiltin::classof( Value const* obj )
 {
@@ -1178,8 +1183,8 @@ OctBuiltin::OctBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation OctBuiltin::annotation( classid(), stringify_builtin_data,
-    stringify_builtin_resolve, stringify_builtin_inference );
+const Annotation OctBuiltin::annotation(
+    classid(), stringify_builtin_data, stringify_builtin_resolve, stringify_builtin_inference );
 
 u1 OctBuiltin::classof( Value const* obj )
 {
@@ -1195,8 +1200,8 @@ BinBuiltin::BinBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation BinBuiltin::annotation( classid(), stringify_builtin_data,
-    stringify_builtin_resolve, stringify_builtin_inference );
+const Annotation BinBuiltin::annotation(
+    classid(), stringify_builtin_data, stringify_builtin_resolve, stringify_builtin_inference );
 
 u1 BinBuiltin::classof( Value const* obj )
 {
@@ -1214,16 +1219,15 @@ OperatorBuiltin::OperatorBuiltin( const Type::Ptr& type, const Value::ID id )
 
 u1 OperatorBuiltin::classof( Value const* obj )
 {
-    return obj->id() == classid() or ArithmeticBuiltin::classof( obj )
-           or CompareBuiltin::classof( obj );
+    return obj->id() == classid() or ArithmeticBuiltin::classof( obj ) or
+           CompareBuiltin::classof( obj );
 }
 
 //
 // ArithmeticBuiltin
 //
 
-ArithmeticBuiltin::ArithmeticBuiltin(
-    const Type::Ptr& type, const Value::ID id )
+ArithmeticBuiltin::ArithmeticBuiltin( const Type::Ptr& type, const Value::ID id )
 : OperatorBuiltin( type, id )
 {
 }
@@ -1231,38 +1235,36 @@ ArithmeticBuiltin::ArithmeticBuiltin(
 static const Annotation::Relations arithmetic_builtin_data = {
 
     { Type::Kind::INTEGER,
-        {
-            Type::Kind::INTEGER,
-            Type::Kind::INTEGER,
-        } },
+      {
+          Type::Kind::INTEGER,
+          Type::Kind::INTEGER,
+      } },
 
     { Type::Kind::BIT,
-        {
-            Type::Kind::BIT,
-            Type::Kind::BIT,
-        } }
+      {
+          Type::Kind::BIT,
+          Type::Kind::BIT,
+      } }
 };
 
-static const auto arithmetic_builtin_resolve
-    = []( std::vector< Type::Ptr >& types ) {
-          if( types.size() != 2 )
-          {
-              throw InternalException( "types.size() != 2" );
-          }
+static const auto arithmetic_builtin_resolve = []( std::vector< Type::Ptr >& types ) {
+    if( types.size() != 2 )
+    {
+        throw InternalException( "types.size() != 2" );
+    }
 
-          if( not types[ 0 ] )
-          {
-              types[ 0 ] = types[ 1 ];
-          }
-          else if( not types[ 1 ] )
-          {
-              types[ 1 ] = types[ 0 ];
-          }
-      };
+    if( not types[ 0 ] )
+    {
+        types[ 0 ] = types[ 1 ];
+    }
+    else if( not types[ 1 ] )
+    {
+        types[ 1 ] = types[ 0 ];
+    }
+};
 
-static const auto arithmetic_builtin_inference
-    = []( const std::vector< Type::Ptr >& types,
-          const std::vector< Value::Ptr >& ) -> Type::Ptr {
+static const auto arithmetic_builtin_inference =
+    []( const std::vector< Type::Ptr >& types, const std::vector< Value::Ptr >& ) -> Type::Ptr {
     if( types.size() != 2 )
     {
         throw InternalException( "types.size() != 2" );
@@ -1281,10 +1283,9 @@ static const auto arithmetic_builtin_inference
 
 u1 ArithmeticBuiltin::classof( Value const* obj )
 {
-    return obj->id() == classid() or AdduBuiltin::classof( obj )
-           or AddsBuiltin::classof( obj ) or SubuBuiltin::classof( obj )
-           or SubsBuiltin::classof( obj ) or MuluBuiltin::classof( obj )
-           or MulsBuiltin::classof( obj );
+    return obj->id() == classid() or AdduBuiltin::classof( obj ) or AddsBuiltin::classof( obj ) or
+           SubuBuiltin::classof( obj ) or SubsBuiltin::classof( obj ) or
+           MuluBuiltin::classof( obj ) or MulsBuiltin::classof( obj );
 }
 
 //
@@ -1296,8 +1297,8 @@ AdduBuiltin::AdduBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation AdduBuiltin::annotation( classid(), arithmetic_builtin_data,
-    arithmetic_builtin_resolve, arithmetic_builtin_inference );
+const Annotation AdduBuiltin::annotation(
+    classid(), arithmetic_builtin_data, arithmetic_builtin_resolve, arithmetic_builtin_inference );
 
 u1 AdduBuiltin::classof( Value const* obj )
 {
@@ -1313,8 +1314,8 @@ AddsBuiltin::AddsBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation AddsBuiltin::annotation( classid(), arithmetic_builtin_data,
-    arithmetic_builtin_resolve, arithmetic_builtin_inference );
+const Annotation AddsBuiltin::annotation(
+    classid(), arithmetic_builtin_data, arithmetic_builtin_resolve, arithmetic_builtin_inference );
 
 u1 AddsBuiltin::classof( Value const* obj )
 {
@@ -1330,8 +1331,8 @@ SubuBuiltin::SubuBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation SubuBuiltin::annotation( classid(), arithmetic_builtin_data,
-    arithmetic_builtin_resolve, arithmetic_builtin_inference );
+const Annotation SubuBuiltin::annotation(
+    classid(), arithmetic_builtin_data, arithmetic_builtin_resolve, arithmetic_builtin_inference );
 
 u1 SubuBuiltin::classof( Value const* obj )
 {
@@ -1347,8 +1348,8 @@ SubsBuiltin::SubsBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation SubsBuiltin::annotation( classid(), arithmetic_builtin_data,
-    arithmetic_builtin_resolve, arithmetic_builtin_inference );
+const Annotation SubsBuiltin::annotation(
+    classid(), arithmetic_builtin_data, arithmetic_builtin_resolve, arithmetic_builtin_inference );
 
 u1 SubsBuiltin::classof( Value const* obj )
 {
@@ -1364,8 +1365,8 @@ MuluBuiltin::MuluBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation MuluBuiltin::annotation( classid(), arithmetic_builtin_data,
-    arithmetic_builtin_resolve, arithmetic_builtin_inference );
+const Annotation MuluBuiltin::annotation(
+    classid(), arithmetic_builtin_data, arithmetic_builtin_resolve, arithmetic_builtin_inference );
 
 u1 MuluBuiltin::classof( Value const* obj )
 {
@@ -1381,8 +1382,8 @@ MulsBuiltin::MulsBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation MulsBuiltin::annotation( classid(), arithmetic_builtin_data,
-    arithmetic_builtin_resolve, arithmetic_builtin_inference );
+const Annotation MulsBuiltin::annotation(
+    classid(), arithmetic_builtin_data, arithmetic_builtin_resolve, arithmetic_builtin_inference );
 
 u1 MulsBuiltin::classof( Value const* obj )
 {
@@ -1401,36 +1402,35 @@ CompareBuiltin::CompareBuiltin( const Type::Ptr& type, const Value::ID id )
 const Annotation::Relations compare_builtin_data = {
 
     { Type::Kind::BOOLEAN,
-        {
-            Type::Kind::INTEGER,
-            Type::Kind::INTEGER,
-        } },
+      {
+          Type::Kind::INTEGER,
+          Type::Kind::INTEGER,
+      } },
 
     { Type::Kind::BOOLEAN,
-        {
-            Type::Kind::RATIONAL,
-            Type::Kind::RATIONAL,
-        } },
+      {
+          Type::Kind::RATIONAL,
+          Type::Kind::RATIONAL,
+      } },
 
     { Type::Kind::BOOLEAN,
-        {
-            Type::Kind::BIT,
-            Type::Kind::BIT,
-        } },
+      {
+          Type::Kind::BIT,
+          Type::Kind::BIT,
+      } },
 
     { Type::Kind::BOOLEAN,
-        {
-            Type::Kind::DECIMAL,
-            Type::Kind::DECIMAL,
-        } },
+      {
+          Type::Kind::DECIMAL,
+          Type::Kind::DECIMAL,
+      } },
 
 };
 
 static const auto compare_builtin_resolve = arithmetic_builtin_resolve;
 
-static const auto compare_builtin_inference
-    = []( const std::vector< Type::Ptr >& types,
-          const std::vector< Value::Ptr >& ) -> Type::Ptr {
+static const auto compare_builtin_inference = []( const std::vector< Type::Ptr >& types,
+                                                  const std::vector< Value::Ptr >& ) -> Type::Ptr {
     if( types.size() != 2 )
     {
         throw InternalException( "types.size() != 2" );
@@ -1449,11 +1449,10 @@ static const auto compare_builtin_inference
 
 u1 CompareBuiltin::classof( Value const* obj )
 {
-    return obj->id() == classid() or LesuBuiltin::classof( obj )
-           or LessBuiltin::classof( obj ) or LequBuiltin::classof( obj )
-           or LeqsBuiltin::classof( obj ) or GreuBuiltin::classof( obj )
-           or GresBuiltin::classof( obj ) or GequBuiltin::classof( obj )
-           or GeqsBuiltin::classof( obj );
+    return obj->id() == classid() or LesuBuiltin::classof( obj ) or LessBuiltin::classof( obj ) or
+           LequBuiltin::classof( obj ) or LeqsBuiltin::classof( obj ) or
+           GreuBuiltin::classof( obj ) or GresBuiltin::classof( obj ) or
+           GequBuiltin::classof( obj ) or GeqsBuiltin::classof( obj );
 }
 
 //
@@ -1465,8 +1464,8 @@ LesuBuiltin::LesuBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation LesuBuiltin::annotation( classid(), compare_builtin_data,
-    compare_builtin_resolve, compare_builtin_inference );
+const Annotation LesuBuiltin::annotation(
+    classid(), compare_builtin_data, compare_builtin_resolve, compare_builtin_inference );
 
 u1 LesuBuiltin::classof( Value const* obj )
 {
@@ -1482,8 +1481,8 @@ LessBuiltin::LessBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation LessBuiltin::annotation( classid(), compare_builtin_data,
-    compare_builtin_resolve, compare_builtin_inference );
+const Annotation LessBuiltin::annotation(
+    classid(), compare_builtin_data, compare_builtin_resolve, compare_builtin_inference );
 
 u1 LessBuiltin::classof( Value const* obj )
 {
@@ -1499,8 +1498,8 @@ LequBuiltin::LequBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation LequBuiltin::annotation( classid(), compare_builtin_data,
-    compare_builtin_resolve, compare_builtin_inference );
+const Annotation LequBuiltin::annotation(
+    classid(), compare_builtin_data, compare_builtin_resolve, compare_builtin_inference );
 
 u1 LequBuiltin::classof( Value const* obj )
 {
@@ -1516,8 +1515,8 @@ LeqsBuiltin::LeqsBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation LeqsBuiltin::annotation( classid(), compare_builtin_data,
-    compare_builtin_resolve, compare_builtin_inference );
+const Annotation LeqsBuiltin::annotation(
+    classid(), compare_builtin_data, compare_builtin_resolve, compare_builtin_inference );
 
 u1 LeqsBuiltin::classof( Value const* obj )
 {
@@ -1533,8 +1532,8 @@ GreuBuiltin::GreuBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation GreuBuiltin::annotation( classid(), compare_builtin_data,
-    compare_builtin_resolve, compare_builtin_inference );
+const Annotation GreuBuiltin::annotation(
+    classid(), compare_builtin_data, compare_builtin_resolve, compare_builtin_inference );
 
 u1 GreuBuiltin::classof( Value const* obj )
 {
@@ -1550,8 +1549,8 @@ GresBuiltin::GresBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation GresBuiltin::annotation( classid(), compare_builtin_data,
-    compare_builtin_resolve, compare_builtin_inference );
+const Annotation GresBuiltin::annotation(
+    classid(), compare_builtin_data, compare_builtin_resolve, compare_builtin_inference );
 
 u1 GresBuiltin::classof( Value const* obj )
 {
@@ -1567,8 +1566,8 @@ GequBuiltin::GequBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation GequBuiltin::annotation( classid(), compare_builtin_data,
-    compare_builtin_resolve, compare_builtin_inference );
+const Annotation GequBuiltin::annotation(
+    classid(), compare_builtin_data, compare_builtin_resolve, compare_builtin_inference );
 
 u1 GequBuiltin::classof( Value const* obj )
 {
@@ -1584,8 +1583,8 @@ GeqsBuiltin::GeqsBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation GeqsBuiltin::annotation( classid(), compare_builtin_data,
-    compare_builtin_resolve, compare_builtin_inference );
+const Annotation GeqsBuiltin::annotation(
+    classid(), compare_builtin_data, compare_builtin_resolve, compare_builtin_inference );
 
 u1 GeqsBuiltin::classof( Value const* obj )
 {
@@ -1603,11 +1602,10 @@ BitBuiltin::BitBuiltin( const Type::Ptr& type, const Value::ID id )
 
 u1 BitBuiltin::classof( Value const* obj )
 {
-    return obj->id() == classid() or ZextBuiltin::classof( obj )
-           or SextBuiltin::classof( obj ) or TruncBuiltin::classof( obj )
-           or ShlBuiltin::classof( obj ) or ShrBuiltin::classof( obj )
-           or AshrBuiltin::classof( obj ) or ClzBuiltin::classof( obj )
-           or CloBuiltin::classof( obj ) or ClsBuiltin::classof( obj );
+    return obj->id() == classid() or ZextBuiltin::classof( obj ) or SextBuiltin::classof( obj ) or
+           TruncBuiltin::classof( obj ) or ShlBuiltin::classof( obj ) or
+           ShrBuiltin::classof( obj ) or AshrBuiltin::classof( obj ) or
+           ClzBuiltin::classof( obj ) or CloBuiltin::classof( obj ) or ClsBuiltin::classof( obj );
 }
 
 //
@@ -1619,14 +1617,15 @@ ZextBuiltin::ZextBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation ZextBuiltin::annotation( classid(),
+const Annotation ZextBuiltin::annotation(
+    classid(),
     Annotation::Relations{
 
         { Type::Kind::BIT,
-            {
-                Type::Kind::BIT,
-                Type::Kind::INTEGER,
-            } }
+          {
+              Type::Kind::BIT,
+              Type::Kind::INTEGER,
+          } }
 
     },
     []( std::vector< Type::Ptr >& types ) {},
@@ -1640,8 +1639,8 @@ const Annotation ZextBuiltin::annotation( classid(),
         {
             throw InternalException( "values.size() != 1" );
         }
-        return nullptr; // TODO: PPA: fetch through values a integer constant
-                        // which defines the new bitsize
+        return nullptr;  // TODO: PPA: fetch through values a integer constant
+                         // which defines the new bitsize
     } );
 
 u1 ZextBuiltin::classof( Value const* obj )
@@ -1658,14 +1657,15 @@ SextBuiltin::SextBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation SextBuiltin::annotation( classid(),
+const Annotation SextBuiltin::annotation(
+    classid(),
     Annotation::Relations{
 
         { Type::Kind::BIT,
-            {
-                Type::Kind::BIT,
-                Type::Kind::INTEGER,
-            } }
+          {
+              Type::Kind::BIT,
+              Type::Kind::INTEGER,
+          } }
 
     },
     []( std::vector< Type::Ptr >& types ) {},
@@ -1679,8 +1679,8 @@ const Annotation SextBuiltin::annotation( classid(),
         {
             throw InternalException( "values.size() != 1" );
         }
-        return nullptr; // TODO: PPA: fetch through values a integer constant
-                        // which defines the new bitsize
+        return nullptr;  // TODO: PPA: fetch through values a integer constant
+                         // which defines the new bitsize
     } );
 
 u1 SextBuiltin::classof( Value const* obj )
@@ -1697,14 +1697,15 @@ TruncBuiltin::TruncBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation TruncBuiltin::annotation( classid(),
+const Annotation TruncBuiltin::annotation(
+    classid(),
     Annotation::Relations{
 
         { Type::Kind::BIT,
-            {
-                Type::Kind::BIT,
-                Type::Kind::INTEGER,
-            } }
+          {
+              Type::Kind::BIT,
+              Type::Kind::INTEGER,
+          } }
 
     },
     []( std::vector< Type::Ptr >& types ) {},
@@ -1718,8 +1719,8 @@ const Annotation TruncBuiltin::annotation( classid(),
         {
             throw InternalException( "values.size() != 1" );
         }
-        return nullptr; // TODO: PPA: fetch through values a integer constant
-                        // which defines the new bitsize
+        return nullptr;  // TODO: PPA: fetch through values a integer constant
+                         // which defines the new bitsize
     } );
 
 u1 TruncBuiltin::classof( Value const* obj )
@@ -1736,20 +1737,21 @@ ShlBuiltin::ShlBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation ShlBuiltin::annotation( classid(),
+const Annotation ShlBuiltin::annotation(
+    classid(),
     Annotation::Relations{
 
         { Type::Kind::BIT,
-            {
-                Type::Kind::BIT,
-                Type::Kind::INTEGER,
-            } },
+          {
+              Type::Kind::BIT,
+              Type::Kind::INTEGER,
+          } },
 
         { Type::Kind::BIT,
-            {
-                Type::Kind::BIT,
-                Type::Kind::BIT,
-            } }
+          {
+              Type::Kind::BIT,
+              Type::Kind::BIT,
+          } }
 
     },
     []( std::vector< Type::Ptr >& types ) {},
@@ -1785,20 +1787,21 @@ ShrBuiltin::ShrBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation ShrBuiltin::annotation( classid(),
+const Annotation ShrBuiltin::annotation(
+    classid(),
     Annotation::Relations{
 
         { Type::Kind::BIT,
-            {
-                Type::Kind::BIT,
-                Type::Kind::INTEGER,
-            } },
+          {
+              Type::Kind::BIT,
+              Type::Kind::INTEGER,
+          } },
 
         { Type::Kind::BIT,
-            {
-                Type::Kind::BIT,
-                Type::Kind::BIT,
-            } }
+          {
+              Type::Kind::BIT,
+              Type::Kind::BIT,
+          } }
 
     },
     []( std::vector< Type::Ptr >& types ) {},
@@ -1834,20 +1837,21 @@ AshrBuiltin::AshrBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation AshrBuiltin::annotation( classid(),
+const Annotation AshrBuiltin::annotation(
+    classid(),
     Annotation::Relations{
 
         { Type::Kind::BIT,
-            {
-                Type::Kind::BIT,
-                Type::Kind::INTEGER,
-            } },
+          {
+              Type::Kind::BIT,
+              Type::Kind::INTEGER,
+          } },
 
         { Type::Kind::BIT,
-            {
-                Type::Kind::BIT,
-                Type::Kind::BIT,
-            } }
+          {
+              Type::Kind::BIT,
+              Type::Kind::BIT,
+          } }
 
     },
     []( std::vector< Type::Ptr >& types ) {},
@@ -1883,13 +1887,14 @@ ClzBuiltin::ClzBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation ClzBuiltin::annotation( classid(),
+const Annotation ClzBuiltin::annotation(
+    classid(),
     Annotation::Relations{
 
         { Type::Kind::INTEGER,
-            {
-                Type::Kind::BIT,
-            } }
+          {
+              Type::Kind::BIT,
+          } }
 
     },
     []( std::vector< Type::Ptr >& types ) {},
@@ -1916,13 +1921,14 @@ CloBuiltin::CloBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation CloBuiltin::annotation( classid(),
+const Annotation CloBuiltin::annotation(
+    classid(),
     Annotation::Relations{
 
         { Type::Kind::INTEGER,
-            {
-                Type::Kind::BIT,
-            } }
+          {
+              Type::Kind::BIT,
+          } }
 
     },
     []( std::vector< Type::Ptr >& types ) {},
@@ -1949,13 +1955,14 @@ ClsBuiltin::ClsBuiltin( const Type::Ptr& type )
 {
 }
 
-const Annotation ClsBuiltin::annotation( classid(),
+const Annotation ClsBuiltin::annotation(
+    classid(),
     Annotation::Relations{
 
         { Type::Kind::INTEGER,
-            {
-                Type::Kind::BIT,
-            } }
+          {
+              Type::Kind::BIT,
+          } }
 
     },
     []( std::vector< Type::Ptr >& types ) {},

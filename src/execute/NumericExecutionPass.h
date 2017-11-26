@@ -65,7 +65,7 @@ namespace libcasm_ir
     };
 }
 
-#endif // _LIBCASM_IR_NUMERIC_EXECUTION_PASS_H_
+#endif  // _LIBCASM_IR_NUMERIC_EXECUTION_PASS_H_
 
 //
 //  Local variables:

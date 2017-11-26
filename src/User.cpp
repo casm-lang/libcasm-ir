@@ -63,19 +63,18 @@ void User::setUse( User& user )
 
 void User::removeUse( const User& user )
 {
-    fprintf(
-        stderr, "removeUse: %s in %s\n", user.name().c_str(), name().c_str() );
+    fprintf( stderr, "removeUse: %s in %s\n", user.name().c_str(), name().c_str() );
 
-    std::remove_if( m_uses.begin(), m_uses.end(),
-        [&user]( const Use::Ptr& element ) { return element->use() == user; } );
+    std::remove_if( m_uses.begin(), m_uses.end(), [&user]( const Use::Ptr& element ) {
+        return element->use() == user;
+    } );
 }
 
 void User::replaceAllUsesWith( const Value::Ptr& value )
 {
     for( auto u : uses() )
     {
-        fprintf( stderr, "%s -> %s\n", u->def().name().c_str(),
-            u->use().name().c_str() );
+        fprintf( stderr, "%s -> %s\n", u->def().name().c_str(), u->use().name().c_str() );
 
         if( auto instr = cast< Instruction >( u->use() ) )
         {
@@ -86,10 +85,9 @@ void User::replaceAllUsesWith( const Value::Ptr& value )
 
 u1 User::classof( Value const* obj )
 {
-    return obj->id() == classid() or Agent::classof( obj )
-           or Rule::classof( obj ) or Derived::classof( obj )
-           or Function::classof( obj ) or Builtin::classof( obj )
-           or Instruction::classof( obj );
+    return obj->id() == classid() or Agent::classof( obj ) or Rule::classof( obj ) or
+           Derived::classof( obj ) or Function::classof( obj ) or Builtin::classof( obj ) or
+           Instruction::classof( obj );
 }
 
 //

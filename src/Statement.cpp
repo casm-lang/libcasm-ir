@@ -54,8 +54,7 @@ void Statement::add( const Instruction::Ptr& instruction )
 {
     if( not instruction )
     {
-        throw std::domain_error(
-            "adding a null pointer instruction is not allowed" );
+        throw std::domain_error( "adding a null pointer instruction is not allowed" );
     }
 
     if( instruction->statement() )
@@ -74,8 +73,7 @@ void Statement::add( const Instruction::Ptr& instruction )
         }
         else if( isa< ExecutionSemanticsBlock >( operand ) )
         {
-            auto esb = std::static_pointer_cast< ExecutionSemanticsBlock >(
-                operand );
+            auto esb = std::static_pointer_cast< ExecutionSemanticsBlock >( operand );
 
             esb->setParent( self );
             esb->setScope( self->scope() );
@@ -97,15 +95,13 @@ Instructions& Statement::instructions( void )
     return m_instructions;
 }
 
-ExecutionSemanticsBlock::Ptr Statement::add(
-    const ExecutionSemanticsBlock::Ptr& block )
+ExecutionSemanticsBlock::Ptr Statement::add( const ExecutionSemanticsBlock::Ptr& block )
 {
     assert( block );
 
     if( isa< TrivialStatement >( this ) )
     {
-        assert(
-            !" trivial statements are not allowed to have inside blocks! " );
+        assert( !" trivial statements are not allowed to have inside blocks! " );
     }
 
     const auto self = ptr_this< Statement >();
@@ -133,8 +129,7 @@ void Statement::replaceWith( const Block::Ptr block )
     assert( parent() );
     assert( isa< ExecutionSemanticsBlock >( parent() ) );
 
-    const auto blk
-        = std::static_pointer_cast< ExecutionSemanticsBlock >( parent() );
+    const auto blk = std::static_pointer_cast< ExecutionSemanticsBlock >( parent() );
 
     blk->replace( *this, block );
 }
@@ -156,8 +151,8 @@ std::string Statement::name( void ) const
 
 u1 Statement::classof( Value const* obj )
 {
-    return obj->id() == classid() or TrivialStatement::classof( obj )
-           or BranchStatement::classof( obj );
+    return obj->id() == classid() or TrivialStatement::classof( obj ) or
+           BranchStatement::classof( obj );
 }
 
 TrivialStatement::TrivialStatement( void )

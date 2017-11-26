@@ -41,6 +41,12 @@
 
 TARGET = libcasm-ir
 
+FORMAT  = src
+FORMAT += src/*
+FORMAT += etc
+FORMAT += etc/*
+FORMAT += etc/*/*
+
 UPDATE_ROOT = ../stdhl
 
 include .cmake/config.mk

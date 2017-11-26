@@ -51,13 +51,13 @@ TEST( libcasm_ir__constant_undef, IntegerType_test )
     EXPECT_TRUE( u == IntegerConstant() );
 }
 
-#define LIBCASM_IR_UTS_CONSTANT_UNDEF( TYPE, ARGS )                            \
-    TEST( libcasm_ir__constant_undef, TYPE##Type )                             \
-    {                                                                          \
-        const auto t = libstdhl::Memory::get< TYPE##Type >( ARGS );            \
-        const auto u = Constant::undef( t );                                   \
-                                                                               \
-        EXPECT_TRUE( u == TYPE##Constant( ARGS ) );                            \
+#define LIBCASM_IR_UTS_CONSTANT_UNDEF( TYPE, ARGS )                 \
+    TEST( libcasm_ir__constant_undef, TYPE##Type )                  \
+    {                                                               \
+        const auto t = libstdhl::Memory::get< TYPE##Type >( ARGS ); \
+        const auto u = Constant::undef( t );                        \
+                                                                    \
+        EXPECT_TRUE( u == TYPE##Constant( ARGS ) );                 \
     }
 
 LIBCASM_IR_UTS_CONSTANT_UNDEF( Integer, );

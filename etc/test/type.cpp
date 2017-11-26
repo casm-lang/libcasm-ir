@@ -64,27 +64,23 @@ TEST( libcasm_ir__Type, id_to_token_string )
             }
             case libcasm_ir::Type::Kind::LOCATION:
             {
-                EXPECT_STREQ(
-                    libcasm_ir::Type::token( id ).c_str(), "Location" );
+                EXPECT_STREQ( libcasm_ir::Type::token( id ).c_str(), "Location" );
                 break;
             }
             case libcasm_ir::Type::Kind::RELATION:
             {
-                EXPECT_STREQ(
-                    libcasm_ir::Type::token( id ).c_str(), "Relation" );
+                EXPECT_STREQ( libcasm_ir::Type::token( id ).c_str(), "Relation" );
                 break;
             }
             // primitive
             case libcasm_ir::Type::Kind::BOOLEAN:
             {
-                EXPECT_STREQ(
-                    libcasm_ir::Type::token( id ).c_str(), "Boolean" );
+                EXPECT_STREQ( libcasm_ir::Type::token( id ).c_str(), "Boolean" );
                 break;
             }
             case libcasm_ir::Type::Kind::INTEGER:
             {
-                EXPECT_STREQ(
-                    libcasm_ir::Type::token( id ).c_str(), "Integer" );
+                EXPECT_STREQ( libcasm_ir::Type::token( id ).c_str(), "Integer" );
                 break;
             }
             case libcasm_ir::Type::Kind::BIT:
@@ -99,21 +95,18 @@ TEST( libcasm_ir__Type, id_to_token_string )
             }
             case libcasm_ir::Type::Kind::DECIMAL:
             {
-                EXPECT_STREQ(
-                    libcasm_ir::Type::token( id ).c_str(), "Decimal" );
+                EXPECT_STREQ( libcasm_ir::Type::token( id ).c_str(), "Decimal" );
                 break;
             }
             case libcasm_ir::Type::Kind::RATIONAL:
             {
-                EXPECT_STREQ(
-                    libcasm_ir::Type::token( id ).c_str(), "Rational" );
+                EXPECT_STREQ( libcasm_ir::Type::token( id ).c_str(), "Rational" );
                 break;
             }
             // composed
             case libcasm_ir::Type::Kind::ENUMERATION:
             {
-                EXPECT_STREQ(
-                    libcasm_ir::Type::token( id ).c_str(), "Enumeration" );
+                EXPECT_STREQ( libcasm_ir::Type::token( id ).c_str(), "Enumeration" );
                 break;
             }
             case libcasm_ir::Type::Kind::RANGE:
@@ -134,14 +127,12 @@ TEST( libcasm_ir__Type, id_to_token_string )
             // reference
             case libcasm_ir::Type::Kind::RULE_REFERENCE:
             {
-                EXPECT_STREQ(
-                    libcasm_ir::Type::token( id ).c_str(), "RuleRef" );
+                EXPECT_STREQ( libcasm_ir::Type::token( id ).c_str(), "RuleRef" );
                 break;
             }
             case libcasm_ir::Type::Kind::FUNCTION_REFERENCE:
             {
-                EXPECT_STREQ(
-                    libcasm_ir::Type::token( id ).c_str(), "FuncRef" );
+                EXPECT_STREQ( libcasm_ir::Type::token( id ).c_str(), "FuncRef" );
                 break;
             }
             // abstraction

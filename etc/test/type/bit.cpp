@@ -55,10 +55,9 @@ TEST( libcasm_ir__type_bit, make_valid )
         EXPECT_TRUE( v != nullptr );
         EXPECT_TRUE( w != nullptr );
 
-        EXPECT_STREQ( v->name().c_str(),
-            std::string( "u" + std::to_string( c ) ).c_str() );
-        EXPECT_STREQ( v->description().c_str(),
-            std::string( "Bit'" + std::to_string( c ) ).c_str() );
+        EXPECT_STREQ( v->name().c_str(), std::string( "u" + std::to_string( c ) ).c_str() );
+        EXPECT_STREQ(
+            v->description().c_str(), std::string( "Bit'" + std::to_string( c ) ).c_str() );
         EXPECT_STREQ( v->name().c_str(), w->name().c_str() );
         EXPECT_STREQ( v->description().c_str(), w->description().c_str() );
 
@@ -87,10 +86,9 @@ TEST( libcasm_ir__type_bit, get_valid )
         EXPECT_TRUE( v != nullptr );
         EXPECT_TRUE( w != nullptr );
 
-        EXPECT_STREQ( v->name().c_str(),
-            std::string( "u" + std::to_string( c ) ).c_str() );
-        EXPECT_STREQ( v->description().c_str(),
-            std::string( "Bit'" + std::to_string( c ) ).c_str() );
+        EXPECT_STREQ( v->name().c_str(), std::string( "u" + std::to_string( c ) ).c_str() );
+        EXPECT_STREQ(
+            v->description().c_str(), std::string( "Bit'" + std::to_string( c ) ).c_str() );
         EXPECT_STREQ( v->name().c_str(), w->name().c_str() );
         EXPECT_STREQ( v->description().c_str(), w->description().c_str() );
 
@@ -100,9 +98,7 @@ TEST( libcasm_ir__type_bit, get_valid )
         EXPECT_EQ( v->bitsize(), c );
         EXPECT_EQ( v->kind(), libcasm_ir::Type::Kind::BIT );
 
-        v->foreach( []( const Constant& constant ) {
-            std::cerr << constant.name() << "\n";
-        } );
+        v->foreach( []( const Constant& constant ) { std::cerr << constant.name() << "\n"; } );
 
         std::cerr << v->choose().name() << "\n";
     }

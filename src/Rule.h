@@ -85,7 +85,7 @@ namespace libcasm_ir
     using Rules = ValueList< Rule >;
 }
 
-#endif // _LIBCASM_IR_RULE_H_
+#endif  // _LIBCASM_IR_RULE_H_
 
 //
 //  Local variables:

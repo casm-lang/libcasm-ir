@@ -62,7 +62,9 @@ namespace libcasm_ir
     /**
        @extends CasmIR
      */
-    class Value : public CasmIR, public std::enable_shared_from_this< Value >
+    class Value
+    : public CasmIR
+    , public std::enable_shared_from_this< Value >
     {
       public:
         using Ptr = std::shared_ptr< Value >;
@@ -249,8 +251,7 @@ namespace libcasm_ir
         }
 
         virtual void iterate(
-            const Traversal order, std::function< void( Value& ) > callback )
-            final;
+            const Traversal order, std::function< void( Value& ) > callback ) final;
 
         virtual void accept( Visitor& visitor ) = 0;
 
@@ -292,7 +293,9 @@ namespace libcasm_ir
     };
 
     template < typename T >
-    class ValueList : public Value, public libstdhl::List< T >
+    class ValueList
+    : public Value
+    , public libstdhl::List< T >
     {
       public:
         using Ptr = std::shared_ptr< ValueList >;
@@ -347,8 +350,7 @@ namespace libcasm_ir
             }
 
             const auto end = this->end();
-            for( auto it1 = this->begin(), it2 = other.begin(); it1 != end;
-                 ++it1, ++it2 )
+            for( auto it1 = this->begin(), it2 = other.begin(); it1 != end; ++it1, ++it2 )
             {
                 if( **it1 != **it2 )
                 {
@@ -388,7 +390,7 @@ namespace std
     };
 }
 
-#endif // _LIBCASM_IR_VALUE_H_
+#endif  // _LIBCASM_IR_VALUE_H_
 
 //
 //  Local variables:

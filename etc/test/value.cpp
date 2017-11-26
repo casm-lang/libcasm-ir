@@ -110,8 +110,7 @@ TEST( libcasm_ir_Value, id_to_token_string )
             }
             case Value::EXECUTION_SEMANTICS_BLOCK:
             {
-                EXPECT_STREQ(
-                    Value::token( id ).c_str(), "ExecutionSemanticsBlock" );
+                EXPECT_STREQ( Value::token( id ).c_str(), "ExecutionSemanticsBlock" );
                 break;
             }
             case Value::PARALLEL_BLOCK:
@@ -152,8 +151,7 @@ TEST( libcasm_ir_Value, id_to_token_string )
             }
             case Value::RULE_REFERENCE_CONSTANT:
             {
-                EXPECT_STREQ(
-                    Value::token( id ).c_str(), "RuleReferenceConstant" );
+                EXPECT_STREQ( Value::token( id ).c_str(), "RuleReferenceConstant" );
                 break;
             }
             case Value::BOOLEAN_CONSTANT:
@@ -188,8 +186,7 @@ TEST( libcasm_ir_Value, id_to_token_string )
             }
             case Value::ENUMERATION_CONSTANT:
             {
-                EXPECT_STREQ(
-                    Value::token( id ).c_str(), "EnumerationConstant" );
+                EXPECT_STREQ( Value::token( id ).c_str(), "EnumerationConstant" );
                 break;
             }
             case Value::RANGE_CONSTANT:
@@ -267,15 +264,13 @@ TEST( libcasm_ir_Value, id_to_token_string )
 
             case Value::OPERATOR_INSTRUCTION:
             {
-                EXPECT_STREQ(
-                    Value::token( id ).c_str(), "OperatorInstruction" );
+                EXPECT_STREQ( Value::token( id ).c_str(), "OperatorInstruction" );
                 break;
             }
 
             case Value::ARITHMETIC_INSTRUCTION:
             {
-                EXPECT_STREQ(
-                    Value::token( id ).c_str(), "ArithmethicInstruction" );
+                EXPECT_STREQ( Value::token( id ).c_str(), "ArithmethicInstruction" );
                 break;
             }
             case Value::INV_INSTRUCTION:
@@ -316,8 +311,7 @@ TEST( libcasm_ir_Value, id_to_token_string )
 
             case Value::COMPARE_INSTRUCTION:
             {
-                EXPECT_STREQ(
-                    Value::token( id ).c_str(), "CompareInstruction" );
+                EXPECT_STREQ( Value::token( id ).c_str(), "CompareInstruction" );
                 break;
             }
             case Value::EQU_INSTRUCTION:
@@ -353,8 +347,7 @@ TEST( libcasm_ir_Value, id_to_token_string )
 
             case Value::LOGICAL_INSTRUCTION:
             {
-                EXPECT_STREQ(
-                    Value::token( id ).c_str(), "LogicalInstruction" );
+                EXPECT_STREQ( Value::token( id ).c_str(), "LogicalInstruction" );
                 break;
             }
             case Value::OR_INSTRUCTION:
@@ -499,8 +492,7 @@ TEST( libcasm_ir_Value, id_to_token_string )
             }
             case Value::ARITHMETIC_BUILTIN:
             {
-                EXPECT_STREQ(
-                    Value::token( id ).c_str(), "ArithmethicBuiltin" );
+                EXPECT_STREQ( Value::token( id ).c_str(), "ArithmethicBuiltin" );
                 break;
             }
             case Value::ADDU_BUILTIN:
@@ -631,21 +623,21 @@ TEST( libcasm_ir_Value, id_to_token_string )
                 break;
             }
 
-            // case Value::MATH_BUILTIN:
-            // {
-            //     EXPECT_STREQ( Value::token( id ).c_str(), "MathBuiltin" );
-            //     break;
-            // }
-            // case Value::POW_BUILTIN:
-            // {
-            //     EXPECT_STREQ( Value::token( id ).c_str(), "pow" );
-            //     break;
-            // }
-            // case Value::RAND_BUILTIN:
-            // {
-            //     EXPECT_STREQ( Value::token( id ).c_str(), "rand" );
-            //     break;
-            // }
+                // case Value::MATH_BUILTIN:
+                // {
+                //     EXPECT_STREQ( Value::token( id ).c_str(), "MathBuiltin" );
+                //     break;
+                // }
+                // case Value::POW_BUILTIN:
+                // {
+                //     EXPECT_STREQ( Value::token( id ).c_str(), "pow" );
+                //     break;
+                // }
+                // case Value::RAND_BUILTIN:
+                // {
+                //     EXPECT_STREQ( Value::token( id ).c_str(), "rand" );
+                //     break;
+                // }
 
             case Value::_SIZE_:
             {

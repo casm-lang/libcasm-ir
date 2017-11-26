@@ -45,8 +45,10 @@ using namespace libcasm_ir;
 
 char IRDumpSourcePass::id = 0;
 
-static libpass::PassRegistration< IRDumpSourcePass > PASS( "IRDumpSourcePass",
-    "translates the CASM IR to the ASCII source code representation", "ir-dump",
+static libpass::PassRegistration< IRDumpSourcePass > PASS(
+    "IRDumpSourcePass",
+    "translates the CASM IR to the ASCII source code representation",
+    "ir-dump",
     0 );
 
 void IRDumpSourcePass::usage( libpass::PassUsage& pu )
@@ -139,8 +141,7 @@ void IRDumpSourceVisitor::visit( Builtin& value )
         m_stream << "\n";
     }
 
-    m_stream << value.label() << " = " << value.type().name() << " "
-             << value.name() << "\n";
+    m_stream << value.label() << " = " << value.type().name() << " " << value.name() << "\n";
 }
 
 void IRDumpSourceVisitor::visit( Enumeration& value )
@@ -375,8 +376,8 @@ void IRDumpSourceVisitor::dump( Instruction& value ) const
 {
     if( isa< ForkInstruction >( value ) or isa< MergeInstruction >( value ) )
     {
-        m_stream << indention( value ) << value.name() << " "
-                 << value.statement()->scope()->name() << "\n";
+        m_stream << indention( value ) << value.name() << " " << value.statement()->scope()->name()
+                 << "\n";
     }
     else
     {
@@ -413,8 +414,7 @@ void IRDumpSourceVisitor::dump( Instruction& value ) const
             m_stream << value.label() << " = ";
         }
 
-        m_stream << value.name() << " " << tmp << "    ;; uses = " << uses
-                 << "\n";
+        m_stream << value.name() << " " << tmp << "    ;; uses = " << uses << "\n";
     }
 }
 
@@ -429,8 +429,7 @@ void IRDumpSourceVisitor::dump( Constant& value ) const
         m_stream << "\n";
     }
 
-    m_stream << value.label() << " = " << value.type().name() << " "
-             << value.name() << "\n";
+    m_stream << value.label() << " = " << value.type().name() << " " << value.name() << "\n";
 }
 
 static inline std::string indention( Value& value )

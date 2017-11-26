@@ -67,8 +67,7 @@ TEST( libcasm_ir__type_list, make_and_get )
     EXPECT_TRUE( a == b );
     EXPECT_TRUE( *a == *b );
 
-    v->foreach( [](
-        const Constant& constant ) { std::cerr << constant.name() << "\n"; } );
+    v->foreach( []( const Constant& constant ) { std::cerr << constant.name() << "\n"; } );
 
     std::cerr << v->choose().name() << "\n";
 }

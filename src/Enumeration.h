@@ -51,8 +51,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< Enumeration >;
 
-        Enumeration(
-            const std::string& name, const std::vector< std::string >& values );
+        Enumeration( const std::string& name, const std::vector< std::string >& values );
 
         Enumeration( const std::string& name );
 
@@ -90,7 +89,7 @@ namespace libcasm_ir
     };
 }
 
-#endif // _LIBCASM_IR_ENUMERATION_H_
+#endif  // _LIBCASM_IR_ENUMERATION_H_
 
 //
 //  Local variables:

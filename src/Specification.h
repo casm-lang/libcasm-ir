@@ -84,8 +84,7 @@ namespace libcasm_ir
         template < typename T, typename... Args >
         typename T::Ptr set( Args&&... args )
         {
-            auto obj = libstdhl::Memory::make< T >(
-                std::forward< Args >( args )... );
+            auto obj = libstdhl::Memory::make< T >( std::forward< Args >( args )... );
             setAgent( obj );
             return obj;
         }
@@ -93,8 +92,7 @@ namespace libcasm_ir
         template < typename T, typename... Args >
         typename T::Ptr add( Args&&... args )
         {
-            auto obj = libstdhl::Memory::make< T >(
-                std::forward< Args >( args )... );
+            auto obj = libstdhl::Memory::make< T >( std::forward< Args >( args )... );
             add( obj );
             return obj;
         }
@@ -128,7 +126,7 @@ namespace libcasm_ir
     };
 }
 
-#endif // _LIBCASM_IR_SPECIFICATION_H_
+#endif  // _LIBCASM_IR_SPECIFICATION_H_
 
 //
 //  Local variables:

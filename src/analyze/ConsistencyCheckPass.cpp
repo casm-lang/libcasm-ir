@@ -46,8 +46,7 @@ using namespace libcasm_ir;
 char ConsistencyCheckPass::id = 0;
 
 static libpass::PassRegistration< ConsistencyCheckPass > PASS(
-    "IRConsistencyCheckPass",
-    "checks the constructed IR in-memory representation", "ir-check", 0 );
+    "IRConsistencyCheckPass", "checks the constructed IR in-memory representation", "ir-check", 0 );
 
 u1 ConsistencyCheckPass::run( libpass::PassResult& pr )
 {
@@ -63,8 +62,7 @@ u1 ConsistencyCheckPass::run( libpass::PassResult& pr )
 
     if( visitor.errors() )
     {
-        log.error( "inconsistent specification, found '%lu' error(s)",
-            visitor.errors() );
+        log.error( "inconsistent specification, found '%lu' error(s)", visitor.errors() );
         return false;
     }
 
@@ -91,15 +89,13 @@ void ConsistencyCheckVisitor::visit( Specification& value )
 
     if( not( value.rules().size() > 0 ) )
     {
-        m_log.error( "specification '%p' %s: has no rules", &value,
-            value.dump().c_str() );
+        m_log.error( "specification '%p' %s: has no rules", &value, value.dump().c_str() );
         m_err++;
     }
 
     if( not value.agent() )
     {
-        m_log.error( "specification '%p' %s: has no agent", &value,
-            value.dump().c_str() );
+        m_log.error( "specification '%p' %s: has no agent", &value, value.dump().c_str() );
         m_err++;
     }
 
@@ -135,8 +131,7 @@ void ConsistencyCheckVisitor::visit( Rule& value )
 
     if( not value.context() )
     {
-        m_log.error(
-            "rule '%p' %s: has no context", &value, value.dump().c_str() );
+        m_log.error( "rule '%p' %s: has no context", &value, value.dump().c_str() );
         m_err++;
     }
 
@@ -144,17 +139,15 @@ void ConsistencyCheckVisitor::visit( Rule& value )
     {
         if( *p->rule() != value )
         {
-            m_log.error( "rule '%p' %s: context does not point to this rule",
-                &value,
-                value.dump().c_str() );
+            m_log.error(
+                "rule '%p' %s: context does not point to this rule", &value, value.dump().c_str() );
             m_err++;
         }
     }
     else
     {
-        m_log.error( "rule '%p' %s: does not start with a parallel block",
-            &value,
-            value.dump().c_str() );
+        m_log.error(
+            "rule '%p' %s: does not start with a parallel block", &value, value.dump().c_str() );
         m_err++;
     }
 
@@ -293,8 +286,7 @@ void ConsistencyCheckVisitor::visit( SelectInstruction& value )
 
     if( size < 3 or ( size % 2 ) != 1 )
     {
-        m_log.error(
-            "select statement has invalid operand size of '%u'", size );
+        m_log.error( "select statement has invalid operand size of '%u'", size );
     }
 
     if( not isa< BranchStatement >( value.statement() ) )
@@ -450,8 +442,7 @@ void ConsistencyCheckVisitor::verify( Value& value )
 
     if( value.label().empty() )
     {
-        m_log.error(
-            "value '%p' %s: has no label", &value, value.dump().c_str() );
+        m_log.error( "value '%p' %s: has no label", &value, value.dump().c_str() );
         m_err++;
     }
 
@@ -459,8 +450,7 @@ void ConsistencyCheckVisitor::verify( Value& value )
     {
         if( not v->statement() )
         {
-            m_log.error(
-                "inst '%p' %s: has no statement", v, v->dump().c_str() );
+            m_log.error( "inst '%p' %s: has no statement", v, v->dump().c_str() );
             m_err++;
         }
     }
@@ -480,8 +470,8 @@ void ConsistencyCheckVisitor::verify( Value& value )
 
         if( v->instructions().size() < 1 )
         {
-            m_log.error( "stmt '%p' %s: shall contain at least 1 instruction",
-                v, v->dump().c_str() );
+            m_log.error(
+                "stmt '%p' %s: shall contain at least 1 instruction", v, v->dump().c_str() );
             m_err++;
         }
     }
@@ -511,26 +501,23 @@ void ConsistencyCheckVisitor::verify( Value& value )
 
         if( v->blocks().size() < 1 )
         {
-            m_log.error( "eblk '%p' %s: shall contain at least 1 block", v,
-                v->dump().c_str() );
+            m_log.error( "eblk '%p' %s: shall contain at least 1 block", v, v->dump().c_str() );
             m_err++;
         }
 
-        if( ( not v->entry() ) and ( not v->exit() )
-            and ( v->blocks().size() != 1 ) )
+        if( ( not v->entry() ) and ( not v->exit() ) and ( v->blocks().size() != 1 ) )
         {
             m_log.error(
                 "eblk '%p' %s: if empty entry and exit section, inner "
                 "blocks size shall be 1",
-                v, v->dump().c_str() );
+                v,
+                v->dump().c_str() );
             m_err++;
         }
 
-        if( ( ( not v->entry() ) and ( v->exit() ) )
-            or ( ( v->entry() ) and ( not v->exit() ) ) )
+        if( ( ( not v->entry() ) and ( v->exit() ) ) or ( ( v->entry() ) and ( not v->exit() ) ) )
         {
-            m_log.error( "eblk '%p' %s: empty entry or empty exit found", v,
-                v->dump().c_str() );
+            m_log.error( "eblk '%p' %s: empty entry or empty exit found", v, v->dump().c_str() );
             m_err++;
         }
     }

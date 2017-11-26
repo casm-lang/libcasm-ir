@@ -54,22 +54,14 @@ using namespace libcasm_ir;
 
 static const auto TYPE_VOID = libstdhl::Memory::get< libcasm_ir::VoidType >();
 static const auto TYPE_LABEL = libstdhl::Memory::get< libcasm_ir::LabelType >();
-static const auto TYPE_LOCATION
-    = libstdhl::Memory::get< libcasm_ir::LocationType >();
-static const auto TYPE_BOOLEAN
-    = libstdhl::Memory::get< libcasm_ir::BooleanType >();
-static const auto TYPE_INTEGER
-    = libstdhl::Memory::get< libcasm_ir::IntegerType >();
-static const auto TYPE_RATIONAL
-    = libstdhl::Memory::get< libcasm_ir::RationalType >();
-static const auto TYPE_DECIMAL
-    = libstdhl::Memory::get< libcasm_ir::DecimalType >();
-static const auto TYPE_STRING
-    = libstdhl::Memory::get< libcasm_ir::StringType >();
+static const auto TYPE_LOCATION = libstdhl::Memory::get< libcasm_ir::LocationType >();
+static const auto TYPE_BOOLEAN = libstdhl::Memory::get< libcasm_ir::BooleanType >();
+static const auto TYPE_INTEGER = libstdhl::Memory::get< libcasm_ir::IntegerType >();
+static const auto TYPE_RATIONAL = libstdhl::Memory::get< libcasm_ir::RationalType >();
+static const auto TYPE_DECIMAL = libstdhl::Memory::get< libcasm_ir::DecimalType >();
+static const auto TYPE_STRING = libstdhl::Memory::get< libcasm_ir::StringType >();
 
-static std::array< std::vector< Type::ID >,
-    (std::size_t)Type::Kind::_SIZE_ + 1 >
-    s_typeIDs = {};
+static std::array< std::vector< Type::ID >, (std::size_t)Type::Kind::_SIZE_ + 1 > s_typeIDs = {};
 
 Type::Type( Type::Kind kind )
 : m_id( kind )
@@ -86,8 +78,7 @@ Type::ID Type::id( void )
     if( m_id.flavor() == 0 )
     {
         const auto type_hash = this->hash();
-        auto result = s_registered_type_hash2ptr().emplace(
-            type_hash, this->ptr_type() );
+        auto result = s_registered_type_hash2ptr().emplace( type_hash, this->ptr_type() );
 
         if( not result.second )
         {
@@ -98,13 +89,11 @@ Type::ID Type::id( void )
         {
             // NOT found, registered this as new type in hash2ptr,
             // allocate new ID, set it to this type, and link it in id2hash
-            const auto type_flavor
-                = s_typeIDs[ (std::size_t)kind() ].size() + 1;
+            const auto type_flavor = s_typeIDs[ (std::size_t)kind() ].size() + 1;
             m_id.setFlavor( type_flavor );
             s_typeIDs[ (std::size_t)kind() ].emplace_back( m_id );
 
-            auto type_id2hash
-                = s_registered_type_id2hash().emplace( m_id.hash(), type_hash );
+            auto type_id2hash = s_registered_type_id2hash().emplace( m_id.hash(), type_hash );
             if( not type_id2hash.second )
             {
                 assert( !" inconsistent state of the registered types! " );
@@ -172,8 +161,7 @@ u1 Type::isRelation( void ) const
 
 u1 Type::isPrimitive( void ) const
 {
-    return isBoolean() or isInteger() or isRational() or isBit() or isDecimal()
-           or isString();
+    return isBoolean() or isInteger() or isRational() or isBit() or isDecimal() or isString();
 }
 
 u1 Type::isBoolean( void ) const
@@ -314,13 +302,13 @@ Type::Ptr Type::fromID( const Type::ID id )
             {
                 return TYPE_STRING;
             }
-            case libcasm_ir::Type::Kind::ENUMERATION:        // [fallthrough]
-            case libcasm_ir::Type::Kind::RANGE:              // [fallthrough]
-            case libcasm_ir::Type::Kind::TUPLE:              // [fallthrough]
-            case libcasm_ir::Type::Kind::LIST:               // [fallthrough]
-            case libcasm_ir::Type::Kind::RULE_REFERENCE:     // [fallthrough]
-            case libcasm_ir::Type::Kind::FUNCTION_REFERENCE: // [fallthrough]
-            case libcasm_ir::Type::Kind::FILE:               // [fallthrough]
+            case libcasm_ir::Type::Kind::ENUMERATION:         // [fallthrough]
+            case libcasm_ir::Type::Kind::RANGE:               // [fallthrough]
+            case libcasm_ir::Type::Kind::TUPLE:               // [fallthrough]
+            case libcasm_ir::Type::Kind::LIST:                // [fallthrough]
+            case libcasm_ir::Type::Kind::RULE_REFERENCE:      // [fallthrough]
+            case libcasm_ir::Type::Kind::FUNCTION_REFERENCE:  // [fallthrough]
+            case libcasm_ir::Type::Kind::FILE:                // [fallthrough]
             case libcasm_ir::Type::Kind::PORT:
             {
                 assert( !" invalid ID!" );
@@ -337,15 +325,13 @@ Type::Ptr Type::fromID( const Type::ID id )
     auto type_id2hash = s_registered_type_id2hash().find( id.hash() );
     if( type_id2hash == s_registered_type_id2hash().end() )
     {
-        throw InternalException(
-            "type id '" + std::to_string( id ) + "' is not registered" );
+        throw InternalException( "type id '" + std::to_string( id ) + "' is not registered" );
     }
 
     auto type_cache = s_cache().find( type_id2hash->second );
     if( type_cache == s_cache().end() )
     {
-        auto type_hash2ptr
-            = s_registered_type_hash2ptr().find( type_id2hash->second );
+        auto type_hash2ptr = s_registered_type_hash2ptr().find( type_id2hash->second );
         if( type_hash2ptr == s_registered_type_hash2ptr().end() )
         {
             assert( !" inconsistent state of the registered types! " );
@@ -479,8 +465,7 @@ std::string VoidType::description( void ) const
     return token( kind() );
 }
 
-void VoidType::foreach(
-    const std::function< void( const Constant& constant ) >& callback ) const
+void VoidType::foreach( const std::function< void( const Constant& constant ) >& callback ) const
 {
     // this type has no range to process
 }
@@ -520,8 +505,7 @@ std::string LabelType::description( void ) const
     return token( kind() );
 }
 
-void LabelType::foreach(
-    const std::function< void( const Constant& constant ) >& callback ) const
+void LabelType::foreach( const std::function< void( const Constant& constant ) >& callback ) const
 {
     // this type has no range to process
 }
@@ -707,8 +691,7 @@ std::string BooleanType::description( void ) const
     return token( kind() );
 }
 
-void BooleanType::foreach(
-    const std::function< void( const Constant& constant ) >& callback ) const
+void BooleanType::foreach( const std::function< void( const Constant& constant ) >& callback ) const
 {
     callback( BooleanConstant( false ) );
     callback( BooleanConstant( true ) );
@@ -749,21 +732,17 @@ IntegerType::IntegerType( const RangeType::Ptr& range )
 
     if( not range->type().isInteger() )
     {
-        throw std::domain_error(
-            "range '" + range->name() + "' has to be of type 'Integer'" );
+        throw std::domain_error( "range '" + range->name() + "' has to be of type 'Integer'" );
     }
 
-    const auto& a
-        = static_cast< IntegerConstant& >( *range->range().from() ).value();
-    const auto& b
-        = static_cast< IntegerConstant& >( *range->range().to() ).value();
+    const auto& a = static_cast< IntegerConstant& >( *range->range().from() ).value();
+    const auto& b = static_cast< IntegerConstant& >( *range->range().to() ).value();
 
     if( a > b )
     {
         throw std::domain_error(
-            "range '"
-            + range->name()
-            + "' violates monotonically nondecreasing property of 'Integer' type" );
+            "range '" + range->name() +
+            "' violates monotonically nondecreasing property of 'Integer' type" );
     }
 }
 
@@ -794,8 +773,7 @@ std::string IntegerType::description( void ) const
     }
 }
 
-void IntegerType::foreach(
-    const std::function< void( const Constant& constant ) >& callback ) const
+void IntegerType::foreach( const std::function< void( const Constant& constant ) >& callback ) const
 {
     if( constrained() )
     {
@@ -874,11 +852,9 @@ void RationalType::foreach(
 
 Constant RationalType::choose( void ) const
 {
-    const auto n
-        = libstdhl::Type::createInteger( libstdhl::Random::uniform< i64 >() );
+    const auto n = libstdhl::Type::createInteger( libstdhl::Random::uniform< i64 >() );
 
-    const auto d = libstdhl::Type::createInteger(
-        libstdhl::Random::uniform< i64 >() + 1 );
+    const auto d = libstdhl::Type::createInteger( libstdhl::Random::uniform< i64 >() + 1 );
     // d = randomvalue + 1 to avoid that the denominator is zero!
 
     return RationalConstant( libstdhl::Type::createRational( n, d ) );
@@ -905,9 +881,8 @@ BitType::BitType( u16 bitsize )
 {
     if( m_bitsize < 1 or m_bitsize > BitType::SizeMax )
     {
-        throw std::domain_error( "invalid bit size '"
-                                 + std::to_string( m_bitsize )
-                                 + "' for 'Bit' type" );
+        throw std::domain_error(
+            "invalid bit size '" + std::to_string( m_bitsize ) + "' for 'Bit' type" );
     }
 }
 
@@ -917,17 +892,15 @@ BitType::BitType( const IntegerConstant::Ptr& bitsize )
     assert( bitsize );
     if( bitsize->value().value() > BitType::SizeMax or bitsize->value().sign() )
     {
-        throw std::domain_error(
-            "invalid bit size '" + bitsize->name() + "' for 'Bit' type" );
+        throw std::domain_error( "invalid bit size '" + bitsize->name() + "' for 'Bit' type" );
     }
 
     m_bitsize = bitsize->value_i64();
 
     if( m_bitsize < 1 )
     {
-        throw std::domain_error( "invalid bit size '"
-                                 + std::to_string( m_bitsize )
-                                 + "' for 'Bit' type" );
+        throw std::domain_error(
+            "invalid bit size '" + std::to_string( m_bitsize ) + "' for 'Bit' type" );
     }
 }
 
@@ -941,9 +914,8 @@ BitType::BitType( const std::string& value, const libstdhl::Type::Radix radix )
 
     if( m_bitsize < 1 or m_bitsize > BitType::SizeMax )
     {
-        throw std::domain_error( "invalid bit size '"
-                                 + std::to_string( m_bitsize )
-                                 + "' for 'Bit' type" );
+        throw std::domain_error(
+            "invalid bit size '" + std::to_string( m_bitsize ) + "' for 'Bit' type" );
     }
 }
 
@@ -962,8 +934,7 @@ std::string BitType::description( void ) const
     return token( kind() ) + "'" + std::to_string( m_bitsize );
 }
 
-void BitType::foreach(
-    const std::function< void( const Constant& constant ) >& callback ) const
+void BitType::foreach( const std::function< void( const Constant& constant ) >& callback ) const
 {
     // this type has an (depending on the current bit-size) infinite range to
     // process, therefore omitted (for now)
@@ -971,10 +942,11 @@ void BitType::foreach(
 
 Constant BitType::choose( void ) const
 {
-    return BitConstant( m_bitsize,
-        libstdhl::Random::uniform< u64 >()
-            % m_bitsize ); // TODO: FIXME: PPA: fix the randomized value modulo
-                           // mapping to full range not only the bitsize
+    return BitConstant(
+        m_bitsize,
+        libstdhl::Random::uniform< u64 >() %
+            m_bitsize );  // TODO: FIXME: PPA: fix the randomized value modulo
+                          // mapping to full range not only the bitsize
 }
 
 void BitType::validate( const Constant& constant ) const
@@ -987,9 +959,9 @@ void BitType::validate( const Constant& constant ) const
 
     if( m_bitsize < t.bitsize() )
     {
-        throw ValidationException( " type " + t.description()
-                                   + " of constant is invalid for type "
-                                   + this->description() );
+        throw ValidationException(
+            " type " + t.description() + " of constant is invalid for type " +
+            this->description() );
     }
 }
 
@@ -1017,8 +989,7 @@ std::string DecimalType::description( void ) const
     return token( kind() );
 }
 
-void DecimalType::foreach(
-    const std::function< void( const Constant& constant ) >& callback ) const
+void DecimalType::foreach( const std::function< void( const Constant& constant ) >& callback ) const
 {
     // this type has an infinite range to process, therefore omitted (for now)
 }
@@ -1059,8 +1030,7 @@ std::string StringType::description( void ) const
     return token( kind() );
 }
 
-void StringType::foreach(
-    const std::function< void( const Constant& constant ) >& callback ) const
+void StringType::foreach( const std::function< void( const Constant& constant ) >& callback ) const
 {
     // this type has an infinite range to process, therefore omitted (for now)
 }
@@ -1132,8 +1102,7 @@ void EnumerationType::foreach(
 
 Constant EnumerationType::choose( void ) const
 {
-    const auto e = libstdhl::Random::uniform< std::size_t >(
-        0, m_kind->elements().size() - 1 );
+    const auto e = libstdhl::Random::uniform< std::size_t >( 0, m_kind->elements().size() - 1 );
 
     return EnumerationConstant( m_kind, m_kind->elements()[ e ] );
 }
@@ -1151,16 +1120,15 @@ void EnumerationType::validate( const Constant& constant ) const
         }
         catch( const std::domain_error& e )
         {
-            throw ValidationException( "value '" + c.name()
-                                       + "' of constant is invalid for type "
-                                       + this->description() );
+            throw ValidationException(
+                "value '" + c.name() + "' of constant is invalid for type " + this->description() );
         }
     }
     else
     {
-        throw ValidationException( "type " + c.type().description()
-                                   + " of constant is invalid for type "
-                                   + this->description() );
+        throw ValidationException(
+            "type " + c.type().description() + " of constant is invalid for type " +
+            this->description() );
     }
 }
 
@@ -1232,19 +1200,15 @@ std::string RangeType::description( void ) const
     return name();
 }
 
-void RangeType::foreach(
-    const std::function< void( const Constant& constant ) >& callback ) const
+void RangeType::foreach( const std::function< void( const Constant& constant ) >& callback ) const
 {
     if( type().isInteger() )
     {
-        const auto a
-            = m_range
-                  ? static_cast< IntegerConstant& >( *range().from() ).value()
-                  : libstdhl::Limits< libstdhl::Type::Integer >::min();
+        const auto a = m_range ? static_cast< IntegerConstant& >( *range().from() ).value()
+                               : libstdhl::Limits< libstdhl::Type::Integer >::min();
 
-        const auto b
-            = m_range ? static_cast< IntegerConstant& >( *range().to() ).value()
-                      : libstdhl::Limits< libstdhl::Type::Integer >::max();
+        const auto b = m_range ? static_cast< IntegerConstant& >( *range().to() ).value()
+                               : libstdhl::Limits< libstdhl::Type::Integer >::max();
 
         for( auto i = a; i <= b; ++i )
         {
@@ -1255,10 +1219,8 @@ void RangeType::foreach(
     {
         if( m_range )
         {
-            const auto& a
-                = static_cast< BooleanConstant& >( *range().from() ).value();
-            const auto& b
-                = static_cast< BooleanConstant& >( *range().to() ).value();
+            const auto& a = static_cast< BooleanConstant& >( *range().from() ).value();
+            const auto& b = static_cast< BooleanConstant& >( *range().to() ).value();
 
             callback( BooleanConstant( a ) );
 
@@ -1275,8 +1237,7 @@ void RangeType::foreach(
     }
     else
     {
-        throw std::domain_error(
-            "unimplemented 'foreach' of range type '" + name() + "'" );
+        throw std::domain_error( "unimplemented 'foreach' of range type '" + name() + "'" );
     }
 }
 
@@ -1286,58 +1247,46 @@ Constant RangeType::choose( void ) const
     {
         if( m_range )
         {
-            const auto& a
-                = static_cast< IntegerConstant& >( *range().from() ).value();
-            const auto& b
-                = static_cast< IntegerConstant& >( *range().to() ).value();
+            const auto& a = static_cast< IntegerConstant& >( *range().from() ).value();
+            const auto& b = static_cast< IntegerConstant& >( *range().to() ).value();
 
             return IntegerConstant( libstdhl::Random::uniform<>( a, b ) );
         }
         else
         {
-            return IntegerConstant(
-                libstdhl::Random::uniform< libstdhl::Type::Integer >() );
+            return IntegerConstant( libstdhl::Random::uniform< libstdhl::Type::Integer >() );
         }
     }
     else if( type().isDecimal() )
     {
         if( m_range )
         {
-            const auto& a
-                = static_cast< DecimalConstant& >( *range().from() ).value();
-            const auto& b
-                = static_cast< DecimalConstant& >( *range().to() ).value();
+            const auto& a = static_cast< DecimalConstant& >( *range().from() ).value();
+            const auto& b = static_cast< DecimalConstant& >( *range().to() ).value();
 
             return DecimalConstant( libstdhl::Random::uniform<>( a, b ) );
         }
         else
         {
-            return DecimalConstant(
-                libstdhl::Random::uniform< libstdhl::Type::Decimal >() );
+            return DecimalConstant( libstdhl::Random::uniform< libstdhl::Type::Decimal >() );
         }
     }
     else if( type().isBoolean() )
     {
         if( m_range )
         {
-            const auto a = static_cast< BooleanConstant& >( *range().from() )
-                               .value()
-                               .value();
-            const auto b = static_cast< BooleanConstant& >( *range().to() )
-                               .value()
-                               .value();
+            const auto a = static_cast< BooleanConstant& >( *range().from() ).value().value();
+            const auto b = static_cast< BooleanConstant& >( *range().to() ).value().value();
 
             return BooleanConstant( libstdhl::Random::uniform< u8 >( a, b ) );
         }
         else
         {
-            return BooleanConstant(
-                libstdhl::Random::uniform< u8 >( false, true ) );
+            return BooleanConstant( libstdhl::Random::uniform< u8 >( false, true ) );
         }
     }
 
-    throw std::domain_error(
-        "unimplemented 'choose' of range type '" + name() + "'" );
+    throw std::domain_error( "unimplemented 'choose' of range type '" + name() + "'" );
     return VoidConstant();
 }
 
@@ -1355,9 +1304,8 @@ void RangeType::validate( const Constant& constant ) const
 
         if( ( a.value() > x.value() ) or ( x.value() > b.value() ) )
         {
-            throw ValidationException( "value '" + x.name()
-                                       + "' is out of type range "
-                                       + this->description() );
+            throw ValidationException(
+                "value '" + x.name() + "' is out of type range " + this->description() );
         }
     }
     else
@@ -1416,8 +1364,7 @@ std::string TupleType::description( void ) const
     return tmp;
 }
 
-void TupleType::foreach(
-    const std::function< void( const Constant& constant ) >& callback ) const
+void TupleType::foreach( const std::function< void( const Constant& constant ) >& callback ) const
 {
     // TODO
 }
@@ -1459,8 +1406,7 @@ std::string ListType::description( void ) const
     return "List< " + m_result->description() + " >";
 }
 
-void ListType::foreach(
-    const std::function< void( const Constant& constant ) >& callback ) const
+void ListType::foreach( const std::function< void( const Constant& constant ) >& callback ) const
 {
     // TODO
 }
@@ -1486,8 +1432,7 @@ std::size_t ListType::hash( void ) const
 // Reference Type
 //
 
-ReferenceType::ReferenceType(
-    const Type::Kind kind, const RelationType::Ptr& type )
+ReferenceType::ReferenceType( const Type::Kind kind, const RelationType::Ptr& type )
 : Type( kind )
 {
     m_result = type;
@@ -1524,16 +1469,14 @@ RuleReferenceType::RuleReferenceType( const RelationType::Ptr& type )
 {
 }
 
-RuleReferenceType::RuleReferenceType(
-    const Type::Ptr& result, const Types& arguments )
-: RuleReferenceType(
-      libstdhl::Memory::make< RelationType >( result, arguments ) )
+RuleReferenceType::RuleReferenceType( const Type::Ptr& result, const Types& arguments )
+: RuleReferenceType( libstdhl::Memory::make< RelationType >( result, arguments ) )
 {
 }
 
 RuleReferenceType::RuleReferenceType( void )
-: RuleReferenceType( libstdhl::Memory::make< RelationType >(
-      libstdhl::Memory::make< VoidType >() ) )
+: RuleReferenceType(
+      libstdhl::Memory::make< RelationType >( libstdhl::Memory::make< VoidType >() ) )
 {
 }
 
@@ -1562,17 +1505,15 @@ FunctionReferenceType::FunctionReferenceType( const RelationType::Ptr& type )
 {
 }
 
-FunctionReferenceType::FunctionReferenceType(
-    const Type::Ptr& result, const Types& arguments )
-: FunctionReferenceType(
-      libstdhl::Memory::make< RelationType >( result, arguments ) )
+FunctionReferenceType::FunctionReferenceType( const Type::Ptr& result, const Types& arguments )
+: FunctionReferenceType( libstdhl::Memory::make< RelationType >( result, arguments ) )
 {
 }
 
 std::string FunctionReferenceType::name( void ) const
 {
-    return "f" + m_result->name(); // PPA: FIXME: change this to "z", when
-                                   // Decimal is introduced
+    return "f" + m_result->name();  // PPA: FIXME: change this to "z", when
+                                    // Decimal is introduced
 }
 
 void FunctionReferenceType::validate( const Constant& constant ) const
@@ -1608,8 +1549,8 @@ FileType::FileType( void )
 
 std::string FileType::name( void ) const
 {
-    return "file"; // PPA: FIXME: change this to "f", when
-                   // Decimal is introduced
+    return "file";  // PPA: FIXME: change this to "f", when
+                    // Decimal is introduced
 }
 
 std::string FileType::description( void ) const
@@ -1617,8 +1558,7 @@ std::string FileType::description( void ) const
     return token( kind() );
 }
 
-void FileType::foreach(
-    const std::function< void( const Constant& constant ) >& callback ) const
+void FileType::foreach( const std::function< void( const Constant& constant ) >& callback ) const
 {
     // nothing to process
 }
@@ -1651,8 +1591,8 @@ PortType::PortType( void )
 
 std::string PortType::name( void ) const
 {
-    return "port"; // PPA: FIXME: change this to "p", when
-                   // Decimal is introduced
+    return "port";  // PPA: FIXME: change this to "p", when
+                    // Decimal is introduced
 }
 
 std::string PortType::description( void ) const
@@ -1660,8 +1600,7 @@ std::string PortType::description( void ) const
     return token( kind() );
 }
 
-void PortType::foreach(
-    const std::function< void( const Constant& constant ) >& callback ) const
+void PortType::foreach( const std::function< void( const Constant& constant ) >& callback ) const
 {
     // nothing to process
 }

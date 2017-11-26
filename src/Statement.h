@@ -59,16 +59,14 @@ namespace libcasm_ir
 
         Instructions& instructions( void );
 
-        ExecutionSemanticsBlock::Ptr add(
-            const ExecutionSemanticsBlock::Ptr& block );
+        ExecutionSemanticsBlock::Ptr add( const ExecutionSemanticsBlock::Ptr& block );
 
         ExecutionSemanticsBlocks& blocks( void );
 
         template < typename T, typename... Args >
         typename T::Ptr add( Args&&... args )
         {
-            auto obj = libstdhl::Memory::make< T >(
-                std::forward< Args >( args )... );
+            auto obj = libstdhl::Memory::make< T >( std::forward< Args >( args )... );
             add( obj );
             return obj;
         }
@@ -126,7 +124,7 @@ namespace libcasm_ir
     // TODO: FIXME: PPA: add ForallStatement and IterateStatement etc.
 }
 
-#endif // _LIBCASM_IR_STATEMENT_H_
+#endif  // _LIBCASM_IR_STATEMENT_H_
 
 //
 //  Local variables:
