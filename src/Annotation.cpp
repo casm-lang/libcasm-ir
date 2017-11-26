@@ -60,11 +60,13 @@ static std::unordered_map< Value::ID, const Annotation* >& id2obj( void )
 Annotation::Annotation( const Value::ID valueId,
     const Annotation::Relations& relations,
     const Resolve resolve,
-    const Inference inference )
+    const Inference inference,
+    const Validate validate )
 : m_valueId( valueId )
 , m_relations( relations )
 , m_resolve( resolve )
 , m_inference( inference )
+, m_validate( validate )
 {
     assert( m_relations.size() > 0 );
 
@@ -212,7 +214,14 @@ u1 Annotation::valid( const RelationType& type ) const
     }
 
     auto result = m_templates.find( key );
-    return result != m_templates.end();
+    if( result != m_templates.end() )
+    {
+        return m_validate( type );
+    }
+    else
+    {
+        return false;
+    }
 }
 
 const Annotation& Annotation::find( const std::string& token )

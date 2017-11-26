@@ -85,8 +85,12 @@ namespace libcasm_ir
             = std::function< Type::Ptr( const std::vector< Type::Ptr >&,
                 const std::vector< Value::Ptr >& ) >;
 
+        using Validate = std::function< u1( const RelationType& ) >;
+
         Annotation( const Value::ID id, const Relations& relations,
-            const Resolve resolve, const Inference inference );
+            const Resolve resolve, const Inference inference,
+            const Validate validate
+            = []( const RelationType& ) -> u1 { return true; } );
 
         Value::ID valueID( void ) const;
 
@@ -121,6 +125,8 @@ namespace libcasm_ir
         const Resolve m_resolve;
 
         const Inference m_inference;
+
+        const Validate m_validate;
 
       public:
         static const Annotation& find( const std::string& token );
