@@ -154,6 +154,37 @@ $(INSTA):%-install: %
 	@$(MAKE) $(MFLAGS) --no-print-directory -C $(OBJ) install
 
 
+format: $(FORMAT:%=%-format-cpp)
+
+%-format-cpp:
+	@echo "-- Formatting Code C++: $(patsubst %-format-cpp,%,$@)"
+	@clang-format -i \
+	`ls $(patsubst %-format-cpp,%,$@)/*.h 2> /dev/null | grep -e .h` 2> /dev/null
+	@clang-format -i \
+	`ls $(patsubst %-format-cpp,%,$@)/*.cpp 2> /dev/null | grep -e .cpp` 2> /dev/null
+
+
+update: $(UPDATE_FILE:%=%-update)
+
+%-update:
+	@echo "-- Updating: $(patsubst %-update,%,$@)"
+	@for i in $(UPDATE_PATH); \
+	  do \
+	    cp -v \
+	    $(UPDATE_ROOT)/$(patsubst %-update,%,$@) \
+	    $$i/$(patsubst %-update,%,$@); \
+	  done
+
+
+license: $(UPDATE_ROOT:%=%-license) $(UPDATE_PATH:%=%-license)
+
+%-license:
+	@echo "-- License: $(patsubst %-update,%,$@)"
+	@(cd $(patsubst %-update,%,$@); \
+	  python2 $(UPDATE_ROOT)/src/py/Licenser.py \
+	)
+
+
 analyze: debug-analyze
 
 analyze-all: $(TYPES:%=%-analyze)

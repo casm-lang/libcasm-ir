@@ -41,4 +41,6 @@
 
 TARGET = libcasm-ir
 
+UPDATE_ROOT = ../stdhl
+
 include .cmake/config.mk
