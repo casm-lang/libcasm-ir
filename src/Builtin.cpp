@@ -822,7 +822,7 @@ const Annotation AsBitBuiltin::annotation( classid(),
 
         { Type::Kind::BIT,
             {
-                Type::Kind::BIT,
+                Type::Kind::BOOLEAN,
             } },
 
         { Type::Kind::BIT,
@@ -832,7 +832,7 @@ const Annotation AsBitBuiltin::annotation( classid(),
 
         { Type::Kind::BIT,
             {
-                Type::Kind::BOOLEAN,
+                Type::Kind::BIT,
             } },
 
         { Type::Kind::BIT,
@@ -849,7 +849,19 @@ const Annotation AsBitBuiltin::annotation( classid(),
             throw InternalException( "types.size() != 1" );
         }
 
-        return nullptr;
+        assert( types[ 0 ] );
+        if( types[ 0 ]->isBit() )
+        {
+            return types[ 0 ];
+        }
+        else
+        {
+            return nullptr;
+        }
+    },
+    []( const RelationType& type ) -> u1 {
+        assert( type.arguments().size() == 1 );
+        return type.result() == *type.arguments().front();
     } );
 
 u1 AsBitBuiltin::classof( Value const* obj )
