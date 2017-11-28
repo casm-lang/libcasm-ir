@@ -39,188 +39,68 @@
 #   statement from your version.
 #
 
-language: cpp
-
-dist: trusty
 sudo: required
 
+language: cpp
+
+services:
+  - docker
+
 git:
-    submodules: false
+  submodules: false
 
 matrix:
   include:
-    - os: linux
-      compiler: clang
-      addons: &addons_clang_5_0
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-5.0
-          packages:
-            - gcc-6
-            - g++-6
-            - clang-5.0
-      env: ENV_CC="clang-5.0" ENV_CXX="clang++-5.0" BUILD="debug"
-    - os: linux
-      compiler: clang
-      addons: *addons_clang_5_0
-      env: ENV_CC="clang-5.0" ENV_CXX="clang++-5.0" BUILD="sanitize"
-    - os: linux
-      compiler: clang
-      addons: *addons_clang_5_0
-      env: ENV_CC="clang-5.0" ENV_CXX="clang++-5.0" BUILD="release"
+    - os:  linux
+      env: IMAGE="ppaulweber/docker-cpp:base" BUILD="debug"    ENV_CC="clang" ENV_CXX="clang++"
+    - os:  linux
+      env: IMAGE="ppaulweber/docker-cpp:base" BUILD="release"  ENV_CC="clang" ENV_CXX="clang++"
 
-    - os: linux
-      compiler: clang
-      addons: &addons_clang_4_0
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-4.0
-          packages:
-            - gcc-6
-            - g++-6
-            - clang-4.0
-      env: ENV_CC="clang-4.0" ENV_CXX="clang++-4.0" BUILD="debug"
-#   - os: linux
-#     compiler: clang
-#     addons: *addons_clang_4_0
-#     env: ENV_CC="clang-4.0" ENV_CXX="clang++-4.0" BUILD="sanitize"
-#   - os: linux
-#     compiler: clang
-#     addons: *addons_clang_4_0
-#     env: ENV_CC="clang-4.0" ENV_CXX="clang++-4.0" BUILD="release"
-
-    - os: linux
-      compiler: clang
-      addons: &addons_clang_3_9
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-3.9
-          packages:
-            - gcc-6
-            - g++-6
-            - clang-3.9
-      env: ENV_CC="clang-3.9" ENV_CXX="clang++-3.9" BUILD="debug"
-#   - os: linux
-#     compiler: clang
-#     addons: *addons_clang_3_9
-#     env: ENV_CC="clang-3.9" ENV_CXX="clang++-3.9" BUILD="release"
-
-    - os: linux
-      compiler: clang
-      addons: &addons_clang_3_8
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.8
-          packages:
-            - gcc-6
-            - g++-6
-            - clang-3.8
-      env: ENV_CC="clang-3.8" ENV_CXX="clang++-3.8" BUILD="debug"
-#   - os: linux
-#     compiler: clang
-#     addons: *addons_clang_3_8
-#     env: ENV_CC="clang-3.8" ENV_CXX="clang++-3.8" BUILD="release"
-
-    - os: linux
-      compiler: clang
-      addons: &addons_clang_3_7
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.7
-          packages:
-            - gcc-5
-            - g++-5
-            - clang-3.7
-      env: ENV_CC="clang-3.7" ENV_CXX="clang++-3.7" BUILD="debug"
-#   - os: linux
-#     compiler: clang
-#     addons: *addons_clang_3_7
-#     env: ENV_CC="clang-3.7" ENV_CXX="clang++-3.7" BUILD="release"
-
-    - os: linux
-      compiler: gcc
-      addons: &addons_gcc_7
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - sourceline: "ppa:jonathonf/binutils"
-          packages:
-            - gcc-7
-            - g++-7
-            - binutils
-      env: ENV_CC="gcc-7" ENV_CXX="g++-7" BUILD="debug"
-    - os: linux
-      compiler: gcc
-      addons: *addons_gcc_7
-      env: ENV_CC="gcc-7" ENV_CXX="g++-7" BUILD="sanitize"
-    - os: linux
-      compiler: gcc
-      addons: *addons_gcc_7
-      env: ENV_CC="gcc-7" ENV_CXX="g++-7" BUILD="release"
-
-    - os: linux
-      compiler: gcc
-      addons: &addons_gcc_6
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - sourceline: "ppa:jonathonf/binutils"
-          packages:
-            - gcc-6
-            - g++-6
-            - binutils
-      env: ENV_CC="gcc-6" ENV_CXX="g++-6" BUILD="debug"
-#   - os: linux
-#     compiler: gcc
-#     addons: *addons_gcc_6
-#     env: ENV_CC="gcc-6" ENV_CXX="g++-6" BUILD="release"
-
-    - os: linux
-      compiler: gcc
-      addons: &addons_gcc_5
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - gcc-5
-            - g++-5
-      env: ENV_CC="gcc-5" ENV_CXX="g++-5" BUILD="debug"
-#   - os: linux
-#     compiler: gcc
-#     addons: *addons_gcc_5
-#     env: ENV_CC="gcc-5" ENV_CXX="g++-5" BUILD="release"
+    - os:  linux
+      env: IMAGE="ppaulweber/docker-cpp:base" BUILD="debug"    ENV_CC="gcc"   ENV_CXX="g++"
+    - os:  linux
+      env: IMAGE="ppaulweber/docker-cpp:base" BUILD="release"  ENV_CC="gcc"   ENV_CXX="g++"
 
   allow_failures:
+    - os:  linux
+      env: IMAGE="ppaulweber/docker-cpp" BUILD="debug"    ENV_CC="clang" ENV_CXX="clang++"
+    - os:  linux
+      env: IMAGE="ppaulweber/docker-cpp" BUILD="sanitize" ENV_CC="clang" ENV_CXX="clang++"
+    - os:  linux
+      env: IMAGE="ppaulweber/docker-cpp" BUILD="release"  ENV_CC="clang" ENV_CXX="clang++"
 
-    - os: osx
-      osx_image: xcode8
-      compiler: clang
+    - os:  linux
+      env: IMAGE="ppaulweber/docker-cpp" BUILD="debug"    ENV_CC="gcc" ENV_CXX="g++"
+    - os:  linux
+      env: IMAGE="ppaulweber/docker-cpp" BUILD="sanitize" ENV_CC="gcc" ENV_CXX="g++"
+    - os:  linux
+      env: IMAGE="ppaulweber/docker-cpp" BUILD="release"  ENV_CC="gcc" ENV_CXX="g++"
 
-    - os: osx
+    - os:        osx
       osx_image: xcode8
-      compiler: gcc
+      compiler:  clang
+
+    - os:        osx
+      osx_image: xcode8
+      compiler:  gcc
 
 before_install:
   - git submodule update --init --remote
+  - docker pull ${IMAGE}
+  - docker run -itd --name build -v $(pwd):/repo ${IMAGE} bash
 
 install:
-  - echo ${TRAVIS_OS_NAME}
-  - make  --version
-  - cmake --version
-  - ${CC} --version
-  - ${CXX} --version
-  - ld --version
-  - echo ${BUILD}
+  - docker exec build uname      -a
+  - docker exec build make       --version
+  - docker exec build cmake      --version
+  - docker exec build ld         --version
+  - docker exec build ${ENV_CC}  --version
+  - docker exec build ${ENV_CXX} --version
 
 script:
-  - make ${BUILD}
-  - make ${BUILD}-test
-  - make ${BUILD}-benchmark
+  - docker exec build make -C /repo ${BUILD}
+  - docker exec build make -C /repo ${BUILD}-test
+  - docker exec build make -C /repo ${BUILD}-benchmark
 
 after_success:
-  - make ${BUILD}-analyze
+  - docker exec build make -C /repo ${BUILD}-analyze
