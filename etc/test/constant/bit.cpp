@@ -43,9 +43,9 @@
 
 using namespace libcasm_ir;
 
-static void libcasm_ir__constant_bit_test( u16 bitsize, u64 c )
+static void libcasm_ir__constant_binary_test( u16 bitsize, u64 c )
 {
-    auto v = libstdhl::Memory::make< BitConstant >( bitsize, c );
+    auto v = libstdhl::Memory::make< BinaryConstant >( bitsize, c );
     ASSERT_TRUE( v != nullptr );
 
     EXPECT_STREQ( v->name().c_str(), std::to_string( c ).c_str() );
@@ -53,14 +53,14 @@ static void libcasm_ir__constant_bit_test( u16 bitsize, u64 c )
     EXPECT_EQ( v->defined(), true );
     EXPECT_EQ( v->symbolic(), false );
 
-    auto w = libstdhl::Memory::make< BitConstant >( bitsize, c );
+    auto w = libstdhl::Memory::make< BinaryConstant >( bitsize, c );
     ASSERT_TRUE( w != nullptr );
 
     EXPECT_TRUE( v != w );
     EXPECT_TRUE( *v == *w );
 
-    auto a = libstdhl::Memory::get< BitConstant >( bitsize, c );
-    auto b = libstdhl::Memory::get< BitConstant >( bitsize, c );
+    auto a = libstdhl::Memory::get< BinaryConstant >( bitsize, c );
+    auto b = libstdhl::Memory::get< BinaryConstant >( bitsize, c );
 
     ASSERT_TRUE( a != nullptr );
     ASSERT_TRUE( b != nullptr );
@@ -69,36 +69,36 @@ static void libcasm_ir__constant_bit_test( u16 bitsize, u64 c )
     EXPECT_TRUE( *a == *b );
 }
 
-TEST( libcasm_ir__constant_bit, create_range_from_1_to_size_max )
+TEST( libcasm_ir__constant_binary, create_range_from_1_to_size_max )
 {
-    for( u16 c = 1; c <= BitType::SizeMax; c++ )
+    for( u16 c = 1; c <= BinaryType::SizeMax; c++ )
     {
-        libcasm_ir__constant_bit_test( c, c );
+        libcasm_ir__constant_binary_test( c, c );
     }
 }
 
-TEST( libcasm_ir__constant_bit, create_random )
+TEST( libcasm_ir__constant_binary, create_random )
 {
-    for( u64 c = 1; c <= BitType::SizeMax; c++ )
+    for( u64 c = 1; c <= BinaryType::SizeMax; c++ )
     {
         for( u64 i = 0; i < 100; i++ )
         {
             u64 value = libstdhl::Random::uniform< u64 >() % ( (u64)1 << c );
 
-            libcasm_ir__constant_bit_test( c, value );
+            libcasm_ir__constant_binary_test( c, value );
         }
     }
 }
 
-TEST( libcasm_ir__constant_bit, create_from_string )
+TEST( libcasm_ir__constant_binary, create_from_string )
 {
-    libstdhl::Memory::get< BitConstant >( "011101011", libstdhl::Type::Radix::BINARY );
-    libstdhl::Memory::get< BitConstant >( "0111'0'1011", libstdhl::Type::Radix::BINARY );
+    libstdhl::Memory::get< BinaryConstant >( "011101011", libstdhl::Type::Radix::BINARY );
+    libstdhl::Memory::get< BinaryConstant >( "0111'0'1011", libstdhl::Type::Radix::BINARY );
 
-    libstdhl::Memory::get< BitConstant >( "1234", libstdhl::Type::Radix::HEXADECIMAL );
-    libstdhl::Memory::get< BitConstant >( "12'34", libstdhl::Type::Radix::HEXADECIMAL );
+    libstdhl::Memory::get< BinaryConstant >( "1234", libstdhl::Type::Radix::HEXADECIMAL );
+    libstdhl::Memory::get< BinaryConstant >( "12'34", libstdhl::Type::Radix::HEXADECIMAL );
 
-    libstdhl::Memory::get< BitConstant >( "F", libstdhl::Type::Radix::RADIX64 );
+    libstdhl::Memory::get< BinaryConstant >( "F", libstdhl::Type::Radix::RADIX64 );
 }
 
 //

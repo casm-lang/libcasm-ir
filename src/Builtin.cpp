@@ -96,7 +96,7 @@ u1 Builtin::classof( Value const* obj )
            CastingBuiltin::classof( obj ) or
            StringifyBuiltin::classof( obj )
            // or MathBuiltin::classof( obj )
-           or OperatorBuiltin::classof( obj ) or BitBuiltin::classof( obj );
+           or OperatorBuiltin::classof( obj ) or BinaryBuiltin::classof( obj );
 }
 
 u1 Builtin::available( const std::string& token )
@@ -108,7 +108,7 @@ u1 Builtin::available( const std::string& token )
         const auto id = annotation.valueID();
 
         if( id == CastingBuiltin::classid() or id == AsBooleanBuiltin::classid() or
-            id == AsIntegerBuiltin::classid() or id == AsBitBuiltin::classid() or
+            id == AsIntegerBuiltin::classid() or id == AsBinaryBuiltin::classid() or
             id == AsStringBuiltin::classid() or id == AsDecimalBuiltin::classid() or
             id == AsRationalBuiltin::classid() or id == AsEnumerationBuiltin::classid() )
         {
@@ -153,7 +153,7 @@ Builtin::Ptr Builtin::create( const Value::ID id, const Type::Ptr& type )
         case Value::RULE_REFERENCE_CONSTANT:    // [fallthrough]
         case Value::BOOLEAN_CONSTANT:           // [fallthrough]
         case Value::INTEGER_CONSTANT:           // [fallthrough]
-        case Value::BIT_CONSTANT:               // [fallthrough]
+        case Value::BINARY_CONSTANT:            // [fallthrough]
         case Value::STRING_CONSTANT:            // [fallthrough]
         case Value::DECIMAL_CONSTANT:           // [fallthrough]
         case Value::RATIONAL_CONSTANT:          // [fallthrough]
@@ -237,9 +237,9 @@ Builtin::Ptr Builtin::create( const Value::ID id, const Type::Ptr& type )
         {
             return libstdhl::Memory::make< AsIntegerBuiltin >( type );
         }
-        case Value::AS_BIT_BUILTIN:
+        case Value::AS_BINARY_BUILTIN:
         {
-            return libstdhl::Memory::make< AsBitBuiltin >( type );
+            return libstdhl::Memory::make< AsBinaryBuiltin >( type );
         }
         case Value::AS_STRING_BUILTIN:
         {
@@ -346,7 +346,7 @@ Builtin::Ptr Builtin::create( const Value::ID id, const Type::Ptr& type )
             return libstdhl::Memory::make< GeqsBuiltin >( type );
         }
 
-        case Value::BIT_BUILTIN:
+        case Value::BINARY_BUILTIN:
         {
             break;
         }
@@ -440,7 +440,7 @@ const Annotation IsSymbolicBuiltin::annotation(
 
         { Type::Kind::BOOLEAN,
           {
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
           } },
 
         { Type::Kind::BOOLEAN,
@@ -703,7 +703,7 @@ CastingBuiltin::CastingBuiltin( const Type::Ptr& type, const Value::ID id )
 u1 CastingBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid() or AsBooleanBuiltin::classof( obj ) or
-           AsIntegerBuiltin::classof( obj ) or AsBitBuiltin::classof( obj ) or
+           AsIntegerBuiltin::classof( obj ) or AsBinaryBuiltin::classof( obj ) or
            AsEnumerationBuiltin::classof( obj ) or AsStringBuiltin::classof( obj ) or
            AsDecimalBuiltin::classof( obj );
 }
@@ -733,7 +733,7 @@ const Annotation AsBooleanBuiltin::annotation(
 
         { Type::Kind::BOOLEAN,
           {
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
           } },
 
     },
@@ -777,7 +777,7 @@ const Annotation AsIntegerBuiltin::annotation(
 
         { Type::Kind::INTEGER,
           {
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
           } },
 
         { Type::Kind::INTEGER,
@@ -811,34 +811,34 @@ u1 AsIntegerBuiltin::classof( Value const* obj )
 }
 
 //
-// AsBitBuiltin
+// AsBinaryBuiltin
 //
 
-AsBitBuiltin::AsBitBuiltin( const Type::Ptr& type )
+AsBinaryBuiltin::AsBinaryBuiltin( const Type::Ptr& type )
 : CastingBuiltin( type, classid() )
 {
 }
 
-const Annotation AsBitBuiltin::annotation(
+const Annotation AsBinaryBuiltin::annotation(
     classid(),
     Annotation::Relations{
 
-        { Type::Kind::BIT,
+        { Type::Kind::BINARY,
           {
               Type::Kind::BOOLEAN,
           } },
 
-        { Type::Kind::BIT,
+        { Type::Kind::BINARY,
           {
               Type::Kind::INTEGER,
           } },
 
-        { Type::Kind::BIT,
+        { Type::Kind::BINARY,
           {
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
           } },
 
-        { Type::Kind::BIT,
+        { Type::Kind::BINARY,
           {
               Type::Kind::DECIMAL,
           } },
@@ -853,7 +853,7 @@ const Annotation AsBitBuiltin::annotation(
         }
 
         assert( types[ 0 ] );
-        if( types[ 0 ]->isBit() )
+        if( types[ 0 ]->isBinary() )
         {
             return types[ 0 ];
         }
@@ -867,7 +867,7 @@ const Annotation AsBitBuiltin::annotation(
         return type.result() == *type.arguments().front();
     } );
 
-u1 AsBitBuiltin::classof( Value const* obj )
+u1 AsBinaryBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
 }
@@ -902,7 +902,7 @@ const Annotation AsStringBuiltin::annotation(
 
         { Type::Kind::STRING,
           {
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
           } },
 
         { Type::Kind::STRING,
@@ -971,7 +971,7 @@ const Annotation AsDecimalBuiltin::annotation(
 
         { Type::Kind::DECIMAL,
           {
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
           } },
 
         { Type::Kind::DECIMAL,
@@ -1025,7 +1025,7 @@ const Annotation AsRationalBuiltin::annotation(
 
         { Type::Kind::RATIONAL,
           {
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
           } },
 
     },
@@ -1108,7 +1108,7 @@ static const Annotation::Relations stringify_builtin_data = {
 
     { Type::Kind::STRING,
       {
-          Type::Kind::BIT,
+          Type::Kind::BINARY,
       } },
 
     { Type::Kind::STRING,
@@ -1240,10 +1240,10 @@ static const Annotation::Relations arithmetic_builtin_data = {
           Type::Kind::INTEGER,
       } },
 
-    { Type::Kind::BIT,
+    { Type::Kind::BINARY,
       {
-          Type::Kind::BIT,
-          Type::Kind::BIT,
+          Type::Kind::BINARY,
+          Type::Kind::BINARY,
       } }
 };
 
@@ -1415,8 +1415,8 @@ const Annotation::Relations compare_builtin_data = {
 
     { Type::Kind::BOOLEAN,
       {
-          Type::Kind::BIT,
-          Type::Kind::BIT,
+          Type::Kind::BINARY,
+          Type::Kind::BINARY,
       } },
 
     { Type::Kind::BOOLEAN,
@@ -1592,15 +1592,15 @@ u1 GeqsBuiltin::classof( Value const* obj )
 }
 
 //
-// BitBuiltin
+// BinaryBuiltin
 //
 
-BitBuiltin::BitBuiltin( const Type::Ptr& type, const Value::ID id )
+BinaryBuiltin::BinaryBuiltin( const Type::Ptr& type, const Value::ID id )
 : Builtin( type, id )
 {
 }
 
-u1 BitBuiltin::classof( Value const* obj )
+u1 BinaryBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid() or ZextBuiltin::classof( obj ) or SextBuiltin::classof( obj ) or
            TruncBuiltin::classof( obj ) or ShlBuiltin::classof( obj ) or
@@ -1613,7 +1613,7 @@ u1 BitBuiltin::classof( Value const* obj )
 //
 
 ZextBuiltin::ZextBuiltin( const Type::Ptr& type )
-: BitBuiltin( type, classid() )
+: BinaryBuiltin( type, classid() )
 {
 }
 
@@ -1621,9 +1621,9 @@ const Annotation ZextBuiltin::annotation(
     classid(),
     Annotation::Relations{
 
-        { Type::Kind::BIT,
+        { Type::Kind::BINARY,
           {
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
               Type::Kind::INTEGER,
           } }
 
@@ -1653,7 +1653,7 @@ u1 ZextBuiltin::classof( Value const* obj )
 //
 
 SextBuiltin::SextBuiltin( const Type::Ptr& type )
-: BitBuiltin( type, classid() )
+: BinaryBuiltin( type, classid() )
 {
 }
 
@@ -1661,9 +1661,9 @@ const Annotation SextBuiltin::annotation(
     classid(),
     Annotation::Relations{
 
-        { Type::Kind::BIT,
+        { Type::Kind::BINARY,
           {
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
               Type::Kind::INTEGER,
           } }
 
@@ -1693,7 +1693,7 @@ u1 SextBuiltin::classof( Value const* obj )
 //
 
 TruncBuiltin::TruncBuiltin( const Type::Ptr& type )
-: BitBuiltin( type, classid() )
+: BinaryBuiltin( type, classid() )
 {
 }
 
@@ -1701,9 +1701,9 @@ const Annotation TruncBuiltin::annotation(
     classid(),
     Annotation::Relations{
 
-        { Type::Kind::BIT,
+        { Type::Kind::BINARY,
           {
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
               Type::Kind::INTEGER,
           } }
 
@@ -1733,7 +1733,7 @@ u1 TruncBuiltin::classof( Value const* obj )
 //
 
 ShlBuiltin::ShlBuiltin( const Type::Ptr& type )
-: BitBuiltin( type, classid() )
+: BinaryBuiltin( type, classid() )
 {
 }
 
@@ -1741,16 +1741,16 @@ const Annotation ShlBuiltin::annotation(
     classid(),
     Annotation::Relations{
 
-        { Type::Kind::BIT,
+        { Type::Kind::BINARY,
           {
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
               Type::Kind::INTEGER,
           } },
 
-        { Type::Kind::BIT,
+        { Type::Kind::BINARY,
           {
-              Type::Kind::BIT,
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
+              Type::Kind::BINARY,
           } }
 
     },
@@ -1763,7 +1763,7 @@ const Annotation ShlBuiltin::annotation(
         }
         const auto& lhs = types[ 0 ];
         const auto& rhs = types[ 1 ];
-        if( rhs->isBit() )
+        if( rhs->isBinary() )
         {
             if( *lhs != *rhs )
             {
@@ -1783,7 +1783,7 @@ u1 ShlBuiltin::classof( Value const* obj )
 //
 
 ShrBuiltin::ShrBuiltin( const Type::Ptr& type )
-: BitBuiltin( type, classid() )
+: BinaryBuiltin( type, classid() )
 {
 }
 
@@ -1791,16 +1791,16 @@ const Annotation ShrBuiltin::annotation(
     classid(),
     Annotation::Relations{
 
-        { Type::Kind::BIT,
+        { Type::Kind::BINARY,
           {
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
               Type::Kind::INTEGER,
           } },
 
-        { Type::Kind::BIT,
+        { Type::Kind::BINARY,
           {
-              Type::Kind::BIT,
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
+              Type::Kind::BINARY,
           } }
 
     },
@@ -1813,7 +1813,7 @@ const Annotation ShrBuiltin::annotation(
         }
         const auto& lhs = types[ 0 ];
         const auto& rhs = types[ 1 ];
-        if( rhs->isBit() )
+        if( rhs->isBinary() )
         {
             if( *lhs != *rhs )
             {
@@ -1833,7 +1833,7 @@ u1 ShrBuiltin::classof( Value const* obj )
 //
 
 AshrBuiltin::AshrBuiltin( const Type::Ptr& type )
-: BitBuiltin( type, classid() )
+: BinaryBuiltin( type, classid() )
 {
 }
 
@@ -1841,16 +1841,16 @@ const Annotation AshrBuiltin::annotation(
     classid(),
     Annotation::Relations{
 
-        { Type::Kind::BIT,
+        { Type::Kind::BINARY,
           {
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
               Type::Kind::INTEGER,
           } },
 
-        { Type::Kind::BIT,
+        { Type::Kind::BINARY,
           {
-              Type::Kind::BIT,
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
+              Type::Kind::BINARY,
           } }
 
     },
@@ -1863,7 +1863,7 @@ const Annotation AshrBuiltin::annotation(
         }
         const auto& lhs = types[ 0 ];
         const auto& rhs = types[ 1 ];
-        if( rhs->isBit() )
+        if( rhs->isBinary() )
         {
             if( *lhs != *rhs )
             {
@@ -1883,7 +1883,7 @@ u1 AshrBuiltin::classof( Value const* obj )
 //
 
 ClzBuiltin::ClzBuiltin( const Type::Ptr& type )
-: BitBuiltin( type, classid() )
+: BinaryBuiltin( type, classid() )
 {
 }
 
@@ -1893,7 +1893,7 @@ const Annotation ClzBuiltin::annotation(
 
         { Type::Kind::INTEGER,
           {
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
           } }
 
     },
@@ -1917,7 +1917,7 @@ u1 ClzBuiltin::classof( Value const* obj )
 //
 
 CloBuiltin::CloBuiltin( const Type::Ptr& type )
-: BitBuiltin( type, classid() )
+: BinaryBuiltin( type, classid() )
 {
 }
 
@@ -1927,7 +1927,7 @@ const Annotation CloBuiltin::annotation(
 
         { Type::Kind::INTEGER,
           {
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
           } }
 
     },
@@ -1951,7 +1951,7 @@ u1 CloBuiltin::classof( Value const* obj )
 //
 
 ClsBuiltin::ClsBuiltin( const Type::Ptr& type )
-: BitBuiltin( type, classid() )
+: BinaryBuiltin( type, classid() )
 {
 }
 
@@ -1961,7 +1961,7 @@ const Annotation ClsBuiltin::annotation(
 
         { Type::Kind::INTEGER,
           {
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
           } }
 
     },

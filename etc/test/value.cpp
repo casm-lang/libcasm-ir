@@ -164,9 +164,9 @@ TEST( libcasm_ir_Value, id_to_token_string )
                 EXPECT_STREQ( Value::token( id ).c_str(), "IntegerConstant" );
                 break;
             }
-            case Value::BIT_CONSTANT:
+            case Value::BINARY_CONSTANT:
             {
-                EXPECT_STREQ( Value::token( id ).c_str(), "BitConstant" );
+                EXPECT_STREQ( Value::token( id ).c_str(), "BinaryConstant" );
                 break;
             }
             case Value::STRING_CONSTANT:
@@ -433,9 +433,9 @@ TEST( libcasm_ir_Value, id_to_token_string )
                 EXPECT_STREQ( Value::token( id ).c_str(), "asInteger" );
                 break;
             }
-            case Value::AS_BIT_BUILTIN:
+            case Value::AS_BINARY_BUILTIN:
             {
-                EXPECT_STREQ( Value::token( id ).c_str(), "asBit" );
+                EXPECT_STREQ( Value::token( id ).c_str(), "asBinary" );
                 break;
             }
             case Value::AS_STRING_BUILTIN:
@@ -572,9 +572,9 @@ TEST( libcasm_ir_Value, id_to_token_string )
                 break;
             }
 
-            case Value::BIT_BUILTIN:
+            case Value::BINARY_BUILTIN:
             {
-                EXPECT_STREQ( Value::token( id ).c_str(), "BitBuiltin" );
+                EXPECT_STREQ( Value::token( id ).c_str(), "BinaryBuiltin" );
                 break;
             }
             case Value::ZEXT_BUILTIN:

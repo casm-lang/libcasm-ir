@@ -83,9 +83,9 @@ TEST( libcasm_ir__Type, id_to_token_string )
                 EXPECT_STREQ( libcasm_ir::Type::token( id ).c_str(), "Integer" );
                 break;
             }
-            case libcasm_ir::Type::Kind::BIT:
+            case libcasm_ir::Type::Kind::BINARY:
             {
-                EXPECT_STREQ( libcasm_ir::Type::token( id ).c_str(), "Bit" );
+                EXPECT_STREQ( libcasm_ir::Type::token( id ).c_str(), "Binary" );
                 break;
             }
             case libcasm_ir::Type::Kind::STRING:

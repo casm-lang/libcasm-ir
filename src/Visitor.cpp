@@ -393,7 +393,7 @@ void TraversalVisitor::visit( IntegerConstant& value )
 {
     callback()( value );
 }
-void TraversalVisitor::visit( BitConstant& value )
+void TraversalVisitor::visit( BinaryConstant& value )
 {
     callback()( value );
 }

@@ -161,7 +161,7 @@ u1 Type::isRelation( void ) const
 
 u1 Type::isPrimitive( void ) const
 {
-    return isBoolean() or isInteger() or isRational() or isBit() or isDecimal() or isString();
+    return isBoolean() or isInteger() or isRational() or isBinary() or isDecimal() or isString();
 }
 
 u1 Type::isBoolean( void ) const
@@ -179,9 +179,9 @@ u1 Type::isRational( void ) const
     return kind() == Type::Kind::RATIONAL;
 }
 
-u1 Type::isBit( void ) const
+u1 Type::isBinary( void ) const
 {
-    return kind() == Type::Kind::BIT;
+    return kind() == Type::Kind::BINARY;
 }
 
 u1 Type::isDecimal( void ) const
@@ -289,7 +289,7 @@ Type::Ptr Type::fromID( const Type::ID id )
             {
                 return TYPE_RATIONAL;
             }
-            case libcasm_ir::Type::Kind::BIT:
+            case libcasm_ir::Type::Kind::BINARY:
             {
                 assert( !" invalid ID!" );
                 break;
@@ -377,9 +377,9 @@ std::string Type::token( const Type::Kind kind )
         {
             return "Rational";
         }
-        case Type::Kind::BIT:
+        case Type::Kind::BINARY:
         {
-            return "Bit";
+            return "Binary";
         }
         case Type::Kind::DECIMAL:
         {
@@ -872,27 +872,27 @@ std::size_t RationalType::hash( void ) const
 
 //
 //
-// Bit Type
+// Binary Type
 //
 
-BitType::BitType( u16 bitsize )
+BinaryType::BinaryType( u16 bitsize )
 : PrimitiveType( classid() )
 , m_bitsize( bitsize )
 {
-    if( m_bitsize < 1 or m_bitsize > BitType::SizeMax )
+    if( m_bitsize < 1 or m_bitsize > BinaryType::SizeMax )
     {
         throw std::domain_error(
-            "invalid bit size '" + std::to_string( m_bitsize ) + "' for 'Bit' type" );
+            "invalid bit size '" + std::to_string( m_bitsize ) + "' for 'Binary' type" );
     }
 }
 
-BitType::BitType( const IntegerConstant::Ptr& bitsize )
+BinaryType::BinaryType( const IntegerConstant::Ptr& bitsize )
 : PrimitiveType( classid() )
 {
     assert( bitsize );
-    if( bitsize->value().value() > BitType::SizeMax or bitsize->value().sign() )
+    if( bitsize->value().value() > BinaryType::SizeMax or bitsize->value().sign() )
     {
-        throw std::domain_error( "invalid bit size '" + bitsize->name() + "' for 'Bit' type" );
+        throw std::domain_error( "invalid bit size '" + bitsize->name() + "' for 'Binary' type" );
     }
 
     m_bitsize = bitsize->value_i64();
@@ -900,11 +900,11 @@ BitType::BitType( const IntegerConstant::Ptr& bitsize )
     if( m_bitsize < 1 )
     {
         throw std::domain_error(
-            "invalid bit size '" + std::to_string( m_bitsize ) + "' for 'Bit' type" );
+            "invalid bit size '" + std::to_string( m_bitsize ) + "' for 'Binary' type" );
     }
 }
 
-BitType::BitType( const std::string& value, const libstdhl::Type::Radix radix )
+BinaryType::BinaryType( const std::string& value, const libstdhl::Type::Radix radix )
 : PrimitiveType( classid() )
 {
     std::string tmp = value;
@@ -912,50 +912,50 @@ BitType::BitType( const std::string& value, const libstdhl::Type::Radix radix )
 
     m_bitsize = (u16)tmp.size() * std::log2( (double)radix );
 
-    if( m_bitsize < 1 or m_bitsize > BitType::SizeMax )
+    if( m_bitsize < 1 or m_bitsize > BinaryType::SizeMax )
     {
         throw std::domain_error(
-            "invalid bit size '" + std::to_string( m_bitsize ) + "' for 'Bit' type" );
+            "invalid bit size '" + std::to_string( m_bitsize ) + "' for 'Binary' type" );
     }
 }
 
-u16 BitType::bitsize( void ) const
+u16 BinaryType::bitsize( void ) const
 {
     return m_bitsize;
 }
 
-std::string BitType::name( void ) const
+std::string BinaryType::name( void ) const
 {
     return "u" + std::to_string( m_bitsize );
 }
 
-std::string BitType::description( void ) const
+std::string BinaryType::description( void ) const
 {
     return token( kind() ) + "'" + std::to_string( m_bitsize );
 }
 
-void BitType::foreach( const std::function< void( const Constant& constant ) >& callback ) const
+void BinaryType::foreach( const std::function< void( const Constant& constant ) >& callback ) const
 {
     // this type has an (depending on the current bit-size) infinite range to
     // process, therefore omitted (for now)
 }
 
-Constant BitType::choose( void ) const
+Constant BinaryType::choose( void ) const
 {
-    return BitConstant(
+    return BinaryConstant(
         m_bitsize,
         libstdhl::Random::uniform< u64 >() %
             m_bitsize );  // TODO: FIXME: PPA: fix the randomized value modulo
                           // mapping to full range not only the bitsize
 }
 
-void BitType::validate( const Constant& constant ) const
+void BinaryType::validate( const Constant& constant ) const
 {
-    assert( isa< BitConstant >( constant ) );
+    assert( isa< BinaryConstant >( constant ) );
 
-    const auto& c = static_cast< const BitConstant& >( constant );
-    assert( c.type().isBit() );
-    const auto& t = static_cast< const BitType& >( c.type() );
+    const auto& c = static_cast< const BinaryConstant& >( constant );
+    assert( c.type().isBinary() );
+    const auto& t = static_cast< const BinaryType& >( c.type() );
 
     if( m_bitsize < t.bitsize() )
     {
@@ -965,7 +965,7 @@ void BitType::validate( const Constant& constant ) const
     }
 }
 
-std::size_t BitType::hash( void ) const
+std::size_t BinaryType::hash( void ) const
 {
     return std::hash< std::string >()( name() );
 }

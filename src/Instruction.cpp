@@ -550,9 +550,9 @@ const Annotation InvInstruction::annotation(
               Type::Kind::INTEGER,
           } },
 
-        { Type::Kind::BIT,
+        { Type::Kind::BINARY,
           {
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
           } },
 
         { Type::Kind::DECIMAL,
@@ -617,9 +617,9 @@ const Annotation AddInstruction::annotation(
               Type::Kind::INTEGER,  // signed integer add no wrap
           } },
 
-        { Type::Kind::BIT,
+        { Type::Kind::BINARY,
           {
-              Type::Kind::BIT, Type::Kind::BIT,  // unsigned bit add with wrap
+              Type::Kind::BINARY, Type::Kind::BINARY,  // unsigned binary add with wrap
           } },
 
         { Type::Kind::RATIONAL,
@@ -697,9 +697,9 @@ const Annotation SubInstruction::annotation(
               Type::Kind::INTEGER,  // signed integer sub no wrap
           } },
 
-        { Type::Kind::BIT,
+        { Type::Kind::BINARY,
           {
-              Type::Kind::BIT, Type::Kind::BIT,  // unsigned bit sub with wrap
+              Type::Kind::BINARY, Type::Kind::BINARY,  // unsigned binary sub with wrap
           } },
 
         { Type::Kind::RATIONAL,
@@ -772,10 +772,10 @@ const Annotation MulInstruction::annotation(
               Type::Kind::INTEGER,  // signed integer mul no wrap
           } },
 
-        { Type::Kind::BIT,
+        { Type::Kind::BINARY,
           {
-              Type::Kind::BIT,
-              Type::Kind::BIT,  // unsigned integer mul with wrap
+              Type::Kind::BINARY,
+              Type::Kind::BINARY,  // unsigned integer mul with wrap
           } },
 
         { Type::Kind::RATIONAL,
@@ -1039,8 +1039,8 @@ LogicalInstruction::LogicalInstruction(
     if( operands.size() > 0 )
     {
         assert(
-            ( operands[ 0 ]->type().isBit() and this->type().isBit() ) or
-            ( not operands[ 0 ]->type().isBit() and this->type().isBoolean() ) );
+            ( operands[ 0 ]->type().isBinary() and this->type().isBinary() ) or
+            ( not operands[ 0 ]->type().isBinary() and this->type().isBoolean() ) );
     }
 }
 
@@ -1059,7 +1059,7 @@ static const auto logic_instruction_resolve = arithmetic_instruction_resolve;
 
 AndInstruction::AndInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 : LogicalInstruction(
-      lhs->type().isBit() ? lhs->type().ptr_type() : BOOLEAN, classid(), { lhs, rhs } )
+      lhs->type().isBinary() ? lhs->type().ptr_type() : BOOLEAN, classid(), { lhs, rhs } )
 {
 }
 
@@ -1083,10 +1083,10 @@ const Annotation AndInstruction::annotation(
               Type::Kind::BOOLEAN,
           } },
 
-        { Type::Kind::BIT,
+        { Type::Kind::BINARY,
           {
-              Type::Kind::BIT,
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
+              Type::Kind::BINARY,
           } },
 
     },
@@ -1105,7 +1105,7 @@ const Annotation AndInstruction::annotation(
             return nullptr;
         }
 
-        if( lhs->isBit() )
+        if( lhs->isBinary() )
         {
             return lhs;
         }
@@ -1126,7 +1126,7 @@ u1 AndInstruction::classof( Value const* obj )
 
 XorInstruction::XorInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 : LogicalInstruction(
-      lhs->type().isBit() ? lhs->type().ptr_type() : BOOLEAN, classid(), { lhs, rhs } )
+      lhs->type().isBinary() ? lhs->type().ptr_type() : BOOLEAN, classid(), { lhs, rhs } )
 {
 }
 
@@ -1150,10 +1150,10 @@ const Annotation XorInstruction::annotation(
               Type::Kind::BOOLEAN,
           } },
 
-        { Type::Kind::BIT,
+        { Type::Kind::BINARY,
           {
-              Type::Kind::BIT,
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
+              Type::Kind::BINARY,
           } },
 
     },
@@ -1172,7 +1172,7 @@ const Annotation XorInstruction::annotation(
             return nullptr;
         }
 
-        if( lhs->isBit() )
+        if( lhs->isBinary() )
         {
             return lhs;
         }
@@ -1193,7 +1193,7 @@ u1 XorInstruction::classof( Value const* obj )
 
 OrInstruction::OrInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 : LogicalInstruction(
-      lhs->type().isBit() ? lhs->type().ptr_type() : BOOLEAN, classid(), { lhs, rhs } )
+      lhs->type().isBinary() ? lhs->type().ptr_type() : BOOLEAN, classid(), { lhs, rhs } )
 {
 }
 
@@ -1217,10 +1217,10 @@ const Annotation OrInstruction::annotation(
               Type::Kind::BOOLEAN,
           } },
 
-        { Type::Kind::BIT,
+        { Type::Kind::BINARY,
           {
-              Type::Kind::BIT,
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
+              Type::Kind::BINARY,
           } },
 
     },
@@ -1239,7 +1239,7 @@ const Annotation OrInstruction::annotation(
             return nullptr;
         }
 
-        if( lhs->isBit() )
+        if( lhs->isBinary() )
         {
             return lhs;
         }
@@ -1260,7 +1260,7 @@ u1 OrInstruction::classof( Value const* obj )
 
 ImpInstruction::ImpInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 : LogicalInstruction(
-      lhs->type().isBit() ? lhs->type().ptr_type() : BOOLEAN, classid(), { lhs, rhs } )
+      lhs->type().isBinary() ? lhs->type().ptr_type() : BOOLEAN, classid(), { lhs, rhs } )
 {
 }
 
@@ -1315,7 +1315,7 @@ const Annotation ImpInstruction::annotation(
             return nullptr;
         }
 
-        if( lhs->isBit() )
+        if( lhs->isBinary() )
         {
             return lhs;
         }
@@ -1335,7 +1335,8 @@ u1 ImpInstruction::classof( Value const* obj )
 //
 
 NotInstruction::NotInstruction( const Value::Ptr& lhs )
-: LogicalInstruction( lhs->type().isBit() ? lhs->type().ptr_type() : BOOLEAN, classid(), { lhs } )
+: LogicalInstruction(
+      lhs->type().isBinary() ? lhs->type().ptr_type() : BOOLEAN, classid(), { lhs } )
 {
 }
 
@@ -1363,9 +1364,9 @@ const Annotation NotInstruction::annotation(
         //         Type::Kind::INTEGER,
         //     } },
 
-        { Type::Kind::BIT,
+        { Type::Kind::BINARY,
           {
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
           } },
 
     },
@@ -1378,7 +1379,7 @@ const Annotation NotInstruction::annotation(
 
         const auto& lhs = types[ 0 ];
 
-        if( lhs->isBit() )
+        if( lhs->isBinary() )
         {
             return lhs;
         }
@@ -1484,8 +1485,8 @@ const Annotation EquInstruction::annotation(
 
         { Type::Kind::BOOLEAN,
           {
-              Type::Kind::BIT,
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
+              Type::Kind::BINARY,
           } },
 
         { Type::Kind::BOOLEAN,
@@ -1601,8 +1602,8 @@ const Annotation NeqInstruction::annotation(
 
         { Type::Kind::BOOLEAN,
           {
-              Type::Kind::BIT,
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
+              Type::Kind::BINARY,
           } },
 
         { Type::Kind::BOOLEAN,
@@ -1712,8 +1713,8 @@ const Annotation LthInstruction::annotation(
 
         { Type::Kind::BOOLEAN,
           {
-              Type::Kind::BIT,
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
+              Type::Kind::BINARY,
           } },
 
         { Type::Kind::BOOLEAN,
@@ -1769,8 +1770,8 @@ const Annotation LeqInstruction::annotation(
 
         { Type::Kind::BOOLEAN,
           {
-              Type::Kind::BIT,
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
+              Type::Kind::BINARY,
           } },
 
         { Type::Kind::BOOLEAN,
@@ -1826,8 +1827,8 @@ const Annotation GthInstruction::annotation(
 
         { Type::Kind::BOOLEAN,
           {
-              Type::Kind::BIT,
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
+              Type::Kind::BINARY,
           } },
 
         { Type::Kind::BOOLEAN,
@@ -1883,8 +1884,8 @@ const Annotation GeqInstruction::annotation(
 
         { Type::Kind::BOOLEAN,
           {
-              Type::Kind::BIT,
-              Type::Kind::BIT,
+              Type::Kind::BINARY,
+              Type::Kind::BINARY,
           } },
 
         { Type::Kind::BOOLEAN,

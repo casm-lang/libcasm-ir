@@ -305,7 +305,7 @@ void IRDumpSourceVisitor::visit( IntegerConstant& value )
 {
     dump( value );
 }
-void IRDumpSourceVisitor::visit( BitConstant& value )
+void IRDumpSourceVisitor::visit( BinaryConstant& value )
 {
     dump( value );
 }

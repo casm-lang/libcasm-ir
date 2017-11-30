@@ -276,17 +276,17 @@ namespace libcasm_ir
         static const Annotation annotation;
     };
 
-    class AsBitBuiltin final : public CastingBuiltin
+    class AsBinaryBuiltin final : public CastingBuiltin
     {
       public:
-        using Ptr = std::shared_ptr< AsBitBuiltin >;
+        using Ptr = std::shared_ptr< AsBinaryBuiltin >;
 
-        AsBitBuiltin( const Type::Ptr& type );
+        AsBinaryBuiltin( const Type::Ptr& type );
 
       public:
         static inline Value::ID classid( void )
         {
-            return Value::AS_BIT_BUILTIN;
+            return Value::AS_BINARY_BUILTIN;
         }
 
         static u1 classof( Value const* obj );
@@ -793,26 +793,26 @@ namespace libcasm_ir
     };
 
     //
-    // BitBuiltin
+    // BinaryBuiltin
     //
 
-    class BitBuiltin : public Builtin
+    class BinaryBuiltin : public Builtin
     {
       public:
-        using Ptr = std::shared_ptr< BitBuiltin >;
+        using Ptr = std::shared_ptr< BinaryBuiltin >;
 
-        BitBuiltin( const Type::Ptr& type, const Value::ID id = classid() );
+        BinaryBuiltin( const Type::Ptr& type, const Value::ID id = classid() );
 
       public:
         static inline Value::ID classid( void )
         {
-            return Value::BIT_BUILTIN;
+            return Value::BINARY_BUILTIN;
         }
 
         static u1 classof( Value const* obj );
     };
 
-    class ZextBuiltin final : public BitBuiltin
+    class ZextBuiltin final : public BinaryBuiltin
     {
       public:
         using Ptr = std::shared_ptr< ZextBuiltin >;
@@ -831,7 +831,7 @@ namespace libcasm_ir
         static const Annotation annotation;
     };
 
-    class SextBuiltin final : public BitBuiltin
+    class SextBuiltin final : public BinaryBuiltin
     {
       public:
         using Ptr = std::shared_ptr< SextBuiltin >;
@@ -850,7 +850,7 @@ namespace libcasm_ir
         static const Annotation annotation;
     };
 
-    class TruncBuiltin final : public BitBuiltin
+    class TruncBuiltin final : public BinaryBuiltin
     {
       public:
         using Ptr = std::shared_ptr< TruncBuiltin >;
@@ -869,7 +869,7 @@ namespace libcasm_ir
         static const Annotation annotation;
     };
 
-    class ShlBuiltin final : public BitBuiltin
+    class ShlBuiltin final : public BinaryBuiltin
     {
       public:
         using Ptr = std::shared_ptr< ShlBuiltin >;
@@ -888,7 +888,7 @@ namespace libcasm_ir
         static const Annotation annotation;
     };
 
-    class ShrBuiltin final : public BitBuiltin
+    class ShrBuiltin final : public BinaryBuiltin
     {
       public:
         using Ptr = std::shared_ptr< ShrBuiltin >;
@@ -907,7 +907,7 @@ namespace libcasm_ir
         static const Annotation annotation;
     };
 
-    class AshrBuiltin final : public BitBuiltin
+    class AshrBuiltin final : public BinaryBuiltin
     {
       public:
         using Ptr = std::shared_ptr< AshrBuiltin >;
@@ -926,7 +926,7 @@ namespace libcasm_ir
         static const Annotation annotation;
     };
 
-    class ClzBuiltin final : public BitBuiltin
+    class ClzBuiltin final : public BinaryBuiltin
     {
       public:
         using Ptr = std::shared_ptr< ClzBuiltin >;
@@ -945,7 +945,7 @@ namespace libcasm_ir
         static const Annotation annotation;
     };
 
-    class CloBuiltin final : public BitBuiltin
+    class CloBuiltin final : public BinaryBuiltin
     {
       public:
         using Ptr = std::shared_ptr< CloBuiltin >;
@@ -964,7 +964,7 @@ namespace libcasm_ir
         static const Annotation annotation;
     };
 
-    class ClsBuiltin final : public BitBuiltin
+    class ClsBuiltin final : public BinaryBuiltin
     {
       public:
         using Ptr = std::shared_ptr< ClsBuiltin >;

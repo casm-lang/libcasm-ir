@@ -404,7 +404,7 @@ void IRDumpDotVisitor::visit( IntegerConstant& value )
 {
     dump( value );
 }
-void IRDumpDotVisitor::visit( BitConstant& value )
+void IRDumpDotVisitor::visit( BinaryConstant& value )
 {
     dump( value );
 }

@@ -214,6 +214,8 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
+    class BinaryConstant;
+
     class IntegerConstant final : public Constant
     {
       public:
@@ -223,7 +225,7 @@ namespace libcasm_ir
         IntegerConstant(
             const std::string& value, const libstdhl::Type::Radix radix = libstdhl::Type::DECIMAL );
 
-        IntegerConstant( const BitConstant& value );
+        IntegerConstant( const BinaryConstant& value );
 
         IntegerConstant( const libstdhl::Type::Integer& value );
 
@@ -253,24 +255,24 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class BitConstant final : public Constant
+    class BinaryConstant final : public Constant
     {
       public:
-        using Ptr = std::shared_ptr< BitConstant >;
+        using Ptr = std::shared_ptr< BinaryConstant >;
 
       public:
-        BitConstant(
+        BinaryConstant(
             const std::string& value, const libstdhl::Type::Radix radix = libstdhl::Type::BINARY );
 
-        BitConstant( const Type::Ptr& type, const libstdhl::Type::Natural& value );
+        BinaryConstant( const Type::Ptr& type, const libstdhl::Type::Natural& value );
 
-        BitConstant( const BitType::Ptr& type, u64 value );
+        BinaryConstant( const BinaryType::Ptr& type, u64 value );
 
-        BitConstant( const BitType::Ptr& type );
+        BinaryConstant( const BinaryType::Ptr& type );
 
-        BitConstant( const u16 bitsize, const u64 value );
+        BinaryConstant( const u16 bitsize, const u64 value );
 
-        BitConstant( const u16 bitsize );
+        BinaryConstant( const u16 bitsize );
 
         std::string literal( libstdhl::Type::Radix radix = libstdhl::Type::HEXADECIMAL ) const;
 
@@ -288,7 +290,7 @@ namespace libcasm_ir
 
         static inline Value::ID classid( void )
         {
-            return Value::BIT_CONSTANT;
+            return Value::BINARY_CONSTANT;
         }
 
         static u1 classof( Value const* obj );

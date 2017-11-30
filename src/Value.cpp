@@ -304,9 +304,9 @@ std::string Value::token( const Value::ID id )
         {
             return "IntegerConstant";
         }
-        case Value::BIT_CONSTANT:
+        case Value::BINARY_CONSTANT:
         {
-            return "BitConstant";
+            return "BinaryConstant";
         }
         case Value::STRING_CONSTANT:
         {
@@ -521,9 +521,9 @@ std::string Value::token( const Value::ID id )
         {
             return "asInteger";
         }
-        case Value::AS_BIT_BUILTIN:
+        case Value::AS_BINARY_BUILTIN:
         {
-            return "asBit";
+            return "asBinary";
         }
         case Value::AS_STRING_BUILTIN:
         {
@@ -633,9 +633,9 @@ std::string Value::token( const Value::ID id )
             return "geqs";
         }
 
-        case Value::BIT_BUILTIN:
+        case Value::BINARY_BUILTIN:
         {
-            return "BitBuiltin";
+            return "BinaryBuiltin";
         }
         case Value::ZEXT_BUILTIN:
         {

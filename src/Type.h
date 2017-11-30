@@ -93,7 +93,7 @@ namespace libcasm_ir
             BOOLEAN,
             INTEGER,
             RATIONAL,
-            BIT,
+            BINARY,
             DECIMAL,
             STRING,
 
@@ -240,7 +240,7 @@ namespace libcasm_ir
         u1 isBoolean( void ) const;
         u1 isInteger( void ) const;
         u1 isRational( void ) const;
-        u1 isBit( void ) const;
+        u1 isBinary( void ) const;
         u1 isDecimal( void ) const;
         u1 isString( void ) const;
 
@@ -510,18 +510,18 @@ namespace libcasm_ir
         }
     };
 
-    class BitType final : public PrimitiveType
+    class BinaryType final : public PrimitiveType
     {
       public:
-        using Ptr = std::shared_ptr< BitType >;
+        using Ptr = std::shared_ptr< BinaryType >;
 
         static const u16 SizeMax = 64;
 
-        BitType( u16 bitsize );
+        BinaryType( u16 bitsize );
 
-        BitType( const std::shared_ptr< IntegerConstant >& bitsize );
+        BinaryType( const std::shared_ptr< IntegerConstant >& bitsize );
 
-        BitType( const std::string& value, const libstdhl::Type::Radix radix );
+        BinaryType( const std::string& value, const libstdhl::Type::Radix radix );
 
         u16 bitsize( void ) const;
 
@@ -540,7 +540,7 @@ namespace libcasm_ir
 
         static inline Type::Kind classid( void )
         {
-            return Type::Kind::BIT;
+            return Type::Kind::BINARY;
         }
 
       private:
