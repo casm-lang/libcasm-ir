@@ -55,7 +55,7 @@ add_library( ${PROJECT}-test OBJECT
   main.cpp
   type.cpp
   value.cpp  
-  constant/bit.cpp
+  constant/binary.cpp
   constant/integer.cpp
   constant/range.cpp
   constant/rational.cpp
@@ -66,7 +66,7 @@ add_library( ${PROJECT}-test OBJECT
   instruction/inv.cpp
   instruction/pow.cpp
   transform/BranchEliminationPass.cpp
-  type/bit.cpp
+  type/binary.cpp
   type/boolean.cpp
   type/decimal.cpp
   type/enum.cpp
