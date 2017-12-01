@@ -60,6 +60,7 @@
 #include <libcasm-ir/Type>
 #include <libcasm-ir/User>
 #include <libcasm-ir/Value>
+#include <libcasm-ir/Version>
 #include <libcasm-ir/Visitor>
 
 #include <libcasm-ir/analyze/ConsistencyCheckPass>
