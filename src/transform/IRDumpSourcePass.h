@@ -136,7 +136,7 @@ namespace libcasm_ir
         void visit( RuleReferenceConstant& value ) override;
         void visit( BooleanConstant& value ) override;
         void visit( IntegerConstant& value ) override;
-        void visit( BitConstant& value ) override;
+        void visit( BinaryConstant& value ) override;
         void visit( StringConstant& value ) override;
         void visit( DecimalConstant& value ) override;
         void visit( RationalConstant& value ) override;

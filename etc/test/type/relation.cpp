@@ -46,14 +46,14 @@ using namespace libcasm_ir;
 TEST( libcasm_ir__type_relation, make_and_get )
 {
     const auto i = libstdhl::Memory::make< IntegerType >();
-    const auto j = libstdhl::Memory::make< BitType >( 32 );
+    const auto j = libstdhl::Memory::make< BinaryType >( 32 );
     const auto t = libcasm_ir::Types( { i, j, i } );
 
     auto v = libstdhl::Memory::make< RelationType >( i, t );
     ASSERT_TRUE( v != nullptr );
 
     EXPECT_STREQ( v->name().c_str(), "<i, u32, i -> i>" );
-    EXPECT_STREQ( v->description().c_str(), "< Integer * Bit'32 * Integer -> Integer >" );
+    EXPECT_STREQ( v->description().c_str(), "< Integer * Binary'32 * Integer -> Integer >" );
 
     auto w = libstdhl::Memory::make< RelationType >( i, t );
     ASSERT_TRUE( w != nullptr );

@@ -141,9 +141,9 @@ std::string Constant::name( void ) const
         {
             return static_cast< const IntegerConstant* >( this )->name();
         }
-        case Value::BIT_CONSTANT:
+        case Value::BINARY_CONSTANT:
         {
-            return static_cast< const BitConstant* >( this )->name();
+            return static_cast< const BinaryConstant* >( this )->name();
         }
         case Value::STRING_CONSTANT:
         {
@@ -195,9 +195,9 @@ void Constant::accept( Visitor& visitor )
             static_cast< IntegerConstant* >( this )->accept( visitor );
             break;
         }
-        case Value::BIT_CONSTANT:
+        case Value::BINARY_CONSTANT:
         {
-            static_cast< BitConstant* >( this )->accept( visitor );
+            static_cast< BinaryConstant* >( this )->accept( visitor );
             break;
         }
         case Value::STRING_CONSTANT:
@@ -285,9 +285,9 @@ std::size_t Constant::hash( void ) const
         {
             return static_cast< const IntegerConstant* >( this )->hash();
         }
-        case Value::BIT_CONSTANT:
+        case Value::BINARY_CONSTANT:
         {
-            return static_cast< const BitConstant* >( this )->hash();
+            return static_cast< const BinaryConstant* >( this )->hash();
         }
         case Value::STRING_CONSTANT:
         {
@@ -339,9 +339,9 @@ u1 Constant::operator==( const Value& rhs ) const
         {
             return static_cast< const IntegerConstant* >( this )->operator==( rhs );
         }
-        case Value::BIT_CONSTANT:
+        case Value::BINARY_CONSTANT:
         {
-            return static_cast< const BitConstant* >( this )->operator==( rhs );
+            return static_cast< const BinaryConstant* >( this )->operator==( rhs );
         }
         case Value::STRING_CONSTANT:
         {
@@ -381,7 +381,7 @@ u1 Constant::classof( Value const* obj )
 {
     return obj->id() == classid() or VoidConstant::classof( obj ) or
            BooleanConstant::classof( obj ) or IntegerConstant::classof( obj ) or
-           BitConstant::classof( obj ) or StringConstant::classof( obj ) or
+           BinaryConstant::classof( obj ) or StringConstant::classof( obj ) or
            DecimalConstant::classof( obj ) or RationalConstant::classof( obj ) or
            EnumerationConstant::classof( obj ) or RuleReferenceConstant::classof( obj ) or
            Identifier::classof( obj );
@@ -409,9 +409,9 @@ Constant Constant::undef( const Type::Ptr& type )
         {
             return IntegerConstant();
         }
-        case Type::Kind::BIT:
+        case Type::Kind::BINARY:
         {
-            return BitConstant( std::static_pointer_cast< BitType >( type ) );
+            return BinaryConstant( std::static_pointer_cast< BinaryType >( type ) );
         }
         case Type::Kind::STRING:
         {
@@ -593,7 +593,7 @@ IntegerConstant::IntegerConstant( const std::string& value, const libstdhl::Type
     // three
 }
 
-IntegerConstant::IntegerConstant( const BitConstant& value )
+IntegerConstant::IntegerConstant( const BinaryConstant& value )
 : Constant( INTEGER, value.value(), classid() )
 {
 }
@@ -671,34 +671,34 @@ u1 IntegerConstant::classof( Value const* obj )
 }
 
 //
-// Bit Constant
+// Binary Constant
 //
 
-BitConstant::BitConstant( const std::string& value, const libstdhl::Type::Radix radix )
+BinaryConstant::BinaryConstant( const std::string& value, const libstdhl::Type::Radix radix )
 : Constant(
-      libstdhl::Memory::get< BitType >( value, radix ),
+      libstdhl::Memory::get< BinaryType >( value, radix ),
       libstdhl::Type::createNatural( value, radix ),
       classid() )
 {
-    assert( this->type().isBit() );
-    const auto& t = static_cast< const BitType& >( this->type() );
-    if( t.bitsize() > BitType::SizeMax )
+    assert( this->type().isBinary() );
+    const auto& t = static_cast< const BinaryType& >( this->type() );
+    if( t.bitsize() > BinaryType::SizeMax )
     {
         throw std::domain_error(
-            "invalid bit size '" + std::to_string( t.bitsize() ) + "' to create BitConstant" );
+            "invalid bit size '" + std::to_string( t.bitsize() ) + "' to create BinaryConstant" );
     }
 }
 
-BitConstant::BitConstant( const Type::Ptr& type, const libstdhl::Type::Natural& value )
+BinaryConstant::BinaryConstant( const Type::Ptr& type, const libstdhl::Type::Natural& value )
 : Constant( type, value, classid() )
 {
-    assert( this->type().isBit() );
-    const auto& t = static_cast< const BitType& >( this->type() );
+    assert( this->type().isBinary() );
+    const auto& t = static_cast< const BinaryType& >( this->type() );
 
-    if( t.bitsize() > BitType::SizeMax )
+    if( t.bitsize() > BinaryType::SizeMax )
     {
         throw std::domain_error(
-            "invalid bit size '" + std::to_string( t.bitsize() ) + "' to create BitConstant" );
+            "invalid bit size '" + std::to_string( t.bitsize() ) + "' to create BinaryConstant" );
     }
 
     assert( value.trivial() and " TODO: PPA: FIXME:" );
@@ -714,53 +714,53 @@ BitConstant::BitConstant( const Type::Ptr& type, const libstdhl::Type::Natural& 
     }
 }
 
-BitConstant::BitConstant( const BitType::Ptr& type, u64 value )
-: BitConstant( type, libstdhl::Type::createNatural( value ) )
+BinaryConstant::BinaryConstant( const BinaryType::Ptr& type, u64 value )
+: BinaryConstant( type, libstdhl::Type::createNatural( value ) )
 {
 }
 
-BitConstant::BitConstant( const BitType::Ptr& type )
+BinaryConstant::BinaryConstant( const BinaryType::Ptr& type )
 : Constant( type, classid() )
 {
 }
 
-BitConstant::BitConstant( const u16 bitsize, const u64 value )
-: BitConstant( libstdhl::Memory::get< BitType >( bitsize ), value )
+BinaryConstant::BinaryConstant( const u16 bitsize, const u64 value )
+: BinaryConstant( libstdhl::Memory::get< BinaryType >( bitsize ), value )
 {
 }
 
-BitConstant::BitConstant( const u16 bitsize )
-: BitConstant( libstdhl::Memory::get< BitType >( bitsize ) )
+BinaryConstant::BinaryConstant( const u16 bitsize )
+: BinaryConstant( libstdhl::Memory::get< BinaryType >( bitsize ) )
 {
 }
 
-u64 BitConstant::value_u64( void ) const
+u64 BinaryConstant::value_u64( void ) const
 {
     return m_data.value();
 }
 
-const libstdhl::Type::Natural& BitConstant::value( void ) const
+const libstdhl::Type::Natural& BinaryConstant::value( void ) const
 {
     return static_cast< const libstdhl::Type::Natural& >( m_data );
 }
 
-std::string BitConstant::name( void ) const
+std::string BinaryConstant::name( void ) const
 {
     return ( defined() ? ( m_data.to< libstdhl::Type::DECIMAL >() ) : undef_str );
 }
 
-void BitConstant::accept( Visitor& visitor )
+void BinaryConstant::accept( Visitor& visitor )
 {
     visitor.visit( *this );
 }
 
-std::size_t BitConstant::hash( void ) const
+std::size_t BinaryConstant::hash( void ) const
 {
     const auto h = ( ( (std::size_t)classid() ) << 1 ) | defined();
     return libstdhl::Hash::combine( h, libstdhl::Hash::value( value() ) );
 }
 
-u1 BitConstant::operator==( const Value& rhs ) const
+u1 BinaryConstant::operator==( const Value& rhs ) const
 {
     if( this == &rhs )
     {
@@ -772,11 +772,11 @@ u1 BitConstant::operator==( const Value& rhs ) const
         return false;
     }
 
-    const auto& other = static_cast< const BitConstant& >( rhs );
+    const auto& other = static_cast< const BinaryConstant& >( rhs );
     return ( this->defined() == other.defined() ) and ( this->value() == other.value() );
 }
 
-u1 BitConstant::classof( Value const* obj )
+u1 BinaryConstant::classof( Value const* obj )
 {
     return obj->id() == classid();
 }

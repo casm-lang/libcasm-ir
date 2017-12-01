@@ -392,9 +392,9 @@ void ConsistencyCheckVisitor::visit( IntegerConstant& value )
 {
     verify< IntegerConstant >( value );
 }
-void ConsistencyCheckVisitor::visit( BitConstant& value )
+void ConsistencyCheckVisitor::visit( BinaryConstant& value )
 {
-    verify< BitConstant >( value );
+    verify< BinaryConstant >( value );
 }
 void ConsistencyCheckVisitor::visit( StringConstant& value )
 {

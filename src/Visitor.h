@@ -105,7 +105,7 @@ namespace libcasm_ir
     class RuleReferenceConstant;
     class BooleanConstant;
     class IntegerConstant;
-    class BitConstant;
+    class BinaryConstant;
     class StringConstant;
     class RationalConstant;
     class DecimalConstant;
@@ -192,7 +192,7 @@ namespace libcasm_ir
         virtual void visit( RuleReferenceConstant& value ) = 0;
         virtual void visit( BooleanConstant& value ) = 0;
         virtual void visit( IntegerConstant& value ) = 0;
-        virtual void visit( BitConstant& value ) = 0;
+        virtual void visit( BinaryConstant& value ) = 0;
         virtual void visit( StringConstant& value ) = 0;
         virtual void visit( DecimalConstant& value ) = 0;
         virtual void visit( RationalConstant& value ) = 0;
@@ -272,7 +272,7 @@ namespace libcasm_ir
         virtual void visit( RuleReferenceConstant& value ) override = 0;
         virtual void visit( BooleanConstant& value ) override = 0;
         virtual void visit( IntegerConstant& value ) override = 0;
-        virtual void visit( BitConstant& value ) override = 0;
+        virtual void visit( BinaryConstant& value ) override = 0;
         virtual void visit( StringConstant& value ) override = 0;
         virtual void visit( DecimalConstant& value ) override = 0;
         virtual void visit( RationalConstant& value ) override = 0;
@@ -364,7 +364,7 @@ namespace libcasm_ir
         void visit( RuleReferenceConstant& value ) override;
         void visit( BooleanConstant& value ) override;
         void visit( IntegerConstant& value ) override;
-        void visit( BitConstant& value ) override;
+        void visit( BinaryConstant& value ) override;
         void visit( StringConstant& value ) override;
         void visit( DecimalConstant& value ) override;
         void visit( RationalConstant& value ) override;
