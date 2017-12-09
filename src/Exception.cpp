@@ -80,6 +80,11 @@ AssertionException::AssertionException( const std::string& message )
 {
 }
 
+AssuranceException::AssuranceException( const std::string& message )
+: Exception( message )
+{
+}
+
 AbortException::AbortException( const std::string& message )
 : Exception( message )
 {

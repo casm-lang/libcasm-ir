@@ -401,6 +401,11 @@ TEST( libcasm_ir_Value, id_to_token_string )
                 EXPECT_STREQ( Value::token( id ).c_str(), "assert" );
                 break;
             }
+            case Value::ASSURE_BUILTIN:
+            {
+                EXPECT_STREQ( Value::token( id ).c_str(), "assure" );
+                break;
+            }
 
             case Value::OUTPUT_BUILTIN:
             {

@@ -86,6 +86,12 @@ namespace libcasm_ir
         AssertionException( const std::string& message );
     };
 
+    class AssuranceException : public Exception
+    {
+      public:
+        AssuranceException( const std::string& message );
+    };
+
     class AbortException : public Exception
     {
       public:

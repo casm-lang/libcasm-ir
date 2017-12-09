@@ -212,6 +212,10 @@ Builtin::Ptr Builtin::create( const Value::ID id, const Type::Ptr& type )
         {
             return libstdhl::Memory::make< AssertBuiltin >( type );
         }
+        case Value::ASSURE_BUILTIN:
+        {
+            return libstdhl::Memory::make< AssureBuiltin >( type );
+        }
 
         case Value::OUTPUT_BUILTIN:
         {
@@ -413,7 +417,7 @@ u1 GeneralBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid() or IsSymbolicBuiltin::classof( obj ) or
            AbortBuiltin::classof( obj ) or AssertBuiltin::classof( obj ) or
-           OutputBuiltin::classof( obj );
+           AssureBuiltin::classof( obj ) or OutputBuiltin::classof( obj );
 }
 
 //
@@ -551,6 +555,50 @@ const Annotation AssertBuiltin::annotation(
     } );
 
 u1 AssertBuiltin::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
+
+//
+// AssureBuiltin
+//
+
+AssureBuiltin::AssureBuiltin( const Type::Ptr& type )
+: GeneralBuiltin( type, classid() )
+{
+}
+
+const Annotation AssureBuiltin::annotation(
+    classid(),
+    Annotation::Relations{
+
+        { Type::Kind::VOID,
+          {
+              Type::Kind::BOOLEAN,
+          } },
+
+    },
+    []( std::vector< Type::Ptr >& types ) {
+        if( types.size() != 1 )
+        {
+            throw InternalException( "types.size() != 1" );
+        }
+
+        if( not types[ 0 ] )
+        {
+            types[ 0 ] = BOOLEAN;
+        }
+    },
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& values ) -> Type::Ptr {
+        if( types.size() != 1 )
+        {
+            throw InternalException( "types.size() != 1" );
+        }
+        return VOID;
+    } );
+
+u1 AssureBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
 }

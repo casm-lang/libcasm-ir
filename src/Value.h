@@ -156,6 +156,7 @@ namespace libcasm_ir
             IS_SYMBOLIC_BUILTIN,
             ABORT_BUILTIN,
             ASSERT_BUILTIN,
+            ASSURE_BUILTIN,
 
             OUTPUT_BUILTIN,
             PRINT_BUILTIN,

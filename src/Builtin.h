@@ -155,6 +155,25 @@ namespace libcasm_ir
         static const Annotation annotation;
     };
 
+    class AssureBuiltin final : public GeneralBuiltin
+    {
+      public:
+        using Ptr = std::shared_ptr< AssureBuiltin >;
+
+        AssureBuiltin( const Type::Ptr& type );
+
+      public:
+        static inline Value::ID classid( void )
+        {
+            return Value::ASSURE_BUILTIN;
+        }
+
+        static u1 classof( Value const* obj );
+
+      public:
+        static const Annotation annotation;
+    };
+
     class OutputBuiltin : public GeneralBuiltin
     {
       public:
