@@ -41,6 +41,7 @@
 
 #include "Builtin.h"
 
+#include "Constant.h"
 #include "Exception.h"
 
 #include <cassert>
@@ -1631,16 +1632,20 @@ const Annotation ZextBuiltin::annotation(
     []( std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
-        if( types.size() != 2 )
+        if( types.size() != 2 or values.size() != 2 )
         {
-            throw InternalException( "types.size() != 2" );
+            throw InternalException( "types.size() != 2 or values.size() != 2" );
         }
-        if( values.size() != 1 )
+
+        if( isa< IntegerConstant >( values[ 1 ] ) )
         {
-            throw InternalException( "values.size() != 1" );
+            auto c = std::static_pointer_cast< IntegerConstant >( values[ 1 ] );
+            return libstdhl::Memory::get< BinaryType >( c );
         }
-        return nullptr;  // TODO: PPA: fetch through values a integer constant
-                         // which defines the new bitsize
+        else
+        {
+            return nullptr;
+        }
     } );
 
 u1 ZextBuiltin::classof( Value const* obj )
@@ -1671,16 +1676,20 @@ const Annotation SextBuiltin::annotation(
     []( std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
-        if( types.size() != 2 )
+        if( types.size() != 2 or values.size() != 2 )
         {
-            throw InternalException( "types.size() != 2" );
+            throw InternalException( "types.size() != 2 or values.size() != 2" );
         }
-        if( values.size() != 1 )
+
+        if( isa< IntegerConstant >( values[ 1 ] ) )
         {
-            throw InternalException( "values.size() != 1" );
+            auto c = std::static_pointer_cast< IntegerConstant >( values[ 1 ] );
+            return libstdhl::Memory::get< BinaryType >( c );
         }
-        return nullptr;  // TODO: PPA: fetch through values a integer constant
-                         // which defines the new bitsize
+        else
+        {
+            return nullptr;
+        }
     } );
 
 u1 SextBuiltin::classof( Value const* obj )
@@ -1711,16 +1720,20 @@ const Annotation TruncBuiltin::annotation(
     []( std::vector< Type::Ptr >& types ) {},
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
-        if( types.size() != 2 )
+        if( types.size() != 2 or values.size() != 2 )
         {
-            throw InternalException( "types.size() != 2" );
+            throw InternalException( "types.size() != 2 or values.size() != 2" );
         }
-        if( values.size() != 1 )
+
+        if( isa< IntegerConstant >( values[ 1 ] ) )
         {
-            throw InternalException( "values.size() != 1" );
+            auto c = std::static_pointer_cast< IntegerConstant >( values[ 1 ] );
+            return libstdhl::Memory::get< BinaryType >( c );
         }
-        return nullptr;  // TODO: PPA: fetch through values a integer constant
-                         // which defines the new bitsize
+        else
+        {
+            return nullptr;
+        }
     } );
 
 u1 TruncBuiltin::classof( Value const* obj )
