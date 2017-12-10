@@ -756,7 +756,8 @@ void BinaryConstant::accept( Visitor& visitor )
 
 std::size_t BinaryConstant::hash( void ) const
 {
-    const auto h = ( ( (std::size_t)classid() ) << 1 ) | defined();
+    const auto h =
+        libstdhl::Hash::combine( ( (std::size_t)classid() << 1 ) | defined(), type().hash() );
     return libstdhl::Hash::combine( h, libstdhl::Hash::value( value() ) );
 }
 
