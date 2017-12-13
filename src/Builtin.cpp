@@ -900,16 +900,7 @@ const Annotation AsBinaryBuiltin::annotation(
         {
             throw InternalException( "types.size() != 1" );
         }
-
-        assert( types[ 0 ] );
-        if( types[ 0 ]->isBinary() )
-        {
-            return types[ 0 ];
-        }
-        else
-        {
-            return nullptr;
-        }
+        return nullptr;
     } );
 
 u1 AsBinaryBuiltin::classof( Value const* obj )
