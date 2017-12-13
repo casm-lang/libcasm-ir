@@ -910,10 +910,6 @@ const Annotation AsBinaryBuiltin::annotation(
         {
             return nullptr;
         }
-    },
-    []( const RelationType& type ) -> u1 {
-        assert( type.arguments().size() == 1 );
-        return type.result() == *type.arguments().front();
     } );
 
 u1 AsBinaryBuiltin::classof( Value const* obj )
