@@ -53,6 +53,8 @@
 #include <libcasm-ir/Type>
 #include <libcasm-ir/Value>
 
+#include <libcasm-ir/Property>
+
 #include <libstdhl/Json>
 
 #include <set>
@@ -88,12 +90,15 @@ namespace libcasm_ir
 
         Annotation(
             const Value::ID id,
+            const Properties properties,
             const Relations& relations,
             const Resolve resolve,
             const Inference inference,
             const Validate validate = []( const RelationType& ) -> u1 { return true; } );
 
         Value::ID valueID( void ) const;
+
+        const Properties& properties( void ) const;
 
         const Relations& relations( void ) const;
 
@@ -115,6 +120,8 @@ namespace libcasm_ir
 
       private:
         Value::ID m_valueId;
+
+        Properties m_properties;
 
         const Relations m_relations;
 

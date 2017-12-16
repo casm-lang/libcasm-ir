@@ -506,6 +506,8 @@ u1 ArithmeticInstruction::classof( Value const* obj )
            AndInstruction::classof( obj );
 }
 
+static const Properties arithmetic_instruction_properties = { Property::CONSTANT, Property::PURE };
+
 static const auto arithmetic_instruction_resolve = []( std::vector< Type::Ptr >& types ) {
     if( types.size() != 2 )
     {
@@ -543,6 +545,7 @@ void InvInstruction::accept( Visitor& visitor )
 
 const Annotation InvInstruction::annotation(
     classid(),
+    arithmetic_instruction_properties,
     Annotation::Relations{
 
         { Type::Kind::INTEGER,
@@ -609,6 +612,7 @@ void AddInstruction::accept( Visitor& visitor )
 
 const Annotation AddInstruction::annotation(
     classid(),
+    arithmetic_instruction_properties,
     Annotation::Relations{
 
         { Type::Kind::INTEGER,
@@ -689,6 +693,7 @@ void SubInstruction::accept( Visitor& visitor )
 
 const Annotation SubInstruction::annotation(
     classid(),
+    arithmetic_instruction_properties,
     Annotation::Relations{
 
         { Type::Kind::INTEGER,
@@ -764,6 +769,7 @@ void MulInstruction::accept( Visitor& visitor )
 
 const Annotation MulInstruction::annotation(
     classid(),
+    arithmetic_instruction_properties,
     Annotation::Relations{
 
         { Type::Kind::INTEGER,
@@ -840,6 +846,7 @@ void ModInstruction::accept( Visitor& visitor )
 
 const Annotation ModInstruction::annotation(
     classid(),
+    arithmetic_instruction_properties,
     Annotation::Relations{
 
         { Type::Kind::INTEGER,
@@ -898,6 +905,7 @@ void DivInstruction::accept( Visitor& visitor )
 
 const Annotation DivInstruction::annotation(
     classid(),
+    arithmetic_instruction_properties,
     Annotation::Relations{
 
         { Type::Kind::INTEGER,
@@ -962,6 +970,7 @@ void PowInstruction::accept( Visitor& visitor )
 
 const Annotation PowInstruction::annotation(
     classid(),
+    arithmetic_instruction_properties,
     Annotation::Relations{
 
         { Type::Kind::INTEGER,
@@ -1051,6 +1060,8 @@ u1 LogicalInstruction::classof( Value const* obj )
            AndInstruction::classof( obj ) or NotInstruction::classof( obj );
 }
 
+static const auto logic_instruction_properties = arithmetic_instruction_properties;
+
 static const auto logic_instruction_resolve = arithmetic_instruction_resolve;
 
 //
@@ -1075,6 +1086,7 @@ void AndInstruction::accept( Visitor& visitor )
 
 const Annotation AndInstruction::annotation(
     classid(),
+    logic_instruction_properties,
     Annotation::Relations{
 
         { Type::Kind::BOOLEAN,
@@ -1142,6 +1154,7 @@ void XorInstruction::accept( Visitor& visitor )
 
 const Annotation XorInstruction::annotation(
     classid(),
+    logic_instruction_properties,
     Annotation::Relations{
 
         { Type::Kind::BOOLEAN,
@@ -1209,6 +1222,7 @@ void OrInstruction::accept( Visitor& visitor )
 
 const Annotation OrInstruction::annotation(
     classid(),
+    logic_instruction_properties,
     Annotation::Relations{
 
         { Type::Kind::BOOLEAN,
@@ -1276,6 +1290,7 @@ void ImpInstruction::accept( Visitor& visitor )
 
 const Annotation ImpInstruction::annotation(
     classid(),
+    logic_instruction_properties,
     Annotation::Relations{
 
         { Type::Kind::BOOLEAN,
@@ -1352,6 +1367,7 @@ void NotInstruction::accept( Visitor& visitor )
 
 const Annotation NotInstruction::annotation(
     classid(),
+    logic_instruction_properties,
     Annotation::Relations{
 
         { Type::Kind::BOOLEAN,
@@ -1414,6 +1430,8 @@ u1 CompareInstruction::classof( Value const* obj )
            GeqInstruction::classof( obj );
 }
 
+static const auto compare_instruction_properties = arithmetic_instruction_properties;
+
 static const auto compare_instruction_resolve = arithmetic_instruction_resolve;
 
 static auto compare_instruction_inference = []( const std::vector< Type::Ptr >& types,
@@ -1463,6 +1481,7 @@ void EquInstruction::accept( Visitor& visitor )
 
 const Annotation EquInstruction::annotation(
     classid(),
+    compare_instruction_properties,
     Annotation::Relations{
 
         { Type::Kind::BOOLEAN,
@@ -1580,6 +1599,7 @@ void NeqInstruction::accept( Visitor& visitor )
 
 const Annotation NeqInstruction::annotation(
     classid(),
+    compare_instruction_properties,
     Annotation::Relations{
 
         { Type::Kind::BOOLEAN,
@@ -1697,6 +1717,7 @@ void LthInstruction::accept( Visitor& visitor )
 
 const Annotation LthInstruction::annotation(
     classid(),
+    compare_instruction_properties,
     Annotation::Relations{
 
         { Type::Kind::BOOLEAN,
@@ -1754,6 +1775,7 @@ void LeqInstruction::accept( Visitor& visitor )
 
 const Annotation LeqInstruction::annotation(
     classid(),
+    compare_instruction_properties,
     Annotation::Relations{
 
         { Type::Kind::BOOLEAN,
@@ -1811,6 +1833,7 @@ void GthInstruction::accept( Visitor& visitor )
 
 const Annotation GthInstruction::annotation(
     classid(),
+    compare_instruction_properties,
     Annotation::Relations{
 
         { Type::Kind::BOOLEAN,
@@ -1868,6 +1891,7 @@ void GeqInstruction::accept( Visitor& visitor )
 
 const Annotation GeqInstruction::annotation(
     classid(),
+    compare_instruction_properties,
     Annotation::Relations{
 
         { Type::Kind::BOOLEAN,

@@ -420,6 +420,8 @@ u1 GeneralBuiltin::classof( Value const* obj )
            AssureBuiltin::classof( obj ) or OutputBuiltin::classof( obj );
 }
 
+static const Properties general_builtin_properties = { Property::CONSTANT, Property::PURE };
+
 //
 // IsSymbolicBuiltin
 //
@@ -431,6 +433,7 @@ IsSymbolicBuiltin::IsSymbolicBuiltin( const Type::Ptr& type )
 
 const Annotation IsSymbolicBuiltin::annotation(
     classid(),
+    general_builtin_properties,
     Annotation::Relations{
 
         { Type::Kind::BOOLEAN,
@@ -495,6 +498,7 @@ AbortBuiltin::AbortBuiltin( const Type::Ptr& type )
 
 const Annotation AbortBuiltin::annotation(
     classid(),
+    general_builtin_properties,
     Annotation::Relations{
 
         { Type::Kind::VOID, {} },
@@ -526,6 +530,7 @@ AssertBuiltin::AssertBuiltin( const Type::Ptr& type )
 
 const Annotation AssertBuiltin::annotation(
     classid(),
+    general_builtin_properties,
     Annotation::Relations{
 
         { Type::Kind::VOID,
@@ -570,6 +575,7 @@ AssureBuiltin::AssureBuiltin( const Type::Ptr& type )
 
 const Annotation AssureBuiltin::annotation(
     classid(),
+    general_builtin_properties,
     Annotation::Relations{
 
         { Type::Kind::VOID,
@@ -641,6 +647,7 @@ PrintBuiltin::PrintBuiltin( const Type::Ptr& type )
 
 const Annotation PrintBuiltin::annotation(
     classid(),
+    general_builtin_properties,
     Annotation::Relations{
 
         { Type::Kind::VOID,
@@ -695,6 +702,7 @@ PrintLnBuiltin::PrintLnBuiltin( const Type::Ptr& type )
 
 const Annotation PrintLnBuiltin::annotation(
     classid(),
+    general_builtin_properties,
     Annotation::Relations{
 
         { Type::Kind::VOID,
@@ -757,6 +765,8 @@ u1 CastingBuiltin::classof( Value const* obj )
            AsDecimalBuiltin::classof( obj );
 }
 
+static const Properties casting_builtin_properties = { Property::CONSTANT, Property::PURE };
+
 //
 // AsBooleanBuiltin
 //
@@ -768,6 +778,7 @@ AsBooleanBuiltin::AsBooleanBuiltin( const Type::Ptr& type )
 
 const Annotation AsBooleanBuiltin::annotation(
     classid(),
+    casting_builtin_properties,
     Annotation::Relations{
 
         { Type::Kind::BOOLEAN,
@@ -812,6 +823,7 @@ AsIntegerBuiltin::AsIntegerBuiltin( const Type::Ptr& type )
 
 const Annotation AsIntegerBuiltin::annotation(
     classid(),
+    casting_builtin_properties,
     Annotation::Relations{
 
         { Type::Kind::INTEGER,
@@ -870,6 +882,7 @@ AsBinaryBuiltin::AsBinaryBuiltin( const Type::Ptr& type )
 
 const Annotation AsBinaryBuiltin::annotation(
     classid(),
+    casting_builtin_properties,
     Annotation::Relations{
 
         { Type::Kind::BINARY,
@@ -919,6 +932,7 @@ AsStringBuiltin::AsStringBuiltin( const Type::Ptr& type )
 
 const Annotation AsStringBuiltin::annotation(
     classid(),
+    casting_builtin_properties,
     Annotation::Relations{
 
         { Type::Kind::STRING,
@@ -993,6 +1007,7 @@ AsDecimalBuiltin::AsDecimalBuiltin( const Type::Ptr& type )
 
 const Annotation AsDecimalBuiltin::annotation(
     classid(),
+    casting_builtin_properties,
     Annotation::Relations{
 
         { Type::Kind::DECIMAL,
@@ -1042,6 +1057,7 @@ AsRationalBuiltin::AsRationalBuiltin( const Type::Ptr& type )
 
 const Annotation AsRationalBuiltin::annotation(
     classid(),
+    casting_builtin_properties,
     Annotation::Relations{
 
         { Type::Kind::RATIONAL,
@@ -1091,6 +1107,7 @@ AsEnumerationBuiltin::AsEnumerationBuiltin( const Type::Ptr& type )
 
 const Annotation AsEnumerationBuiltin::annotation(
     classid(),
+    casting_builtin_properties,
     Annotation::Relations{
 
         { Type::Kind::ENUMERATION,
@@ -1129,6 +1146,8 @@ u1 StringifyBuiltin::classof( Value const* obj )
     return obj->id() == classid() or DecBuiltin::classof( obj ) or HexBuiltin::classof( obj ) or
            OctBuiltin::classof( obj ) or BinBuiltin::classof( obj );
 }
+
+static const Properties stringify_builtin_properties = { Property::CONSTANT, Property::PURE };
 
 static const Annotation::Relations stringify_builtin_data = {
 
@@ -1186,7 +1205,11 @@ DecBuiltin::DecBuiltin( const Type::Ptr& type )
 }
 
 const Annotation DecBuiltin::annotation(
-    classid(), stringify_builtin_data, stringify_builtin_resolve, stringify_builtin_inference );
+    classid(),
+    stringify_builtin_properties,
+    stringify_builtin_data,
+    stringify_builtin_resolve,
+    stringify_builtin_inference );
 
 u1 DecBuiltin::classof( Value const* obj )
 {
@@ -1203,7 +1226,11 @@ HexBuiltin::HexBuiltin( const Type::Ptr& type )
 }
 
 const Annotation HexBuiltin::annotation(
-    classid(), stringify_builtin_data, stringify_builtin_resolve, stringify_builtin_inference );
+    classid(),
+    stringify_builtin_properties,
+    stringify_builtin_data,
+    stringify_builtin_resolve,
+    stringify_builtin_inference );
 
 u1 HexBuiltin::classof( Value const* obj )
 {
@@ -1220,7 +1247,11 @@ OctBuiltin::OctBuiltin( const Type::Ptr& type )
 }
 
 const Annotation OctBuiltin::annotation(
-    classid(), stringify_builtin_data, stringify_builtin_resolve, stringify_builtin_inference );
+    classid(),
+    stringify_builtin_properties,
+    stringify_builtin_data,
+    stringify_builtin_resolve,
+    stringify_builtin_inference );
 
 u1 OctBuiltin::classof( Value const* obj )
 {
@@ -1237,7 +1268,11 @@ BinBuiltin::BinBuiltin( const Type::Ptr& type )
 }
 
 const Annotation BinBuiltin::annotation(
-    classid(), stringify_builtin_data, stringify_builtin_resolve, stringify_builtin_inference );
+    classid(),
+    stringify_builtin_properties,
+    stringify_builtin_data,
+    stringify_builtin_resolve,
+    stringify_builtin_inference );
 
 u1 BinBuiltin::classof( Value const* obj )
 {
@@ -1267,6 +1302,8 @@ ArithmeticBuiltin::ArithmeticBuiltin( const Type::Ptr& type, const Value::ID id 
 : OperatorBuiltin( type, id )
 {
 }
+
+static const Properties arithmetic_builtin_properties = { Property::CONSTANT, Property::PURE };
 
 static const Annotation::Relations arithmetic_builtin_data = {
 
@@ -1334,7 +1371,11 @@ AdduBuiltin::AdduBuiltin( const Type::Ptr& type )
 }
 
 const Annotation AdduBuiltin::annotation(
-    classid(), arithmetic_builtin_data, arithmetic_builtin_resolve, arithmetic_builtin_inference );
+    classid(),
+    arithmetic_builtin_properties,
+    arithmetic_builtin_data,
+    arithmetic_builtin_resolve,
+    arithmetic_builtin_inference );
 
 u1 AdduBuiltin::classof( Value const* obj )
 {
@@ -1351,7 +1392,11 @@ AddsBuiltin::AddsBuiltin( const Type::Ptr& type )
 }
 
 const Annotation AddsBuiltin::annotation(
-    classid(), arithmetic_builtin_data, arithmetic_builtin_resolve, arithmetic_builtin_inference );
+    classid(),
+    arithmetic_builtin_properties,
+    arithmetic_builtin_data,
+    arithmetic_builtin_resolve,
+    arithmetic_builtin_inference );
 
 u1 AddsBuiltin::classof( Value const* obj )
 {
@@ -1368,7 +1413,11 @@ SubuBuiltin::SubuBuiltin( const Type::Ptr& type )
 }
 
 const Annotation SubuBuiltin::annotation(
-    classid(), arithmetic_builtin_data, arithmetic_builtin_resolve, arithmetic_builtin_inference );
+    classid(),
+    arithmetic_builtin_properties,
+    arithmetic_builtin_data,
+    arithmetic_builtin_resolve,
+    arithmetic_builtin_inference );
 
 u1 SubuBuiltin::classof( Value const* obj )
 {
@@ -1385,7 +1434,11 @@ SubsBuiltin::SubsBuiltin( const Type::Ptr& type )
 }
 
 const Annotation SubsBuiltin::annotation(
-    classid(), arithmetic_builtin_data, arithmetic_builtin_resolve, arithmetic_builtin_inference );
+    classid(),
+    arithmetic_builtin_properties,
+    arithmetic_builtin_data,
+    arithmetic_builtin_resolve,
+    arithmetic_builtin_inference );
 
 u1 SubsBuiltin::classof( Value const* obj )
 {
@@ -1402,7 +1455,11 @@ MuluBuiltin::MuluBuiltin( const Type::Ptr& type )
 }
 
 const Annotation MuluBuiltin::annotation(
-    classid(), arithmetic_builtin_data, arithmetic_builtin_resolve, arithmetic_builtin_inference );
+    classid(),
+    arithmetic_builtin_properties,
+    arithmetic_builtin_data,
+    arithmetic_builtin_resolve,
+    arithmetic_builtin_inference );
 
 u1 MuluBuiltin::classof( Value const* obj )
 {
@@ -1419,7 +1476,11 @@ MulsBuiltin::MulsBuiltin( const Type::Ptr& type )
 }
 
 const Annotation MulsBuiltin::annotation(
-    classid(), arithmetic_builtin_data, arithmetic_builtin_resolve, arithmetic_builtin_inference );
+    classid(),
+    arithmetic_builtin_properties,
+    arithmetic_builtin_data,
+    arithmetic_builtin_resolve,
+    arithmetic_builtin_inference );
 
 u1 MulsBuiltin::classof( Value const* obj )
 {
@@ -1434,6 +1495,8 @@ CompareBuiltin::CompareBuiltin( const Type::Ptr& type, const Value::ID id )
 : OperatorBuiltin( type, id )
 {
 }
+
+static const auto compare_builtin_properties = arithmetic_builtin_properties;
 
 const Annotation::Relations compare_builtin_data = {
 
@@ -1501,7 +1564,11 @@ LesuBuiltin::LesuBuiltin( const Type::Ptr& type )
 }
 
 const Annotation LesuBuiltin::annotation(
-    classid(), compare_builtin_data, compare_builtin_resolve, compare_builtin_inference );
+    classid(),
+    compare_builtin_properties,
+    compare_builtin_data,
+    compare_builtin_resolve,
+    compare_builtin_inference );
 
 u1 LesuBuiltin::classof( Value const* obj )
 {
@@ -1518,7 +1585,11 @@ LessBuiltin::LessBuiltin( const Type::Ptr& type )
 }
 
 const Annotation LessBuiltin::annotation(
-    classid(), compare_builtin_data, compare_builtin_resolve, compare_builtin_inference );
+    classid(),
+    compare_builtin_properties,
+    compare_builtin_data,
+    compare_builtin_resolve,
+    compare_builtin_inference );
 
 u1 LessBuiltin::classof( Value const* obj )
 {
@@ -1535,7 +1606,11 @@ LequBuiltin::LequBuiltin( const Type::Ptr& type )
 }
 
 const Annotation LequBuiltin::annotation(
-    classid(), compare_builtin_data, compare_builtin_resolve, compare_builtin_inference );
+    classid(),
+    compare_builtin_properties,
+    compare_builtin_data,
+    compare_builtin_resolve,
+    compare_builtin_inference );
 
 u1 LequBuiltin::classof( Value const* obj )
 {
@@ -1552,7 +1627,11 @@ LeqsBuiltin::LeqsBuiltin( const Type::Ptr& type )
 }
 
 const Annotation LeqsBuiltin::annotation(
-    classid(), compare_builtin_data, compare_builtin_resolve, compare_builtin_inference );
+    classid(),
+    compare_builtin_properties,
+    compare_builtin_data,
+    compare_builtin_resolve,
+    compare_builtin_inference );
 
 u1 LeqsBuiltin::classof( Value const* obj )
 {
@@ -1569,7 +1648,11 @@ GreuBuiltin::GreuBuiltin( const Type::Ptr& type )
 }
 
 const Annotation GreuBuiltin::annotation(
-    classid(), compare_builtin_data, compare_builtin_resolve, compare_builtin_inference );
+    classid(),
+    compare_builtin_properties,
+    compare_builtin_data,
+    compare_builtin_resolve,
+    compare_builtin_inference );
 
 u1 GreuBuiltin::classof( Value const* obj )
 {
@@ -1586,7 +1669,11 @@ GresBuiltin::GresBuiltin( const Type::Ptr& type )
 }
 
 const Annotation GresBuiltin::annotation(
-    classid(), compare_builtin_data, compare_builtin_resolve, compare_builtin_inference );
+    classid(),
+    compare_builtin_properties,
+    compare_builtin_data,
+    compare_builtin_resolve,
+    compare_builtin_inference );
 
 u1 GresBuiltin::classof( Value const* obj )
 {
@@ -1603,7 +1690,11 @@ GequBuiltin::GequBuiltin( const Type::Ptr& type )
 }
 
 const Annotation GequBuiltin::annotation(
-    classid(), compare_builtin_data, compare_builtin_resolve, compare_builtin_inference );
+    classid(),
+    compare_builtin_properties,
+    compare_builtin_data,
+    compare_builtin_resolve,
+    compare_builtin_inference );
 
 u1 GequBuiltin::classof( Value const* obj )
 {
@@ -1620,7 +1711,11 @@ GeqsBuiltin::GeqsBuiltin( const Type::Ptr& type )
 }
 
 const Annotation GeqsBuiltin::annotation(
-    classid(), compare_builtin_data, compare_builtin_resolve, compare_builtin_inference );
+    classid(),
+    compare_builtin_properties,
+    compare_builtin_data,
+    compare_builtin_resolve,
+    compare_builtin_inference );
 
 u1 GeqsBuiltin::classof( Value const* obj )
 {
@@ -1644,6 +1739,8 @@ u1 BinaryBuiltin::classof( Value const* obj )
            ClzBuiltin::classof( obj ) or CloBuiltin::classof( obj ) or ClsBuiltin::classof( obj );
 }
 
+static const Properties binary_builtin_properties = { Property::CONSTANT, Property::PURE };
+
 //
 // ZextBuiltin
 //
@@ -1655,6 +1752,7 @@ ZextBuiltin::ZextBuiltin( const Type::Ptr& type )
 
 const Annotation ZextBuiltin::annotation(
     classid(),
+    binary_builtin_properties,
     Annotation::Relations{
 
         { Type::Kind::BINARY,
@@ -1699,6 +1797,7 @@ SextBuiltin::SextBuiltin( const Type::Ptr& type )
 
 const Annotation SextBuiltin::annotation(
     classid(),
+    binary_builtin_properties,
     Annotation::Relations{
 
         { Type::Kind::BINARY,
@@ -1743,6 +1842,7 @@ TruncBuiltin::TruncBuiltin( const Type::Ptr& type )
 
 const Annotation TruncBuiltin::annotation(
     classid(),
+    binary_builtin_properties,
     Annotation::Relations{
 
         { Type::Kind::BINARY,
@@ -1787,6 +1887,7 @@ ShlBuiltin::ShlBuiltin( const Type::Ptr& type )
 
 const Annotation ShlBuiltin::annotation(
     classid(),
+    binary_builtin_properties,
     Annotation::Relations{
 
         { Type::Kind::BINARY,
@@ -1837,6 +1938,7 @@ ShrBuiltin::ShrBuiltin( const Type::Ptr& type )
 
 const Annotation ShrBuiltin::annotation(
     classid(),
+    binary_builtin_properties,
     Annotation::Relations{
 
         { Type::Kind::BINARY,
@@ -1887,6 +1989,7 @@ AshrBuiltin::AshrBuiltin( const Type::Ptr& type )
 
 const Annotation AshrBuiltin::annotation(
     classid(),
+    binary_builtin_properties,
     Annotation::Relations{
 
         { Type::Kind::BINARY,
@@ -1937,6 +2040,7 @@ ClzBuiltin::ClzBuiltin( const Type::Ptr& type )
 
 const Annotation ClzBuiltin::annotation(
     classid(),
+    binary_builtin_properties,
     Annotation::Relations{
 
         { Type::Kind::INTEGER,
@@ -1971,6 +2075,7 @@ CloBuiltin::CloBuiltin( const Type::Ptr& type )
 
 const Annotation CloBuiltin::annotation(
     classid(),
+    binary_builtin_properties,
     Annotation::Relations{
 
         { Type::Kind::INTEGER,
@@ -2005,6 +2110,7 @@ ClsBuiltin::ClsBuiltin( const Type::Ptr& type )
 
 const Annotation ClsBuiltin::annotation(
     classid(),
+    binary_builtin_properties,
     Annotation::Relations{
 
         { Type::Kind::INTEGER,

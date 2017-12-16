@@ -59,11 +59,13 @@ static std::unordered_map< Value::ID, const Annotation* >& id2obj( void )
 
 Annotation::Annotation(
     const Value::ID valueId,
+    const Properties properties,
     const Annotation::Relations& relations,
     const Resolve resolve,
     const Inference inference,
     const Validate validate )
 : m_valueId( valueId )
+, m_properties( properties )
 , m_relations( relations )
 , m_resolve( resolve )
 , m_inference( inference )
@@ -120,6 +122,11 @@ Annotation::Annotation(
 Value::ID Annotation::valueID( void ) const
 {
     return m_valueId;
+}
+
+const Properties& Annotation::properties( void ) const
+{
+    return m_properties;
 }
 
 const Annotation::Relations& Annotation::relations( void ) const
