@@ -93,6 +93,7 @@ ecm_generate_headers( ${PROJECT}_HEADERS_CPP
     Function
     Instruction
     libcasm-ir
+    Property
     Range
     Rule
     Specification
