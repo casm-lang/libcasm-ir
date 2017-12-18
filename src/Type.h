@@ -803,7 +803,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< FileType >;
 
-        FileType( void );
+        FileType( const Type::Ptr& type );
 
         std::string name( void ) const override;
 
@@ -829,7 +829,7 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< PortType >;
 
-        PortType( void );
+        PortType( const Type::Ptr& type );
 
         std::string name( void ) const override;
 

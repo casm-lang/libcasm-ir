@@ -45,20 +45,21 @@ using namespace libcasm_ir;
 
 TEST( libcasm_ir__type_port, make_and_get )
 {
-    auto v = libstdhl::Memory::make< PortType >();
+    auto i = libstdhl::Memory::make< IntegerType >();
+    auto v = libstdhl::Memory::make< PortType >( i );
     ASSERT_TRUE( v != nullptr );
 
-    EXPECT_STREQ( v->name().c_str(), "port" );
-    EXPECT_STREQ( v->description().c_str(), "Port" );
+    EXPECT_STREQ( v->name().c_str(), "port<i>" );
+    EXPECT_STREQ( v->description().c_str(), "Port< Integer >" );
 
-    auto w = libstdhl::Memory::make< PortType >();
+    auto w = libstdhl::Memory::make< PortType >( i );
     ASSERT_TRUE( w != nullptr );
 
     EXPECT_TRUE( v != w );
     EXPECT_TRUE( *w == *w );
 
-    auto a = libstdhl::Memory::get< PortType >();
-    auto b = libstdhl::Memory::get< PortType >();
+    auto a = libstdhl::Memory::get< PortType >( i );
+    auto b = libstdhl::Memory::get< PortType >( i );
     ASSERT_TRUE( a != nullptr );
     ASSERT_TRUE( b != nullptr );
 

@@ -45,20 +45,21 @@ using namespace libcasm_ir;
 
 TEST( libcasm_ir__type_file, make_and_get )
 {
-    auto v = libstdhl::Memory::make< FileType >();
+    auto i = libstdhl::Memory::make< IntegerType >();
+    auto v = libstdhl::Memory::make< FileType >( i );
     ASSERT_TRUE( v != nullptr );
 
-    EXPECT_STREQ( v->name().c_str(), "file" );
-    EXPECT_STREQ( v->description().c_str(), "File" );
+    EXPECT_STREQ( v->name().c_str(), "file<i>" );
+    EXPECT_STREQ( v->description().c_str(), "File< Integer >" );
 
-    auto w = libstdhl::Memory::make< FileType >();
+    auto w = libstdhl::Memory::make< FileType >( i );
     ASSERT_TRUE( w != nullptr );
 
     EXPECT_TRUE( v != w );
     EXPECT_TRUE( *w == *w );
 
-    auto a = libstdhl::Memory::get< FileType >();
-    auto b = libstdhl::Memory::get< FileType >();
+    auto a = libstdhl::Memory::get< FileType >( i );
+    auto b = libstdhl::Memory::get< FileType >( i );
     ASSERT_TRUE( a != nullptr );
     ASSERT_TRUE( b != nullptr );
 

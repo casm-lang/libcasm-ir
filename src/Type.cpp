@@ -1541,21 +1541,22 @@ AbstractionType::AbstractionType( Type::Kind kind )
 // File Type
 //
 
-FileType::FileType( void )
+FileType::FileType( const Type::Ptr& type )
 : AbstractionType( classid() )
 {
+    m_result = type;
     // TODO: PPA: add file properties?
 }
 
 std::string FileType::name( void ) const
 {
-    return "file";  // PPA: FIXME: change this to "f", when
-                    // Decimal is introduced
+    return "file<" + m_result->name() +
+           ">";  // PPA: FIXME: change "file" to "f", when Decimal is introduced
 }
 
 std::string FileType::description( void ) const
 {
-    return token( kind() );
+    return token( kind() ) + "< " + m_result->description() + " >";
 }
 
 void FileType::foreach( const std::function< void( const Constant& constant ) >& callback ) const
@@ -1583,21 +1584,22 @@ std::size_t FileType::hash( void ) const
 // Port Type
 //
 
-PortType::PortType( void )
+PortType::PortType( const Type::Ptr& type )
 : AbstractionType( classid() )
 {
+    m_result = type;
     // TODO: PPA: add port properties?
 }
 
 std::string PortType::name( void ) const
 {
-    return "port";  // PPA: FIXME: change this to "p", when
-                    // Decimal is introduced
+    return "port<" + m_result->name() +
+           ">";  // PPA: FIXME: change "port" to "p", when Decimal is introduced
 }
 
 std::string PortType::description( void ) const
 {
-    return token( kind() );
+    return token( kind() ) + "< " + m_result->description() + " >";
 }
 
 void PortType::foreach( const std::function< void( const Constant& constant ) >& callback ) const
