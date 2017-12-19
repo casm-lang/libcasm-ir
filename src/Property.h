@@ -48,8 +48,9 @@ namespace libcasm_ir
 {
     enum class Property
     {
-        CONSTANT,
-        PURE,
+        ALTERABLE,  // write-only
+        CONSTANT,   // read-only
+        PURE,       // neither read nor write
     };
 
     using Properties = libstdhl::Enum::Flags< Property >;
