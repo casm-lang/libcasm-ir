@@ -524,6 +524,27 @@ static const auto arithmetic_instruction_resolve = []( std::vector< Type::Ptr >&
     }
 };
 
+static const auto arithmetic_instruction_validate = []( const RelationType& type ) -> u1 {
+    if( type.arguments().size() == 1 )
+    {
+        return type.result() == *type.arguments()[ 0 ];
+    }
+    else if( type.arguments().size() == 2 )
+    {
+        if( type.result().isInteger() and type.arguments()[ 0 ]->isInteger() and
+            type.arguments()[ 1 ]->isInteger() )
+        {
+            return true;
+        }
+
+        return type.result() == *type.arguments()[ 0 ] and type.result() == *type.arguments()[ 1 ];
+    }
+    else
+    {
+        return false;
+    }
+};
+
 //
 // Inv Instruction
 //
@@ -584,7 +605,8 @@ const Annotation InvInstruction::annotation(
         }
 
         return lhs;
-    } );
+    },
+    arithmetic_instruction_validate );
 
 u1 InvInstruction::classof( Value const* obj )
 {
@@ -665,7 +687,8 @@ const Annotation AddInstruction::annotation(
         }
 
         return lhs;
-    } );
+    },
+    arithmetic_instruction_validate );
 
 u1 AddInstruction::classof( Value const* obj )
 {
@@ -741,7 +764,8 @@ const Annotation SubInstruction::annotation(
         }
 
         return lhs;
-    } );
+    },
+    arithmetic_instruction_validate );
 
 u1 SubInstruction::classof( Value const* obj )
 {
@@ -818,7 +842,8 @@ const Annotation MulInstruction::annotation(
         }
 
         return lhs;
-    } );
+    },
+    arithmetic_instruction_validate );
 
 u1 MulInstruction::classof( Value const* obj )
 {
@@ -877,7 +902,8 @@ const Annotation ModInstruction::annotation(
         }
 
         return lhs;
-    } );
+    },
+    arithmetic_instruction_validate );
 
 u1 ModInstruction::classof( Value const* obj )
 {
@@ -942,7 +968,8 @@ const Annotation DivInstruction::annotation(
         }
 
         return lhs;
-    } );
+    },
+    arithmetic_instruction_validate );
 
 u1 DivInstruction::classof( Value const* obj )
 {
@@ -1029,6 +1056,22 @@ const Annotation PowInstruction::annotation(
         }
 
         return lhs;
+    },
+    []( const RelationType& type ) -> u1 {
+        if( type.arguments().size() == 2 )
+        {
+            if( type.result().isInteger() and type.arguments()[ 0 ]->isInteger() and
+                type.arguments()[ 1 ]->isInteger() )
+            {
+                return true;
+            }
+
+            return type.result() == *type.arguments()[ 0 ] and type.arguments()[ 1 ]->isInteger();
+        }
+        else
+        {
+            return false;
+        }
     } );
 
 u1 PowInstruction::classof( Value const* obj )
@@ -1063,6 +1106,8 @@ u1 LogicalInstruction::classof( Value const* obj )
 static const auto logic_instruction_properties = arithmetic_instruction_properties;
 
 static const auto logic_instruction_resolve = arithmetic_instruction_resolve;
+
+static const auto logic_instruction_validate = arithmetic_instruction_validate;
 
 //
 // And Instruction
@@ -1125,7 +1170,8 @@ const Annotation AndInstruction::annotation(
         {
             return BOOLEAN;
         }
-    } );
+    },
+    logic_instruction_validate );
 
 u1 AndInstruction::classof( Value const* obj )
 {
@@ -1193,7 +1239,8 @@ const Annotation XorInstruction::annotation(
         {
             return BOOLEAN;
         }
-    } );
+    },
+    logic_instruction_validate );
 
 u1 XorInstruction::classof( Value const* obj )
 {
@@ -1261,7 +1308,8 @@ const Annotation OrInstruction::annotation(
         {
             return BOOLEAN;
         }
-    } );
+    },
+    logic_instruction_validate );
 
 u1 OrInstruction::classof( Value const* obj )
 {
@@ -1338,7 +1386,8 @@ const Annotation ImpInstruction::annotation(
         {
             return BOOLEAN;
         }
-    } );
+    },
+    logic_instruction_validate );
 
 u1 ImpInstruction::classof( Value const* obj )
 {
@@ -1375,11 +1424,6 @@ const Annotation NotInstruction::annotation(
               Type::Kind::BOOLEAN,
           } },
 
-        // { Type::Kind::BOOLEAN, // TODO: PPA: should we really allow this?
-        //     {
-        //         Type::Kind::INTEGER,
-        //     } },
-
         { Type::Kind::BINARY,
           {
               Type::Kind::BINARY,
@@ -1403,7 +1447,8 @@ const Annotation NotInstruction::annotation(
         {
             return BOOLEAN;
         }
-    } );
+    },
+    logic_instruction_validate );
 
 u1 NotInstruction::classof( Value const* obj )
 {
@@ -1457,6 +1502,19 @@ static auto compare_instruction_inference = []( const std::vector< Type::Ptr >& 
     }
 
     return BOOLEAN;
+};
+
+static const auto compare_instruction_validate = []( const RelationType& type ) -> u1 {
+    if( type.arguments().size() == 2 )
+    {
+        return type.result().isBoolean() and
+               ( *type.arguments()[ 0 ] == *type.arguments()[ 1 ] or
+                 ( type.arguments()[ 0 ]->isInteger() and type.arguments()[ 1 ]->isInteger() ) );
+    }
+    else
+    {
+        return false;
+    }
 };
 
 //
@@ -1570,7 +1628,8 @@ const Annotation EquInstruction::annotation(
 
     },
     compare_instruction_resolve,
-    compare_instruction_inference );
+    compare_instruction_inference,
+    compare_instruction_validate );
 
 u1 EquInstruction::classof( Value const* obj )
 {
@@ -1688,7 +1747,8 @@ const Annotation NeqInstruction::annotation(
 
     },
     compare_instruction_resolve,
-    compare_instruction_inference );
+    compare_instruction_inference,
+    compare_instruction_validate );
 
 u1 NeqInstruction::classof( Value const* obj )
 {
@@ -1746,7 +1806,8 @@ const Annotation LthInstruction::annotation(
 
     },
     compare_instruction_resolve,
-    compare_instruction_inference );
+    compare_instruction_inference,
+    compare_instruction_validate );
 
 u1 LthInstruction::classof( Value const* obj )
 {
@@ -1804,7 +1865,8 @@ const Annotation LeqInstruction::annotation(
 
     },
     compare_instruction_resolve,
-    compare_instruction_inference );
+    compare_instruction_inference,
+    compare_instruction_validate );
 
 u1 LeqInstruction::classof( Value const* obj )
 {
@@ -1862,7 +1924,8 @@ const Annotation GthInstruction::annotation(
 
     },
     compare_instruction_resolve,
-    compare_instruction_inference );
+    compare_instruction_inference,
+    compare_instruction_validate );
 
 u1 GthInstruction::classof( Value const* obj )
 {
@@ -1920,7 +1983,8 @@ const Annotation GeqInstruction::annotation(
 
     },
     compare_instruction_resolve,
-    compare_instruction_inference );
+    compare_instruction_inference,
+    compare_instruction_validate );
 
 u1 GeqInstruction::classof( Value const* obj )
 {

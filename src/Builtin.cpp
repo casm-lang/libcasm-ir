@@ -480,6 +480,16 @@ const Annotation IsSymbolicBuiltin::annotation(
             throw InternalException( "types.size() != 1" );
         }
         return BOOLEAN;
+    },
+    []( const RelationType& type ) -> u1 {
+        if( type.arguments().size() == 1 )
+        {
+            return type.result().isBoolean();
+        }
+        else
+        {
+            return false;
+        }
     } );
 
 u1 IsSymbolicBuiltin::classof( Value const* obj )
@@ -512,6 +522,16 @@ const Annotation AbortBuiltin::annotation(
             throw InternalException( "types.size() != 0" );
         }
         return VOID;
+    },
+    []( const RelationType& type ) -> u1 {
+        if( type.arguments().size() == 0 )
+        {
+            return type.result().isVoid();
+        }
+        else
+        {
+            return false;
+        }
     } );
 
 u1 AbortBuiltin::classof( Value const* obj )
@@ -557,6 +577,16 @@ const Annotation AssertBuiltin::annotation(
             throw InternalException( "types.size() != 1" );
         }
         return VOID;
+    },
+    []( const RelationType& type ) -> u1 {
+        if( type.arguments().size() == 1 )
+        {
+            return type.result().isVoid() and type.arguments()[ 0 ]->isBoolean();
+        }
+        else
+        {
+            return false;
+        }
     } );
 
 u1 AssertBuiltin::classof( Value const* obj )
@@ -602,6 +632,16 @@ const Annotation AssureBuiltin::annotation(
             throw InternalException( "types.size() != 1" );
         }
         return VOID;
+    },
+    []( const RelationType& type ) -> u1 {
+        if( type.arguments().size() == 1 )
+        {
+            return type.result().isVoid() and type.arguments()[ 0 ]->isBoolean();
+        }
+        else
+        {
+            return false;
+        }
     } );
 
 u1 AssureBuiltin::classof( Value const* obj )
@@ -684,6 +724,16 @@ const Annotation PrintBuiltin::annotation(
         }
 
         return VOID;
+    },
+    []( const RelationType& type ) -> u1 {
+        if( type.arguments().size() == 1 )
+        {
+            return type.result().isVoid() and type.arguments()[ 0 ]->isString();
+        }
+        else
+        {
+            return false;
+        }
     } );
 
 u1 PrintBuiltin::classof( Value const* obj )
@@ -739,6 +789,16 @@ const Annotation PrintLnBuiltin::annotation(
         }
 
         return VOID;
+    },
+    []( const RelationType& type ) -> u1 {
+        if( type.arguments().size() == 1 )
+        {
+            return type.result().isVoid() and type.arguments()[ 0 ]->isString();
+        }
+        else
+        {
+            return false;
+        }
     } );
 
 u1 PrintLnBuiltin::classof( Value const* obj )
@@ -805,6 +865,16 @@ const Annotation AsBooleanBuiltin::annotation(
             throw InternalException( "types.size() != 1" );
         }
         return BOOLEAN;
+    },
+    []( const RelationType& type ) -> u1 {
+        if( type.arguments().size() == 1 )
+        {
+            return type.result().isBoolean();
+        }
+        else
+        {
+            return false;
+        }
     } );
 
 u1 AsBooleanBuiltin::classof( Value const* obj )
@@ -864,6 +934,16 @@ const Annotation AsIntegerBuiltin::annotation(
             }
         }
         return INTEGER;
+    },
+    []( const RelationType& type ) -> u1 {
+        if( type.arguments().size() == 1 )
+        {
+            return type.result().isInteger();
+        }
+        else
+        {
+            return false;
+        }
     } );
 
 u1 AsIntegerBuiltin::classof( Value const* obj )
@@ -914,6 +994,16 @@ const Annotation AsBinaryBuiltin::annotation(
             throw InternalException( "types.size() != 1" );
         }
         return nullptr;
+    },
+    []( const RelationType& type ) -> u1 {
+        if( type.arguments().size() == 1 )
+        {
+            return type.result().isBinary();
+        }
+        else
+        {
+            return false;
+        }
     } );
 
 u1 AsBinaryBuiltin::classof( Value const* obj )
@@ -989,6 +1079,16 @@ const Annotation AsStringBuiltin::annotation(
             throw InternalException( "types.size() != 1" );
         }
         return STRING;
+    },
+    []( const RelationType& type ) -> u1 {
+        if( type.arguments().size() == 1 )
+        {
+            return type.result().isString();
+        }
+        else
+        {
+            return false;
+        }
     } );
 
 u1 AsStringBuiltin::classof( Value const* obj )
@@ -1039,6 +1139,16 @@ const Annotation AsDecimalBuiltin::annotation(
             throw InternalException( "types.size() != 1" );
         }
         return DECIMAL;
+    },
+    []( const RelationType& type ) -> u1 {
+        if( type.arguments().size() == 1 )
+        {
+            return type.result().isDecimal();
+        }
+        else
+        {
+            return false;
+        }
     } );
 
 u1 AsDecimalBuiltin::classof( Value const* obj )
@@ -1089,6 +1199,16 @@ const Annotation AsRationalBuiltin::annotation(
             throw InternalException( "types.size() != 1" );
         }
         return RATIONAL;
+    },
+    []( const RelationType& type ) -> u1 {
+        if( type.arguments().size() == 1 )
+        {
+            return type.result().isRational();
+        }
+        else
+        {
+            return false;
+        }
     } );
 
 u1 AsRationalBuiltin::classof( Value const* obj )
@@ -1125,6 +1245,16 @@ const Annotation AsEnumerationBuiltin::annotation(
         }
         return nullptr;  // TODO: PPA: fetch through values a enumeration kind
                          // hint and return its type!
+    },
+    []( const RelationType& type ) -> u1 {
+        if( type.arguments().size() == 1 )
+        {
+            return type.result().isEnumeration();
+        }
+        else
+        {
+            return false;
+        }
     } );
 
 u1 AsEnumerationBuiltin::classof( Value const* obj )
@@ -1195,6 +1325,17 @@ static const auto stringify_builtin_inference =
     return STRING;
 };
 
+static const auto stringify_builtin_validate = []( const RelationType& type ) -> u1 {
+    if( type.arguments().size() == 1 )
+    {
+        return type.result().isString();
+    }
+    else
+    {
+        return false;
+    }
+};
+
 //
 // DecBuiltin
 //
@@ -1209,7 +1350,8 @@ const Annotation DecBuiltin::annotation(
     stringify_builtin_properties,
     stringify_builtin_data,
     stringify_builtin_resolve,
-    stringify_builtin_inference );
+    stringify_builtin_inference,
+    stringify_builtin_validate );
 
 u1 DecBuiltin::classof( Value const* obj )
 {
@@ -1230,7 +1372,8 @@ const Annotation HexBuiltin::annotation(
     stringify_builtin_properties,
     stringify_builtin_data,
     stringify_builtin_resolve,
-    stringify_builtin_inference );
+    stringify_builtin_inference,
+    stringify_builtin_validate );
 
 u1 HexBuiltin::classof( Value const* obj )
 {
@@ -1251,7 +1394,8 @@ const Annotation OctBuiltin::annotation(
     stringify_builtin_properties,
     stringify_builtin_data,
     stringify_builtin_resolve,
-    stringify_builtin_inference );
+    stringify_builtin_inference,
+    stringify_builtin_validate );
 
 u1 OctBuiltin::classof( Value const* obj )
 {
@@ -1272,7 +1416,8 @@ const Annotation BinBuiltin::annotation(
     stringify_builtin_properties,
     stringify_builtin_data,
     stringify_builtin_resolve,
-    stringify_builtin_inference );
+    stringify_builtin_inference,
+    stringify_builtin_validate );
 
 u1 BinBuiltin::classof( Value const* obj )
 {
@@ -1354,6 +1499,17 @@ static const auto arithmetic_builtin_inference =
     }
 };
 
+static const auto arithmetic_builtin_validate = []( const RelationType& type ) -> u1 {
+    if( type.arguments().size() == 2 )
+    {
+        return type.result() == *type.arguments()[ 0 ] and type.result() == *type.arguments()[ 1 ];
+    }
+    else
+    {
+        return false;
+    }
+};
+
 u1 ArithmeticBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid() or AdduBuiltin::classof( obj ) or AddsBuiltin::classof( obj ) or
@@ -1375,7 +1531,8 @@ const Annotation AdduBuiltin::annotation(
     arithmetic_builtin_properties,
     arithmetic_builtin_data,
     arithmetic_builtin_resolve,
-    arithmetic_builtin_inference );
+    arithmetic_builtin_inference,
+    arithmetic_builtin_validate );
 
 u1 AdduBuiltin::classof( Value const* obj )
 {
@@ -1396,7 +1553,8 @@ const Annotation AddsBuiltin::annotation(
     arithmetic_builtin_properties,
     arithmetic_builtin_data,
     arithmetic_builtin_resolve,
-    arithmetic_builtin_inference );
+    arithmetic_builtin_inference,
+    arithmetic_builtin_validate );
 
 u1 AddsBuiltin::classof( Value const* obj )
 {
@@ -1417,7 +1575,8 @@ const Annotation SubuBuiltin::annotation(
     arithmetic_builtin_properties,
     arithmetic_builtin_data,
     arithmetic_builtin_resolve,
-    arithmetic_builtin_inference );
+    arithmetic_builtin_inference,
+    arithmetic_builtin_validate );
 
 u1 SubuBuiltin::classof( Value const* obj )
 {
@@ -1438,7 +1597,8 @@ const Annotation SubsBuiltin::annotation(
     arithmetic_builtin_properties,
     arithmetic_builtin_data,
     arithmetic_builtin_resolve,
-    arithmetic_builtin_inference );
+    arithmetic_builtin_inference,
+    arithmetic_builtin_validate );
 
 u1 SubsBuiltin::classof( Value const* obj )
 {
@@ -1459,7 +1619,8 @@ const Annotation MuluBuiltin::annotation(
     arithmetic_builtin_properties,
     arithmetic_builtin_data,
     arithmetic_builtin_resolve,
-    arithmetic_builtin_inference );
+    arithmetic_builtin_inference,
+    arithmetic_builtin_validate );
 
 u1 MuluBuiltin::classof( Value const* obj )
 {
@@ -1480,7 +1641,8 @@ const Annotation MulsBuiltin::annotation(
     arithmetic_builtin_properties,
     arithmetic_builtin_data,
     arithmetic_builtin_resolve,
-    arithmetic_builtin_inference );
+    arithmetic_builtin_inference,
+    arithmetic_builtin_validate );
 
 u1 MulsBuiltin::classof( Value const* obj )
 {
@@ -1546,6 +1708,17 @@ static const auto compare_builtin_inference = []( const std::vector< Type::Ptr >
     }
 };
 
+static const auto compare_builtin_validate = []( const RelationType& type ) -> u1 {
+    if( type.arguments().size() == 2 )
+    {
+        return type.result().isBoolean() and *type.arguments()[ 0 ] == *type.arguments()[ 1 ];
+    }
+    else
+    {
+        return false;
+    }
+};
+
 u1 CompareBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid() or LesuBuiltin::classof( obj ) or LessBuiltin::classof( obj ) or
@@ -1568,7 +1741,8 @@ const Annotation LesuBuiltin::annotation(
     compare_builtin_properties,
     compare_builtin_data,
     compare_builtin_resolve,
-    compare_builtin_inference );
+    compare_builtin_inference,
+    compare_builtin_validate );
 
 u1 LesuBuiltin::classof( Value const* obj )
 {
@@ -1589,7 +1763,8 @@ const Annotation LessBuiltin::annotation(
     compare_builtin_properties,
     compare_builtin_data,
     compare_builtin_resolve,
-    compare_builtin_inference );
+    compare_builtin_inference,
+    compare_builtin_validate );
 
 u1 LessBuiltin::classof( Value const* obj )
 {
@@ -1610,7 +1785,8 @@ const Annotation LequBuiltin::annotation(
     compare_builtin_properties,
     compare_builtin_data,
     compare_builtin_resolve,
-    compare_builtin_inference );
+    compare_builtin_inference,
+    compare_builtin_validate );
 
 u1 LequBuiltin::classof( Value const* obj )
 {
@@ -1631,7 +1807,8 @@ const Annotation LeqsBuiltin::annotation(
     compare_builtin_properties,
     compare_builtin_data,
     compare_builtin_resolve,
-    compare_builtin_inference );
+    compare_builtin_inference,
+    compare_builtin_validate );
 
 u1 LeqsBuiltin::classof( Value const* obj )
 {
@@ -1652,7 +1829,8 @@ const Annotation GreuBuiltin::annotation(
     compare_builtin_properties,
     compare_builtin_data,
     compare_builtin_resolve,
-    compare_builtin_inference );
+    compare_builtin_inference,
+    compare_builtin_validate );
 
 u1 GreuBuiltin::classof( Value const* obj )
 {
@@ -1673,7 +1851,8 @@ const Annotation GresBuiltin::annotation(
     compare_builtin_properties,
     compare_builtin_data,
     compare_builtin_resolve,
-    compare_builtin_inference );
+    compare_builtin_inference,
+    compare_builtin_validate );
 
 u1 GresBuiltin::classof( Value const* obj )
 {
@@ -1694,7 +1873,8 @@ const Annotation GequBuiltin::annotation(
     compare_builtin_properties,
     compare_builtin_data,
     compare_builtin_resolve,
-    compare_builtin_inference );
+    compare_builtin_inference,
+    compare_builtin_validate );
 
 u1 GequBuiltin::classof( Value const* obj )
 {
@@ -1715,7 +1895,8 @@ const Annotation GeqsBuiltin::annotation(
     compare_builtin_properties,
     compare_builtin_data,
     compare_builtin_resolve,
-    compare_builtin_inference );
+    compare_builtin_inference,
+    compare_builtin_validate );
 
 u1 GeqsBuiltin::classof( Value const* obj )
 {
@@ -1779,6 +1960,24 @@ const Annotation ZextBuiltin::annotation(
         {
             return nullptr;
         }
+    },
+    []( const RelationType& type ) -> u1 {
+        if( type.arguments().size() == 2 )
+        {
+            if( type.result().isBinary() and type.arguments()[ 0 ]->isBinary() and
+                type.arguments()[ 1 ]->isInteger() )
+            {
+                const auto& resType = static_cast< const BinaryType& >( type.result() );
+                const auto& argType = static_cast< const BinaryType& >( *type.arguments()[ 0 ] );
+
+                if( resType.bitsize() > argType.bitsize() )
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     } );
 
 u1 ZextBuiltin::classof( Value const* obj )
@@ -1824,6 +2023,24 @@ const Annotation SextBuiltin::annotation(
         {
             return nullptr;
         }
+    },
+    []( const RelationType& type ) -> u1 {
+        if( type.arguments().size() == 2 )
+        {
+            if( type.result().isBinary() and type.arguments()[ 0 ]->isBinary() and
+                type.arguments()[ 1 ]->isInteger() )
+            {
+                const auto& resType = static_cast< const BinaryType& >( type.result() );
+                const auto& argType = static_cast< const BinaryType& >( *type.arguments()[ 0 ] );
+
+                if( resType.bitsize() > argType.bitsize() )
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     } );
 
 u1 SextBuiltin::classof( Value const* obj )
@@ -1869,6 +2086,24 @@ const Annotation TruncBuiltin::annotation(
         {
             return nullptr;
         }
+    },
+    []( const RelationType& type ) -> u1 {
+        if( type.arguments().size() == 2 )
+        {
+            if( type.result().isBinary() and type.arguments()[ 0 ]->isBinary() and
+                type.arguments()[ 1 ]->isInteger() )
+            {
+                const auto& resType = static_cast< const BinaryType& >( type.result() );
+                const auto& argType = static_cast< const BinaryType& >( *type.arguments()[ 0 ] );
+
+                if( resType.bitsize() < argType.bitsize() )
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     } );
 
 u1 TruncBuiltin::classof( Value const* obj )
@@ -1920,6 +2155,24 @@ const Annotation ShlBuiltin::annotation(
             }
         }
         return lhs;
+    },
+    []( const RelationType& type ) -> u1 {
+        if( type.arguments().size() == 2 )
+        {
+            if( type.arguments()[ 1 ]->isInteger() )
+            {
+                return type.result() == *type.arguments()[ 0 ];
+            }
+            else
+            {
+                return type.result() == *type.arguments()[ 0 ] and
+                       type.result() == *type.arguments()[ 1 ];
+            }
+        }
+        else
+        {
+            return false;
+        }
     } );
 
 u1 ShlBuiltin::classof( Value const* obj )
@@ -1971,6 +2224,24 @@ const Annotation ShrBuiltin::annotation(
             }
         }
         return lhs;
+    },
+    []( const RelationType& type ) -> u1 {
+        if( type.arguments().size() == 2 )
+        {
+            if( type.arguments()[ 1 ]->isInteger() )
+            {
+                return type.result() == *type.arguments()[ 0 ];
+            }
+            else
+            {
+                return type.result() == *type.arguments()[ 0 ] and
+                       type.result() == *type.arguments()[ 1 ];
+            }
+        }
+        else
+        {
+            return false;
+        }
     } );
 
 u1 ShrBuiltin::classof( Value const* obj )
@@ -2022,6 +2293,24 @@ const Annotation AshrBuiltin::annotation(
             }
         }
         return lhs;
+    },
+    []( const RelationType& type ) -> u1 {
+        if( type.arguments().size() == 2 )
+        {
+            if( type.arguments()[ 1 ]->isInteger() )
+            {
+                return type.result() == *type.arguments()[ 0 ];
+            }
+            else
+            {
+                return type.result() == *type.arguments()[ 0 ] and
+                       type.result() == *type.arguments()[ 1 ];
+            }
+        }
+        else
+        {
+            return false;
+        }
     } );
 
 u1 AshrBuiltin::classof( Value const* obj )
@@ -2057,6 +2346,16 @@ const Annotation ClzBuiltin::annotation(
             throw InternalException( "types.size() != 1" );
         }
         return INTEGER;
+    },
+    []( const RelationType& type ) -> u1 {
+        if( type.arguments().size() == 1 )
+        {
+            return type.result().isInteger() and type.arguments()[ 0 ]->isBinary();
+        }
+        else
+        {
+            return false;
+        }
     } );
 
 u1 ClzBuiltin::classof( Value const* obj )
@@ -2092,6 +2391,16 @@ const Annotation CloBuiltin::annotation(
             throw InternalException( "types.size() != 1" );
         }
         return INTEGER;
+    },
+    []( const RelationType& type ) -> u1 {
+        if( type.arguments().size() == 1 )
+        {
+            return type.result().isInteger() and type.arguments()[ 0 ]->isBinary();
+        }
+        else
+        {
+            return false;
+        }
     } );
 
 u1 CloBuiltin::classof( Value const* obj )
@@ -2127,6 +2436,16 @@ const Annotation ClsBuiltin::annotation(
             throw InternalException( "types.size() != 1" );
         }
         return INTEGER;
+    },
+    []( const RelationType& type ) -> u1 {
+        if( type.arguments().size() == 1 )
+        {
+            return type.result().isInteger() and type.arguments()[ 0 ]->isBinary();
+        }
+        else
+        {
+            return false;
+        }
     } );
 
 u1 ClsBuiltin::classof( Value const* obj )

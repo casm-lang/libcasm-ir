@@ -94,7 +94,7 @@ namespace libcasm_ir
             const Relations& relations,
             const Resolve resolve,
             const Inference inference,
-            const Validate validate = []( const RelationType& ) -> u1 { return true; } );
+            const Validate validate );
 
         Value::ID valueID( void ) const;
 
