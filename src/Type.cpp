@@ -106,7 +106,7 @@ Type::ID Type::id( void )
 
 const Type& Type::result( void ) const
 {
-    if( isRelation() or isRange() )
+    if( isRelation() or isRange() or isList() )
     {
         return *m_result.get();
     }
@@ -116,7 +116,7 @@ const Type& Type::result( void ) const
 
 Type::Ptr Type::ptr_result( void ) const
 {
-    if( isRelation() or isRange() )
+    if( isRelation() or isRange() or isList() )
     {
         return m_result;
     }
