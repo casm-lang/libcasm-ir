@@ -66,6 +66,8 @@ namespace libcasm_ir
     class Enumeration;
     class Range;
     class RangeType;
+    class List;
+    class ListType;
 
     class Type;
     using Types = libstdhl::List< Type >;
@@ -712,6 +714,16 @@ namespace libcasm_ir
 
         ListType( const Type::Ptr& type );
 
+        List& list( void ) const;
+
+        std::shared_ptr< List > ptr_list( void ) const;
+
+        void setList( const std::shared_ptr< List >& list );
+
+        Type& type( void ) const;
+
+        std::shared_ptr< Type > ptr_type( void ) const;
+
         std::string name( void ) const override;
 
         std::string description( void ) const override;
@@ -729,6 +741,9 @@ namespace libcasm_ir
         {
             return Type::Kind::LIST;
         }
+
+      private:
+        std::shared_ptr< List > m_list;
     };
 
     class ReferenceType : public Type

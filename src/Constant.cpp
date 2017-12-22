@@ -165,6 +165,10 @@ std::string Constant::name( void ) const
         {
             return static_cast< const RangeConstant* >( this )->name();
         }
+        case Value::LIST_CONSTANT:
+        {
+            return static_cast< const ListConstant* >( this )->name();
+        }
         case Value::RULE_REFERENCE_CONSTANT:
         {
             return static_cast< const RuleReferenceConstant* >( this )->name();
@@ -225,6 +229,11 @@ void Constant::accept( Visitor& visitor )
             static_cast< RangeConstant* >( this )->accept( visitor );
             break;
         }
+        case Value::LIST_CONSTANT:
+        {
+            static_cast< ListConstant* >( this )->accept( visitor );
+            break;
+        }
         case Value::RULE_REFERENCE_CONSTANT:
         {
             static_cast< RuleReferenceConstant* >( this )->accept( visitor );
@@ -247,6 +256,10 @@ void Constant::foreach( const std::function< void( const Constant& constant ) >&
     {
         static_cast< const RangeConstant* >( this )->foreach( callback );
     }
+    else if( id() == Value::LIST_CONSTANT )
+    {
+        static_cast< const ListConstant* >( this )->foreach( callback );
+    }
     else
     {
         callback( *this );
@@ -262,6 +275,10 @@ Constant Constant::choose( void ) const
     if( id() == Value::RANGE_CONSTANT )
     {
         return static_cast< const RangeConstant* >( this )->choose();
+    }
+    else if( id() == Value::LIST_CONSTANT )
+    {
+        return static_cast< const ListConstant* >( this )->choose();
     }
     else
     {
@@ -308,6 +325,10 @@ std::size_t Constant::hash( void ) const
         case Value::RANGE_CONSTANT:
         {
             return static_cast< const RangeConstant* >( this )->hash();
+        }
+        case Value::LIST_CONSTANT:
+        {
+            return static_cast< const ListConstant* >( this )->hash();
         }
         case Value::RULE_REFERENCE_CONSTANT:
         {
@@ -362,6 +383,10 @@ u1 Constant::operator==( const Value& rhs ) const
         case Value::RANGE_CONSTANT:
         {
             return static_cast< const RangeConstant* >( this )->operator==( rhs );
+        }
+        case Value::LIST_CONSTANT:
+        {
+            return static_cast< const ListConstant* >( this )->operator==( rhs );
         }
         case Value::RULE_REFERENCE_CONSTANT:
         {
@@ -433,11 +458,11 @@ Constant Constant::undef( const Type::Ptr& type )
         {
             break;
         }
-        case Type::Kind::TUPLE:
-        {
-            break;
-        }
         case Type::Kind::LIST:
+        {
+            return ListConstant( std::static_pointer_cast< ListType >( type ) );
+        }
+        case Type::Kind::TUPLE:
         {
             break;
         }
@@ -1134,6 +1159,75 @@ u1 RangeConstant::operator==( const Value& rhs ) const
 }
 
 u1 RangeConstant::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
+
+//
+// List Constant
+//
+
+ListConstant::ListConstant( const ListType::Ptr& type, const List::Ptr& value )
+: Constant( type, libstdhl::Type::Data( 0, false ), classid() )
+{
+    assert( type );
+    type->setList( value );
+}
+
+ListConstant::ListConstant( const ListType::Ptr& type )
+: Constant( type, classid() )
+{
+}
+
+List::Ptr ListConstant::value( void ) const
+{
+    return static_cast< const ListType& >( type() ).ptr_list();
+}
+
+std::string ListConstant::name( void ) const
+{
+    return type().name();
+}
+
+void ListConstant::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
+void ListConstant::foreach(
+    const std::function< void( const Constant& constant ) >& callback ) const
+{
+    type().foreach( callback );
+}
+
+Constant ListConstant::choose( void ) const
+{
+    return type().choose();
+}
+
+std::size_t ListConstant::hash( void ) const
+{
+    const auto h = ( ( (std::size_t)classid() ) << 1 ) | defined();
+    return libstdhl::Hash::combine( h, value()->hash() );
+}
+
+u1 ListConstant::operator==( const Value& rhs ) const
+{
+    if( this == &rhs )
+    {
+        return true;
+    }
+
+    if( not Value::operator==( rhs ) )
+    {
+        return false;
+    }
+
+    const auto& other = static_cast< const ListConstant& >( rhs );
+    return ( this->defined() == other.defined() ) and ( this->value() == other.value() );
+}
+
+u1 ListConstant::classof( Value const* obj )
 {
     return obj->id() == classid();
 }

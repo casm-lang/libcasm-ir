@@ -58,6 +58,7 @@ add_library( ${PROJECT}-test OBJECT
   constant/binary.cpp
   constant/integer.cpp
   constant/range.cpp
+  constant/list.cpp
   constant/rational.cpp
   constant/string.cpp
   constant/undef.cpp

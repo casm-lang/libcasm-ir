@@ -39,43 +39,32 @@
 //  statement from your version.
 //
 
-#ifndef _LIBCASM_IR_H_
-#define _LIBCASM_IR_H_
+#include "../main.h"
 
-#include <libcasm-ir/Agent>
-#include <libcasm-ir/Annotation>
-#include <libcasm-ir/Block>
-#include <libcasm-ir/Builtin>
-#include <libcasm-ir/CasmIR>
-#include <libcasm-ir/Constant>
-#include <libcasm-ir/Derived>
-#include <libcasm-ir/Enumeration>
-#include <libcasm-ir/Exception>
-#include <libcasm-ir/Function>
-#include <libcasm-ir/Instruction>
-#include <libcasm-ir/List>
-#include <libcasm-ir/Range>
-#include <libcasm-ir/Rule>
-#include <libcasm-ir/Specification>
-#include <libcasm-ir/Statement>
-#include <libcasm-ir/Type>
-#include <libcasm-ir/User>
-#include <libcasm-ir/Value>
-#include <libcasm-ir/Version>
-#include <libcasm-ir/Visitor>
+using namespace libcasm_ir;
 
-#include <libcasm-ir/analyze/ConsistencyCheckPass>
-#include <libcasm-ir/analyze/IRDumpDebugPass>
-
-#include <libcasm-ir/transform/BranchEliminationPass>
-#include <libcasm-ir/transform/IRDumpDotPass>
-#include <libcasm-ir/transform/IRDumpSourcePass>
-
-namespace libcasm_ir
+TEST( libcasm_ir__constant_list, of_integer_constants )
 {
-}
+    const auto i = libstdhl::Memory::get< IntegerType >();
+    const auto t = libstdhl::Memory::make< ListType >( i );
 
-#endif  // _LIBCASM_IR_H_
+    auto l = libstdhl::Memory::make< libcasm_ir::List >( t );
+    l->append( libstdhl::Memory::make< IntegerConstant >( -4 ) );
+    l->append( libstdhl::Memory::make< IntegerConstant >( 13 ) );
+    l->append( libstdhl::Memory::make< IntegerConstant >( 0 ) );
+    l->append( libstdhl::Memory::make< IntegerConstant >( 20 ) );
+    l->append( libstdhl::Memory::make< IntegerConstant >( 8 ) );
+
+    const auto v = libstdhl::Memory::make< ListConstant >( t, l );
+    ASSERT_TRUE( v != nullptr );
+
+    EXPECT_STREQ( v->name().c_str(), "l<i>" );
+    EXPECT_STREQ( v->description().c_str(), "l<i> l<i>" );
+
+    v->foreach( []( const Constant& constant ) { std::cerr << constant.name() << "\n"; } );
+
+    std::cerr << v->choose().name() << "\n";
+}
 
 //
 //  Local variables:

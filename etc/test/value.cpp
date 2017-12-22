@@ -102,6 +102,11 @@ TEST( libcasm_ir_Value, id_to_token_string )
                 EXPECT_STREQ( Value::token( id ).c_str(), "Range" );
                 break;
             }
+            case Value::LIST:
+            {
+                EXPECT_STREQ( Value::token( id ).c_str(), "List" );
+                break;
+            }
 
             case Value::BLOCK:
             {
@@ -192,6 +197,11 @@ TEST( libcasm_ir_Value, id_to_token_string )
             case Value::RANGE_CONSTANT:
             {
                 EXPECT_STREQ( Value::token( id ).c_str(), "RangeConstant" );
+                break;
+            }
+            case Value::LIST_CONSTANT:
+            {
+                EXPECT_STREQ( Value::token( id ).c_str(), "ListConstant" );
                 break;
             }
             case Value::IDENTIFIER:

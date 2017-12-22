@@ -39,43 +39,75 @@
 //  statement from your version.
 //
 
-#ifndef _LIBCASM_IR_H_
-#define _LIBCASM_IR_H_
+#include "List.h"
 
-#include <libcasm-ir/Agent>
-#include <libcasm-ir/Annotation>
-#include <libcasm-ir/Block>
-#include <libcasm-ir/Builtin>
-#include <libcasm-ir/CasmIR>
-#include <libcasm-ir/Constant>
-#include <libcasm-ir/Derived>
-#include <libcasm-ir/Enumeration>
-#include <libcasm-ir/Exception>
-#include <libcasm-ir/Function>
-#include <libcasm-ir/Instruction>
-#include <libcasm-ir/List>
-#include <libcasm-ir/Range>
-#include <libcasm-ir/Rule>
-#include <libcasm-ir/Specification>
-#include <libcasm-ir/Statement>
-#include <libcasm-ir/Type>
-#include <libcasm-ir/User>
-#include <libcasm-ir/Value>
-#include <libcasm-ir/Version>
-#include <libcasm-ir/Visitor>
+#include "Constant.h"
 
-#include <libcasm-ir/analyze/ConsistencyCheckPass>
-#include <libcasm-ir/analyze/IRDumpDebugPass>
+using namespace libcasm_ir;
 
-#include <libcasm-ir/transform/BranchEliminationPass>
-#include <libcasm-ir/transform/IRDumpDotPass>
-#include <libcasm-ir/transform/IRDumpSourcePass>
-
-namespace libcasm_ir
+List::List( const ListType::Ptr& type )
+: Value( type, classid() )
+, m_elements()
 {
 }
 
-#endif  // _LIBCASM_IR_H_
+const Values& List::elements( void ) const
+{
+    return m_elements;
+}
+
+void List::append( const Value::Ptr& element )
+{
+    m_elements.add( element );
+}
+
+Value::Ptr List::at( const std::size_t index ) const
+{
+    return m_elements[ index ];
+}
+
+std::string List::name( void ) const
+{
+    std::string n = "[";
+
+    for( auto element : m_elements )
+    {
+        n += element->name() + ", ";
+    }
+
+    return n + "]";
+}
+
+std::size_t List::hash( void ) const
+{
+    return libstdhl::Hash::combine( classid(), std::hash< std::string >()( name() ) );
+}
+
+u1 List::operator==( const Value& rhs ) const
+{
+    if( this == &rhs )
+    {
+        return true;
+    }
+
+    if( not Value::operator==( rhs ) )
+    {
+        return false;
+    }
+
+    const auto& other = static_cast< const List& >( rhs );
+    return this->name() == other.name();
+}
+
+void List::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
+u1 List::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
 
 //
 //  Local variables:

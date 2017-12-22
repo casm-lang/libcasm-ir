@@ -84,6 +84,10 @@ void RecursiveVisitor::visit( Range& value )
 {
 }
 
+void RecursiveVisitor::visit( List& value )
+{
+}
+
 void RecursiveVisitor::visit( ParallelBlock& value )
 {
     value.entry()->accept( *this );
@@ -194,6 +198,11 @@ void TraversalVisitor::visit( Enumeration& value )
 }
 
 void TraversalVisitor::visit( Range& value )
+{
+    callback()( value );
+}
+
+void TraversalVisitor::visit( List& value )
 {
     callback()( value );
 }
@@ -414,6 +423,10 @@ void TraversalVisitor::visit( EnumerationConstant& value )
     callback()( value );
 }
 void TraversalVisitor::visit( RangeConstant& value )
+{
+    callback()( value );
+}
+void TraversalVisitor::visit( ListConstant& value )
 {
     callback()( value );
 }

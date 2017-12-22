@@ -56,6 +56,7 @@ add_library( ${PROJECT}-cpp OBJECT
   Function.cpp
   Instruction.cpp
   Range.cpp
+  List.cpp
   Rule.cpp
   Specification.cpp
   Statement.cpp
@@ -95,6 +96,7 @@ ecm_generate_headers( ${PROJECT}_HEADERS_CPP
     libcasm-ir
     Property
     Range
+    List
     Rule
     Specification
     Statement

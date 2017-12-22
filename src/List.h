@@ -39,43 +39,51 @@
 //  statement from your version.
 //
 
-#ifndef _LIBCASM_IR_H_
-#define _LIBCASM_IR_H_
+#ifndef _LIBCASM_IR_LIST_H_
+#define _LIBCASM_IR_LIST_H_
 
-#include <libcasm-ir/Agent>
-#include <libcasm-ir/Annotation>
-#include <libcasm-ir/Block>
-#include <libcasm-ir/Builtin>
-#include <libcasm-ir/CasmIR>
-#include <libcasm-ir/Constant>
-#include <libcasm-ir/Derived>
-#include <libcasm-ir/Enumeration>
-#include <libcasm-ir/Exception>
-#include <libcasm-ir/Function>
-#include <libcasm-ir/Instruction>
-#include <libcasm-ir/List>
-#include <libcasm-ir/Range>
-#include <libcasm-ir/Rule>
-#include <libcasm-ir/Specification>
-#include <libcasm-ir/Statement>
-#include <libcasm-ir/Type>
-#include <libcasm-ir/User>
 #include <libcasm-ir/Value>
-#include <libcasm-ir/Version>
-#include <libcasm-ir/Visitor>
-
-#include <libcasm-ir/analyze/ConsistencyCheckPass>
-#include <libcasm-ir/analyze/IRDumpDebugPass>
-
-#include <libcasm-ir/transform/BranchEliminationPass>
-#include <libcasm-ir/transform/IRDumpDotPass>
-#include <libcasm-ir/transform/IRDumpSourcePass>
 
 namespace libcasm_ir
 {
+    class Constant;
+
+    class List final : public Value
+    {
+      public:
+        using Ptr = std::shared_ptr< List >;
+
+        List( const ListType::Ptr& type );
+
+        ~List( void ) = default;
+
+        const Values& elements( void ) const;
+
+        void append( const Value::Ptr& element );
+
+        Value::Ptr at( const std::size_t index ) const;
+
+        std::string name( void ) const override;
+
+        std::size_t hash( void ) const override;
+
+        u1 operator==( const Value& rhs ) const override;
+
+        void accept( Visitor& visitor ) override;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::LIST;
+        }
+
+        static u1 classof( Value const* obj );
+
+      private:
+        Values m_elements;
+    };
 }
 
-#endif  // _LIBCASM_IR_H_
+#endif  // _LIBCASM_IR_LIST_H_
 
 //
 //  Local variables:

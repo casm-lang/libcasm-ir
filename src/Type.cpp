@@ -1392,8 +1392,36 @@ std::size_t TupleType::hash( void ) const
 
 ListType::ListType( const Type::Ptr& type )
 : ComposedType( classid() )
+, m_list( nullptr )
 {
     m_result = type;
+}
+
+List& ListType::list( void ) const
+{
+    assert( m_list );
+    return *m_list.get();
+}
+
+List::Ptr ListType::ptr_list( void ) const
+{
+    return m_list;
+}
+
+void ListType::setList( const List::Ptr& list )
+{
+    assert( list->type().result() == type() );
+    m_list = list;
+}
+
+Type& ListType::type( void ) const
+{
+    return *m_result;
+}
+
+Type::Ptr ListType::ptr_type( void ) const
+{
+    return m_result;
 }
 
 std::string ListType::name( void ) const
@@ -1408,13 +1436,48 @@ std::string ListType::description( void ) const
 
 void ListType::foreach( const std::function< void( const Constant& constant ) >& callback ) const
 {
-    // TODO
+    const auto& constantList = ptr_list();
+    if( not constantList )
+    {
+        return;
+    }
+
+    for( auto element : constantList->elements() )
+    {
+        if( isa< Constant >( element ) )
+        {
+            const auto& c = static_cast< const Constant& >( *element );
+            callback( c );
+        }
+    }
 }
 
 Constant ListType::choose( void ) const
 {
-    // TODO
-    return VoidConstant();
+    Constant result = VoidConstant();
+
+    const auto& constantList = ptr_list();
+    if( not constantList )
+    {
+        return result;
+    }
+
+    std::size_t index = -1;
+
+    while( true )
+    {
+        index = libstdhl::Random::uniform< std::size_t >( 0, constantList->elements().size() - 1 );
+
+        const auto element = constantList->elements()[ index ];
+
+        if( isa< Constant >( element ) )
+        {
+            result = static_cast< const Constant& >( *element );
+            break;
+        }
+    }
+
+    return result;
 }
 
 void ListType::validate( const Constant& constant ) const

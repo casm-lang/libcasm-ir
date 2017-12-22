@@ -45,6 +45,7 @@
 #include <libcasm-ir/Value>
 
 #include <libcasm-ir/Enumeration>
+#include <libcasm-ir/List>
 #include <libcasm-ir/Range>
 #include <libcasm-ir/Rule>
 
@@ -453,6 +454,38 @@ namespace libcasm_ir
         static inline Value::ID classid( void )
         {
             return Value::RANGE_CONSTANT;
+        }
+
+        static u1 classof( Value const* obj );
+    };
+
+    class ListConstant : public Constant
+    {
+      public:
+        using Ptr = std::shared_ptr< ListConstant >;
+
+      public:
+        ListConstant( const ListType::Ptr& type, const List::Ptr& value );
+
+        ListConstant( const ListType::Ptr& type );
+
+        List::Ptr value( void ) const;
+
+        std::string name( void ) const override;
+
+        void accept( Visitor& visitor ) override;
+
+        void foreach( const std::function< void( const Constant& constant ) >& callback ) const;
+
+        Constant choose( void ) const;
+
+        std::size_t hash( void ) const override;
+
+        u1 operator==( const Value& rhs ) const override;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::LIST_CONSTANT;
         }
 
         static u1 classof( Value const* obj );

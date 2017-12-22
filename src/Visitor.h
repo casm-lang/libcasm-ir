@@ -58,6 +58,7 @@ namespace libcasm_ir
 
     class Enumeration;
     class Range;
+    class List;
 
     class ParallelBlock;
     class SequentialBlock;
@@ -111,6 +112,7 @@ namespace libcasm_ir
     class DecimalConstant;
     class EnumerationConstant;
     class RangeConstant;
+    class ListConstant;
 
     class Identifier;
 
@@ -138,6 +140,7 @@ namespace libcasm_ir
 
         virtual void visit( Enumeration& value ) = 0;
         virtual void visit( Range& value ) = 0;
+        virtual void visit( List& value ) = 0;
 
         virtual void visit( ParallelBlock& value ) = 0;
         virtual void visit( SequentialBlock& value ) = 0;
@@ -198,6 +201,7 @@ namespace libcasm_ir
         virtual void visit( RationalConstant& value ) = 0;
         virtual void visit( EnumerationConstant& value ) = 0;
         virtual void visit( RangeConstant& value ) = 0;
+        virtual void visit( ListConstant& value ) = 0;
 
         virtual void visit( Identifier& value ) = 0;
     };
@@ -218,6 +222,7 @@ namespace libcasm_ir
 
         void visit( Enumeration& value ) override;
         void visit( Range& value ) override;
+        void visit( List& value ) override;
 
         void visit( ParallelBlock& value ) override;
         void visit( SequentialBlock& value ) override;
@@ -278,6 +283,7 @@ namespace libcasm_ir
         virtual void visit( RationalConstant& value ) override = 0;
         virtual void visit( EnumerationConstant& value ) override = 0;
         virtual void visit( RangeConstant& value ) override = 0;
+        virtual void visit( ListConstant& value ) override = 0;
 
         virtual void visit( Identifier& value ) override = 0;
     };
@@ -310,6 +316,7 @@ namespace libcasm_ir
 
         void visit( Enumeration& value ) override;
         void visit( Range& value ) override;
+        void visit( List& value ) override;
 
         void visit( ParallelBlock& value ) override;
         void visit( SequentialBlock& value ) override;
@@ -370,6 +377,7 @@ namespace libcasm_ir
         void visit( RationalConstant& value ) override;
         void visit( EnumerationConstant& value ) override;
         void visit( RangeConstant& value ) override;
+        void visit( ListConstant& value ) override;
 
         void visit( Identifier& value ) override;
     };
