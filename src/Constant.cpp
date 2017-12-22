@@ -456,7 +456,7 @@ Constant Constant::undef( const Type::Ptr& type )
         }
         case Type::Kind::RANGE:
         {
-            break;
+            return RangeConstant( std::static_pointer_cast< RangeType >( type ) );
         }
         case Type::Kind::LIST:
         {
