@@ -61,6 +61,11 @@ void List::append( const Value::Ptr& element )
     m_elements.add( element );
 }
 
+void List::append( const Constant& element )
+{
+    append( libstdhl::Memory::make_unique< Constant >( element ) );
+}
+
 Value::Ptr List::at( const std::size_t index ) const
 {
     return m_elements[ index ];

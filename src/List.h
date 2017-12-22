@@ -61,6 +61,8 @@ namespace libcasm_ir
 
         void append( const Value::Ptr& element );
 
+        void append( const Constant& element );
+
         Value::Ptr at( const std::size_t index ) const;
 
         std::string name( void ) const override;
