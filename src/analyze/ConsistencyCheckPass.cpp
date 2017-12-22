@@ -173,6 +173,11 @@ void ConsistencyCheckVisitor::visit( Range& value )
     verify< Range >( value );
 }
 
+void ConsistencyCheckVisitor::visit( Tuple& value )
+{
+    verify< Tuple >( value );
+}
+
 void ConsistencyCheckVisitor::visit( List& value )
 {
     verify< List >( value );
@@ -424,6 +429,10 @@ void ConsistencyCheckVisitor::visit( EnumerationConstant& value )
 void ConsistencyCheckVisitor::visit( RangeConstant& value )
 {
     verify< RangeConstant >( value );
+}
+void ConsistencyCheckVisitor::visit( TupleConstant& value )
+{
+    verify< TupleConstant >( value );
 }
 void ConsistencyCheckVisitor::visit( ListConstant& value )
 {

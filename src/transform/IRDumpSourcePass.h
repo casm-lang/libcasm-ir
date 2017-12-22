@@ -85,6 +85,7 @@ namespace libcasm_ir
 
         void visit( Enumeration& value ) override;
         void visit( Range& value ) override;
+        void visit( Tuple& value ) override;
         void visit( List& value ) override;
 
         void visit( TrivialStatement& value ) override;
@@ -144,6 +145,7 @@ namespace libcasm_ir
         void visit( RationalConstant& value ) override;
         void visit( EnumerationConstant& value ) override;
         void visit( RangeConstant& value ) override;
+        void visit( TupleConstant& value ) override;
         void visit( ListConstant& value ) override;
 
         void visit( Identifier& value ) override;

@@ -83,6 +83,7 @@ namespace libcasm_ir
             FUNCTION,
             ENUMERATION,
             RANGE,
+            TUPLE,
             LIST,
 
             BLOCK,
@@ -108,6 +109,7 @@ namespace libcasm_ir
             RATIONAL_CONSTANT,
             ENUMERATION_CONSTANT,
             RANGE_CONSTANT,
+            TUPLE_CONSTANT,
             LIST_CONSTANT,
             IDENTIFIER
 

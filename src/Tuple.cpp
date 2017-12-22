@@ -39,44 +39,80 @@
 //  statement from your version.
 //
 
-#ifndef _LIBCASM_IR_H_
-#define _LIBCASM_IR_H_
+#include "Tuple.h"
 
-#include <libcasm-ir/Agent>
-#include <libcasm-ir/Annotation>
-#include <libcasm-ir/Block>
-#include <libcasm-ir/Builtin>
-#include <libcasm-ir/CasmIR>
-#include <libcasm-ir/Constant>
-#include <libcasm-ir/Derived>
-#include <libcasm-ir/Enumeration>
-#include <libcasm-ir/Exception>
-#include <libcasm-ir/Function>
-#include <libcasm-ir/Instruction>
-#include <libcasm-ir/List>
-#include <libcasm-ir/Range>
-#include <libcasm-ir/Rule>
-#include <libcasm-ir/Specification>
-#include <libcasm-ir/Statement>
-#include <libcasm-ir/Tuple>
-#include <libcasm-ir/Type>
-#include <libcasm-ir/User>
-#include <libcasm-ir/Value>
-#include <libcasm-ir/Version>
-#include <libcasm-ir/Visitor>
+#include "Constant.h"
 
-#include <libcasm-ir/analyze/ConsistencyCheckPass>
-#include <libcasm-ir/analyze/IRDumpDebugPass>
+using namespace libcasm_ir;
 
-#include <libcasm-ir/transform/BranchEliminationPass>
-#include <libcasm-ir/transform/IRDumpDotPass>
-#include <libcasm-ir/transform/IRDumpSourcePass>
-
-namespace libcasm_ir
+Tuple::Tuple( const TupleType::Ptr& type )
+: Value( type, classid() )
+, m_elements()
 {
 }
 
-#endif  // _LIBCASM_IR_H_
+const Values& Tuple::elements( void ) const
+{
+    return m_elements;
+}
+
+void Tuple::setElements( const Values& elements )
+{
+    m_elements = elements;
+}
+
+void Tuple::setElements( const Constant* elements, const std::size_t size )
+{
+    // TODO
+}
+
+Value::Ptr Tuple::at( const std::size_t index ) const
+{
+    return m_elements[ index ];
+}
+
+std::string Tuple::name( void ) const
+{
+    std::string n = "{";
+
+    for( auto element : m_elements )
+    {
+        n += element->name() + ", ";
+    }
+
+    return n + "}";
+}
+
+std::size_t Tuple::hash( void ) const
+{
+    return libstdhl::Hash::combine( classid(), std::hash< std::string >()( name() ) );
+}
+
+u1 Tuple::operator==( const Value& rhs ) const
+{
+    if( this == &rhs )
+    {
+        return true;
+    }
+
+    if( not Value::operator==( rhs ) )
+    {
+        return false;
+    }
+
+    const auto& other = static_cast< const Tuple& >( rhs );
+    return this->name() == other.name();
+}
+
+void Tuple::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
+u1 Tuple::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
 
 //
 //  Local variables:

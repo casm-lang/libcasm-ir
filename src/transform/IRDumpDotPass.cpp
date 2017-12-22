@@ -228,6 +228,13 @@ void IRDumpDotVisitor::visit( Range& value )
     m_stream << "  \"" << &value << "\" [label=\"" << value.dump() << "\"];\n";
 }
 
+void IRDumpDotVisitor::visit( Tuple& value )
+{
+    m_stream << "  # " << value.dump() << "\n";
+
+    m_stream << "  \"" << &value << "\" [label=\"" << value.dump() << "\"];\n";
+}
+
 void IRDumpDotVisitor::visit( List& value )
 {
     m_stream << "  # " << value.dump() << "\n";
@@ -436,6 +443,10 @@ void IRDumpDotVisitor::visit( EnumerationConstant& value )
     dump( value );
 }
 void IRDumpDotVisitor::visit( RangeConstant& value )
+{
+    dump( value );
+}
+void IRDumpDotVisitor::visit( TupleConstant& value )
 {
     dump( value );
 }

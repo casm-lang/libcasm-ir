@@ -1164,6 +1164,76 @@ u1 RangeConstant::classof( Value const* obj )
 }
 
 //
+// Tuple Constant
+//
+
+TupleConstant::TupleConstant( const TupleType::Ptr& type, const Tuple::Ptr& value )
+: Constant( type, libstdhl::Type::Data( 0, false ), classid() )
+{
+    assert( type );
+    type->setTuple( value );
+}
+
+TupleConstant::TupleConstant( const TupleType::Ptr& type )
+: Constant( type, classid() )
+{
+}
+
+Tuple::Ptr TupleConstant::value( void ) const
+{
+    return static_cast< const TupleType& >( type() ).ptr_tuple();
+}
+
+std::string TupleConstant::name( void ) const
+{
+    return type().name();
+}
+
+void TupleConstant::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
+void TupleConstant::foreach(
+    const std::function< void( const Constant& constant ) >& callback ) const
+{
+    // TODO
+}
+
+Constant TupleConstant::choose( void ) const
+{
+    // TODO
+    return VoidConstant();
+}
+
+std::size_t TupleConstant::hash( void ) const
+{
+    const auto h = ( ( (std::size_t)classid() ) << 1 ) | defined();
+    return libstdhl::Hash::combine( h, value()->hash() );
+}
+
+u1 TupleConstant::operator==( const Value& rhs ) const
+{
+    if( this == &rhs )
+    {
+        return true;
+    }
+
+    if( not Value::operator==( rhs ) )
+    {
+        return false;
+    }
+
+    const auto& other = static_cast< const TupleConstant& >( rhs );
+    return ( this->defined() == other.defined() ) and ( this->value() == other.value() );
+}
+
+u1 TupleConstant::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
+
+//
 // List Constant
 //
 
