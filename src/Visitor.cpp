@@ -394,6 +394,10 @@ void TraversalVisitor::visit( RuleReferenceConstant& value )
 {
     callback()( value );
 }
+void TraversalVisitor::visit( FunctionReferenceConstant& value )
+{
+    callback()( value );
+}
 void TraversalVisitor::visit( BooleanConstant& value )
 {
     callback()( value );

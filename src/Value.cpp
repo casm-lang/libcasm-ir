@@ -300,6 +300,10 @@ std::string Value::token( const Value::ID id )
         {
             return "RuleReferenceConstant";
         }
+        case Value::FUNCTION_REFERENCE_CONSTANT:
+        {
+            return "FunctionReferenceConstant";
+        }
         case Value::BOOLEAN_CONSTANT:
         {
             return "BooleanConstant";

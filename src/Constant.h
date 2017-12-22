@@ -44,7 +44,10 @@
 
 #include <libcasm-ir/Value>
 
+#include <libcasm-ir/Builtin>
+#include <libcasm-ir/Derived>
 #include <libcasm-ir/Enumeration>
+#include <libcasm-ir/Function>
 #include <libcasm-ir/List>
 #include <libcasm-ir/Range>
 #include <libcasm-ir/Rule>
@@ -544,35 +547,35 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    // class FunctionReferenceConstant final : public ReferenceConstant<
-    // Function >
-    // {
-    //   public:
-    //     using Ptr = std::shared_ptr< FunctionReferenceConstant >;
+    class FunctionReferenceConstant final : public ReferenceConstant< Value >
+    {
+      public:
+        using Ptr = std::shared_ptr< FunctionReferenceConstant >;
 
-    //   private:
-    //     FunctionReferenceConstant( const Type::Ptr& type,
-    //         const Rule::Ptr& value, u1 defined, u1 symbolic );
+      public:
+        FunctionReferenceConstant( const Function::Ptr& value );
 
-    //   public:
-    //     FunctionReferenceConstant( const Rule::Ptr& value );
-    //     FunctionReferenceConstant( const Type::Ptr& type );
+        FunctionReferenceConstant( const Derived::Ptr& value );
 
-    //     Rule::Ptr value( void ) const;
+        FunctionReferenceConstant( const Builtin::Ptr& value );
 
-    //     std::string name( void ) const override;
+        FunctionReferenceConstant( const Type::Ptr& type );
 
-    //     void accept( Visitor& visitor ) override;
+        std::string name( void ) const override;
 
-    //     std::size_t hash( void ) const override;
+        void accept( Visitor& visitor ) override;
 
-    //     static inline Value::ID classid( void )
-    //     {
-    //         return Value::FUNCTION_REFERENCE_CONSTANT;
-    //     }
+        std::size_t hash( void ) const override;
 
-    //     static u1 classof( Value const* obj );
-    // };
+        u1 operator==( const Value& rhs ) const override;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::FUNCTION_REFERENCE_CONSTANT;
+        }
+
+        static u1 classof( Value const* obj );
+    };
 
     class Identifier final : public Constant
     {

@@ -302,6 +302,10 @@ void IRDumpSourceVisitor::visit( RuleReferenceConstant& value )
 {
     dump( value );
 }
+void IRDumpSourceVisitor::visit( FunctionReferenceConstant& value )
+{
+    dump( value );
+}
 void IRDumpSourceVisitor::visit( BooleanConstant& value )
 {
     dump( value );

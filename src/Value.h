@@ -99,6 +99,7 @@ namespace libcasm_ir
             CONSTANT,
             VOID_CONSTANT,
             RULE_REFERENCE_CONSTANT,
+            FUNCTION_REFERENCE_CONSTANT,
             BOOLEAN_CONSTANT,
             INTEGER_CONSTANT,
             BINARY_CONSTANT,

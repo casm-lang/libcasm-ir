@@ -403,6 +403,10 @@ void IRDumpDotVisitor::visit( RuleReferenceConstant& value )
 {
     dump( value );
 }
+void IRDumpDotVisitor::visit( FunctionReferenceConstant& value )
+{
+    dump( value );
+}
 void IRDumpDotVisitor::visit( BooleanConstant& value )
 {
     dump( value );

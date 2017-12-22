@@ -159,6 +159,11 @@ TEST( libcasm_ir_Value, id_to_token_string )
                 EXPECT_STREQ( Value::token( id ).c_str(), "RuleReferenceConstant" );
                 break;
             }
+            case Value::FUNCTION_REFERENCE_CONSTANT:
+            {
+                EXPECT_STREQ( Value::token( id ).c_str(), "FunctionReferenceConstant" );
+                break;
+            }
             case Value::BOOLEAN_CONSTANT:
             {
                 EXPECT_STREQ( Value::token( id ).c_str(), "BooleanConstant" );

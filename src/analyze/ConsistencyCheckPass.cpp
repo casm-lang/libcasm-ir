@@ -389,6 +389,10 @@ void ConsistencyCheckVisitor::visit( RuleReferenceConstant& value )
 {
     verify< RuleReferenceConstant >( value );
 }
+void ConsistencyCheckVisitor::visit( FunctionReferenceConstant& value )
+{
+    verify< FunctionReferenceConstant >( value );
+}
 void ConsistencyCheckVisitor::visit( BooleanConstant& value )
 {
     verify< BooleanConstant >( value );

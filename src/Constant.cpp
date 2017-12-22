@@ -472,7 +472,7 @@ Constant Constant::undef( const Type::Ptr& type )
         }
         case Type::Kind::FUNCTION_REFERENCE:
         {
-            break;
+            return FunctionReferenceConstant( type );
         }
         case Type::Kind::FILE:
         {
@@ -1284,6 +1284,80 @@ u1 RuleReferenceConstant::operator==( const Value& rhs ) const
 }
 
 u1 RuleReferenceConstant::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
+
+//
+// Function Reference Constant
+//
+
+FunctionReferenceConstant::FunctionReferenceConstant( const Function::Ptr& value )
+: ReferenceConstant(
+      std::static_pointer_cast< Type >( libstdhl::Memory::make< FunctionReferenceType >(
+          std::static_pointer_cast< RelationType >( value->type().ptr_type() ) ) ),
+      value.get(),
+      classid() )
+{
+}
+
+FunctionReferenceConstant::FunctionReferenceConstant( const Derived::Ptr& value )
+: ReferenceConstant(
+      std::static_pointer_cast< Type >( libstdhl::Memory::make< FunctionReferenceType >(
+          std::static_pointer_cast< RelationType >( value->type().ptr_type() ) ) ),
+      value.get(),
+      classid() )
+{
+}
+
+FunctionReferenceConstant::FunctionReferenceConstant( const Builtin::Ptr& value )
+: ReferenceConstant(
+      std::static_pointer_cast< Type >( libstdhl::Memory::make< FunctionReferenceType >(
+          std::static_pointer_cast< RelationType >( value->type().ptr_type() ) ) ),
+      value.get(),
+      classid() )
+{
+}
+
+FunctionReferenceConstant::FunctionReferenceConstant( const Type::Ptr& type )
+: ReferenceConstant( type, classid() )
+{
+    assert( type->isFunctionReference() );
+}
+
+std::string FunctionReferenceConstant::name( void ) const
+{
+    return ( defined() ? value()->name() : undef_str );
+}
+
+void FunctionReferenceConstant::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
+std::size_t FunctionReferenceConstant::hash( void ) const
+{
+    const auto h = ( ( (std::size_t)classid() ) << 1 ) | defined();
+    return libstdhl::Hash::combine( h, value()->hash() );
+}
+
+u1 FunctionReferenceConstant::operator==( const Value& rhs ) const
+{
+    if( this == &rhs )
+    {
+        return true;
+    }
+
+    if( not Value::operator==( rhs ) )
+    {
+        return false;
+    }
+
+    const auto& other = static_cast< const FunctionReferenceConstant& >( rhs );
+    return ( this->defined() == other.defined() ) and ( this->value() == other.value() );
+}
+
+u1 FunctionReferenceConstant::classof( Value const* obj )
 {
     return obj->id() == classid();
 }
