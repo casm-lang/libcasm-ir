@@ -41,9 +41,13 @@
 
 #include "NumericExecutionPass.h"
 
-#include "../analyze/ConsistencyCheckPass.h"
+#include <libcasm-ir/Specification>
+#include <libcasm-ir/analyze/ConsistencyCheckPass>
 
 #include <libpass/PassLogger>
+#include <libpass/PassRegistry>
+#include <libpass/PassResult>
+#include <libpass/PassUsage>
 
 using namespace libcasm_ir;
 
