@@ -42,7 +42,7 @@
 #ifndef _LIBCASM_IR_IR_DUMP_DEBUG_PASS_H_
 #define _LIBCASM_IR_IR_DUMP_DEBUG_PASS_H_
 
-#include <libcasm-ir/analyze/ConsistencyCheckPass>
+#include <libpass/Pass>
 
 /**
    @brief    TODO
@@ -55,8 +55,6 @@ namespace libcasm_ir
     class IRDumpDebugPass final : public libpass::Pass
     {
       public:
-        using Data = ConsistencyCheckPass::Data;
-
         static char id;
 
         void usage( libpass::PassUsage& pu ) override;
