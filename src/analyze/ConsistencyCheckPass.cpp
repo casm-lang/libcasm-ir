@@ -41,6 +41,11 @@
 
 #include "ConsistencyCheckPass.h"
 
+#include <libpass/PassLogger>
+#include <libpass/PassRegistry>
+#include <libpass/PassResult>
+#include <libpass/PassUsage>
+
 using namespace libcasm_ir;
 
 char ConsistencyCheckPass::id = 0;
@@ -48,30 +53,10 @@ char ConsistencyCheckPass::id = 0;
 static libpass::PassRegistration< ConsistencyCheckPass > PASS(
     "IRConsistencyCheckPass", "checks the constructed IR in-memory representation", "ir-check", 0 );
 
-u1 ConsistencyCheckPass::run( libpass::PassResult& pr )
-{
-    libpass::PassLogger log( &id, stream() );
-
-    log.debug( "starting" );
-
-    auto data = pr.result< ConsistencyCheckPass >();
-    assert( data );
-
-    ConsistencyCheckVisitor visitor( log );
-    data->specification()->accept( visitor );
-
-    if( visitor.errors() )
-    {
-        log.error( "inconsistent specification, found '%lu' error(s)", visitor.errors() );
-        return false;
-    }
-
-    pr.setResult< ConsistencyCheckPass >( data );
-
-    log.debug( "stopping" );
-
-    return true;
-}
+//
+//
+// ConsistencyCheckVisitor
+//
 
 ConsistencyCheckVisitor::ConsistencyCheckVisitor( libstdhl::Logger log )
 : m_log( log )
@@ -543,6 +528,30 @@ void ConsistencyCheckVisitor::verify( Value& value )
             m_err++;
         }
     }
+}
+
+//
+//
+// ConsistencyCheckPass
+//
+
+u1 ConsistencyCheckPass::run( libpass::PassResult& pr )
+{
+    libpass::PassLogger log( &id, stream() );
+
+    const auto& data = pr.input< ConsistencyCheckPass >();
+    const auto& specification = data->specification();
+
+    ConsistencyCheckVisitor visitor{ log };
+    specification->accept( visitor );
+
+    if( visitor.errors() )
+    {
+        log.error( "inconsistent specification, found '%lu' error(s)", visitor.errors() );
+        return false;
+    }
+
+    return true;
 }
 
 //
