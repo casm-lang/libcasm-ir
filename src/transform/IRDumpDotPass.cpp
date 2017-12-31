@@ -41,6 +41,14 @@
 
 #include "IRDumpDotPass.h"
 
+#include <libcasm-ir/Specification>
+#include <libcasm-ir/analyze/ConsistencyCheckPass>
+
+#include <libpass/PassLogger>
+#include <libpass/PassRegistry>
+#include <libpass/PassResult>
+#include <libpass/PassUsage>
+
 using namespace libcasm_ir;
 
 char IRDumpDotPass::id = 0;
@@ -60,25 +68,21 @@ u1 IRDumpDotPass::run( libpass::PassResult& pr )
 {
     libpass::PassLogger log( libpass::PassRegistry::passInfo< IRDumpDotPass >(), stream() );
 
-    log.debug( "starting" );
+    const auto& data = pr.input< ConsistencyCheckPass >();
+    const auto& specification = data->specification();
+
+    std::ofstream dotfile( "./obj/out.ir.dot" );
+    IRDumpDotVisitor visitor{ dotfile };
 
     try
     {
-        const auto data = pr.result< ConsistencyCheckPass >();
-
-        std::ofstream dotfile( "./obj/out.ir.dot" );
-
-        IRDumpDotVisitor visitor{ dotfile };
-
-        data->specification()->accept( visitor );
+        specification->accept( visitor );
     }
     catch( ... )
     {
         log.error( "unsuccessful dump of specification" );
         return false;
     }
-
-    log.debug( "stopping" );
 
     libstdhl::Log::StringFormatter f;
     libstdhl::Log::OutputStreamSink c( std::cerr, f );

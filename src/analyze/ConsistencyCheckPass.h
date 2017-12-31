@@ -43,7 +43,9 @@
 #define _LIBCASM_IR_CONSISTENCY_CHECK_PASS_H_
 
 #include <libcasm-ir/Specification>
-#include <libpass/libpass>
+
+#include <libpass/Pass>
+#include <libpass/PassData>
 
 /**
    @brief    TODO
@@ -78,6 +80,8 @@ namespace libcasm_ir
         static char id;
 
         u1 run( libpass::PassResult& pr ) override;
+
+        using Input = Data;
     };
 
     class ConsistencyCheckVisitor final : public RecursiveVisitor

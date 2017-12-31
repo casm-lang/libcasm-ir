@@ -43,8 +43,6 @@
 #define _LIBCASM_IR_NUMERIC_EXECUTION_PASS_H_
 
 #include <libpass/Pass>
-#include <libpass/PassResult>
-#include <libpass/PassUsage>
 
 /**
    @brief    TODO

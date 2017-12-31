@@ -42,7 +42,9 @@
 #ifndef _LIBCASM_IR_BRANCH_ELIMINATION_PASS_H_
 #define _LIBCASM_IR_BRANCH_ELIMINATION_PASS_H_
 
-#include <libcasm-ir/analyze/ConsistencyCheckPass>
+#include <libcasm-ir/Rule>
+
+#include <libpass/Pass>
 
 /**
    @brief    TODO
@@ -52,15 +54,9 @@
 
 namespace libcasm_ir
 {
-    class Value;
-    class Constant;
-    class Instruction;
-
     class BranchEliminationPass final : public libpass::Pass
     {
       public:
-        using Data = ConsistencyCheckPass::Data;
-
         static char id;
 
         void usage( libpass::PassUsage& pu ) override;

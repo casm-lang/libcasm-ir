@@ -41,7 +41,14 @@
 
 #include "IRDumpDebugPass.h"
 
-#include "../Specification.h"
+#include <libcasm-ir/Specification>
+
+#include <libcasm-ir/analyze/ConsistencyCheckPass>
+
+#include <libpass/PassLogger>
+#include <libpass/PassRegistry>
+#include <libpass/PassResult>
+#include <libpass/PassUsage>
 
 using namespace libcasm_ir;
 
@@ -55,6 +62,11 @@ static libpass::PassRegistration< IRDumpDebugPass > PASS(
 
 static inline std::string indention( Value& value );
 
+//
+//
+// IRDumpDebugPass
+//
+
 void IRDumpDebugPass::usage( libpass::PassUsage& pu )
 {
     pu.require< ConsistencyCheckPass >();
@@ -64,12 +76,12 @@ u1 IRDumpDebugPass::run( libpass::PassResult& pr )
 {
     libpass::PassLogger log( &id, stream() );
 
-    auto data = pr.result< ConsistencyCheckPass >();
-    assert( data );
+    const auto& data = pr.input< ConsistencyCheckPass >();
+    const auto& specification = data->specification();
 
     try
     {
-        data->specification()->iterate( Traversal::PREORDER, [this, &log]( Value& value ) {
+        specification->iterate( Traversal::PREORDER, [this, &log]( Value& value ) {
             log.info( "%p: %s%s", &value, indention( value ).c_str(), value.dump().c_str() );
         } );
     }

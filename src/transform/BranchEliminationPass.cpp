@@ -41,7 +41,13 @@
 
 #include "BranchEliminationPass.h"
 
-#include "../Specification.h"
+#include <libcasm-ir/Specification>
+#include <libcasm-ir/analyze/ConsistencyCheckPass>
+
+#include <libpass/PassLogger>
+#include <libpass/PassRegistry>
+#include <libpass/PassResult>
+#include <libpass/PassUsage>
 
 using namespace libcasm_ir;
 
@@ -59,8 +65,8 @@ u1 BranchEliminationPass::run( libpass::PassResult& pr )
 {
     libpass::PassLogger log( &id, stream() );
 
-    auto data = pr.result< ConsistencyCheckPass >();
-    auto specification = data->specification();
+    const auto& data = pr.input< ConsistencyCheckPass >();
+    const auto& specification = data->specification();
 
     for( auto rule : specification->rules() )
     {

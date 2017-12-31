@@ -43,7 +43,11 @@
 #define _LIBCASM_IR_IR_DUMP_SOURCE_PASS_H_
 
 #include <libcasm-ir/Specification>
-#include <libcasm-ir/analyze/ConsistencyCheckPass>
+
+#include <libpass/Pass>
+
+#include <fstream>
+#include <unordered_set>
 
 /**
    @brief    TODO
@@ -53,10 +57,6 @@
 
 namespace libcasm_ir
 {
-    class Value;
-    class Constant;
-    class Instruction;
-
     class IRDumpSourcePass final : public libpass::Pass
     {
       public:
