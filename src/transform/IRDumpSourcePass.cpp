@@ -41,6 +41,14 @@
 
 #include "IRDumpSourcePass.h"
 
+#include <libcasm-ir/Specification>
+#include <libcasm-ir/analyze/ConsistencyCheckPass>
+
+#include <libpass/PassLogger>
+#include <libpass/PassRegistry>
+#include <libpass/PassResult>
+#include <libpass/PassUsage>
+
 using namespace libcasm_ir;
 
 char IRDumpSourcePass::id = 0;
@@ -60,8 +68,8 @@ u1 IRDumpSourcePass::run( libpass::PassResult& pr )
 {
     libpass::PassLogger log( &id, stream() );
 
-    const auto data = pr.result< ConsistencyCheckPass >();
-    const auto specification = data->specification();
+    const auto& data = pr.input< ConsistencyCheckPass >();
+    const auto& specification = data->specification();
 
     IRDumpSourceVisitor visitor{ std::cout };
     data->specification()->accept( visitor );
