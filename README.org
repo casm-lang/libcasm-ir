@@ -1,9 +1,9 @@
 # 
-#   Copyright (c) 2015-2017 CASM Organization
+#   Copyright (C) 2015-2018 CASM Organization <https://casm-lang.org>
 #   All rights reserved.
 # 
 #   Developed by: Philipp Paulweber
-#                 https://github.com/casm-lang/libcasm-ir
+#                 <https://github.com/casm-lang/libcasm-ir>
 # 
 #   This file is part of libcasm-ir.
 # 
@@ -46,19 +46,21 @@ TBD
 
 ** Copyright and License
 
-The copyright holder of libcasm-ir is the CASM organization (@casm-lang) 
-and the used license of libcasm-ir is a [[https://www.gnu.org/licenses/gpl-3.0.html][GNU GPLv3+]]
+The copyright holder of 
+=libcasm-ir= is the [[https://casm-lang.org][CASM organization]] ([[https://github.com/casm-lang][@casm-lang]]) 
+and the used license of 
+=libcasm-ir= is the [[https://www.gnu.org/licenses/gpl-3.0.html][GNU GPLv3+]]
 with an additional permission ("GPL Linking Exception").
 
 *** Notice
 
 #+begin_src
 
-Copyright (c) 2015-2017 CASM Organization
+Copyright (C) 2015-2018 CASM Organization <https://casm-lang.org>
 All rights reserved.
 
 Developed by: Philipp Paulweber
-              https://github.com/casm-lang/libcasm-ir
+              <https://github.com/casm-lang/libcasm-ir>
 
 This file is part of libcasm-ir.
 
