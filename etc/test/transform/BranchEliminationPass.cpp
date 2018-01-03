@@ -41,6 +41,8 @@
 
 #include "../main.h"
 
+#include <libpass/PassLogger>
+
 using namespace libcasm_ir;
 using namespace libstdhl;
 using namespace libpass;
