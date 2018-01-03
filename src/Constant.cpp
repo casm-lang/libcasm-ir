@@ -667,7 +667,6 @@ Constant Constant::undef( const Type::Ptr& type )
         }
         case Type::Kind::STRUCTURE:
         {
-            // TODO
             break;
         }
         case Type::Kind::RULE_REFERENCE:
