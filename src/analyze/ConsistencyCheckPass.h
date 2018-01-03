@@ -104,6 +104,7 @@ namespace libcasm_ir
         void visit( Range& value ) override;
         void visit( Tuple& value ) override;
         void visit( List& value ) override;
+        void visit( Structure& value ) override;
 
         void visit( ParallelBlock& value ) override;
         void visit( SequentialBlock& value ) override;

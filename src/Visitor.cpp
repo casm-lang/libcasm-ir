@@ -92,6 +92,10 @@ void RecursiveVisitor::visit( List& value )
 {
 }
 
+void RecursiveVisitor::visit( Structure& value )
+{
+}
+
 void RecursiveVisitor::visit( ParallelBlock& value )
 {
     value.entry()->accept( *this );
@@ -212,6 +216,11 @@ void TraversalVisitor::visit( Tuple& value )
 }
 
 void TraversalVisitor::visit( List& value )
+{
+    callback()( value );
+}
+
+void TraversalVisitor::visit( Structure& value )
 {
     callback()( value );
 }

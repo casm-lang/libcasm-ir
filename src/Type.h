@@ -65,12 +65,15 @@ namespace libcasm_ir
     class IntegerConstant;
 
     class Enumeration;
+    class EnumerationType;
     class Range;
     class RangeType;
     class Tuple;
     class TupleType;
     class List;
     class ListType;
+    class Structure;
+    class StructureType;
 
     class Type;
     using Types = libstdhl::List< Type >;
@@ -108,6 +111,7 @@ namespace libcasm_ir
             TUPLE,
             RECORD,
             LIST,
+            STRUCTURE,
 
             // reference
             RULE_REFERENCE,
@@ -251,6 +255,7 @@ namespace libcasm_ir
         u1 isTuple( void ) const;
         u1 isRecord( void ) const;
         u1 isList( void ) const;
+        u1 isStructure( void ) const;
 
         u1 isReference( void ) const;
         u1 isRuleReference( void ) const;
@@ -788,6 +793,39 @@ namespace libcasm_ir
 
       private:
         std::shared_ptr< List > m_list;
+    };
+
+    class StructureType final : public ComposedType
+    {
+      public:
+        using Ptr = std::shared_ptr< StructureType >;
+
+        StructureType( const std::shared_ptr< Structure >& structure );
+
+        Structure& structure( void ) const;
+
+        std::shared_ptr< Structure > ptr_structure( void ) const;
+
+        std::string name( void ) const override;
+
+        std::string description( void ) const override;
+
+        void foreach(
+            const std::function< void( const Constant& constant ) >& callback ) const override;
+
+        Constant choose( void ) const override;
+
+        void validate( const Constant& constant ) const override;
+
+        std::size_t hash( void ) const override;
+
+        static inline Type::Kind classid( void )
+        {
+            return Type::Kind::STRUCTURE;
+        }
+
+      private:
+        std::shared_ptr< Structure > m_structure;
     };
 
     class ReferenceType : public Type

@@ -129,6 +129,11 @@ TEST( libcasm_ir__Type, id_to_token_string )
                 EXPECT_STREQ( libcasm_ir::Type::token( id ).c_str(), "List" );
                 break;
             }
+            case libcasm_ir::Type::Kind::STRUCTURE:
+            {
+                EXPECT_STREQ( libcasm_ir::Type::token( id ).c_str(), "Structure" );
+                break;
+            }
             // reference
             case libcasm_ir::Type::Kind::RULE_REFERENCE:
             {

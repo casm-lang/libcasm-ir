@@ -665,6 +665,10 @@ Constant Constant::undef( const Type::Ptr& type )
         {
             return RecordConstant( std::static_pointer_cast< RecordType >( type ) );
         }
+        case Type::Kind::STRUCTURE:
+        {
+            break;
+        }
         case Type::Kind::RULE_REFERENCE:
         {
             return RuleReferenceConstant( type );

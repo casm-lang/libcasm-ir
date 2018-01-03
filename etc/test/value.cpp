@@ -112,6 +112,11 @@ TEST( libcasm_ir_Value, id_to_token_string )
                 EXPECT_STREQ( Value::token( id ).c_str(), "List" );
                 break;
             }
+            case Value::STRUCTURE:
+            {
+                EXPECT_STREQ( Value::token( id ).c_str(), "Structure" );
+                break;
+            }
 
             case Value::BLOCK:
             {
