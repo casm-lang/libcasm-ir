@@ -1364,7 +1364,7 @@ std::string TupleType::name( void ) const
 
 std::string TupleType::description( void ) const
 {
-    std::string tmp = token( kind() ) + "< ";
+    std::string tmp = "( ";
 
     u1 first = true;
     for( auto argument : m_arguments )
@@ -1374,7 +1374,7 @@ std::string TupleType::description( void ) const
         first = false;
     }
 
-    tmp += " >";
+    tmp += " )";
 
     return tmp;
 }

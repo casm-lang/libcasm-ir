@@ -52,7 +52,7 @@ TEST( libcasm_ir__type_tuple, make_and_get )
     ASSERT_TRUE( v != nullptr );
 
     EXPECT_STREQ( v->name().c_str(), "t<i,i,i>" );
-    EXPECT_STREQ( v->description().c_str(), "Tuple< Integer, Integer, Integer >" );
+    EXPECT_STREQ( v->description().c_str(), "( Integer, Integer, Integer )" );
 
     auto w = libstdhl::Memory::make< TupleType >( t );
     ASSERT_TRUE( w != nullptr );
