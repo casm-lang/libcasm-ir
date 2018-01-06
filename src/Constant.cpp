@@ -1167,26 +1167,37 @@ u1 RangeConstant::classof( Value const* obj )
 // Tuple Constant
 //
 
-TupleConstant::TupleConstant( const TupleType::Ptr& type, const Tuple::Ptr& value )
-: Constant( type, libstdhl::Type::Data( 0, false ), classid() )
+TupleConstant::TupleConstant( const TupleType::Ptr& type, const std::vector< Constant >& elements )
+: Constant(
+      type,
+      libstdhl::Type::Data( ( u64 )( std::make_shared< Tuple >( type, elements ) ).get(), false ),
+      classid() )
 {
     assert( type );
-    type->setTuple( value );
 }
 
 TupleConstant::TupleConstant( const TupleType::Ptr& type )
 : Constant( type, classid() )
 {
+    assert( type );
 }
 
-Tuple::Ptr TupleConstant::value( void ) const
+const Tuple* TupleConstant::value( void ) const
 {
-    return static_cast< const TupleType& >( type() ).ptr_tuple();
+    return (Tuple*)m_data.value();
 }
 
 std::string TupleConstant::name( void ) const
 {
-    return type().name();
+    const auto& v = value();
+    if( v )
+    {
+        return v->name();
+    }
+    else
+    {
+        return undef_str;
+    }
 }
 
 void TupleConstant::accept( Visitor& visitor )
@@ -1197,12 +1208,12 @@ void TupleConstant::accept( Visitor& visitor )
 void TupleConstant::foreach(
     const std::function< void( const Constant& constant ) >& callback ) const
 {
-    // TODO
+    // not supported
 }
 
 Constant TupleConstant::choose( void ) const
 {
-    // TODO
+    // not supported
     return VoidConstant();
 }
 

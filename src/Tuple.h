@@ -53,17 +53,13 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< Tuple >;
 
-        Tuple( const TupleType::Ptr& type );
+        Tuple( const TupleType::Ptr& type, const std::vector< Constant >& elements );
 
         ~Tuple( void ) = default;
 
-        const Values& elements( void ) const;
+        const std::vector< Constant >& elements( void ) const;
 
-        void setElements( const Values& elements );
-
-        void setElements( const Constant* elements, const std::size_t size );
-
-        Value::Ptr at( const std::size_t index ) const;
+        const Constant& element( const std::size_t atIndex ) const;
 
         std::string name( void ) const override;
 
@@ -81,7 +77,7 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
 
       private:
-        Values m_elements;
+        std::vector< Constant > m_elements;
     };
 }
 

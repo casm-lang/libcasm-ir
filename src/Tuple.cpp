@@ -43,44 +43,39 @@
 
 #include "Constant.h"
 
+#include <cstring>
+
 using namespace libcasm_ir;
 
-Tuple::Tuple( const TupleType::Ptr& type )
+Tuple::Tuple( const TupleType::Ptr& type, const std::vector< Constant >& elements )
 : Value( type, classid() )
-, m_elements()
+, m_elements( elements )
 {
+    assert( type->arguments().size() == elements.size() );
+    // TODO check if vector of constants equal the tuple type!
 }
 
-const Values& Tuple::elements( void ) const
+const std::vector< Constant >& Tuple::elements( void ) const
 {
     return m_elements;
 }
 
-void Tuple::setElements( const Values& elements )
+const Constant& Tuple::element( const std::size_t atIndex ) const
 {
-    m_elements = elements;
-}
-
-void Tuple::setElements( const Constant* elements, const std::size_t size )
-{
-    // TODO
-}
-
-Value::Ptr Tuple::at( const std::size_t index ) const
-{
-    return m_elements[ index ];
+    assert( atIndex < m_elements.size() );
+    return m_elements[ atIndex ];
 }
 
 std::string Tuple::name( void ) const
 {
-    std::string n = "{";
+    std::string n = "(";
 
     for( auto element : m_elements )
     {
-        n += element->name() + ", ";
+        n += element.name() + ", ";
     }
 
-    return n + "}";
+    return n + ")";
 }
 
 std::size_t Tuple::hash( void ) const

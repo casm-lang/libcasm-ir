@@ -1328,23 +1328,6 @@ TupleType::TupleType( const Types& types )
     m_arguments = types;
 }
 
-Tuple& TupleType::tuple( void ) const
-{
-    assert( m_tuple );
-    return *m_tuple.get();
-}
-
-Tuple::Ptr TupleType::ptr_tuple( void ) const
-{
-    return m_tuple;
-}
-
-void TupleType::setTuple( const Tuple::Ptr& tuple )
-{
-    assert( tuple->type() == *this );
-    m_tuple = tuple;
-}
-
 std::string TupleType::name( void ) const
 {
     std::string tmp = "t<";

@@ -690,12 +690,6 @@ namespace libcasm_ir
 
         explicit TupleType( const Types& types );
 
-        Tuple& tuple( void ) const;
-
-        std::shared_ptr< Tuple > ptr_tuple( void ) const;
-
-        void setTuple( const std::shared_ptr< Tuple >& tuple );
-
         std::string name( void ) const override;
 
         std::string description( void ) const override;
@@ -713,9 +707,6 @@ namespace libcasm_ir
         {
             return Type::Kind::TUPLE;
         }
-
-      private:
-        std::shared_ptr< Tuple > m_tuple;
     };
 
     class ListType final : public ComposedType

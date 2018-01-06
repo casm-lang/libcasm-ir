@@ -469,11 +469,11 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< TupleConstant >;
 
       public:
-        TupleConstant( const TupleType::Ptr& type, const Tuple::Ptr& value );
+        TupleConstant( const TupleType::Ptr& type, const std::vector< Constant >& elements );
 
         TupleConstant( const TupleType::Ptr& type );
 
-        Tuple::Ptr value( void ) const;
+        const Tuple* value( void ) const;
 
         std::string name( void ) const override;
 
