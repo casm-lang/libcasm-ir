@@ -52,7 +52,32 @@ Tuple::Tuple( const TupleType::Ptr& type, const std::vector< Constant >& element
 , m_elements( elements )
 {
     assert( type->arguments().size() == elements.size() );
-    // TODO check if vector of constants equal the tuple type!
+
+    // TODO: PPA: check if vector of constants equal the tuple type!
+}
+
+Tuple::Tuple(
+    const TupleType::Ptr& type, const std::unordered_map< std::string, Constant >& elements )
+: Value( type, classid() )
+, m_elements()
+{
+    assert( type->arguments().size() >= elements.size() and elements.size() > 0 );
+    assert( not type->elementIdentifiers().empty() );
+
+    for( std::size_t index = 0; index < type->arguments().size(); index++ )
+    {
+        const auto& subTypeName = type->elementIdentifiers()[ index ];
+
+        const auto it = elements.find( subTypeName );
+        if( it != elements.cend() )
+        {
+            m_elements.emplace_back( it->second );
+        }
+        else
+        {
+            m_elements.emplace_back( Constant::undef( type->arguments()[ index ] ) );
+        }
+    }
 }
 
 const std::vector< Constant >& Tuple::elements( void ) const

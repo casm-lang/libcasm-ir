@@ -690,6 +690,11 @@ namespace libcasm_ir
 
         explicit TupleType( const Types& types );
 
+        explicit TupleType(
+            const Types& types, const std::vector< std::string >& elementIdentifiers );
+
+        const std::vector< std::string >& elementIdentifiers( void ) const;
+
         std::string name( void ) const override;
 
         std::string description( void ) const override;
@@ -707,6 +712,9 @@ namespace libcasm_ir
         {
             return Type::Kind::TUPLE;
         }
+
+      private:
+        std::vector< std::string > m_elementIdentifiers;
     };
 
     class ListType final : public ComposedType

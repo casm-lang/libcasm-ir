@@ -471,6 +471,10 @@ namespace libcasm_ir
       public:
         TupleConstant( const TupleType::Ptr& type, const std::vector< Constant >& elements );
 
+        TupleConstant(
+            const TupleType::Ptr& type,
+            const std::unordered_map< std::string, Constant >& elements );
+
         TupleConstant( const TupleType::Ptr& type );
 
         const Tuple* value( void ) const;

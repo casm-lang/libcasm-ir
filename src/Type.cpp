@@ -1323,9 +1323,21 @@ std::size_t RangeType::hash( void ) const
 //
 
 TupleType::TupleType( const Types& types )
-: ComposedType( classid() )
+: TupleType( types, {} )
 {
     m_arguments = types;
+}
+
+TupleType::TupleType( const Types& types, const std::vector< std::string >& elementIdentifiers )
+: ComposedType( classid() )
+, m_elementIdentifiers( elementIdentifiers )
+{
+    m_arguments = types;
+}
+
+const std::vector< std::string >& TupleType::elementIdentifiers( void ) const
+{
+    return m_elementIdentifiers;
 }
 
 std::string TupleType::name( void ) const
@@ -1333,13 +1345,21 @@ std::string TupleType::name( void ) const
     std::string tmp = "t<";
 
     u1 first = true;
-    for( auto argument : m_arguments )
+    std::size_t index = 0;
+    for( const auto& argument : m_arguments )
     {
         tmp += ( not first ? "," : "" );
+
+        if( not m_elementIdentifiers.empty() )
+        {
+            tmp += m_elementIdentifiers[ index ];
+            tmp += ":";
+        }
+
         tmp += argument->name();
         first = false;
+        index++;
     }
-
     tmp += ">";
 
     return tmp;
@@ -1350,13 +1370,21 @@ std::string TupleType::description( void ) const
     std::string tmp = "( ";
 
     u1 first = true;
-    for( auto argument : m_arguments )
+    std::size_t index = 0;
+    for( const auto& argument : m_arguments )
     {
         tmp += ( not first ? ", " : "" );
+
+        if( not m_elementIdentifiers.empty() )
+        {
+            tmp += m_elementIdentifiers[ index ];
+            tmp += " : ";
+        }
+
         tmp += argument->description();
         first = false;
+        index++;
     }
-
     tmp += " )";
 
     return tmp;

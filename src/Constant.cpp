@@ -464,7 +464,7 @@ Constant Constant::undef( const Type::Ptr& type )
         }
         case Type::Kind::TUPLE:
         {
-            break;
+            return TupleConstant( std::static_pointer_cast< TupleType >( type ) );
         }
         case Type::Kind::RULE_REFERENCE:
         {
@@ -1168,6 +1168,16 @@ u1 RangeConstant::classof( Value const* obj )
 //
 
 TupleConstant::TupleConstant( const TupleType::Ptr& type, const std::vector< Constant >& elements )
+: Constant(
+      type,
+      libstdhl::Type::Data( ( u64 )( std::make_shared< Tuple >( type, elements ) ).get(), false ),
+      classid() )
+{
+    assert( type );
+}
+
+TupleConstant::TupleConstant(
+    const TupleType::Ptr& type, const std::unordered_map< std::string, Constant >& elements )
 : Constant(
       type,
       libstdhl::Type::Data( ( u64 )( std::make_shared< Tuple >( type, elements ) ).get(), false ),
