@@ -1384,6 +1384,16 @@ TupleConstant::TupleConstant( const TupleType::Ptr& type, const std::vector< Con
     assert( type );
 }
 
+TupleConstant::TupleConstant(
+    const TupleType::Ptr& type, const std::unordered_map< std::string, Constant >& elements )
+: Constant(
+      type,
+      libstdhl::Type::Data( ( u64 )( std::make_shared< Tuple >( type, elements ) ).get(), false ),
+      classid() )
+{
+    assert( type );
+}
+
 TupleConstant::TupleConstant( const TupleType::Ptr& type )
 : Constant( type, classid() )
 {
