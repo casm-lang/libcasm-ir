@@ -667,6 +667,7 @@ Constant Constant::undef( const Type::Ptr& type )
         }
         case Type::Kind::STRUCTURE:
         {
+            // TODO
             break;
         }
         case Type::Kind::RULE_REFERENCE:
@@ -1384,8 +1385,14 @@ TupleConstant::TupleConstant( const TupleType::Ptr& type, const std::vector< Con
     assert( type );
 }
 
+TupleConstant::TupleConstant( const TupleType::Ptr& type )
+: Constant( type, classid() )
+{
+    assert( type );
+}
+
 TupleConstant::TupleConstant(
-    const TupleType::Ptr& type, const std::unordered_map< std::string, Constant >& elements )
+    const RecordType::Ptr& type, const std::unordered_map< std::string, Constant >& elements )
 : Constant(
       type,
       libstdhl::Type::Data( ( u64 )( std::make_shared< Tuple >( type, elements ) ).get(), false ),
@@ -1394,7 +1401,7 @@ TupleConstant::TupleConstant(
     assert( type );
 }
 
-TupleConstant::TupleConstant( const TupleType::Ptr& type )
+TupleConstant::TupleConstant( const RecordType::Ptr& type )
 : Constant( type, classid() )
 {
     assert( type );

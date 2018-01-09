@@ -693,11 +693,6 @@ namespace libcasm_ir
 
         explicit TupleType( const Types& types );
 
-        explicit TupleType(
-            const Types& types, const std::vector< std::string >& elementIdentifiers );
-
-        const std::vector< std::string >& elementIdentifiers( void ) const;
-
         std::string name( void ) const override;
 
         std::string description( void ) const override;
@@ -715,9 +710,40 @@ namespace libcasm_ir
         {
             return Type::Kind::TUPLE;
         }
+    };
+
+    class RecordType final : public ComposedType
+    {
+      public:
+        using Ptr = std::shared_ptr< RecordType >;
+
+        explicit RecordType( const Types& types, const std::vector< std::string >& identifiers );
+
+        const std::vector< std::string >& identifiers( void ) const;
+
+        const std::map< std::string, std::size_t >& elements( void ) const;
+
+        std::string name( void ) const override;
+
+        std::string description( void ) const override;
+
+        void foreach(
+            const std::function< void( const Constant& constant ) >& callback ) const override;
+
+        Constant choose( void ) const override;
+
+        void validate( const Constant& constant ) const override;
+
+        std::size_t hash( void ) const override;
+
+        static inline Type::Kind classid( void )
+        {
+            return Type::Kind::RECORD;
+        }
 
       private:
-        std::vector< std::string > m_elementIdentifiers;
+        const std::vector< std::string > m_identifiers;
+        std::map< std::string, std::size_t > m_elements;
     };
 
     class RecordType final : public ComposedType
