@@ -59,7 +59,7 @@ TEST( libcasm_ir__type_relation, make_and_get )
     ASSERT_TRUE( w != nullptr );
 
     EXPECT_TRUE( v != w );
-    EXPECT_TRUE( *w == *w );
+    EXPECT_TRUE( *v == *w );
 
     auto a = libstdhl::Memory::get< RelationType >( i, t );
     auto b = libstdhl::Memory::get< RelationType >( i, t );

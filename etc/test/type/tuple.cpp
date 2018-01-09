@@ -58,37 +58,7 @@ TEST( libcasm_ir__type_tuple, make_and_get )
     ASSERT_TRUE( w != nullptr );
 
     EXPECT_TRUE( v != w );
-    EXPECT_TRUE( *w == *w );
-
-    auto a = libstdhl::Memory::get< TupleType >( t );
-    auto b = libstdhl::Memory::get< TupleType >( t );
-    ASSERT_TRUE( a != nullptr );
-    ASSERT_TRUE( b != nullptr );
-
-    EXPECT_TRUE( a == b );
-    EXPECT_TRUE( *a == *b );
-
-    v->foreach( []( const Constant& constant ) { std::cerr << constant.name() << "\n"; } );
-
-    std::cerr << v->choose().name() << "\n";
-}
-
-TEST( libcasm_ir__type_tuple, make_and_get_of_named_elements )
-{
-    auto i = libstdhl::Memory::make< IntegerType >();
-    auto t = Types( { i, i, i } );
-
-    auto v = libstdhl::Memory::make< TupleType >( t, std::vector< std::string >{ "a", "b", "c" } );
-    ASSERT_TRUE( v != nullptr );
-
-    EXPECT_STREQ( v->name().c_str(), "t<a:i,b:i,c:i>" );
-    EXPECT_STREQ( v->description().c_str(), "( a : Integer, b : Integer, c : Integer )" );
-
-    auto w = libstdhl::Memory::make< TupleType >( t );
-    ASSERT_TRUE( w != nullptr );
-
-    EXPECT_TRUE( v != w );
-    EXPECT_TRUE( *w == *w );
+    EXPECT_TRUE( *v == *w );
 
     auto a = libstdhl::Memory::get< TupleType >( t );
     auto b = libstdhl::Memory::get< TupleType >( t );

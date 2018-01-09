@@ -62,7 +62,7 @@ TEST( libcasm_ir__type_ranged_integer, make_and_get )
     ASSERT_TRUE( w != nullptr );
 
     EXPECT_TRUE( v != w );
-    EXPECT_TRUE( *w == *w );
+    EXPECT_TRUE( *v == *w );
 
     auto a = libstdhl::Memory::get< IntegerType >( r );
     auto b = libstdhl::Memory::get< IntegerType >( r );

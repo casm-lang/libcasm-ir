@@ -55,7 +55,7 @@ TEST( libcasm_ir__type_boolean, make_and_get )
     ASSERT_TRUE( w != nullptr );
 
     EXPECT_TRUE( v != w );
-    EXPECT_TRUE( *w == *w );
+    EXPECT_TRUE( *v == *w );
 
     auto a = libstdhl::Memory::get< BooleanType >();
     auto b = libstdhl::Memory::get< BooleanType >();
