@@ -471,11 +471,13 @@ namespace libcasm_ir
       public:
         TupleConstant( const TupleType::Ptr& type, const std::vector< Constant >& elements );
 
+        TupleConstant( const TupleType::Ptr& type );
+
         TupleConstant(
-            const TupleType::Ptr& type,
+            const RecordType::Ptr& type,
             const std::unordered_map< std::string, Constant >& elements );
 
-        TupleConstant( const TupleType::Ptr& type );
+        TupleConstant( const RecordType::Ptr& type );
 
         const Tuple* value( void ) const;
 
@@ -498,6 +500,8 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
     };
+
+    using RecordConstant = TupleConstant;
 
     class ListConstant : public Constant
     {

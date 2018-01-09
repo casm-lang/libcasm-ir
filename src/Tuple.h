@@ -56,7 +56,7 @@ namespace libcasm_ir
         Tuple( const TupleType::Ptr& type, const std::vector< Constant >& elements );
 
         Tuple(
-            const TupleType::Ptr& type,
+            const RecordType::Ptr& type,
             const std::unordered_map< std::string, Constant >& elements );
 
         ~Tuple( void ) = default;

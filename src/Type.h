@@ -56,6 +56,7 @@
 #include <libstdhl/Math>
 
 #include <functional>
+#include <map>
 #include <unordered_map>
 
 namespace libcasm_ir
@@ -105,6 +106,7 @@ namespace libcasm_ir
             ENUMERATION,
             RANGE,
             TUPLE,
+            RECORD,
             LIST,
 
             // reference
@@ -119,7 +121,7 @@ namespace libcasm_ir
             _SIZE_,
         };
 
-        static_assert( (std::size_t)Kind::_SIZE_ == 18, "length of 'Type::Kind' shall be 18" );
+        static_assert( (std::size_t)Kind::_SIZE_ == 19, "length of 'Type::Kind' shall be 19" );
 
         static_assert( sizeof( Kind ) == 1, "size of 'Type::Kind' shall be 8 bits (1 byte)" );
 
@@ -252,6 +254,7 @@ namespace libcasm_ir
         u1 isEnumeration( void ) const;
         u1 isRange( void ) const;
         u1 isTuple( void ) const;
+        u1 isRecord( void ) const;
         u1 isList( void ) const;
 
         u1 isReference( void ) const;
@@ -690,11 +693,6 @@ namespace libcasm_ir
 
         explicit TupleType( const Types& types );
 
-        explicit TupleType(
-            const Types& types, const std::vector< std::string >& elementIdentifiers );
-
-        const std::vector< std::string >& elementIdentifiers( void ) const;
-
         std::string name( void ) const override;
 
         std::string description( void ) const override;
@@ -712,9 +710,40 @@ namespace libcasm_ir
         {
             return Type::Kind::TUPLE;
         }
+    };
+
+    class RecordType final : public ComposedType
+    {
+      public:
+        using Ptr = std::shared_ptr< RecordType >;
+
+        explicit RecordType( const Types& types, const std::vector< std::string >& identifiers );
+
+        const std::vector< std::string >& identifiers( void ) const;
+
+        const std::map< std::string, std::size_t >& elements( void ) const;
+
+        std::string name( void ) const override;
+
+        std::string description( void ) const override;
+
+        void foreach(
+            const std::function< void( const Constant& constant ) >& callback ) const override;
+
+        Constant choose( void ) const override;
+
+        void validate( const Constant& constant ) const override;
+
+        std::size_t hash( void ) const override;
+
+        static inline Type::Kind classid( void )
+        {
+            return Type::Kind::RECORD;
+        }
 
       private:
-        std::vector< std::string > m_elementIdentifiers;
+        const std::vector< std::string > m_identifiers;
+        std::map< std::string, std::size_t > m_elements;
     };
 
     class ListType final : public ComposedType

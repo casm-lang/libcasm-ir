@@ -39,99 +39,38 @@
 //  statement from your version.
 //
 
-#include "Tuple.h"
-
-#include "Constant.h"
-
-#include <cstring>
+#include "../main.h"
 
 using namespace libcasm_ir;
 
-Tuple::Tuple( const TupleType::Ptr& type, const std::vector< Constant >& elements )
-: Value( type, classid() )
-, m_elements( elements )
+TEST( libcasm_ir__type_record, make_and_get )
 {
-    assert( type->arguments().size() == elements.size() );
+    auto i = libstdhl::Memory::make< IntegerType >();
+    auto t = Types( { i, i, i } );
 
-    // TODO: PPA: check if vector of constants equal the tuple type!
-}
+    auto v = libstdhl::Memory::make< RecordType >( t, std::vector< std::string >{ "a", "b", "c" } );
+    ASSERT_TRUE( v != nullptr );
 
-Tuple::Tuple(
-    const RecordType::Ptr& type, const std::unordered_map< std::string, Constant >& elements )
-: Value( type, classid() )
-, m_elements()
-{
-    assert( type->arguments().size() >= elements.size() and elements.size() > 0 );
-    assert( not type->elements().empty() );
+    EXPECT_STREQ( v->name().c_str(), "r<a:i,b:i,c:i>" );
+    EXPECT_STREQ( v->description().c_str(), "( a : Integer, b : Integer, c : Integer )" );
 
-    for( std::size_t index = 0; index < type->arguments().size(); index++ )
-    {
-        const auto& subTypeName = type->identifiers()[ index ];
+    auto w = libstdhl::Memory::make< RecordType >( t, std::vector< std::string >{ "a", "b", "c" } );
+    ASSERT_TRUE( w != nullptr );
 
-        const auto it = elements.find( subTypeName );
-        if( it != elements.cend() )
-        {
-            m_elements.emplace_back( it->second );
-        }
-        else
-        {
-            m_elements.emplace_back( Constant::undef( type->arguments()[ index ] ) );
-        }
-    }
-}
+    EXPECT_TRUE( v != w );
+    EXPECT_TRUE( *v == *w );
 
-const std::vector< Constant >& Tuple::elements( void ) const
-{
-    return m_elements;
-}
+    auto a = libstdhl::Memory::get< RecordType >( t, std::vector< std::string >{ "a", "b", "c" } );
+    auto b = libstdhl::Memory::get< RecordType >( t, std::vector< std::string >{ "a", "b", "c" } );
+    ASSERT_TRUE( a != nullptr );
+    ASSERT_TRUE( b != nullptr );
 
-const Constant& Tuple::element( const std::size_t atIndex ) const
-{
-    assert( atIndex < m_elements.size() );
-    return m_elements[ atIndex ];
-}
+    EXPECT_TRUE( a == b );
+    EXPECT_TRUE( *a == *b );
 
-std::string Tuple::name( void ) const
-{
-    std::string n = "(";
+    v->foreach( []( const Constant& constant ) { std::cerr << constant.name() << "\n"; } );
 
-    for( auto element : m_elements )
-    {
-        n += element.name() + ", ";
-    }
-
-    return n + ")";
-}
-
-std::size_t Tuple::hash( void ) const
-{
-    return libstdhl::Hash::combine( classid(), std::hash< std::string >()( name() ) );
-}
-
-u1 Tuple::operator==( const Value& rhs ) const
-{
-    if( this == &rhs )
-    {
-        return true;
-    }
-
-    if( not Value::operator==( rhs ) )
-    {
-        return false;
-    }
-
-    const auto& other = static_cast< const Tuple& >( rhs );
-    return this->name() == other.name();
-}
-
-void Tuple::accept( Visitor& visitor )
-{
-    visitor.visit( *this );
-}
-
-u1 Tuple::classof( Value const* obj )
-{
-    return obj->id() == classid();
+    std::cerr << v->choose().name() << "\n";
 }
 
 //

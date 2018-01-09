@@ -80,6 +80,7 @@ add_library( ${PROJECT}-test OBJECT
   type/ranged_integer.cpp
   type/rational.cpp
   type/relation.cpp
+  type/record.cpp
   type/tuple.cpp
   type/void.cpp
 )

@@ -194,7 +194,7 @@ u1 Type::isString( void ) const
 
 u1 Type::isComposed( void ) const
 {
-    return isEnumeration() or isRange() or isTuple() or isList();
+    return isEnumeration() or isRange() or isTuple() or isRecord() or isList();
 }
 
 u1 Type::isEnumeration( void ) const
@@ -210,6 +210,11 @@ u1 Type::isRange( void ) const
 u1 Type::isTuple( void ) const
 {
     return kind() == Type::Kind::TUPLE;
+}
+
+u1 Type::isRecord( void ) const
+{
+    return kind() == Type::Kind::RECORD;
 }
 
 u1 Type::isList( void ) const
@@ -303,6 +308,7 @@ Type::Ptr Type::fromID( const Type::ID id )
             case libcasm_ir::Type::Kind::ENUMERATION:         // [fallthrough]
             case libcasm_ir::Type::Kind::RANGE:               // [fallthrough]
             case libcasm_ir::Type::Kind::TUPLE:               // [fallthrough]
+            case libcasm_ir::Type::Kind::RECORD:              // [fallthrough]
             case libcasm_ir::Type::Kind::LIST:                // [fallthrough]
             case libcasm_ir::Type::Kind::RULE_REFERENCE:      // [fallthrough]
             case libcasm_ir::Type::Kind::FUNCTION_REFERENCE:  // [fallthrough]
@@ -399,6 +405,10 @@ std::string Type::token( const Type::Kind kind )
         case Type::Kind::TUPLE:
         {
             return "Tuple";
+        }
+        case Type::Kind::RECORD:
+        {
+            return "Record";
         }
         case Type::Kind::LIST:
         {
@@ -1323,21 +1333,9 @@ std::size_t RangeType::hash( void ) const
 //
 
 TupleType::TupleType( const Types& types )
-: TupleType( types, {} )
-{
-    m_arguments = types;
-}
-
-TupleType::TupleType( const Types& types, const std::vector< std::string >& elementIdentifiers )
 : ComposedType( classid() )
-, m_elementIdentifiers( elementIdentifiers )
 {
     m_arguments = types;
-}
-
-const std::vector< std::string >& TupleType::elementIdentifiers( void ) const
-{
-    return m_elementIdentifiers;
 }
 
 std::string TupleType::name( void ) const
@@ -1345,20 +1343,11 @@ std::string TupleType::name( void ) const
     std::string tmp = "t<";
 
     u1 first = true;
-    std::size_t index = 0;
     for( const auto& argument : m_arguments )
     {
         tmp += ( not first ? "," : "" );
-
-        if( not m_elementIdentifiers.empty() )
-        {
-            tmp += m_elementIdentifiers[ index ];
-            tmp += ":";
-        }
-
         tmp += argument->name();
         first = false;
-        index++;
     }
     tmp += ">";
 
@@ -1370,20 +1359,11 @@ std::string TupleType::description( void ) const
     std::string tmp = "( ";
 
     u1 first = true;
-    std::size_t index = 0;
     for( const auto& argument : m_arguments )
     {
         tmp += ( not first ? ", " : "" );
-
-        if( not m_elementIdentifiers.empty() )
-        {
-            tmp += m_elementIdentifiers[ index ];
-            tmp += " : ";
-        }
-
         tmp += argument->description();
         first = false;
-        index++;
     }
     tmp += " )";
 
@@ -1407,6 +1387,94 @@ void TupleType::validate( const Constant& constant ) const
 }
 
 std::size_t TupleType::hash( void ) const
+{
+    return std::hash< std::string >()( name() );
+}
+
+//
+//
+// Record Type
+//
+
+RecordType::RecordType( const Types& types, const std::vector< std::string >& identifiers )
+: ComposedType( classid() )
+, m_identifiers( identifiers )
+, m_elements()
+{
+    m_arguments = types;
+
+    const auto recordSize = identifiers.size();
+    assert( recordSize >= 1 and recordSize == types.size() );
+
+    for( std::size_t index = 0; index < recordSize; index++ )
+    {
+        m_elements.emplace( identifiers[ index ], index );
+    }
+}
+
+const std::vector< std::string >& RecordType::identifiers( void ) const
+{
+    return m_identifiers;
+}
+
+const std::map< std::string, std::size_t >& RecordType::elements( void ) const
+{
+    return m_elements;
+}
+
+std::string RecordType::name( void ) const
+{
+    std::string tmp = "r<";
+
+    u1 first = true;
+    for( const auto it : m_elements )
+    {
+        tmp += ( not first ? "," : "" );
+        tmp += it.first;
+        tmp += ":";
+        tmp += m_arguments[ it.second ]->name();
+        first = false;
+    }
+    tmp += ">";
+
+    return tmp;
+}
+
+std::string RecordType::description( void ) const
+{
+    std::string tmp = "( ";
+
+    u1 first = true;
+    for( const auto it : m_elements )
+    {
+        tmp += ( not first ? ", " : "" );
+        tmp += it.first;
+        tmp += " : ";
+        tmp += m_arguments[ it.second ]->description();
+        first = false;
+    }
+    tmp += " )";
+
+    return tmp;
+}
+
+void RecordType::foreach( const std::function< void( const Constant& constant ) >& callback ) const
+{
+    // TODO
+}
+
+Constant RecordType::choose( void ) const
+{
+    // TODO
+    return VoidConstant();
+}
+
+void RecordType::validate( const Constant& constant ) const
+{
+    // TODO
+}
+
+std::size_t RecordType::hash( void ) const
 {
     return std::hash< std::string >()( name() );
 }

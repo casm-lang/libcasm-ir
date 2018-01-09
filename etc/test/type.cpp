@@ -119,6 +119,11 @@ TEST( libcasm_ir__Type, id_to_token_string )
                 EXPECT_STREQ( libcasm_ir::Type::token( id ).c_str(), "Tuple" );
                 break;
             }
+            case libcasm_ir::Type::Kind::RECORD:
+            {
+                EXPECT_STREQ( libcasm_ir::Type::token( id ).c_str(), "Record" );
+                break;
+            }
             case libcasm_ir::Type::Kind::LIST:
             {
                 EXPECT_STREQ( libcasm_ir::Type::token( id ).c_str(), "List" );
