@@ -49,8 +49,8 @@ TBD
 The copyright holder of 
 =libcasm-ir= is the [[https://casm-lang.org][CASM organization]] ([[https://github.com/casm-lang][@casm-lang]]) 
 and the used license of 
-=libcasm-ir= is the [[https://www.gnu.org/licenses/gpl-3.0.html][GNU GPLv3+]]
-with an additional permission ("GPL Linking Exception").
+=libcasm-ir= is the [[https://www.gnu.org/licenses/gpl-3.0.html][GNU GPLv3]]
+with an additional Linking Exception (LE) permission.
 
 *** Notice
 
