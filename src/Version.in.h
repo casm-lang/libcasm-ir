@@ -55,6 +55,8 @@ namespace libcasm_ir
     constexpr const char* REVTAG = "@GIT_REVTAG@";
     constexpr const char* COMMIT = "@GIT_COMMIT@";
     constexpr const char* BRANCH = "@GIT_BRANCH@";
+    constexpr const char* LICENSE = "@GIT_LICENSE@";
+    constexpr const char* NOTICE = "@GIT_NOTICE@";
 }
 
 #endif  // _LIBCASM_IR_VERSION_H_
