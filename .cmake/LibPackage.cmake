@@ -525,7 +525,7 @@ function( package_git_submodule PREFIX VERSION MODE TMP ) # ${ARGN} search paths
 	message( "         found changes!" )
 
 	ExternalProject_Add_Step(${PREFIX} force-build
-	  COMMAND             ${MAKE} ${CMAKE_BUILD_TYPE}
+	  COMMAND             make ${CMAKE_BUILD_TYPE}
       	  COMMENT             "Forcing build step for '${PREFIX}'"
       	  DEPENDEES           configure
 	  DEPENDERS           build
