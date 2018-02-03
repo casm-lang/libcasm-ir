@@ -425,7 +425,9 @@ u1 GeneralBuiltin::classof( Value const* obj )
            AssureBuiltin::classof( obj ) or OutputBuiltin::classof( obj );
 }
 
-static const Properties general_builtin_properties = { Property::CONSTANT, Property::PURE };
+static const Properties general_builtin_properties = {
+    Property::SIDE_EFFECT_FREE, Property::CALLABLE, Property::PURE
+};
 
 //
 // IsSymbolicBuiltin
@@ -830,7 +832,9 @@ u1 CastingBuiltin::classof( Value const* obj )
            AsDecimalBuiltin::classof( obj );
 }
 
-static const Properties casting_builtin_properties = { Property::CONSTANT, Property::PURE };
+static const Properties casting_builtin_properties = {
+    Property::SIDE_EFFECT_FREE, Property::CALLABLE, Property::PURE
+};
 
 //
 // AsBooleanBuiltin
@@ -1282,7 +1286,9 @@ u1 StringifyBuiltin::classof( Value const* obj )
            OctBuiltin::classof( obj ) or BinBuiltin::classof( obj );
 }
 
-static const Properties stringify_builtin_properties = { Property::CONSTANT, Property::PURE };
+static const Properties stringify_builtin_properties = {
+    Property::SIDE_EFFECT_FREE, Property::CALLABLE, Property::PURE
+};
 
 static const Annotation::Relations stringify_builtin_data = {
 
@@ -1453,7 +1459,9 @@ ArithmeticBuiltin::ArithmeticBuiltin( const Type::Ptr& type, const Value::ID id 
 {
 }
 
-static const Properties arithmetic_builtin_properties = { Property::CONSTANT, Property::PURE };
+static const Properties arithmetic_builtin_properties = {
+    Property::SIDE_EFFECT_FREE, Property::CALLABLE, Property::PURE
+};
 
 static const Annotation::Relations arithmetic_builtin_data = {
 
@@ -1925,7 +1933,9 @@ u1 BinaryBuiltin::classof( Value const* obj )
            ClzBuiltin::classof( obj ) or CloBuiltin::classof( obj ) or ClsBuiltin::classof( obj );
 }
 
-static const Properties binary_builtin_properties = { Property::CONSTANT, Property::PURE };
+static const Properties binary_builtin_properties = {
+    Property::SIDE_EFFECT_FREE, Property::CALLABLE, Property::PURE
+};
 
 //
 // ZextBuiltin
