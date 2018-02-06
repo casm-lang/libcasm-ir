@@ -43,10 +43,11 @@
 
 using namespace libcasm_ir;
 
-TEST( libcasm_ir_Property, toString )
+TEST( libcasm_ir_PropertyInfo, toString )
 {
-    EXPECT_STREQ( Properties::toString( Property::SIDE_EFFECT_FREE ).c_str(), "side effect free" );
-    EXPECT_STREQ( Properties::toString( Property::PURE ).c_str(), "pure" );
+    EXPECT_STREQ(
+        PropertyInfo::toString( Property::SIDE_EFFECT_FREE ).c_str(), "side effect free" );
+    EXPECT_STREQ( PropertyInfo::toString( Property::PURE ).c_str(), "pure" );
 }
 
 //

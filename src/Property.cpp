@@ -43,7 +43,7 @@
 
 using namespace libcasm_ir;
 
-std::string Properties::toString( const Property property )
+std::string PropertyInfo::toString( const Property property )
 {
     switch( property )
     {

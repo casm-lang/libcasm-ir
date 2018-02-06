@@ -52,11 +52,11 @@ namespace libcasm_ir
         PURE,              // independent of the state
     };
 
-    class Properties : public libstdhl::Enum::Flags< Property >
+    using Properties = libstdhl::Enum::Flags< Property >;
+
+    class PropertyInfo
     {
       public:
-        using libstdhl::Enum::Flags< Property >::Flags;
-
         static std::string toString( const Property property );
     };
 }
