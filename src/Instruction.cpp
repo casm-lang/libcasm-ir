@@ -506,9 +506,8 @@ u1 ArithmeticInstruction::classof( Value const* obj )
            AndInstruction::classof( obj );
 }
 
-static const Properties arithmetic_instruction_properties = {
-    Property::SIDE_EFFECT_FREE, Property::CALLABLE, Property::PURE
-};
+static const Properties arithmetic_instruction_properties = { Property::SIDE_EFFECT_FREE,
+                                                              Property::PURE };
 
 static const auto arithmetic_instruction_resolve = []( std::vector< Type::Ptr >& types ) {
     if( types.size() != 2 )
