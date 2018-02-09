@@ -58,6 +58,7 @@ add_library( ${PROJECT}-cpp OBJECT
   Range.cpp
   Tuple.cpp
   List.cpp
+  Property.cpp
   Rule.cpp
   Specification.cpp
   Statement.cpp

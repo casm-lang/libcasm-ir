@@ -39,29 +39,16 @@
 //  statement from your version.
 //
 
-#ifndef _LIBCASM_IR_PROPERTY_H_
-#define _LIBCASM_IR_PROPERTY_H_
+#include "main.h"
 
-#include <libstdhl/Enum>
+using namespace libcasm_ir;
 
-namespace libcasm_ir
+TEST( libcasm_ir_PropertyInfo, toString )
 {
-    enum class Property
-    {
-        SIDE_EFFECT_FREE,  // does not alter any state
-        PURE,              // independent of the state
-    };
-
-    using Properties = libstdhl::Enum::Flags< Property >;
-
-    class PropertyInfo
-    {
-      public:
-        static std::string toString( const Property property );
-    };
+    EXPECT_STREQ(
+        PropertyInfo::toString( Property::SIDE_EFFECT_FREE ).c_str(), "side effect free" );
+    EXPECT_STREQ( PropertyInfo::toString( Property::PURE ).c_str(), "pure" );
 }
-
-#endif  // _LIBCASM_IR_PROPERTY_H_
 
 //
 //  Local variables:

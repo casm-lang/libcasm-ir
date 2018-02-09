@@ -53,6 +53,7 @@ add_library( ${PROJECT}-test OBJECT
   enumeration.cpp
   isa.cpp
   main.cpp
+  property.cpp
   type.cpp
   value.cpp  
   constant/binary.cpp
