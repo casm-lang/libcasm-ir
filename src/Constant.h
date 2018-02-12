@@ -535,6 +535,36 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
+    class DomainConstant final : public Constant
+    {
+      public:
+        using Ptr = std::shared_ptr< DomainConstant >;
+
+      public:
+        DomainConstant( const Type::Ptr& type, const u1 defined );
+
+        DomainConstant( const Type::Ptr& type );
+
+        std::string name( void ) const override;
+
+        void accept( Visitor& visitor ) override;
+
+        void foreach( const std::function< void( const Constant& constant ) >& callback ) const;
+
+        Constant choose( void ) const;
+
+        std::size_t hash( void ) const override;
+
+        u1 operator==( const Value& rhs ) const override;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::DOMAIN_CONSTANT;
+        }
+
+        static u1 classof( Value const* obj );
+    };
+
     /**
        @class ReferenceConstant
      */

@@ -447,6 +447,10 @@ void TraversalVisitor::visit( ListConstant& value )
 {
     callback()( value );
 }
+void TraversalVisitor::visit( DomainConstant& value )
+{
+    callback()( value );
+}
 
 void TraversalVisitor::visit( Identifier& value )
 {

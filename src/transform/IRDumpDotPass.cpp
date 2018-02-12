@@ -458,6 +458,10 @@ void IRDumpDotVisitor::visit( ListConstant& value )
 {
     dump( value );
 }
+void IRDumpDotVisitor::visit( DomainConstant& value )
+{
+    dump( value );
+}
 
 void IRDumpDotVisitor::visit( Identifier& value )
 {

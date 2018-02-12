@@ -116,6 +116,7 @@ namespace libcasm_ir
     class RangeConstant;
     class TupleConstant;
     class ListConstant;
+    class DomainConstant;
 
     class Identifier;
 
@@ -208,6 +209,7 @@ namespace libcasm_ir
         virtual void visit( RangeConstant& value ) = 0;
         virtual void visit( TupleConstant& value ) = 0;
         virtual void visit( ListConstant& value ) = 0;
+        virtual void visit( DomainConstant& value ) = 0;
 
         virtual void visit( Identifier& value ) = 0;
     };
@@ -293,6 +295,7 @@ namespace libcasm_ir
         virtual void visit( RangeConstant& value ) override = 0;
         virtual void visit( TupleConstant& value ) override = 0;
         virtual void visit( ListConstant& value ) override = 0;
+        virtual void visit( DomainConstant& value ) override = 0;
 
         virtual void visit( Identifier& value ) override = 0;
     };
@@ -390,6 +393,7 @@ namespace libcasm_ir
         void visit( RangeConstant& value ) override;
         void visit( TupleConstant& value ) override;
         void visit( ListConstant& value ) override;
+        void visit( DomainConstant& value ) override;
 
         void visit( Identifier& value ) override;
     };

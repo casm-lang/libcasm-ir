@@ -169,6 +169,10 @@ std::string Constant::name( void ) const
         {
             return static_cast< const ListConstant* >( this )->name();
         }
+        case Value::DOMAIN_CONSTANT:
+        {
+            return static_cast< const DomainConstant* >( this )->name();
+        }
         case Value::RULE_REFERENCE_CONSTANT:
         {
             return static_cast< const RuleReferenceConstant* >( this )->name();
@@ -234,6 +238,11 @@ void Constant::accept( Visitor& visitor )
             static_cast< ListConstant* >( this )->accept( visitor );
             break;
         }
+        case Value::DOMAIN_CONSTANT:
+        {
+            static_cast< DomainConstant* >( this )->accept( visitor );
+            break;
+        }
         case Value::RULE_REFERENCE_CONSTANT:
         {
             static_cast< RuleReferenceConstant* >( this )->accept( visitor );
@@ -260,6 +269,10 @@ void Constant::foreach( const std::function< void( const Constant& constant ) >&
     {
         static_cast< const ListConstant* >( this )->foreach( callback );
     }
+    else if( id() == Value::DOMAIN_CONSTANT )
+    {
+        static_cast< const DomainConstant* >( this )->foreach( callback );
+    }
     else
     {
         callback( *this );
@@ -279,6 +292,10 @@ Constant Constant::choose( void ) const
     else if( id() == Value::LIST_CONSTANT )
     {
         return static_cast< const ListConstant* >( this )->choose();
+    }
+    else if( id() == Value::DOMAIN_CONSTANT )
+    {
+        return static_cast< const DomainConstant* >( this )->choose();
     }
     else
     {
@@ -329,6 +346,10 @@ std::size_t Constant::hash( void ) const
         case Value::LIST_CONSTANT:
         {
             return static_cast< const ListConstant* >( this )->hash();
+        }
+        case Value::DOMAIN_CONSTANT:
+        {
+            return static_cast< const DomainConstant* >( this )->hash();
         }
         case Value::RULE_REFERENCE_CONSTANT:
         {
@@ -388,6 +409,10 @@ u1 Constant::operator==( const Value& rhs ) const
         {
             return static_cast< const ListConstant* >( this )->operator==( rhs );
         }
+        case Value::DOMAIN_CONSTANT:
+        {
+            return static_cast< const DomainConstant* >( this )->operator==( rhs );
+        }
         case Value::RULE_REFERENCE_CONSTANT:
         {
             return static_cast< const RuleReferenceConstant* >( this )->operator==( rhs );
@@ -408,8 +433,8 @@ u1 Constant::classof( Value const* obj )
            BooleanConstant::classof( obj ) or IntegerConstant::classof( obj ) or
            BinaryConstant::classof( obj ) or StringConstant::classof( obj ) or
            DecimalConstant::classof( obj ) or RationalConstant::classof( obj ) or
-           EnumerationConstant::classof( obj ) or RuleReferenceConstant::classof( obj ) or
-           Identifier::classof( obj );
+           EnumerationConstant::classof( obj ) or DomainConstant::classof( obj ) or
+           RuleReferenceConstant::classof( obj ) or Identifier::classof( obj );
 }
 
 Constant Constant::undef( const Type::Ptr& type )
@@ -1329,6 +1354,69 @@ u1 ListConstant::operator==( const Value& rhs ) const
 }
 
 u1 ListConstant::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
+
+//
+//
+// Domain Constant
+//
+
+DomainConstant::DomainConstant( const Type::Ptr& type, const u1 defined )
+: Constant( type, libstdhl::Type::createNatural( 0 ), classid() )
+{
+}
+
+DomainConstant::DomainConstant( const Type::Ptr& type )
+: Constant( type, classid() )
+{
+}
+
+std::string DomainConstant::name( void ) const
+{
+    return type().description();
+}
+
+void DomainConstant::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
+void DomainConstant::foreach(
+    const std::function< void( const Constant& constant ) >& callback ) const
+{
+    type().foreach( callback );
+}
+
+Constant DomainConstant::choose( void ) const
+{
+    return type().choose();
+}
+
+std::size_t DomainConstant::hash( void ) const
+{
+    const auto h = ( ( (std::size_t)classid() ) << 1 ) | defined();
+    return libstdhl::Hash::combine( h, type().hash() );
+}
+
+u1 DomainConstant::operator==( const Value& rhs ) const
+{
+    if( this == &rhs )
+    {
+        return true;
+    }
+
+    if( not Value::operator==( rhs ) )
+    {
+        return false;
+    }
+
+    const auto& other = static_cast< const DomainConstant& >( rhs );
+    return ( this->defined() == other.defined() ) and ( this->type() == other.type() );
+}
+
+u1 DomainConstant::classof( Value const* obj )
 {
     return obj->id() == classid();
 }
