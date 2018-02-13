@@ -219,6 +219,11 @@ TEST( libcasm_ir_Value, id_to_token_string )
                 EXPECT_STREQ( Value::token( id ).c_str(), "ListConstant" );
                 break;
             }
+            case Value::DOMAIN_CONSTANT:
+            {
+                EXPECT_STREQ( Value::token( id ).c_str(), "DomainConstant" );
+                break;
+            }
             case Value::IDENTIFIER:
             {
                 EXPECT_STREQ( Value::token( id ).c_str(), "Identifier" );

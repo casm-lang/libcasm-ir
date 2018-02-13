@@ -1117,11 +1117,18 @@ Constant EnumerationType::choose( void ) const
 
 void EnumerationType::validate( const Constant& constant ) const
 {
-    assert( isa< EnumerationConstant >( constant ) );
+    assert( isa< EnumerationConstant >( constant ) or isa< DomainConstant >( constant ) );
 
-    const auto& c = static_cast< const EnumerationConstant& >( constant );
-    if( *this == c.type() )
+    if( isa< EnumerationConstant >( constant ) )
     {
+        const auto& c = static_cast< const EnumerationConstant& >( constant );
+        if( *this != c.type() )
+        {
+            throw ValidationException(
+                "type " + c.type().description() + " of constant is invalid for type " +
+                this->description() );
+        }
+
         try
         {
             m_kind->encode( c.name() );
@@ -1134,9 +1141,13 @@ void EnumerationType::validate( const Constant& constant ) const
     }
     else
     {
-        throw ValidationException(
-            "type " + c.type().description() + " of constant is invalid for type " +
-            this->description() );
+        const auto& c = static_cast< const DomainConstant& >( constant );
+        if( *this != c.type() )
+        {
+            throw ValidationException(
+                "type " + c.type().description() + " of constant is invalid for type " +
+                this->description() );
+        }
     }
 }
 

@@ -111,6 +111,7 @@ namespace libcasm_ir
             RANGE_CONSTANT,
             TUPLE_CONSTANT,
             LIST_CONSTANT,
+            DOMAIN_CONSTANT,
             IDENTIFIER
 
             ,

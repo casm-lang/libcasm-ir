@@ -150,6 +150,7 @@ namespace libcasm_ir
         void visit( RangeConstant& value ) override;
         void visit( TupleConstant& value ) override;
         void visit( ListConstant& value ) override;
+        void visit( DomainConstant& value ) override;
 
         void visit( Identifier& value ) override;
 

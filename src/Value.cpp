@@ -348,6 +348,10 @@ std::string Value::token( const Value::ID id )
         {
             return "ListConstant";
         }
+        case Value::DOMAIN_CONSTANT:
+        {
+            return "DomainConstant";
+        }
         case Value::IDENTIFIER:
         {
             return "Identifier";

@@ -423,6 +423,10 @@ void ConsistencyCheckVisitor::visit( ListConstant& value )
 {
     verify< ListConstant >( value );
 }
+void ConsistencyCheckVisitor::visit( DomainConstant& value )
+{
+    verify< DomainConstant >( value );
+}
 void ConsistencyCheckVisitor::visit( Identifier& value )
 {
     verify< Identifier >( value );
