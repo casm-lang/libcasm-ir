@@ -541,8 +541,6 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< DomainConstant >;
 
       public:
-        DomainConstant( const Type::Ptr& type, const u1 defined );
-
         DomainConstant( const Type::Ptr& type );
 
         std::string name( void ) const override;

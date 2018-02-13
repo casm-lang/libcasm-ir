@@ -1363,13 +1363,8 @@ u1 ListConstant::classof( Value const* obj )
 // Domain Constant
 //
 
-DomainConstant::DomainConstant( const Type::Ptr& type, const u1 defined )
-: Constant( type, libstdhl::Type::createNatural( 0 ), classid() )
-{
-}
-
 DomainConstant::DomainConstant( const Type::Ptr& type )
-: Constant( type, classid() )
+: Constant( type, libstdhl::Type::createNatural( 0 ), classid() )
 {
 }
 
