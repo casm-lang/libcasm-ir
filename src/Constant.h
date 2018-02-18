@@ -65,6 +65,60 @@
 
 namespace libcasm_ir
 {
+    class Constant;
+
+    /**
+       @extends CasmIR
+    */
+    class ConstantHandler
+    {
+      public:
+        virtual u1 name( const Constant& constant, std::string& result ) const = 0;
+
+        virtual u1 foreach(
+            const Constant& constant,
+            const std::function< void( const Constant& constant ) >& callback ) const = 0;
+
+        virtual u1 choose( const Constant& constant, Constant& result ) const = 0;
+
+        virtual u1 hash( const Constant& constant, std::size_t& result ) const = 0;
+
+        virtual u1 compare( const Constant& lhs, const Value& rhs, u1& result ) const = 0;
+    };
+
+    /**
+       @extends CasmIR
+    */
+    class ConstantHandlerManager
+    {
+      public:
+        static ConstantHandlerManager& instance( void )
+        {
+            static ConstantHandlerManager cache;
+            return cache;
+        }
+
+      public:
+        void registerConstantHandler( std::unique_ptr< ConstantHandler > constantHandler );
+
+        void processConstantHandlers(
+            const std::function< u1( const ConstantHandler& ) >& process );
+
+      protected:
+        ConstantHandlerManager( void ) = default;
+
+        ConstantHandlerManager( ConstantHandlerManager const& ) = delete;
+        ConstantHandlerManager( ConstantHandlerManager&& ) = delete;
+        ConstantHandlerManager& operator=( ConstantHandlerManager const& ) = delete;
+        ConstantHandlerManager& operator=( ConstantHandlerManager&& ) = delete;
+
+      private:
+        std::vector< std::unique_ptr< ConstantHandler > > m_constantHandlers;
+    };
+
+    /**
+
+    */
     class Constant : public Value
     {
       public:
@@ -94,7 +148,7 @@ namespace libcasm_ir
 
         const libstdhl::Type::Data& data( void ) const;
 
-        std::string name( void ) const override;
+        std::string name( void ) const override final;
 
         void accept( Visitor& visitor ) override;
 
@@ -125,25 +179,6 @@ namespace libcasm_ir
 
         static Constant undef( const Type::Ptr& type );
 
-        class Registry
-        {
-        };
-
-        template < typename T >
-        static Registry registerConstant( void )
-        {
-            auto& registeredConstants = m_registeredConstants();
-
-            auto result = registeredConstants.emplace(
-                T::classid(), []( const Constant& constant ) -> std::string {
-                    return static_cast< const T& >( constant ).name();
-                } );
-
-            assert( result.second == true && " already registered constant ID " );
-
-            return Registry{};
-        }
-
       private:
         static std::string name( const Constant& constant )
         {
@@ -171,7 +206,7 @@ namespace libcasm_ir
 
         VoidConstant( void );
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
@@ -203,7 +238,7 @@ namespace libcasm_ir
 
         const libstdhl::Type::Boolean& value( void ) const;
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
@@ -244,7 +279,7 @@ namespace libcasm_ir
 
         const libstdhl::Type::Integer& value( void ) const;
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
@@ -285,7 +320,7 @@ namespace libcasm_ir
 
         const libstdhl::Type::Natural& value( void ) const;
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
@@ -315,7 +350,7 @@ namespace libcasm_ir
 
         const libstdhl::Type::String& value( void ) const;
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
@@ -351,7 +386,7 @@ namespace libcasm_ir
 
         const libstdhl::Type::Decimal& value( void ) const;
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
@@ -381,7 +416,7 @@ namespace libcasm_ir
 
         const libstdhl::Type::Rational& value( void ) const;
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
@@ -413,7 +448,7 @@ namespace libcasm_ir
 
         const libstdhl::Type::Natural& value( void ) const;
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
@@ -443,7 +478,7 @@ namespace libcasm_ir
 
         Range::Ptr value( void ) const;
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
@@ -481,7 +516,7 @@ namespace libcasm_ir
 
         const Tuple* value( void ) const;
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
@@ -515,7 +550,7 @@ namespace libcasm_ir
 
         List::Ptr value( void ) const;
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
@@ -543,7 +578,7 @@ namespace libcasm_ir
       public:
         DomainConstant( const Type::Ptr& type );
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
@@ -600,7 +635,7 @@ namespace libcasm_ir
 
         RuleReferenceConstant( const Type::Ptr& type );
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
@@ -630,7 +665,7 @@ namespace libcasm_ir
 
         FunctionReferenceConstant( const Type::Ptr& type );
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
@@ -653,7 +688,7 @@ namespace libcasm_ir
 
         Identifier( const Type::Ptr& type, const std::string& value );
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
