@@ -160,51 +160,51 @@ std::string Constant::name( void ) const
     {
         case Value::VOID_CONSTANT:
         {
-            return static_cast< const VoidConstant* >( this )->name();
+            return static_cast< const VoidConstant* >( this )->toString();
         }
         case Value::BOOLEAN_CONSTANT:
         {
-            return static_cast< const BooleanConstant* >( this )->name();
+            return static_cast< const BooleanConstant* >( this )->toString();
         }
         case Value::INTEGER_CONSTANT:
         {
-            return static_cast< const IntegerConstant* >( this )->name();
+            return static_cast< const IntegerConstant* >( this )->toString();
         }
         case Value::BINARY_CONSTANT:
         {
-            return static_cast< const BinaryConstant* >( this )->name();
+            return static_cast< const BinaryConstant* >( this )->toString();
         }
         case Value::STRING_CONSTANT:
         {
-            return static_cast< const StringConstant* >( this )->name();
+            return static_cast< const StringConstant* >( this )->toString();
         }
         case Value::DECIMAL_CONSTANT:
         {
-            return static_cast< const DecimalConstant* >( this )->name();
+            return static_cast< const DecimalConstant* >( this )->toString();
         }
         case Value::RATIONAL_CONSTANT:
         {
-            return static_cast< const RationalConstant* >( this )->name();
+            return static_cast< const RationalConstant* >( this )->toString();
         }
         case Value::ENUMERATION_CONSTANT:
         {
-            return static_cast< const EnumerationConstant* >( this )->name();
+            return static_cast< const EnumerationConstant* >( this )->toString();
         }
         case Value::RANGE_CONSTANT:
         {
-            return static_cast< const RangeConstant* >( this )->name();
+            return static_cast< const RangeConstant* >( this )->toString();
         }
         case Value::LIST_CONSTANT:
         {
-            return static_cast< const ListConstant* >( this )->name();
+            return static_cast< const ListConstant* >( this )->toString();
         }
         case Value::DOMAIN_CONSTANT:
         {
-            return static_cast< const DomainConstant* >( this )->name();
+            return static_cast< const DomainConstant* >( this )->toString();
         }
         case Value::RULE_REFERENCE_CONSTANT:
         {
-            return static_cast< const RuleReferenceConstant* >( this )->name();
+            return static_cast< const RuleReferenceConstant* >( this )->toString();
         }
         default:
         {
@@ -669,7 +669,7 @@ VoidConstant::VoidConstant( void )
 {
 }
 
-std::string VoidConstant::name( void ) const
+std::string VoidConstant::toString( void ) const
 {
     return ( defined() ? "void" : undef_str );
 }
@@ -735,7 +735,7 @@ const libstdhl::Type::Boolean& BooleanConstant::value( void ) const
     return static_cast< const libstdhl::Type::Boolean& >( m_data );
 }
 
-std::string BooleanConstant::name( void ) const
+std::string BooleanConstant::toString( void ) const
 {
     return ( defined() ? ( value() == true ? "true" : "false" ) : undef_str );
 }
@@ -822,7 +822,7 @@ const libstdhl::Type::Integer& IntegerConstant::value( void ) const
     return static_cast< const libstdhl::Type::Integer& >( m_data );
 }
 
-std::string IntegerConstant::name( void ) const
+std::string IntegerConstant::toString( void ) const
 {
     return ( defined() ? ( m_data.to< libstdhl::Type::DECIMAL >() ) : undef_str );
 }
@@ -935,7 +935,7 @@ const libstdhl::Type::Natural& BinaryConstant::value( void ) const
     return static_cast< const libstdhl::Type::Natural& >( m_data );
 }
 
-std::string BinaryConstant::name( void ) const
+std::string BinaryConstant::toString( void ) const
 {
     return ( defined() ? ( m_data.to< libstdhl::Type::DECIMAL >() ) : undef_str );
 }
@@ -997,7 +997,7 @@ const libstdhl::Type::String& StringConstant::value( void ) const
     return static_cast< const libstdhl::Type::String& >( m_data );
 }
 
-std::string StringConstant::name( void ) const
+std::string StringConstant::toString( void ) const
 {
     if( defined() )
     {
@@ -1080,7 +1080,7 @@ const libstdhl::Type::Decimal& DecimalConstant::value( void ) const
     return static_cast< const libstdhl::Type::Decimal& >( m_data );
 }
 
-std::string DecimalConstant::name( void ) const
+std::string DecimalConstant::toString( void ) const
 {
     // return ( defined() ? ( "TODO" ) : undef_str );
     return ( defined() ? ( std::to_string( (double)value().value() ) ) : undef_str );
@@ -1143,7 +1143,7 @@ const libstdhl::Type::Rational& RationalConstant::value( void ) const
     return static_cast< const libstdhl::Type::Rational& >( m_data );
 }
 
-std::string RationalConstant::name( void ) const
+std::string RationalConstant::toString( void ) const
 {
     return ( defined() ? ( "TODO" ) : undef_str );
     // TODO: PPA: use literal function from libstdhl::Type::Data
@@ -1214,7 +1214,7 @@ const libstdhl::Type::Natural& EnumerationConstant::value( void ) const
     return static_cast< const libstdhl::Type::Natural& >( m_data );
 }
 
-std::string EnumerationConstant::name( void ) const
+std::string EnumerationConstant::toString( void ) const
 {
     return static_cast< const EnumerationType& >( type() ).kind().decode( m_data.value() );
 }
@@ -1281,7 +1281,7 @@ Range::Ptr RangeConstant::value( void ) const
     return static_cast< const RangeType& >( type() ).ptr_range();
 }
 
-std::string RangeConstant::name( void ) const
+std::string RangeConstant::toString( void ) const
 {
     return type().name();
 }
@@ -1369,7 +1369,7 @@ const Tuple* TupleConstant::value( void ) const
     return (Tuple*)m_data.value();
 }
 
-std::string TupleConstant::name( void ) const
+std::string TupleConstant::toString( void ) const
 {
     const auto& v = value();
     if( v )
@@ -1447,7 +1447,7 @@ List::Ptr ListConstant::value( void ) const
     return static_cast< const ListType& >( type() ).ptr_list();
 }
 
-std::string ListConstant::name( void ) const
+std::string ListConstant::toString( void ) const
 {
     return type().name();
 }
@@ -1505,7 +1505,7 @@ DomainConstant::DomainConstant( const Type::Ptr& type )
 {
 }
 
-std::string DomainConstant::name( void ) const
+std::string DomainConstant::toString( void ) const
 {
     return type().description();
 }
@@ -1572,7 +1572,7 @@ RuleReferenceConstant::RuleReferenceConstant( const Type::Ptr& type )
     assert( type->isRuleReference() );
 }
 
-std::string RuleReferenceConstant::name( void ) const
+std::string RuleReferenceConstant::toString( void ) const
 {
     return ( defined() ? value()->name() : undef_str );
 }
@@ -1646,7 +1646,7 @@ FunctionReferenceConstant::FunctionReferenceConstant( const Type::Ptr& type )
     assert( type->isFunctionReference() );
 }
 
-std::string FunctionReferenceConstant::name( void ) const
+std::string FunctionReferenceConstant::toString( void ) const
 {
     return ( defined() ? value()->name() : undef_str );
 }
@@ -1692,7 +1692,7 @@ Identifier::Identifier( const Type::Ptr& type, const std::string& value )
 {
 }
 
-std::string Identifier::name( void ) const
+std::string Identifier::toString( void ) const
 {
     return *( (std::string*)m_data.ptr() );
 }

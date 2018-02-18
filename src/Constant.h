@@ -148,7 +148,7 @@ namespace libcasm_ir
 
         const libstdhl::Type::Data& data( void ) const;
 
-        std::string name( void ) const override;
+        std::string name( void ) const override final;
 
         void accept( Visitor& visitor ) override;
 
@@ -206,7 +206,7 @@ namespace libcasm_ir
 
         VoidConstant( void );
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
@@ -238,7 +238,7 @@ namespace libcasm_ir
 
         const libstdhl::Type::Boolean& value( void ) const;
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
@@ -279,7 +279,7 @@ namespace libcasm_ir
 
         const libstdhl::Type::Integer& value( void ) const;
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
@@ -320,7 +320,7 @@ namespace libcasm_ir
 
         const libstdhl::Type::Natural& value( void ) const;
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
@@ -350,7 +350,7 @@ namespace libcasm_ir
 
         const libstdhl::Type::String& value( void ) const;
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
@@ -386,7 +386,7 @@ namespace libcasm_ir
 
         const libstdhl::Type::Decimal& value( void ) const;
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
@@ -416,7 +416,7 @@ namespace libcasm_ir
 
         const libstdhl::Type::Rational& value( void ) const;
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
@@ -448,7 +448,7 @@ namespace libcasm_ir
 
         const libstdhl::Type::Natural& value( void ) const;
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
@@ -478,7 +478,7 @@ namespace libcasm_ir
 
         Range::Ptr value( void ) const;
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
@@ -516,7 +516,7 @@ namespace libcasm_ir
 
         const Tuple* value( void ) const;
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
@@ -550,7 +550,7 @@ namespace libcasm_ir
 
         List::Ptr value( void ) const;
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
@@ -578,7 +578,7 @@ namespace libcasm_ir
       public:
         DomainConstant( const Type::Ptr& type );
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
@@ -635,7 +635,7 @@ namespace libcasm_ir
 
         RuleReferenceConstant( const Type::Ptr& type );
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
@@ -665,7 +665,7 @@ namespace libcasm_ir
 
         FunctionReferenceConstant( const Type::Ptr& type );
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
@@ -688,7 +688,7 @@ namespace libcasm_ir
 
         Identifier( const Type::Ptr& type, const std::string& value );
 
-        std::string name( void ) const override;
+        std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
 
