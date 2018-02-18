@@ -300,50 +300,62 @@ void Constant::foreach( const std::function< void( const Constant& constant ) >&
         case Value::VOID_CONSTANT:
         {
             callback( *this );
+            break;
         }
         case Value::BOOLEAN_CONSTANT:
         {
             callback( *this );
+            break;
         }
         case Value::INTEGER_CONSTANT:
         {
             callback( *this );
+            break;
         }
         case Value::BINARY_CONSTANT:
         {
             callback( *this );
+            break;
         }
         case Value::STRING_CONSTANT:
         {
             callback( *this );
+            break;
         }
         case Value::DECIMAL_CONSTANT:
         {
             callback( *this );
+            break;
         }
         case Value::RATIONAL_CONSTANT:
         {
             callback( *this );
+            break;
         }
         case Value::ENUMERATION_CONSTANT:
         {
             callback( *this );
+            break;
         }
         case Value::RANGE_CONSTANT:
         {
             static_cast< const RangeConstant* >( this )->foreach( callback );
+            break;
         }
         case Value::LIST_CONSTANT:
         {
             static_cast< const ListConstant* >( this )->foreach( callback );
+            break;
         }
         case Value::DOMAIN_CONSTANT:
         {
             static_cast< const DomainConstant* >( this )->foreach( callback );
+            break;
         }
         case Value::RULE_REFERENCE_CONSTANT:
         {
             callback( *this );
+            break;
         }
         default:
         {
