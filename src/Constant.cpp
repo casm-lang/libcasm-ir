@@ -494,7 +494,6 @@ std::size_t Constant::hash( void ) const
                 [this, &result]( const ConstantHandler& constantHandler ) -> u1 {
                     return constantHandler.hash( *this, result );
                 } );
-            assert( result != 0 and " hash cannot be zero! " );
             return result;
         }
     }
