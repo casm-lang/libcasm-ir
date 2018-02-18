@@ -65,6 +65,60 @@
 
 namespace libcasm_ir
 {
+    class Constant;
+
+    /**
+       @extends CasmIR
+    */
+    class ConstantHandler
+    {
+      public:
+        virtual u1 name( const Constant& constant, std::string& result ) const = 0;
+
+        virtual u1 foreach(
+            const Constant& constant,
+            const std::function< void( const Constant& constant ) >& callback ) const = 0;
+
+        virtual u1 choose( const Constant& constant, Constant& result ) const = 0;
+
+        virtual u1 hash( const Constant& constant, std::size_t& result ) const = 0;
+
+        virtual u1 compare( const Constant& lhs, const Value& rhs, u1& result ) const = 0;
+    };
+
+    /**
+       @extends CasmIR
+    */
+    class ConstantHandlerManager
+    {
+      public:
+        static ConstantHandlerManager& instance( void )
+        {
+            static ConstantHandlerManager cache;
+            return cache;
+        }
+
+      public:
+        void registerConstantHandler( std::unique_ptr< ConstantHandler > constantHandler );
+
+        void processConstantHandlers(
+            const std::function< u1( const ConstantHandler& ) >& process );
+
+      protected:
+        ConstantHandlerManager( void ) = default;
+
+        ConstantHandlerManager( ConstantHandlerManager const& ) = delete;
+        ConstantHandlerManager( ConstantHandlerManager&& ) = delete;
+        ConstantHandlerManager& operator=( ConstantHandlerManager const& ) = delete;
+        ConstantHandlerManager& operator=( ConstantHandlerManager&& ) = delete;
+
+      private:
+        std::vector< std::unique_ptr< ConstantHandler > > m_constantHandlers;
+    };
+
+    /**
+
+    */
     class Constant : public Value
     {
       public:
@@ -124,25 +178,6 @@ namespace libcasm_ir
         }
 
         static Constant undef( const Type::Ptr& type );
-
-        class Registry
-        {
-        };
-
-        template < typename T >
-        static Registry registerConstant( void )
-        {
-            auto& registeredConstants = m_registeredConstants();
-
-            auto result = registeredConstants.emplace(
-                T::classid(), []( const Constant& constant ) -> std::string {
-                    return static_cast< const T& >( constant ).name();
-                } );
-
-            assert( result.second == true && " already registered constant ID " );
-
-            return Registry{};
-        }
 
       private:
         static std::string name( const Constant& constant )

@@ -45,6 +45,35 @@
 
 using namespace libcasm_ir;
 
+//
+//
+// ConstantHandlerManager
+//
+
+void ConstantHandlerManager::registerConstantHandler(
+    std::unique_ptr< ConstantHandler > constantHandler )
+{
+    assert( constantHandler != nullptr && "invalid constant handler" );
+    m_constantHandlers.emplace_back( std::move( constantHandler ) );
+}
+
+void ConstantHandlerManager::processConstantHandlers(
+    const std::function< u1( const ConstantHandler& ) >& process )
+{
+    for( const auto& constantHandler : m_constantHandlers )
+    {
+        if( process( *constantHandler ) )
+        {
+            break;
+        }
+    }
+}
+
+//
+//
+// Constant
+//
+
 static constexpr const char* undef_str = "undef";
 
 static const auto VOID = libstdhl::Memory::get< VoidType >();
@@ -179,7 +208,12 @@ std::string Constant::name( void ) const
         }
         default:
         {
-            return Constant::name( *this );
+            std::string result;
+            ConstantHandlerManager::instance().processConstantHandlers(
+                [this, &result]( const ConstantHandler& constantHandler ) -> u1 {
+                    return constantHandler.name( *this, result );
+                } );
+            return result;
         }
     }
 }
@@ -261,21 +295,63 @@ void Constant::foreach( const std::function< void( const Constant& constant ) >&
                                 // defined, please ensure the correct invocation,
                                 // a universe shall not be undefined
 
-    if( id() == Value::RANGE_CONSTANT )
+    switch( id() )
     {
-        static_cast< const RangeConstant* >( this )->foreach( callback );
-    }
-    else if( id() == Value::LIST_CONSTANT )
-    {
-        static_cast< const ListConstant* >( this )->foreach( callback );
-    }
-    else if( id() == Value::DOMAIN_CONSTANT )
-    {
-        static_cast< const DomainConstant* >( this )->foreach( callback );
-    }
-    else
-    {
-        callback( *this );
+        case Value::VOID_CONSTANT:
+        {
+            callback( *this );
+        }
+        case Value::BOOLEAN_CONSTANT:
+        {
+            callback( *this );
+        }
+        case Value::INTEGER_CONSTANT:
+        {
+            callback( *this );
+        }
+        case Value::BINARY_CONSTANT:
+        {
+            callback( *this );
+        }
+        case Value::STRING_CONSTANT:
+        {
+            callback( *this );
+        }
+        case Value::DECIMAL_CONSTANT:
+        {
+            callback( *this );
+        }
+        case Value::RATIONAL_CONSTANT:
+        {
+            callback( *this );
+        }
+        case Value::ENUMERATION_CONSTANT:
+        {
+            callback( *this );
+        }
+        case Value::RANGE_CONSTANT:
+        {
+            static_cast< const RangeConstant* >( this )->foreach( callback );
+        }
+        case Value::LIST_CONSTANT:
+        {
+            static_cast< const ListConstant* >( this )->foreach( callback );
+        }
+        case Value::DOMAIN_CONSTANT:
+        {
+            static_cast< const DomainConstant* >( this )->foreach( callback );
+        }
+        case Value::RULE_REFERENCE_CONSTANT:
+        {
+            callback( *this );
+        }
+        default:
+        {
+            ConstantHandlerManager::instance().processConstantHandlers(
+                [this, &callback]( const ConstantHandler& constantHandler ) -> u1 {
+                    return constantHandler.foreach( *this, callback );
+                } );
+        }
     }
 }
 
@@ -285,21 +361,65 @@ Constant Constant::choose( void ) const
                                 // defined, please ensure the correct invocation,
                                 // a universe shall not be undefined
 
-    if( id() == Value::RANGE_CONSTANT )
+    switch( id() )
     {
-        return static_cast< const RangeConstant* >( this )->choose();
-    }
-    else if( id() == Value::LIST_CONSTANT )
-    {
-        return static_cast< const ListConstant* >( this )->choose();
-    }
-    else if( id() == Value::DOMAIN_CONSTANT )
-    {
-        return static_cast< const DomainConstant* >( this )->choose();
-    }
-    else
-    {
-        return *this;
+        case Value::VOID_CONSTANT:
+        {
+            return *this;
+        }
+        case Value::BOOLEAN_CONSTANT:
+        {
+            return *this;
+        }
+        case Value::INTEGER_CONSTANT:
+        {
+            return *this;
+        }
+        case Value::BINARY_CONSTANT:
+        {
+            return *this;
+        }
+        case Value::STRING_CONSTANT:
+        {
+            return *this;
+        }
+        case Value::DECIMAL_CONSTANT:
+        {
+            return *this;
+        }
+        case Value::RATIONAL_CONSTANT:
+        {
+            return *this;
+        }
+        case Value::ENUMERATION_CONSTANT:
+        {
+            return *this;
+        }
+        case Value::RANGE_CONSTANT:
+        {
+            return static_cast< const RangeConstant* >( this )->choose();
+        }
+        case Value::LIST_CONSTANT:
+        {
+            return static_cast< const ListConstant* >( this )->choose();
+        }
+        case Value::DOMAIN_CONSTANT:
+        {
+            return static_cast< const DomainConstant* >( this )->choose();
+        }
+        case Value::RULE_REFERENCE_CONSTANT:
+        {
+            return *this;
+        }
+        default:
+        {
+            Constant result;
+            ConstantHandlerManager::instance().processConstantHandlers(
+                [this, &result]( const ConstantHandler& constantHandler ) -> u1 {
+                    return constantHandler.choose( *this, result );
+                } );
+            return result;
+        }
     }
 }
 
@@ -357,12 +477,15 @@ std::size_t Constant::hash( void ) const
         }
         default:
         {
-            break;
+            std::size_t result = 0;
+            ConstantHandlerManager::instance().processConstantHandlers(
+                [this, &result]( const ConstantHandler& constantHandler ) -> u1 {
+                    return constantHandler.hash( *this, result );
+                } );
+            assert( result != 0 and " hash cannot be zero! " );
+            return result;
         }
     }
-
-    assert( !" invalid constant to dispatch 'hash' found! " );
-    return 0;
 }
 
 u1 Constant::operator==( const Value& rhs ) const
@@ -419,12 +542,14 @@ u1 Constant::operator==( const Value& rhs ) const
         }
         default:
         {
-            break;
+            u1 result = false;
+            ConstantHandlerManager::instance().processConstantHandlers(
+                [this, &rhs, &result]( const ConstantHandler& constantHandler ) -> u1 {
+                    return constantHandler.compare( *this, rhs, result );
+                } );
+            return result;
         }
     }
-
-    assert( !" invalid constant to dispatch 'operator==' found! " );
-    return false;
 }
 
 u1 Constant::classof( Value const* obj )
