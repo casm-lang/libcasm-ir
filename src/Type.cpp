@@ -959,16 +959,30 @@ Constant BinaryType::choose( void ) const
 
 void BinaryType::validate( const Constant& constant ) const
 {
-    assert( isa< BinaryConstant >( constant ) );
+    assert( isa< BinaryConstant >( constant ) or isa< IntegerConstant >( constant ) );
 
-    const auto& c = static_cast< const BinaryConstant& >( constant );
-    assert( c.type().isBinary() );
-    const auto& t = static_cast< const BinaryType& >( c.type() );
+    std::size_t constantBitSize;
+    if( isa< BinaryConstant >( constant ) )
+    {
+        const auto& c = static_cast< const BinaryConstant& >( constant );
+        assert( c.type().isBinary() );
+        const auto& t = static_cast< const BinaryType& >( c.type() );
+        constantBitSize = t.bitsize();
+    }
+    else
+    {
+        const auto& c = static_cast< const IntegerConstant& >( constant );
+        assert( c.type().isInteger() );
 
-    if( m_bitsize < t.bitsize() )
+        assert( c.value().trivial() and " TODO: PPA: FIXME:" );
+        constantBitSize = static_cast< u64 >(
+            std::log2( (double)( c.value() > 1 ? c.value().value() - 1 : 1 ) ) );
+    }
+
+    if( m_bitsize < constantBitSize )
     {
         throw ValidationException(
-            " type " + t.description() + " of constant is invalid for type " +
+            " type " + constant.type().description() + " of constant is invalid for type " +
             this->description() );
     }
 }
