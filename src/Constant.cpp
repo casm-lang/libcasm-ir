@@ -893,8 +893,7 @@ BinaryConstant::BinaryConstant( const Type::Ptr& type, const libstdhl::Type::Nat
 
     assert( value.trivial() and " TODO: PPA: FIXME:" );
     const u64 bitsize =
-        static_cast< u64 >( std::log2( (double)( value.value() > 1 ? value.value() - 1 : 1 ) ) ) +
-        1;
+        static_cast< u64 >( std::log2( (double)( value.value() > 1 ? value.value() - 1 : 1 ) ) );
 
     if( bitsize > t.bitsize() )
     {
