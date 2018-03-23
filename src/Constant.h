@@ -73,6 +73,8 @@ namespace libcasm_ir
     class ConstantHandler
     {
       public:
+        virtual ~ConstantHandler( void ) = default;
+
         virtual u1 name( const Constant& constant, std::string& result ) const = 0;
 
         virtual u1 foreach(
