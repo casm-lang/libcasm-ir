@@ -1,17 +1,23 @@
-src/*.h linguist-language=C++
-src/*/*.h linguist-language=C++
-
 .gitignore	text eol=lf
 .gitattributes	text eol=lf
 .clang-format	text eol=lf
 Makefile 	text eol=lf
 
-*.txt		text eol=lf
-*.org		text eol=lf
 *.md		text eol=lf
+*.org		text eol=lf
+*.txt		text eol=lf
+*.cmake		text eol=lf
 
 *.c		text eol=lf
 *.cpp		text eol=lf
 *.h		text eol=lf
 *.js		text eol=lf
 *.py		text eol=lf
+*.casm		text eol=lf
+
+src/*.h			linguist-language=C++
+src/*/*.h		linguist-language=C++
+etc/test/*.h		linguist-language=C++
+etc/test/*/*.h		linguist-language=C++
+etc/benchmark/*.h	linguist-language=C++
+etc/benchmark/*/*.h	linguist-language=C++
