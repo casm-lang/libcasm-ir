@@ -83,7 +83,6 @@ u64 BranchEliminationPass::optimize( Rule::Ptr& rule )
     u64 elimination = 0;
 
     rule->iterate( Traversal::POSTORDER, [&log, &elimination]( Value& value ) {
-
         if( isa< SelectInstruction >( value ) )
         {
             const auto instr = static_cast< SelectInstruction& >( value );
@@ -127,7 +126,6 @@ u64 BranchEliminationPass::optimize( Rule::Ptr& rule )
                 elimination++;
             }
         }
-
     } );
 
     return elimination;
