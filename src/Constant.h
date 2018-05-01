@@ -271,6 +271,8 @@ namespace libcasm_ir
 
         IntegerConstant( const libstdhl::Type::Integer& value );
 
+        IntegerConstant( const libstdhl::Type::Natural& value, const u1 sign );
+
         IntegerConstant( const i64 value );
 
         IntegerConstant( void );

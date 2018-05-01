@@ -793,6 +793,11 @@ IntegerConstant::IntegerConstant( const libstdhl::Type::Integer& value )
 {
 }
 
+IntegerConstant::IntegerConstant( const libstdhl::Type::Natural& value, const u1 sign = false )
+: Constant( INTEGER, libstdhl::Type::createInteger( value, sign ), classid() )
+{
+}
+
 IntegerConstant::IntegerConstant( const i64 value )
 : Constant( INTEGER, libstdhl::Type::createInteger( value ), classid() )
 {
