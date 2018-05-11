@@ -591,7 +591,12 @@ const Annotation InvInstruction::annotation(
           } },
 
     },
-    []( std::vector< Type::Ptr >& types ) {},
+    []( std::vector< Type::Ptr >& types ) {
+        if( types.size() != 1 )
+        {
+            throw InternalException( "types.size() != 1" );
+        }
+    },
     []( const std::vector< Type::Ptr >& types, const std::vector< Value::Ptr >& ) -> Type::Ptr {
         if( types.size() != 1 )
         {

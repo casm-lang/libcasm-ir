@@ -793,6 +793,11 @@ IntegerConstant::IntegerConstant( const libstdhl::Type::Integer& value )
 {
 }
 
+IntegerConstant::IntegerConstant( const libstdhl::Type::Natural& value, const u1 sign = false )
+: Constant( INTEGER, libstdhl::Type::createInteger( value, sign ), classid() )
+{
+}
+
 IntegerConstant::IntegerConstant( const i64 value )
 : Constant( INTEGER, libstdhl::Type::createInteger( value ), classid() )
 {
@@ -893,8 +898,7 @@ BinaryConstant::BinaryConstant( const Type::Ptr& type, const libstdhl::Type::Nat
 
     assert( value.trivial() and " TODO: PPA: FIXME:" );
     const u64 bitsize =
-        static_cast< u64 >( std::log2( (double)( value.value() > 1 ? value.value() - 1 : 1 ) ) ) +
-        1;
+        static_cast< u64 >( std::log2( (double)( value.value() > 1 ? value.value() - 1 : 1 ) ) );
 
     if( bitsize > t.bitsize() )
     {
