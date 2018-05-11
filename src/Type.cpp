@@ -1447,6 +1447,32 @@ const std::map< std::string, std::size_t >& RecordType::elements( void ) const
     return m_elements;
 }
 
+u1 RecordType::contains( const RecordType& other ) const
+{
+    if( identifiers().size() <= other.identifiers().size() )
+    {
+        return false;
+    }
+
+    for( const auto otherIt : other.elements() )
+    {
+        const auto it = m_elements.find( otherIt.first );
+        if( it == m_elements.cend() )
+        {
+            // element identifier from 'other' is not in this record
+            return false;
+        }
+
+        if( m_arguments.at( it->second ) != other.arguments()[ otherIt.second ] )
+        {
+            // element type of 'other' differs from this record element
+            return false;
+        }
+    }
+
+    return true;
+}
+
 std::string RecordType::name( void ) const
 {
     std::string tmp = "r<";

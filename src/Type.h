@@ -723,6 +723,8 @@ namespace libcasm_ir
 
         const std::map< std::string, std::size_t >& elements( void ) const;
 
+        u1 contains( const RecordType& other ) const;
+
         std::string name( void ) const override;
 
         std::string description( void ) const override;
