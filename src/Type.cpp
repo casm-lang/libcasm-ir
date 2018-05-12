@@ -1449,8 +1449,9 @@ const std::map< std::string, std::size_t >& RecordType::elements( void ) const
 
 u1 RecordType::contains( const RecordType& other ) const
 {
-    if( identifiers().size() <= other.identifiers().size() )
+    if( identifiers().size() < other.identifiers().size() )
     {
+        // this record type has less identifiers than the other, cannot contain other record type
         return false;
     }
 

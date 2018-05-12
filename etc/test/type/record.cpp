@@ -73,6 +73,57 @@ TEST( libcasm_ir__type_record, make_and_get )
     std::cerr << v->choose().name() << "\n";
 }
 
+TEST( libcasm_ir__type_record, contains )
+{
+    auto i = libstdhl::Memory::make< IntegerType >();
+    auto b = libstdhl::Memory::make< BooleanType >();
+
+    // record type as base type
+    auto t = Types( { i, i, i } );
+    auto v = libstdhl::Memory::make< RecordType >( t, std::vector< std::string >{ "a", "b", "c" } );
+    ASSERT_TRUE( v != nullptr );
+
+    // contains in-order
+    auto w = libstdhl::Memory::make< RecordType >( t, std::vector< std::string >{ "a", "b", "c" } );
+    ASSERT_TRUE( w != nullptr );
+    EXPECT_TRUE( v->contains( *w ) );
+
+    // contains out-of-order
+    w = libstdhl::Memory::make< RecordType >( t, std::vector< std::string >{ "c", "a", "b" } );
+    ASSERT_TRUE( w != nullptr );
+    EXPECT_TRUE( v->contains( *w ) );
+
+    // contains partial
+    t = Types( { i } );
+    w = libstdhl::Memory::make< RecordType >( t, std::vector< std::string >{ "b" } );
+    ASSERT_TRUE( w != nullptr );
+    EXPECT_TRUE( v->contains( *w ) );
+
+    // does not contain this record type
+    t = Types( { i, i } );
+    w = libstdhl::Memory::make< RecordType >( t, std::vector< std::string >{ "d", "e" } );
+    ASSERT_TRUE( w != nullptr );
+    EXPECT_FALSE( v->contains( *w ) );
+
+    // does not contain this record type
+    t = Types( { i, i, i } );
+    w = libstdhl::Memory::make< RecordType >( t, std::vector< std::string >{ "a", "z", "c" } );
+    ASSERT_TRUE( w != nullptr );
+    EXPECT_FALSE( v->contains( *w ) );
+
+    // does not contain this record type
+    t = Types( { i, b, i } );
+    w = libstdhl::Memory::make< RecordType >( t, std::vector< std::string >{ "a", "b", "c" } );
+    ASSERT_TRUE( w != nullptr );
+    EXPECT_FALSE( v->contains( *w ) );
+
+    // does not contain this record type
+    t = Types( { i, i, b } );
+    w = libstdhl::Memory::make< RecordType >( t, std::vector< std::string >{ "f", "b", "h" } );
+    ASSERT_TRUE( w != nullptr );
+    EXPECT_FALSE( v->contains( *w ) );
+}
+
 //
 //  Local variables:
 //  mode: c++
