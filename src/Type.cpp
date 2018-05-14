@@ -1455,7 +1455,7 @@ u1 RecordType::contains( const RecordType& other ) const
         return false;
     }
 
-    for( const auto otherIt : other.elements() )
+    for( const auto& otherIt : other.elements() )
     {
         const auto it = m_elements.find( otherIt.first );
         if( it == m_elements.cend() )
