@@ -723,6 +723,14 @@ namespace libcasm_ir
 
         const std::map< std::string, std::size_t >& elements( void ) const;
 
+        /**
+           Checks if a record type \a other fully or partial contained the current record type.
+           Therefore this function allows to obtain in-order, out-of-order, and partial type
+           containment of record types.
+
+           @param other The record type to compare to.
+           @return A boolean value if the compared record type is contained this record type.
+         */
         u1 contains( const RecordType& other ) const;
 
         std::string name( void ) const override;
