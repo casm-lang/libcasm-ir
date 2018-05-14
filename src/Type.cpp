@@ -1455,16 +1455,16 @@ u1 RecordType::contains( const RecordType& other ) const
         return false;
     }
 
-    for( const auto& otherIt : other.elements() )
+    for( const auto& otherElement : other.elements() )
     {
-        const auto it = m_elements.find( otherIt.first );
+        const auto it = m_elements.find( otherElement.first );
         if( it == m_elements.cend() )
         {
             // element identifier from 'other' is not in this record
             return false;
         }
 
-        if( m_arguments.at( it->second ) != other.arguments()[ otherIt.second ] )
+        if( m_arguments.at( it->second ) != other.arguments()[ otherElement.second ] )
         {
             // element type of 'other' differs from this record element
             return false;
