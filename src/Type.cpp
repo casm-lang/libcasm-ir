@@ -1464,7 +1464,7 @@ u1 RecordType::contains( const RecordType& other ) const
             return false;
         }
 
-        if( m_arguments.at( it->second ) != other.arguments()[ otherElement.second ] )
+        if( m_arguments.at( it->second ) != other.arguments().at( otherElement.second ) )
         {
             // element type of 'other' differs from this record element
             return false;
