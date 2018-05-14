@@ -73,6 +73,72 @@ TEST( libcasm_ir__type_record, make_and_get )
     std::cerr << v->choose().name() << "\n";
 }
 
+TEST( libcasm_ir__type_record, contains )
+{
+    auto i = libstdhl::Memory::make< IntegerType >();
+    auto b = libstdhl::Memory::make< BooleanType >();
+
+    // record type as base type
+    auto types = Types( { i, i, i } );
+    auto names = std::vector< std::string >{ "a", "b", "c" };
+    const auto baseType = RecordType( types, names );
+
+    // contains in-order
+    const auto inOrderType = RecordType( types, names );
+    EXPECT_TRUE( baseType.contains( inOrderType ) );
+
+    // contains out-of-order
+    names = std::vector< std::string >{ "c", "a", "b" };
+    const auto outOfOrderType = RecordType( types, names );
+    EXPECT_TRUE( baseType.contains( outOfOrderType ) );
+
+    // contains partial
+    types = Types( { i } );
+    names = std::vector< std::string >{ "b" };
+    const auto partialType = RecordType( types, names );
+    EXPECT_TRUE( baseType.contains( partialType ) );
+
+    // does not contain this record type, because
+    // record element types do not match size and
+    // record element names do not match
+    types = Types( { i, i } );
+    names = std::vector< std::string >{ "d", "e" };
+    const auto notPartialType = RecordType( types, names );
+    EXPECT_FALSE( baseType.contains( notPartialType ) );
+
+    // does not contain this record type, because
+    // record element types match in kind and size but
+    // record element names do not match
+    types = Types( { i, i, i } );
+    names = std::vector< std::string >{ "a", "z", "c" };
+    const auto differentNamesType = RecordType( types, names );
+    EXPECT_FALSE( baseType.contains( differentNamesType ) );
+
+    // does not contain this record type, because
+    // record element types do not match in kind, but
+    // they match in record element names
+    types = Types( { i, b, i } );
+    names = std::vector< std::string >{ "a", "b", "c" };
+    const auto differentTypesType = RecordType( types, names );
+    EXPECT_FALSE( baseType.contains( differentTypesType ) );
+
+    // does not contain this record type, because
+    // record element types do not match in kind and
+    // they do not match in record element names at all
+    types = Types( { i, i, b } );
+    names = std::vector< std::string >{ "f", "b", "h" };
+    const auto differentTypesAndNamesType = RecordType( types, names );
+    EXPECT_FALSE( baseType.contains( differentTypesAndNamesType ) );
+
+    // does not contain this record type, because
+    // this record type elements are greater then the record
+    // element type/name size from the base record type
+    types = Types( { i, i, i, b } );
+    names = std::vector< std::string >{ "a", "b", "c", "d" };
+    const auto biggerElementSizeType = RecordType( types, names );
+    EXPECT_FALSE( baseType.contains( biggerElementSizeType ) );
+}
+
 //
 //  Local variables:
 //  mode: c++
