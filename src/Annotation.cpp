@@ -87,9 +87,20 @@ Annotation::Annotation(
 
     for( const auto& relation : m_relations )
     {
+        std::vector< std::vector< Type::Kind > > keys = {};
         Type::Kind resultTypeKind = relation.result;
-        m_typeSets.front().emplace( Type::ID{ resultTypeKind } );
-        std::vector< Type::Kind > key = { resultTypeKind };
+        if( resultTypeKind != Type::Kind::_SIZE_ )
+        {
+            m_typeSets.front().emplace( Type::ID{ resultTypeKind } );
+            keys.emplace_back( std::vector< Type::Kind >{ resultTypeKind } );
+        }
+        else
+        {
+            m_typeSets.front().emplace( Type::Kind::INTEGER );
+            keys.emplace_back( std::vector< Type::Kind >{ Type::Kind::INTEGER } );
+            m_typeSets.front().emplace( Type::Kind::BOOLEAN );
+            keys.emplace_back( std::vector< Type::Kind >{ Type::Kind::BOOLEAN } );
+        }
 
         for( std::size_t i = 0; i < relation.argument.size(); i++ )
         {
@@ -99,16 +110,22 @@ Annotation::Annotation(
             }
 
             Type::Kind argumentTypeKind = relation.argument[ i ];
-            assert( argumentTypeKind != libcasm_ir::Type::Kind::RELATION );
+            assert( argumentTypeKind != Type::Kind::RELATION );
             m_typeSets[ i + 1 ].emplace( argumentTypeKind );
 
-            key.emplace_back( argumentTypeKind );
+            for( auto& key : keys )
+            {
+                key.emplace_back( argumentTypeKind );
+            }
         }
 
-        auto result = m_templates.emplace( key, &relation );
-        if( not result.second )
+        for( auto& key : keys )
         {
-            assert( !" annotation relation of return type already exists!" );
+            auto result = m_templates.emplace( key, &relation );
+            if( not result.second )
+            {
+                assert( !" annotation relation of return type already exists!" );
+            }
         }
     }
 
