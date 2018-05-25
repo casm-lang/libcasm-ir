@@ -552,7 +552,7 @@ namespace libcasm_ir
 
         ListConstant( const ListType::Ptr& type );
 
-        List::Ptr value( void ) const;
+        const List* value( void ) const;
 
         std::string toString( void ) const;
 

@@ -1582,48 +1582,11 @@ std::string ListType::description( void ) const
 
 void ListType::foreach( const std::function< void( const Constant& constant ) >& callback ) const
 {
-    const auto& constantList = ptr_list();
-    if( not constantList )
-    {
-        return;
-    }
-
-    for( auto element : constantList->elements() )
-    {
-        if( isa< Constant >( element ) )
-        {
-            const auto& c = static_cast< const Constant& >( *element );
-            callback( c );
-        }
-    }
 }
 
 Constant ListType::choose( void ) const
 {
-    Constant result = VoidConstant();
-
-    const auto& constantList = ptr_list();
-    if( not constantList )
-    {
-        return result;
-    }
-
-    std::size_t index = -1;
-
-    while( true )
-    {
-        index = libstdhl::Random::uniform< std::size_t >( 0, constantList->elements().size() - 1 );
-
-        const auto element = constantList->elements()[ index ];
-
-        if( isa< Constant >( element ) )
-        {
-            result = static_cast< const Constant& >( *element );
-            break;
-        }
-    }
-
-    return result;
+    return VoidConstant();
 }
 
 void ListType::validate( const Constant& constant ) const

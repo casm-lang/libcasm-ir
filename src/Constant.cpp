@@ -41,6 +41,8 @@
 
 #include "Constant.h"
 
+#include <libstdhl/Random>
+
 #include <cmath>
 
 using namespace libcasm_ir;
@@ -647,8 +649,9 @@ Constant Constant::undef( const Type::Ptr& type )
         {
             break;
         }
-        case Type::Kind::_SIZE_:
+        case libcasm_ir::Type::Kind::_SIZE_:
         {
+            assert( !" internal error!" );
             break;
         }
     }
@@ -1434,7 +1437,7 @@ u1 TupleConstant::classof( Value const* obj )
 //
 
 ListConstant::ListConstant( const ListType::Ptr& type, const List::Ptr& value )
-: Constant( type, libstdhl::Type::Data( 0, false ), classid() )
+: Constant( type, libstdhl::Type::Data( (u64)value.get(), false ), classid() )
 {
     assert( type );
     type->setList( value );
@@ -1445,9 +1448,9 @@ ListConstant::ListConstant( const ListType::Ptr& type )
 {
 }
 
-List::Ptr ListConstant::value( void ) const
+const List* ListConstant::value( void ) const
 {
-    return static_cast< const ListType& >( type() ).ptr_list();
+    return (List*)m_data.value();
 }
 
 std::string ListConstant::toString( void ) const
@@ -1463,12 +1466,36 @@ void ListConstant::accept( Visitor& visitor )
 void ListConstant::foreach(
     const std::function< void( const Constant& constant ) >& callback ) const
 {
-    type().foreach( callback );
+    for( auto element : value()->elements() )
+    {
+        if( isa< Constant >( element ) )
+        {
+            const auto& c = static_cast< const Constant& >( *element );
+            callback( c );
+        }
+    }
 }
 
 Constant ListConstant::choose( void ) const
 {
-    return type().choose();
+    assert( value() != nullptr );
+
+    Constant result = VoidConstant();
+    std::size_t index = -1;
+    while( true )
+    {
+        index = libstdhl::Random::uniform< std::size_t >( 0, value()->elements().size() - 1 );
+
+        const auto element = value()->elements()[ index ];
+
+        if( isa< Constant >( element ) )
+        {
+            result = static_cast< const Constant& >( *element );
+            break;
+        }
+    }
+
+    return result;
 }
 
 std::size_t ListConstant::hash( void ) const
