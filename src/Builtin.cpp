@@ -684,6 +684,11 @@ const Annotation SizeBuiltin::annotation(
               Type::Kind::LIST,
           } },
 
+        { Type::Kind::INTEGER,
+          {
+              Type::Kind::RANGE,
+          } },
+
     },
     []( std::vector< Type::Ptr >& types ) {
         if( types.size() != 1 )
@@ -705,7 +710,7 @@ const Annotation SizeBuiltin::annotation(
             const auto argument = type.arguments()[ 0 ];
 
             return type.result().isInteger() and
-                   ( argument->isEnumeration() or argument->isList() );
+                   ( argument->isEnumeration() or argument->isList() or argument->isRange() );
         }
         else
         {
