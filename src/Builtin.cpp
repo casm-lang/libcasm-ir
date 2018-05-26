@@ -676,6 +676,11 @@ const Annotation SizeBuiltin::annotation(
 
         { Type::Kind::INTEGER,
           {
+              Type::Kind::ENUMERATION,
+          } },
+
+        { Type::Kind::INTEGER,
+          {
               Type::Kind::LIST,
           } },
 
@@ -697,7 +702,10 @@ const Annotation SizeBuiltin::annotation(
     []( const RelationType& type ) -> u1 {
         if( type.arguments().size() == 1 )
         {
-            return type.result().isInteger() and type.arguments()[ 0 ]->isList();
+            const auto argument = type.arguments()[ 0 ];
+
+            return type.result().isInteger() and
+                   ( argument->isEnumeration() or argument->isList() );
         }
         else
         {
