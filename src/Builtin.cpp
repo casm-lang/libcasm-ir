@@ -222,6 +222,10 @@ Builtin::Ptr Builtin::create( const Value::ID id, const Type::Ptr& type )
         {
             return libstdhl::Memory::make< AssureBuiltin >( type );
         }
+        case Value::SIZE_BUILTIN:
+        {
+            return libstdhl::Memory::make< SizeBuiltin >( type );
+        }
 
         case Value::OUTPUT_BUILTIN:
         {
@@ -423,7 +427,8 @@ u1 GeneralBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid() or IsSymbolicBuiltin::classof( obj ) or
            AbortBuiltin::classof( obj ) or AssertBuiltin::classof( obj ) or
-           AssureBuiltin::classof( obj ) or OutputBuiltin::classof( obj );
+           AssureBuiltin::classof( obj ) or SizeBuiltin::classof( obj ) or
+           OutputBuiltin::classof( obj );
 }
 
 static const Properties general_builtin_properties = { Property::SIDE_EFFECT_FREE, Property::PURE };
@@ -651,6 +656,56 @@ const Annotation AssureBuiltin::annotation(
     } );
 
 u1 AssureBuiltin::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
+
+//
+// SizeBuiltin
+//
+
+SizeBuiltin::SizeBuiltin( const Type::Ptr& type )
+: GeneralBuiltin( type, classid() )
+{
+}
+
+const Annotation SizeBuiltin::annotation(
+    classid(),
+    general_builtin_properties,
+    Annotation::Relations{
+
+        { Type::Kind::INTEGER,
+          {
+              Type::Kind::LIST,
+          } },
+
+    },
+    []( std::vector< Type::Ptr >& types ) {
+        if( types.size() != 1 )
+        {
+            throw InternalException( "types.size() != 1" );
+        }
+    },
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& values ) -> Type::Ptr {
+        if( types.size() != 1 )
+        {
+            throw InternalException( "types.size() != 1" );
+        }
+        return INTEGER;
+    },
+    []( const RelationType& type ) -> u1 {
+        if( type.arguments().size() == 1 )
+        {
+            return type.result().isInteger() and type.arguments()[ 0 ]->isList();
+        }
+        else
+        {
+            return false;
+        }
+    } );
+
+u1 SizeBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
 }

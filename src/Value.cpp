@@ -523,6 +523,10 @@ std::string Value::token( const Value::ID id )
         {
             return "assure";
         }
+        case Value::SIZE_BUILTIN:
+        {
+            return "size";
+        }
 
         case Value::OUTPUT_BUILTIN:
         {
