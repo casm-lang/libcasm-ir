@@ -746,16 +746,6 @@ const Annotation AtBuiltin::annotation(
               Type::Kind::LIST,
               Type::Kind::INTEGER,
           } },
-        { Type::Kind::_SIZE_,
-          {
-              Type::Kind::TUPLE,
-              Type::Kind::INTEGER,
-          } },
-        { Type::Kind::_SIZE_,
-          {
-              Type::Kind::RECORD,
-              Type::Kind::INTEGER,
-          } },
     },
     []( std::vector< Type::Ptr >& types ) {
         if( types.size() != 2 )
@@ -776,10 +766,7 @@ const Annotation AtBuiltin::annotation(
         }
 
         auto object = types[ 0 ];
-        if( not( object->isList()
-                 // or object->isTuple()
-                 // or object->isRecord()
-                 ) )
+        if( not object->isList() )
         {
             throw InternalException( "invalid object type" );
         }
