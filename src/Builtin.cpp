@@ -752,11 +752,6 @@ const Annotation AtBuiltin::annotation(
         {
             throw InternalException( "types.size() != 2" );
         }
-
-        if( not types[ 0 ] )
-        {
-            types[ 0 ] = BOOLEAN;
-        }
     },
     []( const std::vector< Type::Ptr >& types,
         const std::vector< Value::Ptr >& values ) -> Type::Ptr {
