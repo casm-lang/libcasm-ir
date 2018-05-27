@@ -193,6 +193,25 @@ namespace libcasm_ir
         static const Annotation annotation;
     };
 
+    class AtBuiltin final : public GeneralBuiltin
+    {
+      public:
+        using Ptr = std::shared_ptr< AtBuiltin >;
+
+        AtBuiltin( const Type::Ptr& type );
+
+      public:
+        static inline Value::ID classid( void )
+        {
+            return Value::AT_BUILTIN;
+        }
+
+        static u1 classof( Value const* obj );
+
+      public:
+        static const Annotation annotation;
+    };
+
     class OutputBuiltin : public GeneralBuiltin
     {
       public:

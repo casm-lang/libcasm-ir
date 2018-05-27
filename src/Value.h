@@ -164,6 +164,7 @@ namespace libcasm_ir
             ASSERT_BUILTIN,
             ASSURE_BUILTIN,
             SIZE_BUILTIN,
+            AT_BUILTIN,
 
             OUTPUT_BUILTIN,
             PRINT_BUILTIN,
