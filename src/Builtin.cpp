@@ -226,6 +226,10 @@ Builtin::Ptr Builtin::create( const Value::ID id, const Type::Ptr& type )
         {
             return libstdhl::Memory::make< SizeBuiltin >( type );
         }
+        case Value::AT_BUILTIN:
+        {
+            return libstdhl::Memory::make< AtBuiltin >( type );
+        }
 
         case Value::OUTPUT_BUILTIN:
         {
@@ -428,7 +432,7 @@ u1 GeneralBuiltin::classof( Value const* obj )
     return obj->id() == classid() or IsSymbolicBuiltin::classof( obj ) or
            AbortBuiltin::classof( obj ) or AssertBuiltin::classof( obj ) or
            AssureBuiltin::classof( obj ) or SizeBuiltin::classof( obj ) or
-           OutputBuiltin::classof( obj );
+           AtBuiltin::classof( obj ) or OutputBuiltin::classof( obj );
 }
 
 static const Properties general_builtin_properties = { Property::SIDE_EFFECT_FREE, Property::PURE };
@@ -719,6 +723,78 @@ const Annotation SizeBuiltin::annotation(
     } );
 
 u1 SizeBuiltin::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
+
+//
+// AtBuiltin
+//
+
+AtBuiltin::AtBuiltin( const Type::Ptr& type )
+: GeneralBuiltin( type, classid() )
+{
+}
+
+const Annotation AtBuiltin::annotation(
+    classid(),
+    { Property::SIDE_EFFECT_FREE },
+    Annotation::Relations{
+
+        { Type::Kind::_SIZE_,
+          {
+              Type::Kind::LIST,
+              Type::Kind::INTEGER,
+          } },
+    },
+    []( std::vector< Type::Ptr >& types ) {
+        if( types.size() != 2 )
+        {
+            throw InternalException( "types.size() != 2" );
+        }
+    },
+    []( const std::vector< Type::Ptr >& types,
+        const std::vector< Value::Ptr >& values ) -> Type::Ptr {
+        if( types.size() != 2 )
+        {
+            throw InternalException( "types.size() != 2" );
+        }
+
+        auto object = types[ 0 ];
+        if( not object->isList() )
+        {
+            throw InternalException( "invalid object type" );
+        }
+
+        return object->ptr_result();
+    },
+    []( const RelationType& type ) -> u1 {
+        if( type.arguments().size() != 2 )
+        {
+            throw InternalException( "type.arguments().size() != 2" );
+        }
+
+        const auto& object = type.arguments().at( 0 );
+        const auto& index = type.arguments().at( 1 );
+
+        if( not index->isInteger() )
+        {
+            return false;
+        }
+
+        if( object->isList() )
+        {
+            // List< T > * Integer -> T
+            if( object->result() == type.result() )
+            {
+                return true;
+            }
+        }
+
+        return false;
+    } );
+
+u1 AtBuiltin::classof( Value const* obj )
 {
     return obj->id() == classid();
 }

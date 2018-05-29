@@ -527,6 +527,10 @@ std::string Value::token( const Value::ID id )
         {
             return "size";
         }
+        case Value::AT_BUILTIN:
+        {
+            return "at";
+        }
 
         case Value::OUTPUT_BUILTIN:
         {

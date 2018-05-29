@@ -436,6 +436,16 @@ TEST( libcasm_ir_Value, id_to_token_string )
                 EXPECT_STREQ( Value::token( id ).c_str(), "assure" );
                 break;
             }
+            case Value::SIZE_BUILTIN:
+            {
+                EXPECT_STREQ( Value::token( id ).c_str(), "size" );
+                break;
+            }
+            case Value::AT_BUILTIN:
+            {
+                EXPECT_STREQ( Value::token( id ).c_str(), "at" );
+                break;
+            }
 
             case Value::OUTPUT_BUILTIN:
             {
