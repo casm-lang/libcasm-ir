@@ -1325,20 +1325,57 @@ Constant RangeType::choose( void ) const
 
 void RangeType::validate( const Constant& constant ) const
 {
-    assert( m_range );
-
     if( type().isInteger() )
     {
-        assert( isa< IntegerConstant >( constant ) );
-
-        const auto& a = static_cast< IntegerConstant& >( *range().from() );
-        const auto& b = static_cast< IntegerConstant& >( *range().to() );
-        const auto& x = static_cast< const IntegerConstant& >( constant );
-
-        if( ( a.value() > x.value() ) or ( x.value() > b.value() ) )
+        if( isa< IntegerConstant >( constant ) )
         {
-            throw ValidationException(
-                "value '" + x.name() + "' is out of type range " + this->description() );
+            if( not m_range )
+            {
+                throw ValidationException(
+                    "value '" + constant.name() + "' cannot be validated against type range " +
+                    this->description() );
+            }
+
+            const auto& a = static_cast< IntegerConstant& >( *range().from() );
+            const auto& b = static_cast< IntegerConstant& >( *range().to() );
+
+            const auto& x = static_cast< const IntegerConstant& >( constant );
+
+            if( a.value() > x.value() or x.value() > b.value() )
+            {
+                throw ValidationException(
+                    "value '" + constant.name() + "' is out of type range " + this->description() );
+            }
+        }
+        else
+        {
+            assert( isa< RangeConstant >( constant ) );
+
+            if( not constant.type().result().isInteger() )
+            {
+                throw ValidationException(
+                    "range '" + constant.name() + "' does not match type range " +
+                    this->description() );
+            }
+
+            if( not m_range )
+            {
+                return;
+            }
+
+            const auto& a = static_cast< IntegerConstant& >( *range().from() );
+            const auto& b = static_cast< IntegerConstant& >( *range().to() );
+            const auto& x = static_cast< const RangeConstant& >( constant );
+            const auto& t = static_cast< const RangeType& >( x.type() );
+            const auto& xa = static_cast< IntegerConstant& >( *t.range().from() );
+            const auto& xb = static_cast< IntegerConstant& >( *t.range().to() );
+
+            if( a.value() > xa.value() or xb.value() > b.value() )
+            {
+                throw ValidationException(
+                    "range '" + constant.name() + "' is not included in type range " +
+                    this->description() );
+            }
         }
     }
     else
