@@ -723,40 +723,6 @@ namespace libcasm_ir
 
         const std::map< std::string, std::size_t >& elements( void ) const;
 
-        std::string name( void ) const override;
-
-        std::string description( void ) const override;
-
-        void foreach(
-            const std::function< void( const Constant& constant ) >& callback ) const override;
-
-        Constant choose( void ) const override;
-
-        void validate( const Constant& constant ) const override;
-
-        std::size_t hash( void ) const override;
-
-        static inline Type::Kind classid( void )
-        {
-            return Type::Kind::RECORD;
-        }
-
-      private:
-        const std::vector< std::string > m_identifiers;
-        std::map< std::string, std::size_t > m_elements;
-    };
-
-    class RecordType final : public ComposedType
-    {
-      public:
-        using Ptr = std::shared_ptr< RecordType >;
-
-        explicit RecordType( const Types& types, const std::vector< std::string >& identifiers );
-
-        const std::vector< std::string >& identifiers( void ) const;
-
-        const std::map< std::string, std::size_t >& elements( void ) const;
-
         /**
            Checks if a record type \a other fully or partial contained the current record type.
            Therefore this function allows to obtain in-order, out-of-order, and partial type

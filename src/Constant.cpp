@@ -1406,22 +1406,6 @@ TupleConstant::TupleConstant( const RecordType::Ptr& type )
     assert( type );
 }
 
-TupleConstant::TupleConstant(
-    const RecordType::Ptr& type, const std::unordered_map< std::string, Constant >& elements )
-: Constant(
-      type,
-      libstdhl::Type::Data( ( u64 )( std::make_shared< Tuple >( type, elements ) ).get(), false ),
-      classid() )
-{
-    assert( type );
-}
-
-TupleConstant::TupleConstant( const RecordType::Ptr& type )
-: Constant( type, classid() )
-{
-    assert( type );
-}
-
 const Tuple* TupleConstant::value( void ) const
 {
     return (Tuple*)m_data.value();

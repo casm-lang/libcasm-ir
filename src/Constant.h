@@ -523,12 +523,6 @@ namespace libcasm_ir
 
         TupleConstant( const RecordType::Ptr& type );
 
-        TupleConstant(
-            const RecordType::Ptr& type,
-            const std::unordered_map< std::string, Constant >& elements );
-
-        TupleConstant( const RecordType::Ptr& type );
-
         const Tuple* value( void ) const;
 
         std::string toString( void ) const;
