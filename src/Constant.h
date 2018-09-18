@@ -53,13 +53,13 @@
 #include <libcasm-ir/Rule>
 #include <libcasm-ir/Tuple>
 
-#include <libstdhl/type/Boolean>
-#include <libstdhl/type/Data>
-#include <libstdhl/type/Decimal>
-#include <libstdhl/type/Integer>
-#include <libstdhl/type/Natural>
-#include <libstdhl/type/Rational>
-#include <libstdhl/type/String>
+#include <libstdhl/data/type/Boolean>
+#include <libstdhl/data/type/Data>
+#include <libstdhl/data/type/Decimal>
+#include <libstdhl/data/type/Integer>
+#include <libstdhl/data/type/Natural>
+#include <libstdhl/data/type/Rational>
+#include <libstdhl/data/type/String>
 
 #include <cassert>
 
