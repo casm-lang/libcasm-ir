@@ -615,6 +615,19 @@ info-build: info
 	$(eval F=$(subst -D,\n       -D,$(ENV_CMAKE_FLAGS)))
 	@printf '   F = $(F)\n'
 
+info-repo:
+	@echo `pwd`
+	@printf "%-20s %-10s %-25s %s\n" \
+		"submodule:     repo:" \
+		`git rev-parse --short HEAD` \
+		`git describe --tags --always --dirty` \
+		`git branch | grep -e "\* " | sed "s/* //g"`
+	@git submodule foreach \
+	'printf "%-20s %-10s %-25s %s\n" \
+		$$path \
+		`git rev-parse --short HEAD` \
+		`git describe --tags --always --dirty` \
+		`git branch | grep -e "\* " | sed "s/* //g"`' | sed '/Entering/d'
 
 info-variables:
 	$(foreach v, $(.VARIABLES), $(info $(v) = $($(v))))
@@ -724,7 +737,7 @@ ci-fetch: ci-info
 	@echo ""
 	@git submodule foreach \
 	'git branch --remotes | grep $(ENV_CI_BRANCH) && git checkout $(ENV_CI_BRANCH) || git checkout master; echo ""'
-	@git submodule
+	@make --no-print-directory info-repo
 
 ci-build: ci-check
 	@make --no-print-directory C=$(C) $(B)
