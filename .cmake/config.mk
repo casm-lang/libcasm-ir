@@ -424,25 +424,17 @@ ifneq (,$(findstring Makefile,$(ENV_GEN)))
 endif
 
 
-ifeq ("$(wildcard $(OBJ)/CMakeCache.txt)","")
-$(OBJ)/Makefile: $(OBJ) info-build
-	@cd $(OBJ) && cmake $(ENV_CMAKE_FLAGS) ..
-  ifeq ($(ENV_CC),msvc)
-	@printf "rebuild_cache:\n" > $@
-  endif
-else
-$(OBJ)/Makefile: $(OBJ)
-	@$(MAKE) $(MFLAGS) --no-print-directory -C $(OBJ) rebuild_cache
-endif
-
-
 sync: debug-sync
 
 sync-all: $(TYPES:%=%-sync)
 
+ifeq ("$(wildcard $(OBJ)/CMakeCache.txt)","")
+$(SYNCS):%-sync: $(OBJ) info-build
+	@cd $(OBJ) && cmake $(ENV_CMAKE_FLAGS) ..
+else
 $(SYNCS):%-sync: $(OBJ)
-	@$(MAKE) --no-print-directory TYPE=$(patsubst %-sync,%,$@) $(OBJ)/Makefile
-
+	@cmake --build $(OBJ) --config $(TYPE) --target rebuild_cache -- $(ENV_BUILD_FLAGS)
+endif
 
 $(TYPES):%: %-sync
 	@cmake --build $(OBJ) --config $(patsubst %-sync,%,$@) --target $(TARGET) -- $(ENV_BUILD_FLAGS)
