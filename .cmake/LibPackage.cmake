@@ -424,7 +424,12 @@ function( package_git_submodule PREFIX VERSION MODE TMP ) # ${ARGN} search paths
     string( STRIP ${PATH} PREFIX_PATH )
     set( ${PREFIX}_REPO_DIR ${PROJECT_SOURCE_DIR}/${PREFIX_PATH} )
     set( ${PREFIX}_MAKE_DIR ${${PREFIX}_REPO_DIR}/${TMP} )
-    set( ${PREFIX}_ROOT_DIR ${${PREFIX}_MAKE_DIR}/install )
+
+    if( "${CMAKE_INSTALL_PREFIX}" STREQUAL "" )
+      set( ${PREFIX}_ROOT_DIR ${${PREFIX}_MAKE_DIR}/install )
+    else()
+      set( ${PREFIX}_ROOT_DIR ${CMAKE_INSTALL_PREFIX} )
+    endif()
 
     if( EXISTS ${${PREFIX}_REPO_DIR} )
       if( NOT EXISTS ${${PREFIX}_REPO_DIR}/.git )

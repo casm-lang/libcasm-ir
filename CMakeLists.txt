@@ -70,8 +70,6 @@ add_subdirectory( etc
   )
 
 add_custom_target( ${PROJECT}-sync
-  COMMAND
-    make sync > ${PROJECT_BINARY_DIR}/CMakeSync 2>&1
   DEPENDS
     libgtest
     libhayai
