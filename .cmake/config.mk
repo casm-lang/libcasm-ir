@@ -360,6 +360,7 @@ SYNCS = $(TYPES:%=%-sync)
 TESTS = $(TYPES:%=%-test)
 BENCH = $(TYPES:%=%-benchmark)
 INSTA = $(TYPES:%=%-install)
+DEPS  = $(TYPES:%=%-deps)
 ANALY = $(TYPES:%=%-analyze)
 ALL   = $(TYPES:%=%-all)
 
@@ -485,6 +486,13 @@ install-all: $(TYPES:%=%-install)
 
 $(INSTA):%-install: %
 	@cmake --build $(OBJ) --config $(patsubst %-install,%,$@) --target install -- $(ENV_BUILD_FLAGS)
+
+
+
+deps: debug-deps
+
+$(DEPS):%-deps: %-sync
+	@cmake --build $(OBJ) --config $(patsubst %-deps,%,$@) --target $(TARGET)-deps -- $(ENV_BUILD_FLAGS)
 
 
 format: $(FORMAT:%=%-format-cpp)
@@ -735,6 +743,7 @@ ci-fetch: ci-info
 	@git submodule foreach \
 	'git branch --remotes | grep $(ENV_CI_BRANCH) && git checkout $(ENV_CI_BRANCH) || git checkout master; echo ""'
 	@make --no-print-directory info-repo
+	@make --no-print-directory C=$(C) $(B)-deps
 
 ci-build: ci-check
 	@make --no-print-directory C=$(C) $(B)

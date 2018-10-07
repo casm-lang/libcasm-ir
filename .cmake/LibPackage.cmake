@@ -471,9 +471,10 @@ function( package_git_submodule PREFIX VERSION MODE TMP ) # ${ARGN} search paths
       string( CONCAT CMAKE_CXX_FLAGS_RELEASE ${CMAKE_CXX_FLAGS} " " ${CMAKE_CXX_FLAGS_RELEASE} )
 
       Externalproject_Add( ${PREFIX}
-	SOURCE_DIR      ${${PREFIX}_REPO_DIR}
-	BINARY_DIR      ${${PREFIX}_MAKE_DIR}
-	INSTALL_DIR     ${${PREFIX}_ROOT_DIR}
+	SOURCE_DIR       ${${PREFIX}_REPO_DIR}
+	BINARY_DIR       ${${PREFIX}_MAKE_DIR}
+	INSTALL_DIR      ${${PREFIX}_ROOT_DIR}
+	EXCLUDE_FROM_ALL TRUE
 	CMAKE_ARGS
 	--no-warn-unused-cli
 	-G ${CMAKE_GENERATOR}
@@ -482,14 +483,10 @@ function( package_git_submodule PREFIX VERSION MODE TMP ) # ${ARGN} search paths
 	-DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
 	-DCMAKE_C_STANDARD=${CMAKE_C_STANDARD}
 	-DCMAKE_C_EXTENSIONS=${CMAKE_C_EXTENSIONS}
-#      -DCMAKE_C_FLAGS_INIT:STRING=${CMAKE_C_FLAGS_INIT}
 	-DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
 	-DCMAKE_C_FLAGS_DEBUG:STRING=${CMAKE_C_FLAGS_DEBUG}
 	-DCMAKE_C_FLAGS_RELEASE:STRING=${CMAKE_C_FLAGS_RELEASE}
 	-DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
-#      -DCMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}
-#      -DCMAKE_CXX_EXTENSIONS=${CMAKE_CXX_EXTENSIONS}
-#      -DCMAKE_CXX_FLAGS_INIT:STRING=${CMAKE_CXX_FLAGS_INIT}
 	-DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
 	-DCMAKE_CXX_FLAGS_DEBUG:STRING=${CMAKE_CXX_FLAGS_DEBUG}
 	-DCMAKE_CXX_FLAGS_RELEASE:STRING=${CMAKE_CXX_FLAGS_RELEASE}
@@ -514,58 +511,6 @@ function( package_git_submodule PREFIX VERSION MODE TMP ) # ${ARGN} search paths
 	QUIET
 	)
 
-      set( MAKE_DIFF_PATH
-	${${PREFIX}_MAKE_DIR}/CMakeLibPackageGitDiff
-	)
-
-      ExternalProject_Add_Step(${PREFIX} git-diff
-      	COMMAND             git diff > ${MAKE_DIFF_PATH} && git diff --staged >> ${MAKE_DIFF_PATH}
-      	COMMENT             "[Syncing] '${PREFIX}'"
-      	DEPENDEES           build
-	WORKING_DIRECTORY   ${${PREFIX}_REPO_DIR}
-	ALWAYS              1
-      	)
-
-      set( MAKE_DIFF "." )
-      if( EXISTS ${MAKE_DIFF_PATH} )
-	file( READ ${MAKE_DIFF_PATH} MAKE_DIFF_FILE )
-	if( NOT "${MAKE_DIFF_FILE}" STREQUAL "" )
-	  set( MAKE_DIFF "${MAKE_DIFF_FILE}" )
-	endif()
-      else()
-      endif()
-      string( SHA512 MAKE_DIFF_HASH "${MAKE_DIFF}" )
-
-      execute_process(
-	COMMAND             git diff
-	WORKING_DIRECTORY   ${${PREFIX}_REPO_DIR}
-	OUTPUT_VARIABLE     REPO_DIFF_CURDIR
-	)
-      execute_process(
-	COMMAND             git diff --staged
-	WORKING_DIRECTORY   ${${PREFIX}_REPO_DIR}
-	OUTPUT_VARIABLE     REPO_DIFF_STAGED
-	)
-
-      set( REPO_DIFF "${REPO_DIFF_CURDIR}${REPO_DIFF_STAGED}" )
-      if( "${REPO_DIFF}" STREQUAL "" )
-	set( REPO_DIFF "." )
-      endif()
-      string( SHA512 REPO_DIFF_HASH "${REPO_DIFF}" )
-
-      if( NOT "${MAKE_DIFF_HASH}" STREQUAL "${REPO_DIFF_HASH}" )
-	message( "         found changes!" )
-
-	ExternalProject_Add_Step(${PREFIX} force-build
-	  COMMAND             make ${CMAKE_BUILD_TYPE}
-      	  COMMENT             "Forcing build step for '${PREFIX}'"
-      	  DEPENDEES           configure
-	  DEPENDERS           build
-	  WORKING_DIRECTORY   ${${PREFIX}_REPO_DIR}
-	  ALWAYS              1
-      	  )
-      endif()
-
       if( "${${PREFIX_LIBRARY}}" STREQUAL "${PREFIX_LIBRARY}-NOTFOUND" OR
       	  "${${PREFIX_INCLUDE}}" STREQUAL "${PREFIX_INCLUDE}-NOTFOUND"
       	  )
@@ -577,10 +522,6 @@ function( package_git_submodule PREFIX VERSION MODE TMP ) # ${ARGN} search paths
       	set( ${PREFIX_NAME}_FOUND TRUE )
       	set( ${PREFIX_NAME}_FOUND TRUE PARENT_SCOPE )
       endif()
-
-      # message( "         ${PREFIX_INCLUDE} = ${${PREFIX_INCLUDE}}" )
-      # message( "         ${PREFIX_LIBRARY}     = ${${PREFIX_LIBRARY}}" )
-      # message( "         ${PREFIX_NAME}_FOUND       = ${${PREFIX_NAME}_FOUND}" )
 
       set( CMAKE_MODULE_PATH
 	${CMAKE_MODULE_PATH}
