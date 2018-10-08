@@ -374,7 +374,7 @@ function( package_git NAME )
     )
   set( GIT_NOTICE  ${GIT_NOTICE} PARENT_SCOPE )
 
-  message( "-- ${NAME}: ${GIT_REVTAG} at ${GIT_COMMIT} of ${GIT_BRANCH}" )
+  message( "-- Found ${NAME} [${GIT_REVTAG}] @ ${GIT_BRANCH} # ${GIT_COMMIT}" )
 endfunction()
 
 
@@ -400,9 +400,13 @@ include( ExternalProject )
 function( package_git_submodule PREFIX VERSION MODE TMP ) # ${ARGN} search paths
   string( TOUPPER ${PREFIX} PREFIX_NAME )
   string( REPLACE "-" "_"   PREFIX_NAME ${PREFIX_NAME} )
-
   # message( "-- ${PREFIX} Module @ ${VERSION} ${MODE} '${TMP}' [${ARGN}] [${PREFIX_NAME}]" )
-  
+
+  set( ${PROJECT}_DEPS
+    ""
+    PARENT_SCOPE
+    )
+
   set( PREFIX_LIBRARY ${PREFIX_NAME}_LIBRARY )
   set( PREFIX_INCLUDE ${PREFIX_NAME}_INCLUDE_DIR )
 
@@ -444,6 +448,11 @@ function( package_git_submodule PREFIX VERSION MODE TMP ) # ${ARGN} search paths
 	)
 
       message( "-- Found ${PREFIX} [${PREFIX_GIT_REVTAG}] @ '${${PREFIX}_REPO_DIR}'" )
+
+      set( ${PROJECT}_DEPS
+	${${PROJECT}_DEPS} ${PREFIX}
+	PARENT_SCOPE
+	)
 
       if( EXISTS ${${PREFIX}_REPO_DIR}/.cmake )
 	set( CMAKE_MODULE_PATH
@@ -512,15 +521,15 @@ function( package_git_submodule PREFIX VERSION MODE TMP ) # ${ARGN} search paths
 	)
 
       if( "${${PREFIX_LIBRARY}}" STREQUAL "${PREFIX_LIBRARY}-NOTFOUND" OR
-      	  "${${PREFIX_INCLUDE}}" STREQUAL "${PREFIX_INCLUDE}-NOTFOUND"
-      	  )
-       	set( ${PREFIX_INCLUDE} ${PROJECT_SOURCE_DIR} )
-      	set( ${PREFIX_INCLUDE} ${PROJECT_SOURCE_DIR} PARENT_SCOPE )
-      	set( ${PREFIX_NAME}_FOUND FALSE )
-      	set( ${PREFIX_NAME}_FOUND FALSE PARENT_SCOPE )
+	  "${${PREFIX_INCLUDE}}" STREQUAL "${PREFIX_INCLUDE}-NOTFOUND"
+	  )
+	set( ${PREFIX_INCLUDE} ${PROJECT_SOURCE_DIR} )
+	set( ${PREFIX_INCLUDE} ${PROJECT_SOURCE_DIR} PARENT_SCOPE )
+	set( ${PREFIX_NAME}_FOUND FALSE )
+	set( ${PREFIX_NAME}_FOUND FALSE PARENT_SCOPE )
       else()
-      	set( ${PREFIX_NAME}_FOUND TRUE )
-      	set( ${PREFIX_NAME}_FOUND TRUE PARENT_SCOPE )
+	set( ${PREFIX_NAME}_FOUND TRUE )
+	set( ${PREFIX_NAME}_FOUND TRUE PARENT_SCOPE )
       endif()
 
       set( CMAKE_MODULE_PATH
@@ -550,4 +559,41 @@ function( package_git_submodule PREFIX VERSION MODE TMP ) # ${ARGN} search paths
     ${${PREFIX_NAME}_FOUND}
     PARENT_SCOPE
     )
+endfunction()
+
+#
+# package_git_deps
+#
+
+function( package_git_deps ) # ${ARGN} for build order
+  add_custom_target( ${PROJECT}-deps )
+
+  foreach( DEPENDENCY ${${PROJECT}_DEPS} )
+    add_dependencies( ${PROJECT}-deps ${DEPENDENCY} )
+  endforeach()
+
+  foreach( DEPENDENCY ${ARGN} )
+
+    string( REPLACE ">" ";" DEPS ${DEPENDENCY} )
+    list( LENGTH DEPS DEPS_LEN )
+
+    if( ${DEPS_LEN} EQUAL 2 )
+      list( GET DEPS 0 FROM )
+      list( GET DEPS 1 TO )
+      add_dependencies( ${TO} ${FROM} )
+      continue()
+    endif()
+
+    string( REPLACE "<" ";" DEPS ${DEPENDENCY} )
+    list( LENGTH DEPS DEPS_LEN )
+
+    if( ${DEPS_LEN} EQUAL 2 )
+      list( GET DEPS 1 FROM )
+      list( GET DEPS 0 TO )
+      add_dependencies( ${TO} ${FROM} )
+      continue()
+    endif()
+
+    message( FATAL_ERROR "unsupported dependency '${DEPENDENCY}' found" )
+  endforeach()
 endfunction()
