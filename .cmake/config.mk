@@ -434,7 +434,7 @@ $(SYNCS):%-sync: $(OBJ) info-build
 	@cd $(OBJ) && cmake $(ENV_CMAKE_FLAGS) ..
 else
 $(SYNCS):%-sync: $(OBJ)
-	@echo "-- CMake run target"
+	@cmake --build $(OBJ) --config $(patsubst %-sync,%,$@) --target rebuild_cache -- $(ENV_BUILD_FLAGS)
 endif
 
 $(TYPES):%: %-sync

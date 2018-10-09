@@ -484,6 +484,8 @@ function( package_git_submodule PREFIX VERSION MODE TMP ) # ${ARGN} search paths
 	BINARY_DIR       ${${PREFIX}_MAKE_DIR}
 	INSTALL_DIR      ${${PREFIX}_ROOT_DIR}
 	EXCLUDE_FROM_ALL TRUE
+	BUILD_ALWAYS     1
+	LOG_INSTALL      1
 	CMAKE_ARGS
 	--no-warn-unused-cli
 	-G ${CMAKE_GENERATOR}
