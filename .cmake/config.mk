@@ -434,7 +434,7 @@ $(SYNCS):%-sync: $(OBJ) info-build
 	@cd $(OBJ) && cmake $(ENV_CMAKE_FLAGS) ..
 else
 $(SYNCS):%-sync: $(OBJ)
-	@cmake --build $(OBJ) --config $(TYPE) --target rebuild_cache -- $(ENV_BUILD_FLAGS)
+	@echo "-- CMake run target"
 endif
 
 $(TYPES):%: %-sync
@@ -621,14 +621,14 @@ info-build: info
 	@printf '   F = $(F)\n'
 
 info-repo:
-	@echo `pwd`
-	@printf "%-20s %-10s %-25s %s\n" \
-		"submodule:     repo:" \
+	@printf "%s %-20s %-10s %-25s %s\n" \
+		"--" \
+		"Repository" \
 		`git rev-parse --short HEAD` \
 		`git describe --tags --always --dirty` \
 		`git branch | grep -e "\* " | sed "s/* //g"`
 	@git submodule foreach \
-	'printf "%-20s %-10s %-25s %s\n" \
+	'printf "   %-20s %-10s %-25s %s\n" \
 		$$path \
 		`git rev-parse --short HEAD` \
 		`git describe --tags --always --dirty` \
@@ -743,6 +743,8 @@ ci-fetch: ci-info
 	@git submodule foreach \
 	'git branch --remotes | grep $(ENV_CI_BRANCH) && git checkout $(ENV_CI_BRANCH) || git checkout master; echo ""'
 	@make --no-print-directory info-repo
+
+ci-deps: ci-check
 	@make --no-print-directory C=$(C) $(B)-deps
 
 ci-build: ci-check
