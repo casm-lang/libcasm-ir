@@ -479,13 +479,48 @@ function( package_git_submodule PREFIX VERSION MODE TMP ) # ${ARGN} search paths
       string( CONCAT CMAKE_CXX_FLAGS_DEBUG   ${CMAKE_CXX_FLAGS} " " ${CMAKE_CXX_FLAGS_DEBUG}   )
       string( CONCAT CMAKE_CXX_FLAGS_RELEASE ${CMAKE_CXX_FLAGS} " " ${CMAKE_CXX_FLAGS_RELEASE} )
 
+      set( MAKE_DIFF_PATH ${${PREFIX}_MAKE_DIR}/CMakeLibPackage.diff )
+
+      set( MAKE_DIFF "." )
+      if( EXISTS ${MAKE_DIFF_PATH} )
+       file( READ ${MAKE_DIFF_PATH} MAKE_DIFF_FILE )
+       if( NOT "${MAKE_DIFF_FILE}" STREQUAL "" )
+         set( MAKE_DIFF "${MAKE_DIFF_FILE}" )
+       endif()
+      else()
+      endif()
+
+      execute_process(
+       COMMAND             git diff
+       WORKING_DIRECTORY   ${${PREFIX}_REPO_DIR}
+       OUTPUT_VARIABLE     REPO_DIFF_CURDIR
+       )
+      execute_process(
+       COMMAND             git diff --staged
+       WORKING_DIRECTORY   ${${PREFIX}_REPO_DIR}
+       OUTPUT_VARIABLE     REPO_DIFF_STAGED
+       )
+
+      set( REPO_DIFF "${REPO_DIFF_CURDIR}${REPO_DIFF_STAGED}" )
+      if( "${REPO_DIFF}" STREQUAL "" )
+       set( REPO_DIFF "." )
+      endif()
+      file( WRITE ${MAKE_DIFF_PATH} ${REPO_DIFF} )
+
+      string( SHA512 MAKE_DIFF_HASH "${MAKE_DIFF}" )
+      string( SHA512 REPO_DIFF_HASH "${REPO_DIFF}" )
+
+      set( ${PREFIX}_ALWAYS_BUILD 0 )
+      if( NOT "${MAKE_DIFF_HASH}" STREQUAL "${REPO_DIFF_HASH}" )
+	set( ${PREFIX}_ALWAYS_BUILD 1 )
+      endif()
+
       Externalproject_Add( ${PREFIX}
 	SOURCE_DIR       ${${PREFIX}_REPO_DIR}
 	BINARY_DIR       ${${PREFIX}_MAKE_DIR}
 	INSTALL_DIR      ${${PREFIX}_ROOT_DIR}
+	BUILD_ALWAYS     ${${PREFIX}_ALWAYS_BUILD}
 	EXCLUDE_FROM_ALL TRUE
-	BUILD_ALWAYS     1
-	LOG_INSTALL      1
 	CMAKE_ARGS
 	--no-warn-unused-cli
 	-G ${CMAKE_GENERATOR}
