@@ -86,10 +86,10 @@ namespace libcasm_ir
         /**
            Represents the various types recognized by the IR type system
         */
-        enum class Kind : u8
+        enum class Kind
         {
             // synthetic
-            VOID,
+            VOID = 0,
             LABEL,
             LOCATION,
             RELATION,
@@ -121,9 +121,9 @@ namespace libcasm_ir
             _SIZE_,
         };
 
-        static_assert( (std::size_t)Kind::_SIZE_ == 19, "length of 'Type::Kind' shall be 19" );
-
-        static_assert( sizeof( Kind ) == 1, "size of 'Type::Kind' shall be 8 bits (1 byte)" );
+        static_assert(
+            (std::size_t)Kind::_SIZE_ < 256,
+            "length of 'Type::Kind' shall be smaller 256 to fit in 1 byte (8 bit)" );
 
         /**
            Represents a unique number of a derived flavor of a Type::Kind
@@ -184,11 +184,6 @@ namespace libcasm_ir
             u64 m_flavor : 56;
             Kind m_kind : 8;
         };
-
-        static_assert(
-            sizeof( ID ) == ( sizeof( Kind ) + 7 ),
-            "size of 'Type::ID' shall be 64 bits (8 bytes, 1 byte (kind) + 7 "
-            "bytes (flavor) )" );
 
         Type( Kind kind );
 

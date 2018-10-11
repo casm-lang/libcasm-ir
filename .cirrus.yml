@@ -39,7 +39,88 @@
 #   statement from your version.
 #
 
-/.attic
-/.idea
-/.vscode
-/obj
+linux_task:
+  container:
+    image: casmlang/container.linux
+    memory: 2
+    cpu: 1
+  matrix:
+    env:
+      B: "coverage"
+      C: "clang"
+    env:
+      B: "coverage"
+      C: "gcc"
+      CODECOV_TOKEN: ENCRYPTED[TODO]
+  fetch_script:
+    - make ci-fetch
+  deps_script:
+    - make ci-deps
+  build_script:
+    - make ci-build
+  test_script:
+    - make ci-test
+  benchmark_script:
+    - make ci-benchmark
+  coverage_script:
+    - |
+      if [ "$C" == "gcc" ]; then
+        wget https://codecov.io/bash;
+        sh bash -f "!*#usr#include*" 2> /dev/null;
+      fi
+
+darwin_task:
+  osx_instance:
+    image: high-sierra-xcode-9.4.1
+  matrix:
+    env:
+      B: "debug"
+      C: "clang"
+    env:
+      B: "debug"
+      C: "gcc"
+  setup_script:
+    - brew install cmake
+    - if [ "$C" == "gcc" ]; then brew install gcc; fi
+    - brew install flex  && brew link --force flex
+    - brew install bison && brew link --force bison
+  fetch_script:
+    - make ci-fetch
+  deps_script:
+    - make ci-deps
+  build_script:
+    - make ci-build
+  test_script:
+    - make ci-test
+  benchmark_script:
+    - make ci-benchmark
+
+windows_task:
+  windows_container:
+    image: casmlang/container.windows
+    os_version: 2016
+    cpu: 1
+  matrix:
+    env:
+      V: mingw64
+      B: "debug"
+      C: "clang"
+    env:
+      V: mingw64
+      B: "debug"
+      C: "gcc"
+  fetch_script:
+    - set PATH=C:\msys2\%V%\bin;%PATH%
+    - make ci-fetch
+  deps_script:
+    - set PATH=C:\msys2\%V%\bin;%PATH%
+    - make ci-deps
+  build_script:
+    - set PATH=C:\msys2\%V%\bin;%PATH%
+    - make ci-build
+  test_script:
+    - set PATH=C:\msys2\%V%\bin;%PATH%
+    - make ci-test
+  benchmark_script:
+    - set PATH=C:\msys2\%V%\bin;%PATH%
+    - make ci-benchmark
