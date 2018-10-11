@@ -40,7 +40,7 @@
 #
 
 # LIBCASM_IR_FOUND        - system has found the package
-# LIBCASM_IR_INCLUDE_DIRS - the package include directories
+# LIBCASM_IR_INCLUDE_DIR  - the package include directory
 # LIBCASM_IR_LIBRARY      - the package library
 
 include( LibPackage )
@@ -62,11 +62,7 @@ set( LIBCASM_IR_PROCESS_LIBS     LIBCASM_IR_LIBRARY )
 
 libfind_process( LIBCASM_IR )
 
-if( EXISTS "${LIBCASM_IR_INCLUDE_DIR}" AND
-    EXISTS "${LIBCASM_IR_LIBRARY}" AND
-    ${LIBCASM_IR_INCLUDE_DIR} AND
-    ${LIBCASM_IR_LIBRARY}
-    )
+if( EXISTS "${LIBCASM_IR_LIBRARY}" AND ${LIBCASM_IR_LIBRARY} )
   set( LIBCASM_IR_FOUND TRUE PARENT_SCOPE )
 else()
   set( LIBCASM_IR_FOUND FALSE PARENT_SCOPE )
