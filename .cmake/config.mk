@@ -364,6 +364,7 @@ DEPS  = $(TYPES:%=%-deps)
 ANALY = $(TYPES:%=%-analyze)
 ALL   = $(TYPES:%=%-all)
 
+
 ENV_CMAKE_FLAGS  = -G$(ENV_GEN)
 ENV_CMAKE_FLAGS += -DCMAKE_BUILD_TYPE=$(TYPE)
 
@@ -429,9 +430,12 @@ sync: debug-sync
 
 sync-all: $(TYPES:%=%-sync)
 
-ifeq ("$(wildcard $(OBJ)/CMakeCache.txt)","")
-$(SYNCS):%-sync: $(OBJ) info-build
+$(OBJ)/CMakeCache.txt: $(OBJ) info-build
 	@cd $(OBJ) && cmake $(ENV_CMAKE_FLAGS) ..
+
+ifeq ("$(wildcard $(OBJ)/CMakeCache.txt)","")
+$(SYNCS):%-sync: $(OBJ)
+	@$(MAKE) --no-print-directory TYPE=$(patsubst %-sync,%,$@) $(OBJ)/CMakeCache.txt
 else
 $(SYNCS):%-sync: $(OBJ)
 	@cmake --build $(OBJ) --config $(patsubst %-sync,%,$@) --target rebuild_cache -- $(ENV_BUILD_FLAGS)
@@ -439,6 +443,7 @@ endif
 
 $(TYPES):%: %-sync
 	@cmake --build $(OBJ) --config $(patsubst %-sync,%,$@) --target $(TARGET) -- $(ENV_BUILD_FLAGS)
+
 
 all: debug-all
 
