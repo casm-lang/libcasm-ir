@@ -86,7 +86,7 @@ namespace libcasm_ir
         /**
            Represents the various types recognized by the IR type system
         */
-        enum class Kind
+        enum class Kind : u8
         {
             // synthetic
             VOID = 0,
