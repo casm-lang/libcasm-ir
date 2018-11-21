@@ -146,6 +146,7 @@ Builtin::Ptr Builtin::create( const Value::ID id, const Type::Ptr& type )
         case Value::TUPLE:                        // [fallthrough]
         case Value::LIST:                         // [fallthrough]
         case Value::STRUCTURE:                    // [fallthrough]
+        case Value::FEATURE:                      // [fallthrough]
         case Value::BLOCK:                        // [fallthrough]
         case Value::EXECUTION_SEMANTICS_BLOCK:    // [fallthrough]
         case Value::PARALLEL_BLOCK:               // [fallthrough]

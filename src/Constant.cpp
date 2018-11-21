@@ -669,6 +669,10 @@ Constant Constant::undef( const Type::Ptr& type )
         {
             break;
         }
+        case Type::Kind::FEATURE:
+        {
+            break;
+        }
         case Type::Kind::RULE_REFERENCE:
         {
             return RuleReferenceConstant( type );

@@ -47,6 +47,7 @@
 #include <libcasm-ir/Builtin>
 #include <libcasm-ir/Derived>
 #include <libcasm-ir/Enumeration>
+#include <libcasm-ir/Feature>
 #include <libcasm-ir/Function>
 #include <libcasm-ir/List>
 #include <libcasm-ir/Range>

@@ -266,6 +266,10 @@ std::string Value::token( const Value::ID id )
         {
             return "Structure";
         }
+        case Value::FEATURE:
+        {
+            return "Feature";
+        }
 
         case Value::BLOCK:
         {
