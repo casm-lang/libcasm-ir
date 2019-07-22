@@ -667,7 +667,7 @@ Constant Constant::undef( const Type::Ptr& type )
         }
         case Type::Kind::STRUCTURE:
         {
-            break;
+            return DomainConstant( std::static_pointer_cast< StructureType >( type ) );
         }
         case Type::Kind::FEATURE:
         {
