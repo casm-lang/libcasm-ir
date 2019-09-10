@@ -1,0 +1,226 @@
+#
+#   Copyright (C) 2015-2019 CASM Organization <https://casm-lang.org>
+#   All rights reserved.
+#
+#   Developed by: Philipp Paulweber
+#                 <https://github.com/casm-lang/libcasm-ir>
+#
+#   This file is part of libcasm-ir.
+#
+#   libcasm-ir is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   libcasm-ir is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with libcasm-ir. If not, see <http://www.gnu.org/licenses/>.
+#
+#   Additional permission under GNU GPL version 3 section 7
+#
+#   libcasm-ir is distributed under the terms of the GNU General Public License
+#   with the following clarification and special exception: Linking libcasm-ir
+#   statically or dynamically with other modules is making a combined work
+#   based on libcasm-ir. Thus, the terms and conditions of the GNU General
+#   Public License cover the whole combination. As a special exception,
+#   the copyright holders of libcasm-ir give you permission to link libcasm-ir
+#   with independent modules to produce an executable, regardless of the
+#   license terms of these independent modules, and to copy and distribute
+#   the resulting executable under terms of your choice, provided that you
+#   also meet, for each linked independent module, the terms and conditions
+#   of the license of that module. An independent module is a module which
+#   is not derived from or based on libcasm-ir. If you modify libcasm-ir, you
+#   may extend this exception to your version of the library, but you are
+#   not obliged to do so. If you do not wish to do so, delete this exception
+#   statement from your version.
+#
+
+# https://help.github.com/en/articles/virtual-environments-for-github-actions#supported-virtual-environments
+#
+# |---------+---------------------------------------------|
+# | OS      | Version                                     |
+# |---------+---------------------------------------------|
+# | Linux   | ubuntu-18.04 (ubuntu-latest), ubuntu-16.04  |
+# | MacOSX  | macOS-10.14 (macOS-latest)                  |
+# | Windows | windows-2019 (windows-latest), windows-2016 |
+
+name: build
+
+on: [push]
+
+
+
+jobs:
+  linux-clang-debug:
+    strategy:
+      matrix:
+        os: [ ubuntu-18.04, ubuntu-16.04 ]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v1
+    - name: Fetching
+      env:
+        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      run:  |
+        make C=clang fetch
+    - name: Dependencies
+      run:  |
+        make C=clang debug-deps
+    - name: Building
+      run:  |
+        make C=clang debug-build
+    - name: Tests
+      run:  |
+        make C=clang debug-test
+    - name: Benchmark
+      run:  |
+        make C=clang debug-benchmark
+
+  linux-gcc-coverage:
+    strategy:
+      matrix:
+        os: [ ubuntu-18.04 ]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v1
+    - name: Fetching
+      env:
+        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      run:  |
+        make C=gcc fetch
+    - name: Dependencies
+      run:  |
+        make C=gcc coverage-deps
+    - name: Building
+      run:  |
+        make C=gcc coverage-build
+    - name: Tests
+      run:  |
+        make C=gcc coverage-test
+    - name: Benchmark
+      run:  |
+        make C=gcc coverage-benchmark
+    - name: Coverage
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      run:  |
+        wget https://codecov.io/bash
+        chmod 755 bash
+        ./bash
+
+  darwin-clang-debug:
+    strategy:
+      matrix:
+        os: [ macOS-10.14 ]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v1
+    - name: Fetching
+      env:
+        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      run:  |
+        make C=clang fetch
+    - name: Dependencies
+      run:  |
+        make C=clang debug-deps
+    - name: Building
+      run:  |
+        make C=clang debug-build
+    - name: Tests
+      run:  |
+        make C=clang debug-test
+    - name: Benchmark
+      run:  |
+        make C=clang debug-benchmark
+
+  darwin-gcc-debug:
+    strategy:
+      matrix:
+        os: [ macOS-10.14 ]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup
+      run:  |
+        brew --version
+        brew install gcc@9
+        ln -s /usr/local/bin/gcc-9 /usr/local/bin/gcc
+        ln -s /usr/local/bin/g++-9 /usr/local/bin/g++
+    - name: Fetching
+      env:
+        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      run:  |
+        make C=gcc fetch
+    - name: Dependencies
+      run:  |
+        make C=gcc debug-deps
+    - name: Building
+      run:  |
+        make C=gcc debug-build
+    - name: Tests
+      run:  |
+        make C=gcc debug-test
+    - name: Benchmark
+      run:  |
+        make C=gcc debug-benchmark
+
+  windows-clang-debug:
+    strategy:
+      matrix:
+        os: [ windows-2019, windows-2016 ]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup
+      run:  |
+        choco install llvm
+    - name: Fetching
+      env:
+        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      run:  |
+        make C=clang fetch
+    - name: Dependencies
+      run:  |
+        refreshenv
+        make C=clang debug-deps
+    - name: Building
+      run:  |
+        refreshenv
+        make C=clang debug-build
+    - name: Tests
+      run:  |
+        refreshenv
+        make C=clang debug-test
+    - name: Benchmark
+      run:  |
+        refreshenv
+        make C=clang debug-benchmark
+
+  windows-gcc-debug:
+    strategy:
+      matrix:
+        os: [ windows-2019 ]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v1
+    - name: Fetching
+      env:
+        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      run:  |
+        make C=gcc fetch
+    - name: Dependencies
+      run:  |
+        make C=gcc debug-deps
+    - name: Building
+      run:  |
+        make C=gcc debug-build
+    - name: Tests
+      run:  |
+        make C=gcc debug-test
+    - name: Benchmark
+      run:  |
+        make C=gcc debug-benchmark
