@@ -49,27 +49,66 @@ include_directories(
 add_library( ${PROJECT}-test OBJECT
   agent.cpp
   annotation.cpp
-  constant.cpp
   enumeration.cpp
   isa.cpp
   main.cpp
   property.cpp
-  type.cpp
-  value.cpp  
+  value.cpp
+
   constant/binary.cpp
+  constant.cpp
   constant/integer.cpp
-  constant/range.cpp
   constant/list.cpp
+  constant/range.cpp
   constant/rational.cpp
   constant/string.cpp
   constant/undef.cpp
+
   instruction/add.cpp
   instruction/imp.cpp
   instruction/inv.cpp
   instruction/pow.cpp
+
+  operation/abort.cpp
+  operation/add/integer.cpp
+  operation/add/string.cpp
+  operation/and.cpp
+  operation/as/boolean/binary.cpp
+  operation/as/boolean/boolean.cpp
+  operation/as/boolean/integer.cpp
+  operation/as/integer/binary.cpp
+  operation/as/integer/boolean.cpp
+  operation/as/integer/integer.cpp
+  operation/assert.cpp
+  operation/as/string/binary.cpp
+  operation/as/string/boolean.cpp
+  operation/as/string/decimal.cpp
+  operation/as/string/enumeration.cpp
+  operation/as/string/integer.cpp
+  operation/as/string/rational.cpp
+  operation/as/string/string.cpp
+  operation/at/list.cpp
+  operation/equ.cpp
+  operation/geq/integer.cpp
+  operation/gth/integer.cpp
+  operation/imp.cpp
+  operation/inv/integer.cpp
+  operation/leq/integer.cpp
+  operation/lth/integer.cpp
+  operation/not.cpp
+  operation/or.cpp
+  operation/print.cpp
+  operation/println.cpp
+  operation/size/enumeration.cpp
+  operation/size/list.cpp
+  operation/size/range.cpp
+  operation/xor.cpp
+
   transform/BranchEliminationPass.cpp
+
   type/binary.cpp
   type/boolean.cpp
+  type.cpp
   type/decimal.cpp
   type/enum.cpp
   type/file.cpp
@@ -80,8 +119,8 @@ add_library( ${PROJECT}-test OBJECT
   type/range.cpp
   type/ranged_integer.cpp
   type/rational.cpp
-  type/relation.cpp
   type/record.cpp
+  type/relation.cpp
   type/tuple.cpp
   type/void.cpp
 )
