@@ -73,9 +73,8 @@ namespace libcasm_ir
         {
             VALUE = 0,
             VALUE_LIST,
-            USER
+            USER,
 
-            ,
             SPECIFICATION,
             AGENT,
             RULE,
@@ -89,14 +88,12 @@ namespace libcasm_ir
             BLOCK,
             EXECUTION_SEMANTICS_BLOCK,
             PARALLEL_BLOCK,
-            SEQUENTIAL_BLOCK
+            SEQUENTIAL_BLOCK,
 
-            ,
             STATEMENT,
             TRIVIAL_STATEMENT,
-            BRANCH_STATEMENT
+            BRANCH_STATEMENT,
 
-            ,
             CONSTANT,
             VOID_CONSTANT,
             RULE_REFERENCE_CONSTANT,
@@ -112,9 +109,8 @@ namespace libcasm_ir
             TUPLE_CONSTANT,
             LIST_CONSTANT,
             DOMAIN_CONSTANT,
-            IDENTIFIER
+            IDENTIFIER,
 
-            ,
             INSTRUCTION,
             UNARY_INSTRUCTION,
             BINARY_INSTRUCTION,
@@ -128,9 +124,8 @@ namespace libcasm_ir
             UPDATE_INSTRUCTION,
             LOCATION_INSTRUCTION,
             CALL_INSTRUCTION,
-            LOCAL_INSTRUCTION
+            LOCAL_INSTRUCTION,
 
-            ,
             OPERATOR_INSTRUCTION,
             ARITHMETIC_INSTRUCTION,
             INV_INSTRUCTION,
