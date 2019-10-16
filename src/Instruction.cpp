@@ -41,12 +41,13 @@
 
 #include "Instruction.h"
 
-#include "Builtin.h"
-#include "Derived.h"
-#include "Exception.h"
-#include "Function.h"
-#include "Rule.h"
-#include "Statement.h"
+#include <libcasm-ir/Builtin>
+#include <libcasm-ir/Constant>
+#include <libcasm-ir/Derived>
+#include <libcasm-ir/Exception>
+#include <libcasm-ir/Function>
+#include <libcasm-ir/Rule>
+#include <libcasm-ir/Statement>
 
 using namespace libcasm_ir;
 
@@ -196,12 +197,17 @@ u1 Instruction::operator==( const Value& rhs ) const
 
 u1 Instruction::classof( Value const* obj )
 {
-    return obj->id() == classid() or SkipInstruction::classof( obj ) or
-           ForkInstruction::classof( obj ) or MergeInstruction::classof( obj ) or
-           LookupInstruction::classof( obj ) or UpdateInstruction::classof( obj ) or
-           LocalInstruction::classof( obj ) or LocationInstruction::classof( obj ) or
-           CallInstruction::classof( obj ) or SelectInstruction::classof( obj ) or
-           OperatorInstruction::classof( obj );
+    return obj->id() == classid()                  //
+           or SkipInstruction::classof( obj )      //
+           or ForkInstruction::classof( obj )      //
+           or MergeInstruction::classof( obj )     //
+           or LookupInstruction::classof( obj )    //
+           or UpdateInstruction::classof( obj )    //
+           or LocalInstruction::classof( obj )     //
+           or LocationInstruction::classof( obj )  //
+           or CallInstruction::classof( obj )      //
+           or SelectInstruction::classof( obj )    //
+           or OperatorInstruction::classof( obj );
 }
 
 //
@@ -217,7 +223,8 @@ u1 UnaryInstruction::classof( Value const* obj )
             return false;
         }
 
-        if( NotInstruction::classof( obj ) or InvInstruction::classof( obj ) )
+        if( NotInstruction::classof( obj )  //
+            or InvInstruction::classof( obj ) )
         {
             return true;
         }
@@ -245,12 +252,17 @@ u1 BinaryInstruction::classof( Value const* obj )
             return false;
         }
 
-        if( AddInstruction::classof( obj ) or SubInstruction::classof( obj ) or
-            MulInstruction::classof( obj ) or DivInstruction::classof( obj ) or
-            PowInstruction::classof( obj ) or ModInstruction::classof( obj ) or
-            OrInstruction::classof( obj ) or XorInstruction::classof( obj ) or
-            AndInstruction::classof( obj ) or ImpInstruction::classof( obj ) or
-            CompareInstruction::classof( obj ) )
+        if( AddInstruction::classof( obj )     //
+            or SubInstruction::classof( obj )  //
+            or MulInstruction::classof( obj )  //
+            or DivInstruction::classof( obj )  //
+            or PowInstruction::classof( obj )  //
+            or ModInstruction::classof( obj )  //
+            or OrInstruction::classof( obj )   //
+            or XorInstruction::classof( obj )  //
+            or AndInstruction::classof( obj )  //
+            or ImpInstruction::classof( obj )  //
+            or CompareInstruction::classof( obj ) )
         {
             return true;
         }
@@ -263,6 +275,16 @@ u1 BinaryInstruction::classof( Value const* obj )
     {
         return false;
     }
+}
+
+//
+// N-ary Instruction
+//
+
+u1 NaryInstruction::classof( Value const* obj )
+{
+    return isa< LocationInstruction >( obj )  //
+           or isa< CallInstruction >( obj );
 }
 
 //
@@ -440,6 +462,12 @@ void CallInstruction::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
+void CallInstruction::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    // TODO: FIXME: @ppaulweber
+    throw InternalException( "unimplemented '" + description() + "'" );
+}
+
 u1 CallInstruction::classof( Value const* obj )
 {
     return obj->id() == classid();
@@ -477,8 +505,10 @@ OperatorInstruction::OperatorInstruction(
 
 u1 OperatorInstruction::classof( Value const* obj )
 {
-    return obj->id() == classid() or ArithmeticInstruction::classof( obj ) or
-           CompareInstruction::classof( obj ) or LogicalInstruction::classof( obj );
+    return obj->id() == classid()                    //
+           or ArithmeticInstruction::classof( obj )  //
+           or CompareInstruction::classof( obj )     //
+           or LogicalInstruction::classof( obj );
 }
 
 //
@@ -498,12 +528,17 @@ ArithmeticInstruction::ArithmeticInstruction(
 
 u1 ArithmeticInstruction::classof( Value const* obj )
 {
-    return obj->id() == classid() or InvInstruction::classof( obj ) or
-           AddInstruction::classof( obj ) or SubInstruction::classof( obj ) or
-           MulInstruction::classof( obj ) or DivInstruction::classof( obj ) or
-           PowInstruction::classof( obj ) or ModInstruction::classof( obj ) or
-           OrInstruction::classof( obj ) or XorInstruction::classof( obj ) or
-           AndInstruction::classof( obj );
+    return obj->id() == classid()             //
+           or InvInstruction::classof( obj )  //
+           or AddInstruction::classof( obj )  //
+           or SubInstruction::classof( obj )  //
+           or MulInstruction::classof( obj )  //
+           or DivInstruction::classof( obj )  //
+           or PowInstruction::classof( obj )  //
+           or ModInstruction::classof( obj )  //
+           or OrInstruction::classof( obj )   //
+           or XorInstruction::classof( obj )  //
+           or AndInstruction::classof( obj );
 }
 
 static const Properties arithmetic_instruction_properties = { Property::SIDE_EFFECT_FREE,
@@ -563,6 +598,56 @@ InvInstruction::InvInstruction( const Type::Ptr& type )
 void InvInstruction::accept( Visitor& visitor )
 {
     visitor.visit( *this );
+}
+
+void InvInstruction::execute( Constant& res, const Constant& lhs ) const
+{
+    if( not lhs.defined() )
+    {
+        res = lhs;
+        return;
+    }
+
+    switch( lhs.typeId().kind() )
+    {
+        case Type::Kind::INTEGER:
+        {
+            const auto& val = static_cast< const IntegerConstant& >( lhs ).value();
+
+            res = IntegerConstant( -val );
+            break;
+        }
+        case Type::Kind::BINARY:
+        {
+            const auto& t = static_cast< const BinaryType& >( lhs.type() );
+            auto val = static_cast< const BinaryConstant& >( lhs ).value();
+            val = ~val;
+            val++;
+            val = val & Utility::createMask( t.bitsize() );
+            res = BinaryConstant( lhs.type().ptr_type(), val );
+            break;
+        }
+        case Type::Kind::DECIMAL:
+        {
+            const auto& val = static_cast< const DecimalConstant& >( lhs ).value();
+
+            res = DecimalConstant( -val );
+            break;
+        }
+        case Type::Kind::RATIONAL:
+        {
+            const auto& val = static_cast< const RationalConstant& >( lhs ).value();
+
+            res = RationalConstant( -val );
+            break;
+        }
+        default:
+        {
+            throw InternalException( "unimplemented '" + description() + "'" );
+            res = VoidConstant();
+            break;
+        }
+    }
 }
 
 const Annotation InvInstruction::annotation(
@@ -636,6 +721,61 @@ AddInstruction::AddInstruction( const Type::Ptr& type )
 void AddInstruction::accept( Visitor& visitor )
 {
     visitor.visit( *this );
+}
+
+void AddInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
+{
+    if( not lhs.defined() )
+    {
+        res = lhs;
+        return;
+    }
+
+    if( not rhs.defined() )
+    {
+        res = rhs;
+        return;
+    }
+
+    switch( typeId().kind() )
+    {
+        case Type::Kind::INTEGER:
+        {
+            auto& lval = static_cast< const IntegerConstant& >( lhs ).value();
+            auto& rval = static_cast< const IntegerConstant& >( rhs ).value();
+
+            res = IntegerConstant( lval + rval );
+            break;
+        }
+        case Type::Kind::BINARY:
+        {
+            assert( lhs.type().isBinary() and lhs.type() == rhs.type() );
+            const auto& lhsBinaryType = static_cast< const BinaryType& >( lhs.type() );
+            auto m = libstdhl::Type::createNatural( 1 ) << lhsBinaryType.bitsize();
+            m--;
+
+            const auto& lval = static_cast< const BinaryConstant& >( lhs ).value();
+            const auto& rval = static_cast< const BinaryConstant& >( rhs ).value();
+            const auto v = libstdhl::Type::createNatural( lval + rval );
+            const auto r = v & m;
+
+            res = BinaryConstant( lhs.type().ptr_type(), r );
+            break;
+        }
+        case Type::Kind::STRING:
+        {
+            auto& lval = static_cast< const StringConstant& >( lhs ).value();
+            auto& rval = static_cast< const StringConstant& >( rhs ).value();
+
+            res = StringConstant( lval.toString() + rval.toString() );
+            break;
+        }
+        default:
+        {
+            throw InternalException( "unimplemented '" + description() + "'" );
+            break;
+        }
+    }
 }
 
 const Annotation AddInstruction::annotation(
@@ -720,6 +860,38 @@ void SubInstruction::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
+void SubInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
+{
+    if( not lhs.defined() )
+    {
+        res = lhs;
+        return;
+    }
+
+    if( not rhs.defined() )
+    {
+        res = rhs;
+        return;
+    }
+
+    switch( typeId().kind() )
+    {
+        case Type::Kind::INTEGER:
+        {
+            const auto& lval = static_cast< const IntegerConstant& >( lhs ).value();
+            const auto& rval = static_cast< const IntegerConstant& >( rhs ).value();
+
+            res = IntegerConstant( lval - rval );
+            break;
+        }
+        default:
+        {
+            throw InternalException( "unimplemented '" + description() + "'" );
+            break;
+        }
+    }
+}
+
 const Annotation SubInstruction::annotation(
     classid(),
     arithmetic_instruction_properties,
@@ -795,6 +967,38 @@ MulInstruction::MulInstruction( const Type::Ptr& type )
 void MulInstruction::accept( Visitor& visitor )
 {
     visitor.visit( *this );
+}
+
+void MulInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
+{
+    if( not lhs.defined() )
+    {
+        res = lhs;
+        return;
+    }
+
+    if( not rhs.defined() )
+    {
+        res = rhs;
+        return;
+    }
+
+    switch( typeId().kind() )
+    {
+        case Type::Kind::INTEGER:
+        {
+            const auto& lval = static_cast< const IntegerConstant& >( lhs ).value();
+            const auto& rval = static_cast< const IntegerConstant& >( rhs ).value();
+
+            res = IntegerConstant( lval * rval );
+            break;
+        }
+        default:
+        {
+            throw InternalException( "unimplemented '" + description() + "'" );
+            break;
+        }
+    }
 }
 
 const Annotation MulInstruction::annotation(
@@ -875,6 +1079,45 @@ void ModInstruction::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
+void ModInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
+{
+    if( not lhs.defined() )
+    {
+        res = lhs;
+        return;
+    }
+
+    if( not rhs.defined() )
+    {
+        res = rhs;
+        return;
+    }
+
+    switch( typeId().kind() )
+    {
+        case Type::Kind::INTEGER:
+        {
+            const auto& lval = static_cast< const IntegerConstant& >( lhs ).value();
+            const auto& rval = static_cast< const IntegerConstant& >( rhs ).value();
+
+            if( rval == 0 )
+            {
+                res = IntegerConstant();
+            }
+            else
+            {
+                res = IntegerConstant( lval % rval );
+            }
+            break;
+        }
+        default:
+        {
+            throw InternalException( "unimplemented '" + description() + "'" );
+            break;
+        }
+    }
+}
+
 const Annotation ModInstruction::annotation(
     classid(),
     arithmetic_instruction_properties,
@@ -933,6 +1176,45 @@ DivInstruction::DivInstruction( const Type::Ptr& type )
 void DivInstruction::accept( Visitor& visitor )
 {
     visitor.visit( *this );
+}
+
+void DivInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
+{
+    if( not lhs.defined() )
+    {
+        res = lhs;
+        return;
+    }
+
+    if( not rhs.defined() )
+    {
+        res = rhs;
+        return;
+    }
+
+    switch( typeId().kind() )
+    {
+        case Type::Kind::INTEGER:
+        {
+            const auto& lval = static_cast< const IntegerConstant& >( lhs ).value();
+            const auto& rval = static_cast< const IntegerConstant& >( rhs ).value();
+
+            if( rval == 0 )
+            {
+                res = IntegerConstant();
+            }
+            else
+            {
+                res = IntegerConstant( lval / rval );
+            }
+            break;
+        }
+        default:
+        {
+            throw InternalException( "unimplemented '" + description() + "'" );
+            break;
+        }
+    }
 }
 
 const Annotation DivInstruction::annotation(
@@ -999,6 +1281,142 @@ PowInstruction::PowInstruction( const Type::Ptr& type )
 void PowInstruction::accept( Visitor& visitor )
 {
     visitor.visit( *this );
+}
+
+void PowInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
+{
+    if( not lhs.defined() )
+    {
+        res = lhs;
+        return;
+    }
+
+    if( not rhs.defined() )
+    {
+        switch( typeId().kind() )
+        {
+            case Type::Kind::INTEGER:
+            {
+                const auto& lval = static_cast< const IntegerConstant& >( lhs ).value();
+
+                if( lval == 1 )
+                {
+                    res = lhs;
+                }
+                else
+                {
+                    res = Constant::undef( type().ptr_type() );
+                }
+                break;
+            }
+            case Type::Kind::DECIMAL:
+            {
+                const auto& lval = static_cast< const DecimalConstant& >( lhs ).value();
+
+                if( lval == 1 )
+                {
+                    res = lhs;
+                }
+                else
+                {
+                    res = Constant::undef( type().ptr_type() );
+                }
+                break;
+            }
+            default:
+            {
+                throw InternalException( "unimplemented '" + description() + "'" );
+                break;
+            }
+        }
+    }
+    else
+    {
+        switch( typeId().kind() )
+        {
+            case Type::Kind::INTEGER:
+            {
+                const auto& lval = static_cast< const IntegerConstant& >( lhs ).value();
+                const auto& rval = static_cast< const IntegerConstant& >( rhs ).value();
+
+                if( rval < 0 )
+                {
+                    if( lval == 1 or -lval == 1 )
+                    {
+                        auto neg_rval = -rval;
+                        const auto& nat_rval =
+                            static_cast< const libstdhl::Type::Natural& >( neg_rval );
+
+                        IntegerConstant( lval ^ nat_rval );
+                    }
+                    else
+                    {
+                        Constant::undef( type().ptr_type() );
+                    }
+                }
+                else if( rval == 0 )
+                {
+                    if( lval == 0 )
+                    {
+                        res = Constant::undef( type().ptr_type() );
+                    }
+                    else
+                    {
+                        res = IntegerConstant( 1 );
+                    }
+                }
+                else
+                {
+                    const auto& nat_rval = static_cast< const libstdhl::Type::Natural& >( rval );
+                    res = IntegerConstant( lval ^ nat_rval );
+                }
+                break;
+            }
+            case Type::Kind::DECIMAL:
+            {
+                const auto& lval = static_cast< const DecimalConstant& >( lhs ).value();
+                const auto& rval = static_cast< const IntegerConstant& >( rhs ).value();
+
+                if( rval < 0 )
+                {
+                    if( lval == 1 or -lval == 1 )
+                    {
+                        auto neg_rval = -rval;
+                        const auto& nat_rval =
+                            static_cast< const libstdhl::Type::Natural& >( neg_rval );
+
+                        DecimalConstant( lval ^ nat_rval );
+                    }
+                    else
+                    {
+                        Constant::undef( type().ptr_type() );
+                    }
+                }
+                else if( rval == 0 )
+                {
+                    if( lval == 0 )
+                    {
+                        res = Constant::undef( type().ptr_type() );
+                    }
+                    else
+                    {
+                        res = DecimalConstant( 1 );
+                    }
+                }
+                else
+                {
+                    const auto& nat_rval = static_cast< const libstdhl::Type::Natural& >( rval );
+                    res = DecimalConstant( lval ^ nat_rval );
+                }
+                break;
+            }
+            default:
+            {
+                throw InternalException( "unimplemented '" + description() + "'" );
+                break;
+            }
+        }
+    }
 }
 
 const Annotation PowInstruction::annotation(
@@ -1104,9 +1522,12 @@ LogicalInstruction::LogicalInstruction(
 
 u1 LogicalInstruction::classof( Value const* obj )
 {
-    return obj->id() == classid() or OrInstruction::classof( obj ) or
-           ImpInstruction::classof( obj ) or XorInstruction::classof( obj ) or
-           AndInstruction::classof( obj ) or NotInstruction::classof( obj );
+    return obj->id() == classid()             //
+           or OrInstruction::classof( obj )   //
+           or ImpInstruction::classof( obj )  //
+           or XorInstruction::classof( obj )  //
+           or AndInstruction::classof( obj )  //
+           or NotInstruction::classof( obj );
 }
 
 static const auto logic_instruction_properties = arithmetic_instruction_properties;
@@ -1133,6 +1554,59 @@ AndInstruction::AndInstruction( const Type::Ptr& type )
 void AndInstruction::accept( Visitor& visitor )
 {
     visitor.visit( *this );
+}
+
+void AndInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
+{
+    switch( typeId().kind() )
+    {
+        case Type::Kind::BOOLEAN:
+        {
+            const auto& lval = static_cast< const BooleanConstant& >( lhs ).value();
+            const auto& rval = static_cast< const BooleanConstant& >( rhs ).value();
+
+            if( lhs.defined() and rhs.defined() )
+            {
+                res = BooleanConstant( lval.value() and rval.value() );
+            }
+            else
+            {
+                if( ( lhs.defined() and ( not lval.value() ) ) or
+                    ( rhs.defined() and ( not rval.value() ) ) )
+                {
+                    res = BooleanConstant( false );
+                }
+                else
+                {
+                    res = BooleanConstant();
+                }
+            }
+            break;
+        }
+        case Type::Kind::BINARY:
+        {
+            const auto& lval = static_cast< const BinaryConstant& >( lhs ).value();
+            const auto& rval = static_cast< const BinaryConstant& >( rhs ).value();
+
+            assert( type().isBinary() );
+            const auto resultType = std::static_pointer_cast< BinaryType >( type().ptr_type() );
+
+            if( lhs.defined() and rhs.defined() )
+            {
+                res = BinaryConstant( resultType, lval.value() & rval.value() );
+            }
+            else
+            {
+                res = BinaryConstant( resultType );
+            }
+            break;
+        }
+        default:
+        {
+            throw InternalException( "unimplemented '" + description() + "'" );
+            break;
+        }
+    }
 }
 
 const Annotation AndInstruction::annotation(
@@ -1204,6 +1678,54 @@ void XorInstruction::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
+void XorInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
+{
+    const auto& lval = static_cast< const BooleanConstant& >( lhs ).value();
+    const auto& rval = static_cast< const BooleanConstant& >( rhs ).value();
+
+    switch( typeId().kind() )
+    {
+        case Type::Kind::BOOLEAN:
+        {
+            const auto& lval = static_cast< const BooleanConstant& >( lhs ).value();
+            const auto& rval = static_cast< const BooleanConstant& >( rhs ).value();
+
+            if( lhs.defined() and rhs.defined() )
+            {
+                res = BooleanConstant( lval.value() xor rval.value() );
+            }
+            else
+            {
+                res = BooleanConstant();
+            }
+            break;
+        }
+        case Type::Kind::BINARY:
+        {
+            const auto& lval = static_cast< const BinaryConstant& >( lhs ).value();
+            const auto& rval = static_cast< const BinaryConstant& >( rhs ).value();
+
+            assert( type().isBinary() );
+            const auto resultType = std::static_pointer_cast< BinaryType >( type().ptr_type() );
+
+            if( lhs.defined() and rhs.defined() )
+            {
+                res = BinaryConstant( resultType, lval.value() ^ rval.value() );
+            }
+            else
+            {
+                res = BinaryConstant( resultType );
+            }
+            break;
+        }
+        default:
+        {
+            throw InternalException( "unimplemented '" + description() + "'" );
+            break;
+        }
+    }
+}
+
 const Annotation XorInstruction::annotation(
     classid(),
     logic_instruction_properties,
@@ -1273,6 +1795,58 @@ void OrInstruction::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
+void OrInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
+{
+    switch( typeId().kind() )
+    {
+        case Type::Kind::BOOLEAN:
+        {
+            const auto& lval = static_cast< const BooleanConstant& >( lhs ).value();
+            const auto& rval = static_cast< const BooleanConstant& >( rhs ).value();
+
+            if( lhs.defined() and rhs.defined() )
+            {
+                res = BooleanConstant( lval.value() or rval.value() );
+            }
+            else
+            {
+                if( ( lhs.defined() and lval.value() ) or ( rhs.defined() and rval.value() ) )
+                {
+                    res = BooleanConstant( true );
+                }
+                else
+                {
+                    res = BooleanConstant();
+                }
+            }
+            break;
+        }
+        case Type::Kind::BINARY:
+        {
+            const auto& lval = static_cast< const BinaryConstant& >( lhs ).value();
+            const auto& rval = static_cast< const BinaryConstant& >( rhs ).value();
+
+            assert( type().isBinary() );
+            const auto resultType = std::static_pointer_cast< BinaryType >( type().ptr_type() );
+
+            if( lhs.defined() and rhs.defined() )
+            {
+                res = BinaryConstant( resultType, lval.value() | rval.value() );
+            }
+            else
+            {
+                res = BinaryConstant( resultType );
+            }
+            break;
+        }
+        default:
+        {
+            throw InternalException( "unimplemented '" + description() + "'" );
+            break;
+        }
+    }
+}
+
 const Annotation OrInstruction::annotation(
     classid(),
     logic_instruction_properties,
@@ -1340,6 +1914,28 @@ ImpInstruction::ImpInstruction( const Type::Ptr& type )
 void ImpInstruction::accept( Visitor& visitor )
 {
     visitor.visit( *this );
+}
+
+void ImpInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
+{
+    const auto& lval = static_cast< const BooleanConstant& >( lhs ).value();
+    const auto& rval = static_cast< const BooleanConstant& >( rhs ).value();
+
+    if( lhs.defined() and rhs.defined() )
+    {
+        res = BooleanConstant( ( not lval.value() ) or rval.value() );
+    }
+    else
+    {
+        if( ( lhs.defined() and ( not lval.value() ) ) or ( rhs.defined() and rval.value() ) )
+        {
+            res = BooleanConstant( true );
+        }
+        else
+        {
+            res = BooleanConstant();
+        }
+    }
 }
 
 const Annotation ImpInstruction::annotation(
@@ -1420,6 +2016,45 @@ void NotInstruction::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
+void NotInstruction::execute( Constant& res, const Constant& lhs ) const
+{
+    if( not lhs.defined() )
+    {
+        res = Constant::undef( type().ptr_type() );
+        return;
+    }
+
+    switch( lhs.typeId().kind() )
+    {
+        case Type::Kind::BOOLEAN:
+        {
+            const auto& val = static_cast< const BooleanConstant& >( lhs ).value();
+
+            res = BooleanConstant( not val.value() );
+            break;
+        }
+        case Type::Kind::INTEGER:
+        {
+            const auto& val = static_cast< const IntegerConstant& >( lhs ).value();
+
+            res = BooleanConstant( val == 0 );
+            break;
+        }
+        case Type::Kind::BINARY:
+        {
+            const auto& val = static_cast< const BinaryConstant& >( lhs ).value();
+
+            res = BinaryConstant( lhs.type().ptr_type(), ~val );
+            break;
+        }
+        default:
+        {
+            throw InternalException( "unimplemented '" + description() + "'" );
+            break;
+        }
+    }
+}
+
 const Annotation NotInstruction::annotation(
     classid(),
     logic_instruction_properties,
@@ -1475,10 +2110,13 @@ CompareInstruction::CompareInstruction(
 
 u1 CompareInstruction::classof( Value const* obj )
 {
-    return obj->id() == classid() or EquInstruction::classof( obj ) or
-           NeqInstruction::classof( obj ) or LthInstruction::classof( obj ) or
-           LeqInstruction::classof( obj ) or GthInstruction::classof( obj ) or
-           GeqInstruction::classof( obj );
+    return obj->id() == classid()             //
+           or EquInstruction::classof( obj )  //
+           or NeqInstruction::classof( obj )  //
+           or LthInstruction::classof( obj )  //
+           or LeqInstruction::classof( obj )  //
+           or GthInstruction::classof( obj )  //
+           or GeqInstruction::classof( obj );
 }
 
 static const auto compare_instruction_properties = arithmetic_instruction_properties;
@@ -1541,6 +2179,22 @@ EquInstruction::EquInstruction( const Type::Ptr& type )
 void EquInstruction::accept( Visitor& visitor )
 {
     visitor.visit( *this );
+}
+
+void EquInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
+{
+    if( lhs.defined() and rhs.defined() )
+    {
+        res = BooleanConstant( lhs == rhs );
+    }
+    else if( lhs.defined() or rhs.defined() )
+    {
+        res = BooleanConstant( false );
+    }
+    else
+    {
+        res = BooleanConstant( true );
+    }
 }
 
 const Annotation EquInstruction::annotation(
@@ -1662,6 +2316,22 @@ void NeqInstruction::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
+void NeqInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
+{
+    if( lhs.defined() and rhs.defined() )
+    {
+        res = BooleanConstant( lhs != rhs );
+    }
+    else if( lhs.defined() or rhs.defined() )
+    {
+        res = BooleanConstant( true );
+    }
+    else
+    {
+        res = BooleanConstant( false );
+    }
+}
+
 const Annotation NeqInstruction::annotation(
     classid(),
     compare_instruction_properties,
@@ -1776,6 +2446,34 @@ LthInstruction::LthInstruction( const Type::Ptr& type )
     assert( type->isBoolean() );
 }
 
+void LthInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
+{
+    assert( lhs.type() == rhs.type() );
+
+    if( not lhs.defined() or not rhs.defined() )
+    {
+        res = BooleanConstant();
+        return;
+    }
+
+    switch( lhs.typeId().kind() )
+    {
+        case Type::Kind::INTEGER:
+        {
+            const auto& lval = static_cast< const IntegerConstant& >( lhs ).value();
+            const auto& rval = static_cast< const IntegerConstant& >( rhs ).value();
+
+            res = BooleanConstant( lval < rval );
+            break;
+        }
+        default:
+        {
+            throw InternalException( "unimplemented '" + description() + "'" );
+            break;
+        }
+    }
+}
+
 void LthInstruction::accept( Visitor& visitor )
 {
     visitor.visit( *this );
@@ -1840,6 +2538,39 @@ void LeqInstruction::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
+void LeqInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
+{
+    assert( lhs.type() == rhs.type() );
+
+    if( lhs.defined() and rhs.defined() )
+    {
+        switch( lhs.typeId().kind() )
+        {
+            case Type::Kind::INTEGER:
+            {
+                const auto& lval = static_cast< const IntegerConstant& >( lhs ).value();
+                const auto& rval = static_cast< const IntegerConstant& >( rhs ).value();
+
+                res = BooleanConstant( lval <= rval );
+                break;
+            }
+            default:
+            {
+                throw InternalException( "unimplemented '" + description() + "'" );
+                break;
+            }
+        }
+    }
+    else if( not lhs.defined() and not rhs.defined() )
+    {
+        res = BooleanConstant( true );
+    }
+    else
+    {
+        res = BooleanConstant();
+    }
+}
+
 const Annotation LeqInstruction::annotation(
     classid(),
     compare_instruction_properties,
@@ -1899,6 +2630,34 @@ void GthInstruction::accept( Visitor& visitor )
     visitor.visit( *this );
 }
 
+void GthInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
+{
+    assert( lhs.type() == rhs.type() );
+
+    if( not lhs.defined() or not rhs.defined() )
+    {
+        res = BooleanConstant();
+        return;
+    }
+
+    switch( lhs.typeId().kind() )
+    {
+        case Type::Kind::INTEGER:
+        {
+            const auto& lval = static_cast< const IntegerConstant& >( lhs ).value();
+            const auto& rval = static_cast< const IntegerConstant& >( rhs ).value();
+
+            res = BooleanConstant( lval > rval );
+            break;
+        }
+        default:
+        {
+            throw InternalException( "unimplemented '" + description() + "'" );
+            break;
+        }
+    }
+}
+
 const Annotation GthInstruction::annotation(
     classid(),
     compare_instruction_properties,
@@ -1956,6 +2715,39 @@ GeqInstruction::GeqInstruction( const Type::Ptr& type )
 void GeqInstruction::accept( Visitor& visitor )
 {
     visitor.visit( *this );
+}
+
+void GeqInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
+{
+    assert( lhs.type() == rhs.type() );
+
+    if( lhs.defined() and rhs.defined() )
+    {
+        switch( lhs.typeId().kind() )
+        {
+            case Type::Kind::INTEGER:
+            {
+                const auto& lval = static_cast< const IntegerConstant& >( lhs ).value();
+                const auto& rval = static_cast< const IntegerConstant& >( rhs ).value();
+
+                res = BooleanConstant( lval >= rval );
+                break;
+            }
+            default:
+            {
+                throw InternalException( "unimplemented '" + description() + "'" );
+                break;
+            }
+        }
+    }
+    else if( not lhs.defined() and not rhs.defined() )
+    {
+        res = BooleanConstant( true );
+    }
+    else
+    {
+        res = BooleanConstant();
+    }
 }
 
 const Annotation GeqInstruction::annotation(

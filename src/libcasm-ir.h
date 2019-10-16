@@ -54,6 +54,7 @@
 #include <libcasm-ir/Function>
 #include <libcasm-ir/Instruction>
 #include <libcasm-ir/List>
+#include <libcasm-ir/Operation>
 #include <libcasm-ir/Range>
 #include <libcasm-ir/Rule>
 #include <libcasm-ir/Specification>

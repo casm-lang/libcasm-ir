@@ -41,6 +41,7 @@
 
 #include "Constant.h"
 
+#include <libcasm-ir/Instruction>
 #include <libstdhl/Random>
 
 #include <cmath>

@@ -45,10 +45,13 @@
 #include <libcasm-ir/User>
 
 #include <libcasm-ir/Annotation>
+#include <libcasm-ir/Operation>
 
 namespace libcasm_ir
 {
-    class Builtin : public User
+    class Builtin
+    : public User
+    , public NaryOperation
     {
       public:
         using Ptr = std::shared_ptr< Builtin >;
@@ -107,6 +110,8 @@ namespace libcasm_ir
 
         IsSymbolicBuiltin( const Type::Ptr& type );
 
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
+
         static const Annotation annotation;
 
         static inline Value::ID classid( void )
@@ -123,6 +128,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< AbortBuiltin >;
 
         AbortBuiltin( const Type::Ptr& type );
+
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -143,6 +150,8 @@ namespace libcasm_ir
 
         AssertBuiltin( const Type::Ptr& type );
 
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
+
       public:
         static inline Value::ID classid( void )
         {
@@ -161,6 +170,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< AssureBuiltin >;
 
         AssureBuiltin( const Type::Ptr& type );
+
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -181,6 +192,8 @@ namespace libcasm_ir
 
         SizeBuiltin( const Type::Ptr& type );
 
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
+
       public:
         static inline Value::ID classid( void )
         {
@@ -199,6 +212,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< AtBuiltin >;
 
         AtBuiltin( const Type::Ptr& type );
+
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -248,6 +263,8 @@ namespace libcasm_ir
 
         PrintBuiltin( const Type::Ptr& type );
 
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
+
       public:
         static inline Value::ID classid( void )
         {
@@ -266,6 +283,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< PrintLnBuiltin >;
 
         PrintLnBuiltin( const Type::Ptr& type );
+
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -302,6 +321,8 @@ namespace libcasm_ir
 
         AsBooleanBuiltin( const Type::Ptr& type );
 
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
+
       public:
         static inline Value::ID classid( void )
         {
@@ -320,6 +341,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< AsIntegerBuiltin >;
 
         AsIntegerBuiltin( const Type::Ptr& type );
+
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -340,6 +363,8 @@ namespace libcasm_ir
 
         AsBinaryBuiltin( const Type::Ptr& type );
 
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
+
       public:
         static inline Value::ID classid( void )
         {
@@ -358,6 +383,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< AsStringBuiltin >;
 
         AsStringBuiltin( const Type::Ptr& type );
+
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -378,6 +405,8 @@ namespace libcasm_ir
 
         AsDecimalBuiltin( const Type::Ptr& type );
 
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
+
       public:
         static inline Value::ID classid( void )
         {
@@ -397,6 +426,8 @@ namespace libcasm_ir
 
         AsRationalBuiltin( const Type::Ptr& type );
 
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
+
       public:
         static inline Value::ID classid( void )
         {
@@ -415,6 +446,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< AsEnumerationBuiltin >;
 
         AsEnumerationBuiltin( const Type::Ptr& type );
+
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -455,6 +488,8 @@ namespace libcasm_ir
 
         DecBuiltin( const Type::Ptr& type );
 
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
+
       public:
         static inline Value::ID classid( void )
         {
@@ -473,6 +508,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< HexBuiltin >;
 
         HexBuiltin( const Type::Ptr& type );
+
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -493,6 +530,8 @@ namespace libcasm_ir
 
         OctBuiltin( const Type::Ptr& type );
 
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
+
       public:
         static inline Value::ID classid( void )
         {
@@ -511,6 +550,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< BinBuiltin >;
 
         BinBuiltin( const Type::Ptr& type );
+
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
 
         static inline Value::ID classid( void )
         {
@@ -570,6 +611,8 @@ namespace libcasm_ir
 
         AdduBuiltin( const Type::Ptr& type );
 
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
+
       public:
         static inline Value::ID classid( void )
         {
@@ -588,6 +631,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< AddsBuiltin >;
 
         AddsBuiltin( const Type::Ptr& type );
+
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -608,6 +653,8 @@ namespace libcasm_ir
 
         SubuBuiltin( const Type::Ptr& type );
 
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
+
       public:
         static inline Value::ID classid( void )
         {
@@ -626,6 +673,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< SubsBuiltin >;
 
         SubsBuiltin( const Type::Ptr& type );
+
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -646,6 +695,8 @@ namespace libcasm_ir
 
         MuluBuiltin( const Type::Ptr& type );
 
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
+
       public:
         static inline Value::ID classid( void )
         {
@@ -664,6 +715,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< MulsBuiltin >;
 
         MulsBuiltin( const Type::Ptr& type );
+
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -704,6 +757,8 @@ namespace libcasm_ir
 
         LesuBuiltin( const Type::Ptr& type );
 
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
+
       public:
         static inline Value::ID classid( void )
         {
@@ -722,6 +777,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< LessBuiltin >;
 
         LessBuiltin( const Type::Ptr& type );
+
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -742,6 +799,8 @@ namespace libcasm_ir
 
         LequBuiltin( const Type::Ptr& type );
 
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
+
       public:
         static inline Value::ID classid( void )
         {
@@ -760,6 +819,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< LeqsBuiltin >;
 
         LeqsBuiltin( const Type::Ptr& type );
+
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -780,6 +841,8 @@ namespace libcasm_ir
 
         GreuBuiltin( const Type::Ptr& type );
 
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
+
       public:
         static inline Value::ID classid( void )
         {
@@ -798,6 +861,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< GresBuiltin >;
 
         GresBuiltin( const Type::Ptr& type );
+
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -818,6 +883,8 @@ namespace libcasm_ir
 
         GequBuiltin( const Type::Ptr& type );
 
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
+
       public:
         static inline Value::ID classid( void )
         {
@@ -836,6 +903,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< GeqsBuiltin >;
 
         GeqsBuiltin( const Type::Ptr& type );
+
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -876,6 +945,8 @@ namespace libcasm_ir
 
         ZextBuiltin( const Type::Ptr& type );
 
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
+
       public:
         static inline Value::ID classid( void )
         {
@@ -894,6 +965,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< SextBuiltin >;
 
         SextBuiltin( const Type::Ptr& type );
+
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -914,6 +987,8 @@ namespace libcasm_ir
 
         TruncBuiltin( const Type::Ptr& type );
 
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
+
       public:
         static inline Value::ID classid( void )
         {
@@ -932,6 +1007,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< ShlBuiltin >;
 
         ShlBuiltin( const Type::Ptr& type );
+
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -952,6 +1029,8 @@ namespace libcasm_ir
 
         ShrBuiltin( const Type::Ptr& type );
 
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
+
       public:
         static inline Value::ID classid( void )
         {
@@ -970,6 +1049,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< AshrBuiltin >;
 
         AshrBuiltin( const Type::Ptr& type );
+
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -990,6 +1071,8 @@ namespace libcasm_ir
 
         ClzBuiltin( const Type::Ptr& type );
 
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
+
       public:
         static inline Value::ID classid( void )
         {
@@ -1009,6 +1092,8 @@ namespace libcasm_ir
 
         CloBuiltin( const Type::Ptr& type );
 
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
+
       public:
         static inline Value::ID classid( void )
         {
@@ -1027,6 +1112,8 @@ namespace libcasm_ir
         using Ptr = std::shared_ptr< ClsBuiltin >;
 
         ClsBuiltin( const Type::Ptr& type );
+
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
 
       public:
         static inline Value::ID classid( void )

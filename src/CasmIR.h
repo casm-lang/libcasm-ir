@@ -49,6 +49,7 @@
 #define _LIBCASM_IR_CASMIR_H_
 
 #include <libstdhl/Type>
+#include <libstdhl/data/type/Natural>
 
 #include <memory>
 
@@ -163,6 +164,17 @@ namespace libcasm_ir
         }
         return nullptr;
     }
+
+    namespace Utility
+    {
+        static inline libstdhl::Type::Natural createMask( libstdhl::u16 bitsize )
+        {
+            auto mask = libstdhl::Type::createNatural( 1 );
+            mask <<= bitsize;
+            mask -= 1;
+            return mask;
+        }
+    };
 }
 
 #endif  // _LIBCASM_IR_CASMIR_H_

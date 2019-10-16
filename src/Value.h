@@ -54,6 +54,7 @@
 
 #include <libstdhl/Hash>
 #include <libstdhl/Memory>
+#include <libstdhl/Variadic>
 
 #include <sstream>
 
