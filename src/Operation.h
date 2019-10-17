@@ -53,13 +53,21 @@ namespace libcasm_ir
     {
       public:
         /**
-           unary instruction/built-in call
+           0-ary call
+        */
+        static inline void execute( const Value::ID id, const Type::Ptr& type, Constant& res )
+        {
+            execute( id, type, res, nullptr, 0 );
+        }
+
+        /**
+           unary call
         */
         static void execute(
             const Value::ID id, const Type::Ptr& type, Constant& res, const Constant& lhs );
 
         /**
-           binary instruction/built-in call
+           binary call
         */
         static void execute(
             const Value::ID id,
@@ -69,7 +77,7 @@ namespace libcasm_ir
             const Constant& rhs );
 
         /**
-           n-ary instruction/built-in call
+           n-ary call
         */
         static void execute(
             const Value::ID id,
@@ -79,15 +87,7 @@ namespace libcasm_ir
             const std::size_t size );
 
         /**
-           0-ary built-in call
-        */
-        static inline void execute( const Value::ID id, const Type::Ptr& type, Constant& res )
-        {
-            execute( id, type, res, nullptr, 0 );
-        }
-
-        /**
-           n-ary instruction/built-in call with type as reference
+           n-ary call with reference type
         */
         template < typename... Args >
         static inline void execute(
@@ -97,25 +97,14 @@ namespace libcasm_ir
             execute( id, type, res, std::forward< Args >( args )... );
         }
 
-        // template < typename T >
-        // static inline void execute(
-        //     const libcasm_ir::Type::Ptr& type,
-        //     libcasm_ir::Constant& res,
-        //     const libcasm_ir::Constant* operands,
-        //     const std::size_t size )
-        // {
-        //     const T builtin( type );
-        //     assert( builtin.type().arguments().size() == size );
-        //     execute( builtin, res, operands, size );
-        //     assert( builtin.type().result() == res.type() );
-        // }
-
+        /**
+           n-ary class-based call
+        */
         template < typename T, typename... Args >
         static inline void execute( const Type::Ptr& type, Constant& res, Args&&... args )
         {
             const T value( type );
             value.execute( res, std::forward< Args >( args )... );
-            // assert( value.type().result() == res.type() );
         }
     };
 
