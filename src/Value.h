@@ -281,8 +281,6 @@ namespace libcasm_ir
       public:
         /**
            encodes the Value::ID to a human readable std::string
-           this function can be used by front-ends to display the
-           e.g. instruction as a operator symbol
          */
         static std::string token( const Value::ID id );
 
