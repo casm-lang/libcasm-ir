@@ -602,9 +602,25 @@ void InvInstruction::accept( Visitor& visitor )
 
 void InvInstruction::execute( Constant& res, const Constant& lhs ) const
 {
+    // inv : (lhs : T) -> T
+    //
+    // | case |         | A     | B         | C     |
+    // |------+---------+-------+-----------+-------|
+    // | lhs  | inv (-) | undef | lhs       | sym   |
+    // |------+---------+-------+-----------+-------|
+    // |    0 | undef   | undef | -lhs      | sym'  |
+
     if( not lhs.defined() )
     {
         res = lhs;
+        return;
+    }
+
+    if( lhs.symbolic() )
+    {
+        // TODO: FIXME: @ppaulweber: return here a symbolic constant and trace @mossbruggerj
+        throw InternalException( "unimplemented '" + description() + "'" );
+        // res = SymbolicConstant( ... );
         return;
     }
 
@@ -725,6 +741,16 @@ void AddInstruction::accept( Visitor& visitor )
 
 void AddInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
 {
+    // add : (lhs : T) * (rhs : T) -> T
+    //
+    // | case | rhs     | A     | B         | C     |
+    // |------+---------+-------+-----------+-------|
+    // |  lhs | add (+) | undef | rhs       | sym   |
+    // |------+---------+-------+-----------+-------|
+    // |    0 | undef   | undef | undef     | undef |
+    // |    1 | lhs     | undef | lhs + rhs | sym'  |
+    // |    2 | sym     | undef | sym'      | sym'  |
+
     if( not lhs.defined() )
     {
         res = lhs;
@@ -734,6 +760,14 @@ void AddInstruction::execute( Constant& res, const Constant& lhs, const Constant
     if( not rhs.defined() )
     {
         res = rhs;
+        return;
+    }
+
+    if( lhs.symbolic() or rhs.symbolic() )
+    {
+        // TODO: FIXME: @ppaulweber: return here a symbolic constant and trace @mossbruggerj
+        throw InternalException( "unimplemented '" + description() + "'" );
+        // res = SymbolicConstant( ... );
         return;
     }
 
@@ -862,6 +896,16 @@ void SubInstruction::accept( Visitor& visitor )
 
 void SubInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
 {
+    // sub : (lhs : T) * (rhs : T) -> T
+    //
+    // | case | rhs     | A     | B         | C     |
+    // |------+---------+-------+-----------+-------|
+    // |  lhs | sub (-) | undef | rhs       | sym   |
+    // |------+---------+-------+-----------+-------|
+    // |    0 | undef   | undef | undef     | undef |
+    // |    1 | lhs     | undef | lhs - rhs | sym'  |
+    // |    2 | sym     | undef | sym'      | sym'  |
+
     if( not lhs.defined() )
     {
         res = lhs;
@@ -871,6 +915,14 @@ void SubInstruction::execute( Constant& res, const Constant& lhs, const Constant
     if( not rhs.defined() )
     {
         res = rhs;
+        return;
+    }
+
+    if( lhs.symbolic() or rhs.symbolic() )
+    {
+        // TODO: FIXME: @ppaulweber: return here a symbolic constant and trace @mossbruggerj
+        throw InternalException( "unimplemented '" + description() + "'" );
+        // res = SymbolicConstant( ... );
         return;
     }
 
@@ -971,6 +1023,16 @@ void MulInstruction::accept( Visitor& visitor )
 
 void MulInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
 {
+    // mul : (lhs : T) * (rhs : T) -> T
+    //
+    // | case | rhs     | A     | B         | C     |
+    // |------+---------+-------+-----------+-------|
+    // |  lhs | mul (*) | undef | rhs       | sym   |
+    // |------+---------+-------+-----------+-------|
+    // |    0 | undef   | undef | undef     | undef |
+    // |    1 | lhs     | undef | lhs * rhs | sym'  |
+    // |    2 | sym     | undef | sym'      | sym'  |
+
     if( not lhs.defined() )
     {
         res = lhs;
@@ -980,6 +1042,14 @@ void MulInstruction::execute( Constant& res, const Constant& lhs, const Constant
     if( not rhs.defined() )
     {
         res = rhs;
+        return;
+    }
+
+    if( lhs.symbolic() or rhs.symbolic() )
+    {
+        // TODO: FIXME: @ppaulweber: return here a symbolic constant and trace @mossbruggerj
+        throw InternalException( "unimplemented '" + description() + "'" );
+        // res = SymbolicConstant( ... );
         return;
     }
 
@@ -1081,6 +1151,16 @@ void ModInstruction::accept( Visitor& visitor )
 
 void ModInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
 {
+    // mod : (lhs : T) * (rhs : T) -> T
+    //
+    // | case | rhs     | A     | B         | C     |
+    // |------+---------+-------+-----------+-------|
+    // |  lhs | mod (%) | undef | rhs       | sym   |
+    // |------+---------+-------+-----------+-------|
+    // |    0 | undef   | undef | undef     | undef |
+    // |    1 | lhs     | undef | lhs % rhs | sym'  |
+    // |    2 | sym     | undef | sym'      | sym'  |
+
     if( not lhs.defined() )
     {
         res = lhs;
@@ -1090,6 +1170,14 @@ void ModInstruction::execute( Constant& res, const Constant& lhs, const Constant
     if( not rhs.defined() )
     {
         res = rhs;
+        return;
+    }
+
+    if( lhs.symbolic() or rhs.symbolic() )
+    {
+        // TODO: FIXME: @ppaulweber: return here a symbolic constant and trace @mossbruggerj
+        throw InternalException( "unimplemented '" + description() + "'" );
+        // res = SymbolicConstant( ... );
         return;
     }
 
@@ -1180,6 +1268,17 @@ void DivInstruction::accept( Visitor& visitor )
 
 void DivInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
 {
+    // div : (lhs : T) * (rhs : T) -> T
+    //
+    // | case | rhs      | A     | B         | C        | D     |
+    // |------+----------+-------+-----------+----------+-------|
+    // |  lhs | div (/)  | undef | rhs != 0  | rhs == 0 | sym   |
+    // |------+----------+-------+-----------+----------+-------|
+    // |    0 | undef    | undef | undef     | undef    | undef |
+    // |    1 | lhs != 0 | undef | lhs / rhs | undef    | sym'  |
+    // |    2 | lhs == 0 | undef | 0 : T     | undef    | 0 : T |
+    // |    3 | sym      | undef | sym'      | undef    | sym'  |
+
     if( not lhs.defined() )
     {
         res = lhs;
@@ -1189,6 +1288,14 @@ void DivInstruction::execute( Constant& res, const Constant& lhs, const Constant
     if( not rhs.defined() )
     {
         res = rhs;
+        return;
+    }
+
+    if( lhs.symbolic() or rhs.symbolic() )
+    {
+        // TODO: FIXME: @ppaulweber: return here a symbolic constant and trace @mossbruggerj
+        throw InternalException( "unimplemented '" + description() + "'" );
+        // res = SymbolicConstant( ... );
         return;
     }
 
@@ -1285,11 +1392,27 @@ void PowInstruction::accept( Visitor& visitor )
 
 void PowInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
 {
+    // pow : (lhs : T) * (rhs : T) -> T
+    //
+    // | case | rhs      | A     | B               | C       | D       | E          | F     |
+    // |------+----------+-------+-----------------+---------+---------+------------+-------|
+    // |  lhs | pow (^)  | undef | rhs < 0         | rhs = 0 | rhs = 1 | rhs > 1    | sym   |
+    // |------+----------+-------+-----------------+---------+---------+------------+-------|
+    // |    0 | undef    | undef | undef           |   undef | undef   | undef      | undef |
+    // |    1 | lhs < -1 | undef | undef           |       1 | lhs     | lhs ^ rhs  | sym'  |
+    // |    2 | lhs = -1 | undef | (-1) ^ abs(rhs) |       1 | -1      | (-1) ^ rhs | sym'  |
+    // |    3 | lhs = 0  | undef | undef           |   undef | 0       | 0          | sym'  |
+    // |    4 | lhs = 1  | 1     | 1               |       1 | 1       | 1          | 1     |
+    // |    5 | lhs > 1  | undef | undef           |       1 | lhs     | lhs ^ rhs  | sym'  |
+    // |    6 | sym      | sym'  | sym'            |    sym' | sym'    | sym'       | sym'  |
+
     if( not lhs.defined() )
     {
         res = lhs;
         return;
     }
+
+    // TODO: FIXME: @ppaulweber: symbolic constant and trace @mossbruggerj
 
     if( not rhs.defined() )
     {
@@ -1558,6 +1681,19 @@ void AndInstruction::accept( Visitor& visitor )
 
 void AndInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
 {
+    // and : (lhs : T) * (rhs : T) -> T
+    //
+    // | case | rhs   | A     | B     | C     | D     |
+    // |------+-------+-------+-------+-------+-------|
+    // |  lhs | and   | undef | false | true  | sym   |
+    // |------+-------+-------+-------+-------+-------|
+    // |    0 | undef | undef | false | undef | sym'  |
+    // |    1 | false | false | false | false | false |
+    // |    2 | true  | undef | false | true  | sym'  |
+    // |    3 | sym   | sym'  | false | sym'  | sym'  |
+
+    // TODO: FIXME: @ppaulweber: symbolic constant and trace @mossbruggerj
+
     switch( typeId().kind() )
     {
         case Type::Kind::BOOLEAN:
@@ -1680,8 +1816,18 @@ void XorInstruction::accept( Visitor& visitor )
 
 void XorInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
 {
-    const auto& lval = static_cast< const BooleanConstant& >( lhs ).value();
-    const auto& rval = static_cast< const BooleanConstant& >( rhs ).value();
+    // xor : (lhs : T) * (rhs : T) -> T
+    //
+    // | case | rhs   | A     | B     | C     | D    |
+    // |------+-------+-------+-------+-------+------|
+    // |  lhs | xor   | undef | false | true  | sym  |
+    // |------+-------+-------+-------+-------+------|
+    // |    0 | undef | undef | undef | undef | sym' |
+    // |    1 | false | undef | false | true  | sym' |
+    // |    2 | true  | undef | true  | false | sym' |
+    // |    3 | sym   | sym'  | sym'  | sym'  | sym' |
+
+    // TODO: FIXME: @ppaulweber: symbolic constant and trace @mossbruggerj
 
     switch( typeId().kind() )
     {
@@ -1797,6 +1943,19 @@ void OrInstruction::accept( Visitor& visitor )
 
 void OrInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
 {
+    // or : (lhs : T) * (rhs : T) -> T
+    //
+    // | case | rhs   | A     | B     | C    | D    |
+    // |------+-------+-------+-------+------+------|
+    // |  lhs | or    | undef | false | true | sym  |
+    // |------+-------+-------+-------+------+------|
+    // |    0 | undef | undef | undef | true | sym' |
+    // |    1 | false | undef | false | true | sym' |
+    // |    2 | true  | true  | true  | true | true |
+    // |    3 | sym   | sym'  | sym'  | true | sym' |
+
+    // TODO: FIXME: @ppaulweber: symbolic constant and trace @mossbruggerj
+
     switch( typeId().kind() )
     {
         case Type::Kind::BOOLEAN:
@@ -1918,6 +2077,19 @@ void ImpInstruction::accept( Visitor& visitor )
 
 void ImpInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
 {
+    // imp : (lhs : T) * (rhs : T) -> T
+    //
+    // | case | rhs   | A     | B     | C     | D     |
+    // |------+-------+-------+-------+-------+-------|
+    // |  lhs | imp   | undef | false | true  | sym   |
+    // |------+-------+-------+-------+-------+-------|
+    // |    0 | undef | undef | undef | true  | sym'  |
+    // |    1 | false | true  | true  | true  | true  |
+    // |    2 | true  | undef | false | true  | sym'  |
+    // |    3 | sym   | sym'  | sym'  | true  | sym'  |
+
+    // TODO: FIXME: @ppaulweber: symbolic constant and trace @mossbruggerj
+
     const auto& lval = static_cast< const BooleanConstant& >( lhs ).value();
     const auto& rval = static_cast< const BooleanConstant& >( rhs ).value();
 
@@ -2018,6 +2190,16 @@ void NotInstruction::accept( Visitor& visitor )
 
 void NotInstruction::execute( Constant& res, const Constant& lhs ) const
 {
+    // not : (lhs : T) -> T
+    //
+    // | case |       | A     | B     | C     | D     |
+    // |------+-------+-------+-------+-------+-------|
+    // | lhs  | not   | undef | false | true  | sym   |
+    // |------+-------+-------+-------+-------+-------|
+    // |    0 | undef | undef | true  | false | sym'  |
+
+    // TODO: FIXME: @ppaulweber: symbolic constant and trace @mossbruggerj
+
     if( not lhs.defined() )
     {
         res = Constant::undef( type().ptr_type() );
@@ -2183,6 +2365,18 @@ void EquInstruction::accept( Visitor& visitor )
 
 void EquInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
 {
+    // equ : (lhs : T) * (rhs : T) -> Boolean
+    //
+    // | case | rhs      | A     | B          | C     |
+    // |------+----------+-------+------------+-------|
+    // |  lhs | equ (=)  | undef | rhs        | sym   |
+    // |------+----------+-------+------------+-------|
+    // |    0 | undef    | true  | false      | sym'  |
+    // |    1 | lhs      | false | lhs == rhs | sym'  |
+    // |    2 | sym      | sym'  | sym'       | sym'  |
+
+    // TODO: FIXME: @ppaulweber: symbolic constant and trace @mossbruggerj
+
     if( lhs.defined() and rhs.defined() )
     {
         res = BooleanConstant( lhs == rhs );
@@ -2318,6 +2512,18 @@ void NeqInstruction::accept( Visitor& visitor )
 
 void NeqInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
 {
+    // neq : (lhs : T) * (rhs : T) -> Boolean
+    //
+    // | case | rhs      | A     | B          | C     |
+    // |------+----------+-------+------------+-------|
+    // |  lhs | neq (!=) | undef | rhs        | sym   |
+    // |------+----------+-------+------------+-------|
+    // |    0 | undef    | false | true       | sym'  |
+    // |    1 | lhs      | true  | lhs != rhs | sym'  |
+    // |    2 | sym      | sym'  | sym'       | sym'  |
+
+    // TODO: FIXME: @ppaulweber: symbolic constant and trace @mossbruggerj
+
     if( lhs.defined() and rhs.defined() )
     {
         res = BooleanConstant( lhs != rhs );
@@ -2448,6 +2654,18 @@ LthInstruction::LthInstruction( const Type::Ptr& type )
 
 void LthInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
 {
+    // lth : (lhs : T) * (rhs : T) -> Boolean
+    //
+    // | case | rhs     | A     | B         | C     |
+    // |------+---------+-------+-----------+-------|
+    // |  lhs | lth (<) | undef | rhs       | sym   |
+    // |------+---------+-------+-----------+-------|
+    // |    0 | undef   | undef | undef     | undef |
+    // |    1 | lhs     | undef | lhs < rhs | sym'  |
+    // |    2 | sym     | undef | sym'      | sym'  |
+
+    // TODO: FIXME: @ppaulweber: symbolic constant and trace @mossbruggerj
+
     assert( lhs.type() == rhs.type() );
 
     if( not lhs.defined() or not rhs.defined() )
@@ -2540,6 +2758,18 @@ void LeqInstruction::accept( Visitor& visitor )
 
 void LeqInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
 {
+    // leq : (lhs : T) * (rhs : T) -> Boolean
+    //
+    // | case | rhs      | A     | B          | C     |
+    // |------+----------+-------+------------+-------|
+    // |  lhs | leq (<=) | undef | rhs        | sym   |
+    // |------+----------+-------+------------+-------|
+    // |    0 | undef    | true  | undef      | undef |
+    // |    1 | lhs      | undef | lhs <= rhs | sym'  |
+    // |    2 | sym      | undef | sym'       | sym'  |
+
+    // TODO: FIXME: @ppaulweber: symbolic constant and trace @mossbruggerj
+
     assert( lhs.type() == rhs.type() );
 
     if( lhs.defined() and rhs.defined() )
@@ -2632,6 +2862,18 @@ void GthInstruction::accept( Visitor& visitor )
 
 void GthInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
 {
+    // gth : (lhs : T) * (rhs : T) -> Boolean
+    //
+    // | case | rhs     | A     | B         | C     |
+    // |------+---------+-------+-----------+-------|
+    // |  lhs | gth (>) | undef | rhs       | sym   |
+    // |------+---------+-------+-----------+-------|
+    // |    0 | undef   | undef | undef     | undef |
+    // |    1 | lhs     | undef | lhs > rhs | sym'  |
+    // |    2 | sym     | undef | sym'      | sym'  |
+
+    // TODO: FIXME: @ppaulweber: symbolic constant and trace @mossbruggerj
+
     assert( lhs.type() == rhs.type() );
 
     if( not lhs.defined() or not rhs.defined() )
@@ -2719,6 +2961,16 @@ void GeqInstruction::accept( Visitor& visitor )
 
 void GeqInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
 {
+    // geq : (lhs : T) * (rhs : T) -> Boolean
+    //
+    // | case | rhs      | A     | B          | C     |
+    // |------+----------+-------+------------+-------|
+    // |  lhs | geq (>=) | undef | rhs        | sym   |
+    // |------+----------+-------+------------+-------|
+    // |    0 | undef    | true  | undef      | undef |
+    // |    1 | lhs      | undef | lhs >= rhs | sym'  |
+    // |    2 | sym      | undef | sym'       | sym'  |
+
     assert( lhs.type() == rhs.type() );
 
     if( lhs.defined() and rhs.defined() )
