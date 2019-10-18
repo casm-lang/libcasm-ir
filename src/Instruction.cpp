@@ -618,7 +618,7 @@ void InvInstruction::execute( Constant& res, const Constant& lhs ) const
 
     if( lhs.symbolic() )
     {
-        // TODO: FIXME: @ppaulweber: return here a symbolic constant and trace @mossbruggerj
+        // TODO: FIXME: @ppaulweber: return here a symbolic constant and trace @moosbruggerj
         throw InternalException( "unimplemented '" + description() + "'" );
         // res = SymbolicConstant( ... );
         return;
@@ -765,7 +765,7 @@ void AddInstruction::execute( Constant& res, const Constant& lhs, const Constant
 
     if( lhs.symbolic() or rhs.symbolic() )
     {
-        // TODO: FIXME: @ppaulweber: return here a symbolic constant and trace @mossbruggerj
+        // TODO: FIXME: @ppaulweber: return here a symbolic constant and trace @moosbruggerj
         throw InternalException( "unimplemented '" + description() + "'" );
         // res = SymbolicConstant( ... );
         return;
@@ -920,7 +920,7 @@ void SubInstruction::execute( Constant& res, const Constant& lhs, const Constant
 
     if( lhs.symbolic() or rhs.symbolic() )
     {
-        // TODO: FIXME: @ppaulweber: return here a symbolic constant and trace @mossbruggerj
+        // TODO: FIXME: @ppaulweber: return here a symbolic constant and trace @moosbruggerj
         throw InternalException( "unimplemented '" + description() + "'" );
         // res = SymbolicConstant( ... );
         return;
@@ -1047,7 +1047,7 @@ void MulInstruction::execute( Constant& res, const Constant& lhs, const Constant
 
     if( lhs.symbolic() or rhs.symbolic() )
     {
-        // TODO: FIXME: @ppaulweber: return here a symbolic constant and trace @mossbruggerj
+        // TODO: FIXME: @ppaulweber: return here a symbolic constant and trace @moosbruggerj
         throw InternalException( "unimplemented '" + description() + "'" );
         // res = SymbolicConstant( ... );
         return;
@@ -1175,7 +1175,7 @@ void ModInstruction::execute( Constant& res, const Constant& lhs, const Constant
 
     if( lhs.symbolic() or rhs.symbolic() )
     {
-        // TODO: FIXME: @ppaulweber: return here a symbolic constant and trace @mossbruggerj
+        // TODO: FIXME: @ppaulweber: return here a symbolic constant and trace @moosbruggerj
         throw InternalException( "unimplemented '" + description() + "'" );
         // res = SymbolicConstant( ... );
         return;
@@ -1293,7 +1293,7 @@ void DivInstruction::execute( Constant& res, const Constant& lhs, const Constant
 
     if( lhs.symbolic() or rhs.symbolic() )
     {
-        // TODO: FIXME: @ppaulweber: return here a symbolic constant and trace @mossbruggerj
+        // TODO: FIXME: @ppaulweber: return here a symbolic constant and trace @moosbruggerj
         throw InternalException( "unimplemented '" + description() + "'" );
         // res = SymbolicConstant( ... );
         return;
@@ -1412,7 +1412,7 @@ void PowInstruction::execute( Constant& res, const Constant& lhs, const Constant
         return;
     }
 
-    // TODO: FIXME: @ppaulweber: symbolic constant and trace @mossbruggerj
+    // TODO: FIXME: @ppaulweber: symbolic constant and trace @moosbruggerj
 
     if( not rhs.defined() )
     {
@@ -1692,7 +1692,7 @@ void AndInstruction::execute( Constant& res, const Constant& lhs, const Constant
     // |    2 | true  | undef | false | true  | sym'  |
     // |    3 | sym   | sym'  | false | sym'  | sym'  |
 
-    // TODO: FIXME: @ppaulweber: symbolic constant and trace @mossbruggerj
+    // TODO: FIXME: @ppaulweber: symbolic constant and trace @moosbruggerj
 
     switch( typeId().kind() )
     {
@@ -1827,7 +1827,7 @@ void XorInstruction::execute( Constant& res, const Constant& lhs, const Constant
     // |    2 | true  | undef | true  | false | sym' |
     // |    3 | sym   | sym'  | sym'  | sym'  | sym' |
 
-    // TODO: FIXME: @ppaulweber: symbolic constant and trace @mossbruggerj
+    // TODO: FIXME: @ppaulweber: symbolic constant and trace @moosbruggerj
 
     switch( typeId().kind() )
     {
@@ -1954,7 +1954,7 @@ void OrInstruction::execute( Constant& res, const Constant& lhs, const Constant&
     // |    2 | true  | true  | true  | true | true |
     // |    3 | sym   | sym'  | sym'  | true | sym' |
 
-    // TODO: FIXME: @ppaulweber: symbolic constant and trace @mossbruggerj
+    // TODO: FIXME: @ppaulweber: symbolic constant and trace @moosbruggerj
 
     switch( typeId().kind() )
     {
@@ -2088,7 +2088,7 @@ void ImpInstruction::execute( Constant& res, const Constant& lhs, const Constant
     // |    2 | true  | undef | false | true  | sym'  |
     // |    3 | sym   | sym'  | sym'  | true  | sym'  |
 
-    // TODO: FIXME: @ppaulweber: symbolic constant and trace @mossbruggerj
+    // TODO: FIXME: @ppaulweber: symbolic constant and trace @moosbruggerj
 
     const auto& lval = static_cast< const BooleanConstant& >( lhs ).value();
     const auto& rval = static_cast< const BooleanConstant& >( rhs ).value();
@@ -2198,7 +2198,7 @@ void NotInstruction::execute( Constant& res, const Constant& lhs ) const
     // |------+-------+-------+-------+-------+-------|
     // |    0 | undef | undef | true  | false | sym'  |
 
-    // TODO: FIXME: @ppaulweber: symbolic constant and trace @mossbruggerj
+    // TODO: FIXME: @ppaulweber: symbolic constant and trace @moosbruggerj
 
     if( not lhs.defined() )
     {
@@ -2375,7 +2375,7 @@ void EquInstruction::execute( Constant& res, const Constant& lhs, const Constant
     // |    1 | lhs      | false | lhs == rhs | sym'  |
     // |    2 | sym      | sym'  | sym'       | sym'  |
 
-    // TODO: FIXME: @ppaulweber: symbolic constant and trace @mossbruggerj
+    // TODO: FIXME: @ppaulweber: symbolic constant and trace @moosbruggerj
 
     if( lhs.defined() and rhs.defined() )
     {
@@ -2522,7 +2522,7 @@ void NeqInstruction::execute( Constant& res, const Constant& lhs, const Constant
     // |    1 | lhs      | true  | lhs != rhs | sym'  |
     // |    2 | sym      | sym'  | sym'       | sym'  |
 
-    // TODO: FIXME: @ppaulweber: symbolic constant and trace @mossbruggerj
+    // TODO: FIXME: @ppaulweber: symbolic constant and trace @moosbruggerj
 
     if( lhs.defined() and rhs.defined() )
     {
@@ -2664,7 +2664,7 @@ void LthInstruction::execute( Constant& res, const Constant& lhs, const Constant
     // |    1 | lhs     | undef | lhs < rhs | sym'  |
     // |    2 | sym     | undef | sym'      | sym'  |
 
-    // TODO: FIXME: @ppaulweber: symbolic constant and trace @mossbruggerj
+    // TODO: FIXME: @ppaulweber: symbolic constant and trace @moosbruggerj
 
     assert( lhs.type() == rhs.type() );
 
@@ -2768,7 +2768,7 @@ void LeqInstruction::execute( Constant& res, const Constant& lhs, const Constant
     // |    1 | lhs      | undef | lhs <= rhs | sym'  |
     // |    2 | sym      | undef | sym'       | sym'  |
 
-    // TODO: FIXME: @ppaulweber: symbolic constant and trace @mossbruggerj
+    // TODO: FIXME: @ppaulweber: symbolic constant and trace @moosbruggerj
 
     assert( lhs.type() == rhs.type() );
 
@@ -2872,7 +2872,7 @@ void GthInstruction::execute( Constant& res, const Constant& lhs, const Constant
     // |    1 | lhs     | undef | lhs > rhs | sym'  |
     // |    2 | sym     | undef | sym'      | sym'  |
 
-    // TODO: FIXME: @ppaulweber: symbolic constant and trace @mossbruggerj
+    // TODO: FIXME: @ppaulweber: symbolic constant and trace @moosbruggerj
 
     assert( lhs.type() == rhs.type() );
 
