@@ -39,45 +39,41 @@
 //  statement from your version.
 //
 
-#ifndef _LIBCASM_IR_H_
-#define _LIBCASM_IR_H_
+#include "../../main.h"
 
-#include <libcasm-ir/Agent>
-#include <libcasm-ir/Annotation>
-#include <libcasm-ir/Block>
-#include <libcasm-ir/Builtin>
-#include <libcasm-ir/CasmIR>
-#include <libcasm-ir/Constant>
-#include <libcasm-ir/Derived>
-#include <libcasm-ir/Enumeration>
-#include <libcasm-ir/Exception>
-#include <libcasm-ir/Function>
-#include <libcasm-ir/Instruction>
-#include <libcasm-ir/List>
-#include <libcasm-ir/Operation>
-#include <libcasm-ir/Range>
-#include <libcasm-ir/Rule>
-#include <libcasm-ir/Specification>
-#include <libcasm-ir/Statement>
-#include <libcasm-ir/Tuple>
-#include <libcasm-ir/Type>
-#include <libcasm-ir/User>
-#include <libcasm-ir/Value>
-#include <libcasm-ir/Version>
-#include <libcasm-ir/Visitor>
+using namespace libcasm_ir;
 
-#include <libcasm-ir/analyze/ConsistencyCheckPass>
-#include <libcasm-ir/analyze/IRDumpDebugPass>
+static const auto id = Value::ID::INV_INSTRUCTION;
 
-#include <libcasm-ir/transform/BranchEliminationPass>
-#include <libcasm-ir/transform/IRDumpDotPass>
-#include <libcasm-ir/transform/IRDumpSourcePass>
+static const auto type
+    = libstdhl::Memory::get< RelationType >( libstdhl::Memory::get< IntegerType >(),
+        Types( { libstdhl::Memory::get< IntegerType >() } ) );
 
-namespace libcasm_ir
-{
-}
+#define CALC_( ARG )                                                           \
+    const auto arg = IntegerConstant( ARG );                                   \
+    Constant res;                                                              \
+    Operation::execute( id, *type, res, arg );
 
-#endif  // _LIBCASM_IR_H_
+#define TEST_( NAME, RES, ARG )                                                \
+    TEST( libcasm_ir__instruction_inv_integer, NAME )                          \
+    {                                                                          \
+        CALC_( ARG );                                                          \
+        EXPECT_TRUE( res == IntegerConstant( RES ) );                          \
+        EXPECT_STREQ( res.description().c_str(),                               \
+            IntegerConstant( RES ).description().c_str() );                    \
+    }
+
+// BENCHMARK( libcasm_ir__instruction_inv_integer, example, 10, 10 ) // TODO: PPA: FIXME: move this to the benchmarks!!!
+// {
+//     CALC_( 123 );
+// }
+
+TEST_( undef__at__undef, , );
+TEST_( zero___at__zero_, 0, 0 );
+TEST_( neg1___at__pos1_, -1, 1 );
+TEST_( pos1___at__neg1_, 1, -1 );
+TEST_( short__at__short, -123, 123 );
+TEST_( long___at__long_, 123456789, -123456789 );
 
 //
 //  Local variables:

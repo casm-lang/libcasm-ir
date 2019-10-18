@@ -39,45 +39,22 @@
 //  statement from your version.
 //
 
-#ifndef _LIBCASM_IR_H_
-#define _LIBCASM_IR_H_
+#include "../main.h"
 
-#include <libcasm-ir/Agent>
-#include <libcasm-ir/Annotation>
-#include <libcasm-ir/Block>
-#include <libcasm-ir/Builtin>
-#include <libcasm-ir/CasmIR>
-#include <libcasm-ir/Constant>
-#include <libcasm-ir/Derived>
-#include <libcasm-ir/Enumeration>
 #include <libcasm-ir/Exception>
-#include <libcasm-ir/Function>
-#include <libcasm-ir/Instruction>
-#include <libcasm-ir/List>
-#include <libcasm-ir/Operation>
-#include <libcasm-ir/Range>
-#include <libcasm-ir/Rule>
-#include <libcasm-ir/Specification>
-#include <libcasm-ir/Statement>
-#include <libcasm-ir/Tuple>
-#include <libcasm-ir/Type>
-#include <libcasm-ir/User>
-#include <libcasm-ir/Value>
-#include <libcasm-ir/Version>
-#include <libcasm-ir/Visitor>
 
-#include <libcasm-ir/analyze/ConsistencyCheckPass>
-#include <libcasm-ir/analyze/IRDumpDebugPass>
+using namespace libcasm_ir;
 
-#include <libcasm-ir/transform/BranchEliminationPass>
-#include <libcasm-ir/transform/IRDumpDotPass>
-#include <libcasm-ir/transform/IRDumpSourcePass>
+static const auto id = Value::ID::ABORT_BUILTIN;
 
-namespace libcasm_ir
+static const auto type =
+    libstdhl::Memory::get< RelationType >( libstdhl::Memory::get< VoidType >() );
+
+TEST( libcasm_ir__builtin_abort, call )
 {
+    Constant res;
+    EXPECT_THROW( Operation::execute( id, *type, res );, AbortException );
 }
-
-#endif  // _LIBCASM_IR_H_
 
 //
 //  Local variables:

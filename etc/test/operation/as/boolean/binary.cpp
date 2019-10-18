@@ -39,45 +39,43 @@
 //  statement from your version.
 //
 
-#ifndef _LIBCASM_IR_H_
-#define _LIBCASM_IR_H_
+#include "../../../main.h"
 
-#include <libcasm-ir/Agent>
-#include <libcasm-ir/Annotation>
-#include <libcasm-ir/Block>
-#include <libcasm-ir/Builtin>
-#include <libcasm-ir/CasmIR>
-#include <libcasm-ir/Constant>
-#include <libcasm-ir/Derived>
-#include <libcasm-ir/Enumeration>
-#include <libcasm-ir/Exception>
-#include <libcasm-ir/Function>
-#include <libcasm-ir/Instruction>
-#include <libcasm-ir/List>
-#include <libcasm-ir/Operation>
-#include <libcasm-ir/Range>
-#include <libcasm-ir/Rule>
-#include <libcasm-ir/Specification>
-#include <libcasm-ir/Statement>
-#include <libcasm-ir/Tuple>
-#include <libcasm-ir/Type>
-#include <libcasm-ir/User>
-#include <libcasm-ir/Value>
-#include <libcasm-ir/Version>
-#include <libcasm-ir/Visitor>
+using namespace libcasm_ir;
 
-#include <libcasm-ir/analyze/ConsistencyCheckPass>
-#include <libcasm-ir/analyze/IRDumpDebugPass>
+static const auto id = Value::ID::AS_BOOLEAN_BUILTIN;
 
-#include <libcasm-ir/transform/BranchEliminationPass>
-#include <libcasm-ir/transform/IRDumpDotPass>
-#include <libcasm-ir/transform/IRDumpSourcePass>
+#define TEST_( NAME, SIZE, FROM, TO )                                   \
+    TEST( libcasm_ir__builtin_as_boolean_binary, SIZE##NAME )           \
+    {                                                                   \
+        const auto arg = BinaryConstant FROM;                           \
+        const auto type = libstdhl::Memory::get< RelationType >(        \
+            libstdhl::Memory::get< BooleanType >(),                     \
+            Types( { libstdhl::Memory::get< BinaryType >( SIZE ) } ) ); \
+                                                                        \
+        Constant res;                                                   \
+        Operation::execute( id, *type, res, arg );              \
+        EXPECT_TRUE( res == BooleanConstant( TO ) );                    \
+    }
 
-namespace libcasm_ir
-{
-}
+TEST_( undef_at_undef, 1, ( 1 ), );
+TEST_( false_at_zero, 1, ( 1, 0 ), false );
+TEST_( true__at_one, 1, ( 1, 1 ), true );
 
-#endif  // _LIBCASM_IR_H_
+TEST_( undef_at_undef, 8, ( 8 ), );
+TEST_( false_at_zero, 8, ( 8, 0 ), false );
+TEST_( true__at_one, 8, ( 8, 1 ), true );
+TEST_( true__at_large, 8, ( 8, 0xee ), true );
+
+TEST_( undef_at_undef, 23, ( 23 ), );
+TEST_( false_at_zero, 23, ( 23, 0 ), false );
+TEST_( true__at_one, 23, ( 23, 1 ), true );
+TEST_( true__at_large, 23, ( 23, 0xfeed ), true );
+
+TEST_( undef_at_undef, 48, ( 48 ), );
+TEST_( false_at_zero, 48, ( 48, 0 ), false );
+TEST_( true__at_one, 48, ( 48, 1 ), true );
+TEST_( true__at_large, 48, ( 48, 0xfeedbeef ), true );
 
 //
 //  Local variables:

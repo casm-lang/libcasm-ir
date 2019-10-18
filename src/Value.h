@@ -54,6 +54,7 @@
 
 #include <libstdhl/Hash>
 #include <libstdhl/Memory>
+#include <libstdhl/Variadic>
 
 #include <sstream>
 
@@ -73,9 +74,8 @@ namespace libcasm_ir
         {
             VALUE = 0,
             VALUE_LIST,
-            USER
+            USER,
 
-            ,
             SPECIFICATION,
             AGENT,
             RULE,
@@ -89,14 +89,12 @@ namespace libcasm_ir
             BLOCK,
             EXECUTION_SEMANTICS_BLOCK,
             PARALLEL_BLOCK,
-            SEQUENTIAL_BLOCK
+            SEQUENTIAL_BLOCK,
 
-            ,
             STATEMENT,
             TRIVIAL_STATEMENT,
-            BRANCH_STATEMENT
+            BRANCH_STATEMENT,
 
-            ,
             CONSTANT,
             VOID_CONSTANT,
             RULE_REFERENCE_CONSTANT,
@@ -112,9 +110,8 @@ namespace libcasm_ir
             TUPLE_CONSTANT,
             LIST_CONSTANT,
             DOMAIN_CONSTANT,
-            IDENTIFIER
+            IDENTIFIER,
 
-            ,
             INSTRUCTION,
             UNARY_INSTRUCTION,
             BINARY_INSTRUCTION,
@@ -128,9 +125,8 @@ namespace libcasm_ir
             UPDATE_INSTRUCTION,
             LOCATION_INSTRUCTION,
             CALL_INSTRUCTION,
-            LOCAL_INSTRUCTION
+            LOCAL_INSTRUCTION,
 
-            ,
             OPERATOR_INSTRUCTION,
             ARITHMETIC_INSTRUCTION,
             INV_INSTRUCTION,
@@ -285,8 +281,6 @@ namespace libcasm_ir
       public:
         /**
            encodes the Value::ID to a human readable std::string
-           this function can be used by front-ends to display the
-           e.g. instruction as a operator symbol
          */
         static std::string token( const Value::ID id );
 

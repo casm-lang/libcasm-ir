@@ -60,6 +60,7 @@ add_library( ${PROJECT}-cpp OBJECT
   Tuple.cpp
   List.cpp
   Property.cpp
+  Operation.cpp
   Rule.cpp
   Specification.cpp
   Statement.cpp
@@ -113,6 +114,7 @@ ecm_generate_headers( ${PROJECT}_HEADERS_CPP
     Range
     Tuple
     List
+    Operation
     Rule
     Specification
     Statement

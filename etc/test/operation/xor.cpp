@@ -39,45 +39,54 @@
 //  statement from your version.
 //
 
-#ifndef _LIBCASM_IR_H_
-#define _LIBCASM_IR_H_
+#include "../main.h"
 
-#include <libcasm-ir/Agent>
-#include <libcasm-ir/Annotation>
-#include <libcasm-ir/Block>
-#include <libcasm-ir/Builtin>
-#include <libcasm-ir/CasmIR>
-#include <libcasm-ir/Constant>
-#include <libcasm-ir/Derived>
-#include <libcasm-ir/Enumeration>
-#include <libcasm-ir/Exception>
-#include <libcasm-ir/Function>
-#include <libcasm-ir/Instruction>
-#include <libcasm-ir/List>
-#include <libcasm-ir/Operation>
-#include <libcasm-ir/Range>
-#include <libcasm-ir/Rule>
-#include <libcasm-ir/Specification>
-#include <libcasm-ir/Statement>
-#include <libcasm-ir/Tuple>
-#include <libcasm-ir/Type>
-#include <libcasm-ir/User>
-#include <libcasm-ir/Value>
-#include <libcasm-ir/Version>
-#include <libcasm-ir/Visitor>
+using namespace libcasm_ir;
 
-#include <libcasm-ir/analyze/ConsistencyCheckPass>
-#include <libcasm-ir/analyze/IRDumpDebugPass>
+// | XOR   | undef | false | true  | sym  |
+// |-------+-------+-------+-------+------|
+// | undef | undef | undef | undef | sym' |
+// | false | undef | false | true  | sym' |
+// | true  | undef | true  | false | sym' |
+// | sym   | sym'  | sym'  | sym'  | sym' |
 
-#include <libcasm-ir/transform/BranchEliminationPass>
-#include <libcasm-ir/transform/IRDumpDotPass>
-#include <libcasm-ir/transform/IRDumpSourcePass>
+static const auto id = Value::ID::XOR_INSTRUCTION;
 
-namespace libcasm_ir
-{
-}
+static const auto type = libstdhl::Memory::get< RelationType >(
+    libstdhl::Memory::get< BooleanType >(),
+    Types( { libstdhl::Memory::get< BooleanType >(), libstdhl::Memory::get< BooleanType >() } ) );
 
-#endif  // _LIBCASM_IR_H_
+#define CALC_( LHS, RHS )                    \
+    const auto lhs = BooleanConstant( LHS ); \
+    const auto rhs = BooleanConstant( RHS ); \
+    Constant res;                            \
+    Operation::execute( id, *type, res, lhs, rhs );
+
+#define TEST_( NAME, RES, LHS, RHS )                                                             \
+    TEST( libcasm_ir__instruction_xor_boolean_boolean, NAME )                                    \
+    {                                                                                            \
+        CALC_( LHS, RHS );                                                                       \
+        EXPECT_TRUE( res == BooleanConstant( RES ) );                                            \
+        EXPECT_STREQ( res.description().c_str(), BooleanConstant( RES ).description().c_str() ); \
+    }
+
+// BENCHMARK( // TODO: PPA: FIXME: move this to the benchmarks!!!
+//     libcasm_ir__instruction_xor_boolean_boolean, one_word_no_wrap, 10, 10 )
+// {
+//     CALC_( true, false );
+// }
+
+TEST_( undef__at__undef__undef, , , );
+TEST_( undef__at__false__undef, , false, );
+TEST_( undef__at__true___undef, , true, );
+
+TEST_( undef__at__undef__false, , , false );
+TEST_( false__at__false__false, false, false, false );
+TEST_( true___at__true___false, true, true, false );
+
+TEST_( undef__at__undef__true_, , , true );
+TEST_( true___at__false__true_, true, false, true );
+TEST_( false___at__true___true_, false, true, true );
 
 //
 //  Local variables:

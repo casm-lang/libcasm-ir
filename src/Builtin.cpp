@@ -41,8 +41,9 @@
 
 #include "Builtin.h"
 
-#include "Constant.h"
-#include "Exception.h"
+#include <libcasm-ir/Constant>
+#include <libcasm-ir/Exception>
+#include <libcasm-ir/Instruction>
 
 #include <cassert>
 
@@ -446,6 +447,12 @@ IsSymbolicBuiltin::IsSymbolicBuiltin( const Type::Ptr& type )
 {
 }
 
+void IsSymbolicBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    const auto& arg = reg[ 0 ];
+    res = BooleanConstant( arg.symbolic() );
+}
+
 const Annotation IsSymbolicBuiltin::annotation(
     classid(),
     general_builtin_properties,
@@ -521,6 +528,11 @@ AbortBuiltin::AbortBuiltin( const Type::Ptr& type )
 {
 }
 
+void AbortBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    throw AbortException( "aborting" );
+}
+
 const Annotation AbortBuiltin::annotation(
     classid(),
     general_builtin_properties,
@@ -561,6 +573,27 @@ u1 AbortBuiltin::classof( Value const* obj )
 AssertBuiltin::AssertBuiltin( const Type::Ptr& type )
 : GeneralBuiltin( type, classid() )
 {
+}
+
+void AssertBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    const auto& cond = reg[ 0 ];
+    assert( cond.type().isBoolean() );
+    const auto& c = static_cast< const BooleanConstant& >( cond ).value();
+
+    if( not c.defined() )
+    {
+        throw UndefinedConstantException( "assertion on undefined value" );
+    }
+    else
+    {
+        if( not c.value() )
+        {
+            throw AssertionException( "assertion failed" );
+        }
+    }
+
+    res = VoidConstant();
 }
 
 const Annotation AssertBuiltin::annotation(
@@ -618,6 +651,27 @@ AssureBuiltin::AssureBuiltin( const Type::Ptr& type )
 {
 }
 
+void AssureBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    const auto& cond = reg[ 0 ];
+    assert( cond.type().isBoolean() );
+    const auto& c = static_cast< const BooleanConstant& >( cond ).value();
+
+    if( not c.defined() )
+    {
+        throw UndefinedConstantException( "assurance on undefined value" );
+    }
+    else
+    {
+        if( not c.value() )
+        {
+            throw AssuranceException( "assurance failed" );
+        }
+    }
+
+    res = VoidConstant();
+}
+
 const Annotation AssureBuiltin::annotation(
     classid(),
     general_builtin_properties,
@@ -671,6 +725,46 @@ u1 AssureBuiltin::classof( Value const* obj )
 SizeBuiltin::SizeBuiltin( const Type::Ptr& type )
 : GeneralBuiltin( type, classid() )
 {
+}
+
+void SizeBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    const auto& object = reg[ 0 ];
+    assert( object.type().isEnumeration() or object.type().isList() or object.type().isRange() );
+
+    if( not object.defined() )
+    {
+        res = IntegerConstant();
+        return;
+    }
+
+    if( object.type().isEnumeration() )
+    {
+        const auto enumeration = static_cast< const EnumerationType& >( object.type() );
+        res = IntegerConstant( enumeration.kind().elements().size() );
+    }
+    else if( object.type().isList() )
+    {
+        const auto list = static_cast< const ListConstant& >( object ).value();
+        res = IntegerConstant( list->elements().size() );
+    }
+    else
+    {
+        assert( object.type().isRange() );
+        const auto& range = static_cast< const RangeConstant& >( object ).value();
+
+        const auto& a = static_cast< IntegerConstant& >( *range->from() ).value();
+        const auto& b = static_cast< IntegerConstant& >( *range->to() ).value();
+
+        if( a >= b )
+        {
+            res = IntegerConstant( a - b + 1 );
+        }
+        else
+        {
+            res = IntegerConstant( b - a + 1 );
+        }
+    }
 }
 
 const Annotation SizeBuiltin::annotation(
@@ -734,6 +828,34 @@ u1 SizeBuiltin::classof( Value const* obj )
 AtBuiltin::AtBuiltin( const Type::Ptr& type )
 : GeneralBuiltin( type, classid() )
 {
+}
+
+void AtBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    const auto& object = reg[ 0 ];
+    const auto& index = reg[ 1 ];
+
+    assert( object.type().isList() );
+    assert( index.type().isInteger() );
+
+    if( not object.defined() or not index.defined() )
+    {
+        res = Constant::undef( object.type().ptr_result() );
+        return;
+    }
+
+    const auto& list = static_cast< const ListConstant& >( object ).value();
+    const auto& pos = static_cast< const IntegerConstant& >( index ).value();
+
+    if( pos > 0 and pos <= list->elements().size() )
+    {
+        const auto element = list->at( pos.value() - 1 );
+        assert( isa< Constant >( element ) );
+        res = static_cast< const Constant& >( *element );
+        return;
+    }
+
+    res = Constant::undef( object.type().ptr_result() );
 }
 
 const Annotation AtBuiltin::annotation(
@@ -835,6 +957,17 @@ PrintBuiltin::PrintBuiltin( const Type::Ptr& type )
 {
 }
 
+void PrintBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    const auto& txt = reg[ 0 ];
+    assert( txt.type().isString() );
+    const auto stringConstant = static_cast< const StringConstant& >( txt );
+
+    std::cout << stringConstant.toString();
+
+    res = VoidConstant();
+}
+
 const Annotation PrintBuiltin::annotation(
     classid(),
     general_builtin_properties,
@@ -898,6 +1031,17 @@ u1 PrintBuiltin::classof( Value const* obj )
 PrintLnBuiltin::PrintLnBuiltin( const Type::Ptr& type )
 : OutputBuiltin( type, "$stdout$", true, classid() )
 {
+}
+
+void PrintLnBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    const auto& txt = reg[ 0 ];
+    assert( txt.type().isString() );
+    const auto stringConstant = static_cast< const StringConstant& >( txt );
+
+    std::cout << stringConstant.toString() << "\n";
+
+    res = VoidConstant();
 }
 
 const Annotation PrintLnBuiltin::annotation(
@@ -986,6 +1130,42 @@ AsBooleanBuiltin::AsBooleanBuiltin( const Type::Ptr& type )
 {
 }
 
+void AsBooleanBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    const auto& arg = reg[ 0 ];
+
+    if( not arg.defined() )
+    {
+        res = BooleanConstant();
+        return;
+    }
+
+    switch( arg.typeId().kind() )
+    {
+        case Type::Kind::BOOLEAN:
+        {
+            res = arg;
+            break;
+        }
+        case Type::Kind::INTEGER:
+        {
+            const auto c = static_cast< const IntegerConstant& >( arg ).value();
+            res = BooleanConstant( c != 0 );
+            break;
+        }
+        case Type::Kind::BINARY:
+        {
+            const auto c = static_cast< const BinaryConstant& >( arg ).value();
+            res = BooleanConstant( c != 0 );
+            break;
+        }
+        default:
+        {
+            throw InternalException( "unimplemented '" + description() + "'" );
+        }
+    }
+}
+
 const Annotation AsBooleanBuiltin::annotation(
     classid(),
     casting_builtin_properties,
@@ -1039,6 +1219,59 @@ u1 AsBooleanBuiltin::classof( Value const* obj )
 AsIntegerBuiltin::AsIntegerBuiltin( const Type::Ptr& type )
 : CastingBuiltin( type, classid() )
 {
+}
+
+void AsIntegerBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    const auto& arg = reg[ 0 ];
+
+    if( not arg.defined() )
+    {
+        res = IntegerConstant();
+        return;
+    }
+
+    switch( arg.typeId().kind() )
+    {
+        case Type::Kind::BOOLEAN:
+        {
+            const auto& c = static_cast< const BooleanConstant& >( arg ).value();
+            res = IntegerConstant( c == true ? 1 : 0 );
+            break;
+        }
+        case Type::Kind::INTEGER:
+        {
+            res = arg;
+            break;
+        }
+        case Type::Kind::BINARY:
+        {
+            const auto& t = static_cast< const BinaryType& >( arg.type() );
+            const auto& c = static_cast< const BinaryConstant& >( arg ).value();
+
+            if( c.isSet( t.bitsize() ) )
+            {
+                Operation::execute< InvInstruction >( t.ptr_type(), res, arg );
+                const auto& r = static_cast< const BinaryConstant& >( res ).value();
+                res = IntegerConstant( r, true );
+            }
+            else
+            {
+                res = IntegerConstant( c );
+            }
+            break;
+        }
+        case Type::Kind::DECIMAL:
+        {
+            const auto& c = static_cast< const DecimalConstant& >( arg ).value();
+            res = IntegerConstant( c.toInteger() );
+            break;
+        }
+        default:
+        {
+            throw InternalException( "unimplemented '" + description() + "'" );
+        }
+    }
 }
 
 const Annotation AsIntegerBuiltin::annotation(
@@ -1110,6 +1343,151 @@ AsBinaryBuiltin::AsBinaryBuiltin( const Type::Ptr& type )
 {
 }
 
+void AsBinaryBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    const auto& arg = reg[ 0 ];
+
+    assert( type().result().isBinary() );
+    const auto resultType = std::static_pointer_cast< BinaryType >( type().result().ptr_type() );
+
+    if( not arg.defined() )
+    {
+        res = BinaryConstant( resultType );
+        return;
+    }
+
+    switch( arg.typeId().kind() )
+    {
+        case Type::Kind::BOOLEAN:
+        {
+            const auto& c = static_cast< const BooleanConstant& >( arg ).value();
+            res = BinaryConstant( resultType, libstdhl::Type::createNatural( c == true ? 1 : 0 ) );
+            break;
+        }
+        case Type::Kind::INTEGER:
+        {
+            const auto& c = static_cast< const IntegerConstant& >( arg ).value();
+
+            try
+            {
+                const auto mask = Utility::createMask( resultType->bitsize() );
+
+                libstdhl::Type::Natural nat;
+                if( c >= 0 )
+                {
+                    nat = libstdhl::Type::createNatural( c );
+
+                    const auto check = nat & mask;
+                    if( nat != check )
+                    {
+                        res = BinaryConstant( resultType );
+                        break;
+                    }
+
+                    if( nat.isSet( resultType->bitsize() ) )
+                    {
+                        res = BinaryConstant( resultType );
+                        break;
+                    }
+                }
+                else
+                {
+                    nat = libstdhl::Type::createNatural( -c );
+
+                    const auto check = nat & mask;
+                    if( nat != check )
+                    {
+                        res = BinaryConstant( resultType );
+                        break;
+                    }
+
+                    nat = nat ^ mask;
+                    nat += 1;
+                    if( not nat.isSet( resultType->bitsize() ) )
+                    {
+                        res = BinaryConstant( resultType );
+                        break;
+                    }
+
+                    nat = nat & mask;
+                }
+
+                res = BinaryConstant( resultType, nat );
+            }
+            catch( const std::domain_error& e )
+            {
+                res = BinaryConstant( resultType );
+            }
+            catch( const std::invalid_argument& e )
+            {
+                res = BinaryConstant( resultType );
+            }
+            break;
+        }
+        case Type::Kind::BINARY:
+        {
+            const auto& c = static_cast< const BinaryConstant& >( arg );
+            assert( c.type().isBinary() );
+            const auto& valueType = static_cast< const BinaryType& >( c.type() );
+
+            if( resultType->bitsize() < valueType.bitsize() )
+            {
+                // perform a truncation of the binary value!
+                const auto offset = IntegerConstant( c.value() );
+                const Constant values[ 2 ] = { arg, offset };
+                const auto truncType = libstdhl::Memory::get< RelationType >(
+                    resultType, Types( { c.type().ptr_type(), offset.type().ptr_type() } ) );
+                Operation::execute< TruncBuiltin >( truncType, res, values, 2 );
+            }
+            else if( resultType->bitsize() > valueType.bitsize() )
+            {
+                // perform a zero extension
+                res = BinaryConstant( resultType, libstdhl::Type::createNatural( c.value() ) );
+            }
+            else
+            {
+                res = arg;
+            }
+            break;
+        }
+        case Type::Kind::DECIMAL:
+        {
+            const auto& c = static_cast< const DecimalConstant& >( arg ).value();
+
+            try
+            {
+                const auto i = c.toInteger();
+                if( i >= 0 )
+                {
+                    const auto nat = libstdhl::Type::createNatural( i );
+                    res = BinaryConstant( resultType, nat );
+                }
+                else
+                {
+                    const auto mask = Utility::createMask( resultType->bitsize() );
+                    auto nat = libstdhl::Type::createNatural( -i );
+                    nat = nat ^ mask;
+                    nat += 1;
+                    res = BinaryConstant( resultType, nat );
+                }
+            }
+            catch( const std::domain_error& e )
+            {
+                res = BinaryConstant( resultType );
+            }
+            catch( const std::invalid_argument& e )
+            {
+                res = BinaryConstant( resultType );
+            }
+            break;
+        }
+        default:
+        {
+            throw InternalException( "unimplemented '" + description() + "'" );
+        }
+    }
+}
+
 const Annotation AsBinaryBuiltin::annotation(
     classid(),
     casting_builtin_properties,
@@ -1168,6 +1546,20 @@ u1 AsBinaryBuiltin::classof( Value const* obj )
 AsStringBuiltin::AsStringBuiltin( const Type::Ptr& type )
 : CastingBuiltin( type, classid() )
 {
+}
+
+void AsStringBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    const auto& arg = reg[ 0 ];
+
+    if( arg.defined() )
+    {
+        res = StringConstant( arg.name() );
+    }
+    else
+    {
+        res = StringConstant();
+    }
 }
 
 const Annotation AsStringBuiltin::annotation(
@@ -1255,6 +1647,50 @@ AsDecimalBuiltin::AsDecimalBuiltin( const Type::Ptr& type )
 {
 }
 
+void AsDecimalBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    const auto& arg = reg[ 0 ];
+
+    if( arg.defined() )
+    {
+        switch( arg.typeId().kind() )
+        {
+            case Type::Kind::DECIMAL:
+            {
+                const auto& c = static_cast< const DecimalConstant& >( arg );
+                res = c;
+                break;
+            }
+            case Type::Kind::BOOLEAN:
+            {
+                const auto& c = static_cast< const BooleanConstant& >( arg ).value();
+                res = DecimalConstant( c == true ? 1.0 : 0.0 );
+                break;
+            }
+            case Type::Kind::INTEGER:
+            {
+                const auto& c = static_cast< const IntegerConstant& >( arg ).value();
+                res = DecimalConstant( c );
+                break;
+            }
+            case Type::Kind::BINARY:
+            {
+                const auto& c = static_cast< const BinaryConstant& >( arg ).value();
+                res = DecimalConstant( c );
+                break;
+            }
+            default:
+            {
+                throw InternalException( "unimplemented '" + description() + "'" );
+            }
+        }
+    }
+    else
+    {
+        res = DecimalConstant();
+    }
+}
+
 const Annotation AsDecimalBuiltin::annotation(
     classid(),
     casting_builtin_properties,
@@ -1315,6 +1751,54 @@ AsRationalBuiltin::AsRationalBuiltin( const Type::Ptr& type )
 {
 }
 
+void AsRationalBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    const auto& arg = reg[ 0 ];
+
+    assert( type().result().isRational() );
+    const auto resultType =
+        std::static_pointer_cast< EnumerationType >( type().result().ptr_type() );
+
+    if( arg.defined() )
+    {
+        switch( arg.typeId().kind() )
+        {
+            case Type::Kind::BOOLEAN:
+            {
+                const auto& c = static_cast< const BooleanConstant& >( arg ).value();
+                res = RationalConstant( libstdhl::Type::createRational(
+                    libstdhl::Type::createInteger( ( libstdhl::u64 )( c == true ? 1 : 0 ) ) ) );
+                break;
+            }
+            case Type::Kind::INTEGER:
+            {
+                const auto& c = static_cast< const IntegerConstant& >( arg ).value();
+                res = RationalConstant( libstdhl::Type::createRational( c ) );
+                break;
+            }
+            case Type::Kind::BINARY:
+            {
+                const auto& c = static_cast< const BinaryConstant& >( arg ).value();
+                res = RationalConstant( libstdhl::Type::createRational( c ) );
+                break;
+            }
+            case Type::Kind::RATIONAL:
+            {
+                res = arg;
+                break;
+            }
+            default:
+            {
+                throw InternalException( "unimplemented '" + description() + "'" );
+            }
+        }
+    }
+    else
+    {
+        res = RationalConstant();
+    }
+}
+
 const Annotation AsRationalBuiltin::annotation(
     classid(),
     casting_builtin_properties,
@@ -1373,6 +1857,43 @@ u1 AsRationalBuiltin::classof( Value const* obj )
 AsEnumerationBuiltin::AsEnumerationBuiltin( const Type::Ptr& type )
 : CastingBuiltin( type, classid() )
 {
+}
+
+void AsEnumerationBuiltin::execute(
+    Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    const auto& arg = reg[ 0 ];
+
+    assert( type().result().isEnumeration() );
+    const auto resultType =
+        std::static_pointer_cast< EnumerationType >( type().result().ptr_type() );
+
+    if( arg.defined() )
+    {
+        switch( arg.typeId().kind() )
+        {
+            case Type::Kind::ENUMERATION:
+            {
+                if( arg.type() == *resultType )
+                {
+                    res = arg;
+                }
+                else
+                {
+                    res = EnumerationConstant( resultType );
+                }
+                break;
+            }
+            default:
+            {
+                throw InternalException( "unimplemented '" + description() + "'" );
+            }
+        }
+    }
+    else
+    {
+        res = EnumerationConstant( resultType );
+    }
 }
 
 const Annotation AsEnumerationBuiltin::annotation(
@@ -1496,6 +2017,67 @@ DecBuiltin::DecBuiltin( const Type::Ptr& type )
 {
 }
 
+void DecBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    const auto& arg = reg[ 0 ];
+
+    if( arg.defined() )
+    {
+        switch( arg.typeId().kind() )
+        {
+            case Type::Kind::BOOLEAN:
+            {
+                const auto& c = static_cast< const BooleanConstant& >( arg ).value();
+                res = StringConstant( c.value() ? "1" : "0" );
+                break;
+            }
+            case Type::Kind::INTEGER:
+            {
+                const auto& c = static_cast< const IntegerConstant& >( arg ).value();
+                res = StringConstant(
+                    c.to< libstdhl::Type::Radix::DECIMAL, libstdhl::Type::Literal::NONE >() );
+                break;
+            }
+            case Type::Kind::BINARY:
+            {
+                const auto& c = static_cast< const BinaryConstant& >( arg ).value();
+                res = StringConstant(
+                    c.to< libstdhl::Type::Radix::DECIMAL, libstdhl::Type::Literal::NONE >() );
+                break;
+            }
+            case Type::Kind::DECIMAL:
+            {
+                const auto& c = static_cast< const DecimalConstant& >( arg ).value();
+                res = StringConstant(
+                    c.to< libstdhl::Type::Radix::DECIMAL, libstdhl::Type::Literal::NONE >() );
+                break;
+            }
+            case Type::Kind::RATIONAL:
+            {
+                const auto& c = static_cast< const RationalConstant& >( arg ).value();
+                res = StringConstant(
+                    c.to< libstdhl::Type::Radix::DECIMAL, libstdhl::Type::Literal::NONE >() );
+                break;
+            }
+            case Type::Kind::ENUMERATION:
+            {
+                const auto& c = static_cast< const EnumerationConstant& >( arg ).value();
+                res = StringConstant(
+                    c.to< libstdhl::Type::Radix::DECIMAL, libstdhl::Type::Literal::NONE >() );
+                break;
+            }
+            default:
+            {
+                throw InternalException( "unimplemented '" + description() + "'" );
+            }
+        }
+    }
+    else
+    {
+        res = StringConstant();
+    }
+}
+
 const Annotation DecBuiltin::annotation(
     classid(),
     stringify_builtin_properties,
@@ -1516,6 +2098,67 @@ u1 DecBuiltin::classof( Value const* obj )
 HexBuiltin::HexBuiltin( const Type::Ptr& type )
 : StringifyBuiltin( type, classid() )
 {
+}
+
+void HexBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    const auto& arg = reg[ 0 ];
+
+    if( arg.defined() )
+    {
+        switch( arg.typeId().kind() )
+        {
+            case Type::Kind::BOOLEAN:
+            {
+                const auto& c = static_cast< const BooleanConstant& >( arg ).value();
+                res = StringConstant( c.value() ? "1" : "0" );
+                break;
+            }
+            case Type::Kind::INTEGER:
+            {
+                const auto& c = static_cast< const IntegerConstant& >( arg ).value();
+                res = StringConstant(
+                    c.to< libstdhl::Type::Radix::HEXADECIMAL, libstdhl::Type::Literal::NONE >() );
+                break;
+            }
+            case Type::Kind::BINARY:
+            {
+                const auto& c = static_cast< const BinaryConstant& >( arg ).value();
+                res = StringConstant(
+                    c.to< libstdhl::Type::Radix::HEXADECIMAL, libstdhl::Type::Literal::NONE >() );
+                break;
+            }
+            case Type::Kind::DECIMAL:
+            {
+                const auto& c = static_cast< const DecimalConstant& >( arg ).value();
+                res = StringConstant(
+                    c.to< libstdhl::Type::Radix::HEXADECIMAL, libstdhl::Type::Literal::NONE >() );
+                break;
+            }
+            case Type::Kind::RATIONAL:
+            {
+                const auto& c = static_cast< const RationalConstant& >( arg ).value();
+                res = StringConstant(
+                    c.to< libstdhl::Type::Radix::HEXADECIMAL, libstdhl::Type::Literal::NONE >() );
+                break;
+            }
+            case Type::Kind::ENUMERATION:
+            {
+                const auto& c = static_cast< const EnumerationConstant& >( arg ).value();
+                res = StringConstant(
+                    c.to< libstdhl::Type::Radix::HEXADECIMAL, libstdhl::Type::Literal::NONE >() );
+                break;
+            }
+            default:
+            {
+                throw InternalException( "unimplemented '" + description() + "'" );
+            }
+        }
+    }
+    else
+    {
+        res = StringConstant();
+    }
 }
 
 const Annotation HexBuiltin::annotation(
@@ -1540,6 +2183,67 @@ OctBuiltin::OctBuiltin( const Type::Ptr& type )
 {
 }
 
+void OctBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    const auto& arg = reg[ 0 ];
+
+    if( arg.defined() )
+    {
+        switch( arg.typeId().kind() )
+        {
+            case Type::Kind::BOOLEAN:
+            {
+                const auto& c = static_cast< const BooleanConstant& >( arg ).value();
+                res = StringConstant( c.value() ? "1" : "0" );
+                break;
+            }
+            case Type::Kind::INTEGER:
+            {
+                const auto& c = static_cast< const IntegerConstant& >( arg ).value();
+                res = StringConstant(
+                    c.to< libstdhl::Type::Radix::OCTAL, libstdhl::Type::Literal::NONE >() );
+                break;
+            }
+            case Type::Kind::BINARY:
+            {
+                const auto& c = static_cast< const BinaryConstant& >( arg ).value();
+                res = StringConstant(
+                    c.to< libstdhl::Type::Radix::OCTAL, libstdhl::Type::Literal::NONE >() );
+                break;
+            }
+            case Type::Kind::DECIMAL:
+            {
+                const auto& c = static_cast< const DecimalConstant& >( arg ).value();
+                res = StringConstant(
+                    c.to< libstdhl::Type::Radix::OCTAL, libstdhl::Type::Literal::NONE >() );
+                break;
+            }
+            case Type::Kind::RATIONAL:
+            {
+                const auto& c = static_cast< const RationalConstant& >( arg ).value();
+                res = StringConstant(
+                    c.to< libstdhl::Type::Radix::OCTAL, libstdhl::Type::Literal::NONE >() );
+                break;
+            }
+            case Type::Kind::ENUMERATION:
+            {
+                const auto& c = static_cast< const EnumerationConstant& >( arg ).value();
+                res = StringConstant(
+                    c.to< libstdhl::Type::Radix::OCTAL, libstdhl::Type::Literal::NONE >() );
+                break;
+            }
+            default:
+            {
+                throw InternalException( "unimplemented '" + description() + "'" );
+            }
+        }
+    }
+    else
+    {
+        res = StringConstant();
+    }
+}
+
 const Annotation OctBuiltin::annotation(
     classid(),
     stringify_builtin_properties,
@@ -1560,6 +2264,67 @@ u1 OctBuiltin::classof( Value const* obj )
 BinBuiltin::BinBuiltin( const Type::Ptr& type )
 : StringifyBuiltin( type, classid() )
 {
+}
+
+void BinBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    const auto& arg = reg[ 0 ];
+
+    if( arg.defined() )
+    {
+        switch( arg.typeId().kind() )
+        {
+            case Type::Kind::BOOLEAN:
+            {
+                const auto& c = static_cast< const BooleanConstant& >( arg ).value();
+                res = StringConstant( c.value() ? "1" : "0" );
+                break;
+            }
+            case Type::Kind::INTEGER:
+            {
+                const auto& c = static_cast< const IntegerConstant& >( arg ).value();
+                res = StringConstant(
+                    c.to< libstdhl::Type::Radix::BINARY, libstdhl::Type::Literal::NONE >() );
+                break;
+            }
+            case Type::Kind::BINARY:
+            {
+                const auto& c = static_cast< const BinaryConstant& >( arg ).value();
+                res = StringConstant(
+                    c.to< libstdhl::Type::Radix::BINARY, libstdhl::Type::Literal::NONE >() );
+                break;
+            }
+            case Type::Kind::DECIMAL:
+            {
+                const auto& c = static_cast< const DecimalConstant& >( arg ).value();
+                res = StringConstant(
+                    c.to< libstdhl::Type::Radix::BINARY, libstdhl::Type::Literal::NONE >() );
+                break;
+            }
+            case Type::Kind::RATIONAL:
+            {
+                const auto& c = static_cast< const RationalConstant& >( arg ).value();
+                res = StringConstant(
+                    c.to< libstdhl::Type::Radix::BINARY, libstdhl::Type::Literal::NONE >() );
+                break;
+            }
+            case Type::Kind::ENUMERATION:
+            {
+                const auto& c = static_cast< const EnumerationConstant& >( arg ).value();
+                res = StringConstant(
+                    c.to< libstdhl::Type::Radix::BINARY, libstdhl::Type::Literal::NONE >() );
+                break;
+            }
+            default:
+            {
+                throw InternalException( "unimplemented '" + description() + "'" );
+            }
+        }
+    }
+    else
+    {
+        res = StringConstant();
+    }
 }
 
 const Annotation BinBuiltin::annotation(
@@ -1678,6 +2443,34 @@ AdduBuiltin::AdduBuiltin( const Type::Ptr& type )
 {
 }
 
+void AdduBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    const auto& lhs = reg[ 0 ];
+    const auto& rhs = reg[ 1 ];
+
+    if( not lhs.defined() or not rhs.defined() )
+    {
+        res = Constant::undef( lhs.type().ptr_type() );
+        return;
+    }
+
+    switch( lhs.typeId().kind() )
+    {
+        case Type::Kind::INTEGER:
+        {
+            const auto& lval = static_cast< const IntegerConstant& >( lhs ).value();
+            const auto& rval = static_cast< const IntegerConstant& >( rhs ).value();
+
+            res = IntegerConstant( lval + rval );
+            break;
+        }
+        default:
+        {
+            throw InternalException( "unimplemented '" + description() + "'" );
+        }
+    }
+}
+
 const Annotation AdduBuiltin::annotation(
     classid(),
     arithmetic_builtin_properties,
@@ -1698,6 +2491,12 @@ u1 AdduBuiltin::classof( Value const* obj )
 AddsBuiltin::AddsBuiltin( const Type::Ptr& type )
 : ArithmeticBuiltin( type, classid() )
 {
+}
+
+void AddsBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    // TODO: FIXME: @ppaulweber
+    throw InternalException( "unimplemented '" + description() + "'" );
 }
 
 const Annotation AddsBuiltin::annotation(
@@ -1722,6 +2521,12 @@ SubuBuiltin::SubuBuiltin( const Type::Ptr& type )
 {
 }
 
+void SubuBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    // TODO: FIXME: @ppaulweber
+    throw InternalException( "unimplemented '" + description() + "'" );
+}
+
 const Annotation SubuBuiltin::annotation(
     classid(),
     arithmetic_builtin_properties,
@@ -1742,6 +2547,12 @@ u1 SubuBuiltin::classof( Value const* obj )
 SubsBuiltin::SubsBuiltin( const Type::Ptr& type )
 : ArithmeticBuiltin( type, classid() )
 {
+}
+
+void SubsBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    // TODO: FIXME: @ppaulweber
+    throw InternalException( "unimplemented '" + description() + "'" );
 }
 
 const Annotation SubsBuiltin::annotation(
@@ -1766,6 +2577,12 @@ MuluBuiltin::MuluBuiltin( const Type::Ptr& type )
 {
 }
 
+void MuluBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    // TODO: FIXME: @ppaulweber
+    throw InternalException( "unimplemented '" + description() + "'" );
+}
+
 const Annotation MuluBuiltin::annotation(
     classid(),
     arithmetic_builtin_properties,
@@ -1786,6 +2603,12 @@ u1 MuluBuiltin::classof( Value const* obj )
 MulsBuiltin::MulsBuiltin( const Type::Ptr& type )
 : ArithmeticBuiltin( type, classid() )
 {
+}
+
+void MulsBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    // TODO: FIXME: @ppaulweber
+    throw InternalException( "unimplemented '" + description() + "'" );
 }
 
 const Annotation MulsBuiltin::annotation(
@@ -1888,6 +2711,12 @@ LesuBuiltin::LesuBuiltin( const Type::Ptr& type )
 {
 }
 
+void LesuBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    // TODO: FIXME: @ppaulweber
+    throw InternalException( "unimplemented '" + description() + "'" );
+}
+
 const Annotation LesuBuiltin::annotation(
     classid(),
     compare_builtin_properties,
@@ -1908,6 +2737,12 @@ u1 LesuBuiltin::classof( Value const* obj )
 LessBuiltin::LessBuiltin( const Type::Ptr& type )
 : CompareBuiltin( type, classid() )
 {
+}
+
+void LessBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    // TODO: FIXME: @ppaulweber
+    throw InternalException( "unimplemented '" + description() + "'" );
 }
 
 const Annotation LessBuiltin::annotation(
@@ -1932,6 +2767,12 @@ LequBuiltin::LequBuiltin( const Type::Ptr& type )
 {
 }
 
+void LequBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    // TODO: FIXME: @ppaulweber
+    throw InternalException( "unimplemented '" + description() + "'" );
+}
+
 const Annotation LequBuiltin::annotation(
     classid(),
     compare_builtin_properties,
@@ -1952,6 +2793,12 @@ u1 LequBuiltin::classof( Value const* obj )
 LeqsBuiltin::LeqsBuiltin( const Type::Ptr& type )
 : CompareBuiltin( type, classid() )
 {
+}
+
+void LeqsBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    // TODO: FIXME: @ppaulweber
+    throw InternalException( "unimplemented '" + description() + "'" );
 }
 
 const Annotation LeqsBuiltin::annotation(
@@ -1976,6 +2823,12 @@ GreuBuiltin::GreuBuiltin( const Type::Ptr& type )
 {
 }
 
+void GreuBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    // TODO: FIXME: @ppaulweber
+    throw InternalException( "unimplemented '" + description() + "'" );
+}
+
 const Annotation GreuBuiltin::annotation(
     classid(),
     compare_builtin_properties,
@@ -1996,6 +2849,12 @@ u1 GreuBuiltin::classof( Value const* obj )
 GresBuiltin::GresBuiltin( const Type::Ptr& type )
 : CompareBuiltin( type, classid() )
 {
+}
+
+void GresBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    // TODO: FIXME: @ppaulweber
+    throw InternalException( "unimplemented '" + description() + "'" );
 }
 
 const Annotation GresBuiltin::annotation(
@@ -2020,6 +2879,12 @@ GequBuiltin::GequBuiltin( const Type::Ptr& type )
 {
 }
 
+void GequBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    // TODO: FIXME: @ppaulweber
+    throw InternalException( "unimplemented '" + description() + "'" );
+}
+
 const Annotation GequBuiltin::annotation(
     classid(),
     compare_builtin_properties,
@@ -2040,6 +2905,12 @@ u1 GequBuiltin::classof( Value const* obj )
 GeqsBuiltin::GeqsBuiltin( const Type::Ptr& type )
 : CompareBuiltin( type, classid() )
 {
+}
+
+void GeqsBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    // TODO: FIXME: @ppaulweber
+    throw InternalException( "unimplemented '" + description() + "'" );
 }
 
 const Annotation GeqsBuiltin::annotation(
@@ -2081,6 +2952,25 @@ static const Properties binary_builtin_properties = { Property::SIDE_EFFECT_FREE
 ZextBuiltin::ZextBuiltin( const Type::Ptr& type )
 : BinaryBuiltin( type, classid() )
 {
+}
+
+void ZextBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    const auto& valueConstant = reg[ 0 ];
+
+    assert( type().result().isBinary() );
+    const auto resultType = std::static_pointer_cast< BinaryType >( type().result().ptr_type() );
+
+    if( not valueConstant.defined() )
+    {
+        res = BinaryConstant( resultType );
+    }
+    else
+    {
+        const auto& value = static_cast< const BinaryConstant& >( valueConstant ).value();
+        const auto zextValue = libstdhl::Type::createNatural( value );
+        res = BinaryConstant( resultType, zextValue );
+    }
 }
 
 const Annotation ZextBuiltin::annotation(
@@ -2146,6 +3036,38 @@ SextBuiltin::SextBuiltin( const Type::Ptr& type )
 {
 }
 
+void SextBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    const auto& valueConstant = reg[ 0 ];
+
+    assert( type().result().isBinary() );
+    const auto resultType = std::static_pointer_cast< BinaryType >( type().result().ptr_type() );
+
+    if( not valueConstant.defined() )
+    {
+        res = BinaryConstant( resultType );
+    }
+    else
+    {
+        const auto& value = static_cast< const BinaryConstant& >( valueConstant );
+        assert( value.type().isBinary() );
+        const auto& valueType = static_cast< const BinaryType& >( value.type() );
+
+        const auto sign = value.value() >> ( valueType.bitsize() - 1 );
+
+        Operation::execute< ZextBuiltin >( type().ptr_type(), res, reg, size );
+
+        if( sign != 0 )
+        {
+            auto mask = Utility::createMask( resultType->bitsize() - valueType.bitsize() );
+            mask <<= valueType.bitsize();
+
+            auto tmp = BinaryConstant( resultType, mask );
+            Operation::execute< OrInstruction >( resultType, res, res, tmp );
+        }
+    }
+}
+
 const Annotation SextBuiltin::annotation(
     classid(),
     binary_builtin_properties,
@@ -2209,6 +3131,39 @@ TruncBuiltin::TruncBuiltin( const Type::Ptr& type )
 {
 }
 
+void TruncBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    const auto& valueConstant = reg[ 0 ];
+    const auto& offsetConstant = reg[ 1 ];
+    assert( offsetConstant.defined() );
+    assert( offsetConstant.typeId().kind() == Type::Kind::INTEGER );
+
+    assert( type().result().isBinary() );
+    const auto resultType = std::static_pointer_cast< BinaryType >( type().result().ptr_type() );
+
+    if( not valueConstant.defined() )
+    {
+        res = BinaryConstant( resultType );
+    }
+    else
+    {
+        const auto& offset = static_cast< const IntegerConstant& >( offsetConstant ).value();
+
+        auto mask = libstdhl::Type::createNatural( 1 );
+        mask <<= libstdhl::Type::createNatural( offset );
+        mask -= 1;
+
+        auto tmp = BinaryConstant( valueConstant.type().ptr_type(), mask );
+        Operation::execute< AndInstruction >(
+            valueConstant.type().ptr_type(), tmp, tmp, valueConstant );
+        assert( tmp.defined() );
+        assert( tmp.typeId().kind() == Type::Kind::BINARY );
+
+        const auto& value = static_cast< const BinaryConstant& >( tmp ).value();
+        res = BinaryConstant( resultType, value );
+    }
+}
+
 const Annotation TruncBuiltin::annotation(
     classid(),
     binary_builtin_properties,
@@ -2270,6 +3225,48 @@ u1 TruncBuiltin::classof( Value const* obj )
 ShlBuiltin::ShlBuiltin( const Type::Ptr& type )
 : BinaryBuiltin( type, classid() )
 {
+}
+
+void ShlBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    const auto& valueConstant = reg[ 0 ];
+    const auto& offsetConstant = reg[ 1 ];
+
+    if( not valueConstant.defined() or not offsetConstant.defined() )
+    {
+        // offset is undef, return the given value
+        res = valueConstant;
+    }
+    else
+    {
+        assert( type().result().isBinary() );
+        const auto& value = static_cast< const BinaryConstant& >( valueConstant ).value();
+
+        switch( offsetConstant.typeId().kind() )
+        {
+            case Type::Kind::INTEGER:
+            {
+                const auto& offset =
+                    static_cast< const IntegerConstant& >( offsetConstant ).value();
+
+                const auto shiftedValue = libstdhl::Type::createNatural( value << offset );
+                res = BinaryConstant( valueConstant.type().ptr_type(), shiftedValue );
+                break;
+            }
+            case Type::Kind::BINARY:
+            {
+                const auto& offset = static_cast< const BinaryConstant& >( offsetConstant ).value();
+
+                const auto shiftedValue = libstdhl::Type::createNatural( value << offset );
+                res = BinaryConstant( valueConstant.type().ptr_type(), shiftedValue );
+                break;
+            }
+            default:
+            {
+                throw InternalException( "unimplemented '" + description() + "'" );
+            }
+        }
+    }
 }
 
 const Annotation ShlBuiltin::annotation(
@@ -2341,6 +3338,48 @@ ShrBuiltin::ShrBuiltin( const Type::Ptr& type )
 {
 }
 
+void ShrBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    const auto& valueConstant = reg[ 0 ];
+    const auto& offsetConstant = reg[ 1 ];
+
+    if( not valueConstant.defined() or not offsetConstant.defined() )
+    {
+        // offset is undef, return the given value
+        res = valueConstant;
+    }
+    else
+    {
+        assert( type().result().isBinary() );
+        const auto& value = static_cast< const BinaryConstant& >( valueConstant ).value();
+
+        switch( offsetConstant.typeId().kind() )
+        {
+            case Type::Kind::INTEGER:
+            {
+                const auto& offset =
+                    static_cast< const IntegerConstant& >( offsetConstant ).value();
+
+                const auto shiftedValue = libstdhl::Type::createNatural( value >> offset );
+                res = BinaryConstant( valueConstant.type().ptr_type(), shiftedValue );
+                break;
+            }
+            case Type::Kind::BINARY:
+            {
+                const auto& offset = static_cast< const BinaryConstant& >( offsetConstant ).value();
+
+                const auto shiftedValue = libstdhl::Type::createNatural( value >> offset );
+                res = BinaryConstant( valueConstant.type().ptr_type(), shiftedValue );
+                break;
+            }
+            default:
+            {
+                throw InternalException( "unimplemented '" + description() + "'" );
+            }
+        }
+    }
+}
+
 const Annotation ShrBuiltin::annotation(
     classid(),
     binary_builtin_properties,
@@ -2408,6 +3447,12 @@ u1 ShrBuiltin::classof( Value const* obj )
 AshrBuiltin::AshrBuiltin( const Type::Ptr& type )
 : BinaryBuiltin( type, classid() )
 {
+}
+
+void AshrBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    // TODO: FIXME: @ppaulweber
+    throw InternalException( "unimplemented '" + description() + "'" );
 }
 
 const Annotation AshrBuiltin::annotation(
@@ -2479,6 +3524,12 @@ ClzBuiltin::ClzBuiltin( const Type::Ptr& type )
 {
 }
 
+void ClzBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    // TODO: FIXME: @ppaulweber
+    throw InternalException( "unimplemented '" + description() + "'" );
+}
+
 const Annotation ClzBuiltin::annotation(
     classid(),
     binary_builtin_properties,
@@ -2524,6 +3575,12 @@ CloBuiltin::CloBuiltin( const Type::Ptr& type )
 {
 }
 
+void CloBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    // TODO: FIXME: @ppaulweber
+    throw InternalException( "unimplemented '" + description() + "'" );
+}
+
 const Annotation CloBuiltin::annotation(
     classid(),
     binary_builtin_properties,
@@ -2567,6 +3624,12 @@ u1 CloBuiltin::classof( Value const* obj )
 ClsBuiltin::ClsBuiltin( const Type::Ptr& type )
 : BinaryBuiltin( type, classid() )
 {
+}
+
+void ClsBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
+{
+    // TODO: FIXME: @ppaulweber
+    throw InternalException( "unimplemented '" + description() + "'" );
 }
 
 const Annotation ClsBuiltin::annotation(

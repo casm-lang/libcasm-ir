@@ -39,45 +39,39 @@
 //  statement from your version.
 //
 
-#ifndef _LIBCASM_IR_H_
-#define _LIBCASM_IR_H_
+#include "../../main.h"
 
-#include <libcasm-ir/Agent>
-#include <libcasm-ir/Annotation>
-#include <libcasm-ir/Block>
-#include <libcasm-ir/Builtin>
-#include <libcasm-ir/CasmIR>
-#include <libcasm-ir/Constant>
-#include <libcasm-ir/Derived>
-#include <libcasm-ir/Enumeration>
-#include <libcasm-ir/Exception>
-#include <libcasm-ir/Function>
-#include <libcasm-ir/Instruction>
-#include <libcasm-ir/List>
-#include <libcasm-ir/Operation>
-#include <libcasm-ir/Range>
-#include <libcasm-ir/Rule>
-#include <libcasm-ir/Specification>
-#include <libcasm-ir/Statement>
-#include <libcasm-ir/Tuple>
-#include <libcasm-ir/Type>
-#include <libcasm-ir/User>
-#include <libcasm-ir/Value>
-#include <libcasm-ir/Version>
-#include <libcasm-ir/Visitor>
+using namespace libcasm_ir;
 
-#include <libcasm-ir/analyze/ConsistencyCheckPass>
-#include <libcasm-ir/analyze/IRDumpDebugPass>
+static const auto id = Value::ID::SIZE_BUILTIN;
 
-#include <libcasm-ir/transform/BranchEliminationPass>
-#include <libcasm-ir/transform/IRDumpDotPass>
-#include <libcasm-ir/transform/IRDumpSourcePass>
+static const auto enumerationENUM = libstdhl::Memory::make< Enumeration >(
+    "ENUM", std::initializer_list< std::string >{ "A", "B", "C" } );
 
-namespace libcasm_ir
+TEST( libcasm_ir__builtin_size, enumeration )
 {
-}
+    const auto integerType = libstdhl::Memory::get< IntegerType >();
+    const auto enumerationType = libstdhl::Memory::make< EnumerationType >( enumerationENUM );
+    const auto sizeBuiltinType = RelationType( integerType, Types( { enumerationType } ) );
 
-#endif  // _LIBCASM_IR_H_
+    Constant arg = DomainConstant( enumerationType );
+    Constant res;
+
+    Operation::execute( id, sizeBuiltinType, res, arg );
+    EXPECT_TRUE( res == IntegerConstant( 3 ) );
+
+    Operation::execute( id, sizeBuiltinType, res, arg );
+    EXPECT_FALSE( res == IntegerConstant( 0 ) );
+
+    Operation::execute( id, sizeBuiltinType, res, arg );
+    EXPECT_FALSE( res == IntegerConstant( 123 ) );
+
+    Operation::execute( id, sizeBuiltinType, res, arg );
+    EXPECT_FALSE( res == IntegerConstant( -123 ) );
+
+    Operation::execute( id, sizeBuiltinType, res, arg );
+    EXPECT_FALSE( res == IntegerConstant() );
+}
 
 //
 //  Local variables:

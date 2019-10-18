@@ -305,37 +305,37 @@ TEST( libcasm_ir_Value, id_to_token_string )
             }
             case Value::INV_INSTRUCTION:
             {
-                EXPECT_STREQ( Value::token( id ).c_str(), " -" );
+                EXPECT_STREQ( Value::token( id ).c_str(), "inv" );
                 break;
             }
             case Value::ADD_INSTRUCTION:
             {
-                EXPECT_STREQ( Value::token( id ).c_str(), "+" );
+                EXPECT_STREQ( Value::token( id ).c_str(), "add" );
                 break;
             }
             case Value::SUB_INSTRUCTION:
             {
-                EXPECT_STREQ( Value::token( id ).c_str(), "-" );
+                EXPECT_STREQ( Value::token( id ).c_str(), "sub" );
                 break;
             }
             case Value::MUL_INSTRUCTION:
             {
-                EXPECT_STREQ( Value::token( id ).c_str(), "*" );
+                EXPECT_STREQ( Value::token( id ).c_str(), "mul" );
                 break;
             }
             case Value::DIV_INSTRUCTION:
             {
-                EXPECT_STREQ( Value::token( id ).c_str(), "/" );
+                EXPECT_STREQ( Value::token( id ).c_str(), "div" );
                 break;
             }
             case Value::POW_INSTRUCTION:
             {
-                EXPECT_STREQ( Value::token( id ).c_str(), "^" );
+                EXPECT_STREQ( Value::token( id ).c_str(), "pow" );
                 break;
             }
             case Value::MOD_INSTRUCTION:
             {
-                EXPECT_STREQ( Value::token( id ).c_str(), "%" );
+                EXPECT_STREQ( Value::token( id ).c_str(), "mod" );
                 break;
             }
 
@@ -346,32 +346,32 @@ TEST( libcasm_ir_Value, id_to_token_string )
             }
             case Value::EQU_INSTRUCTION:
             {
-                EXPECT_STREQ( Value::token( id ).c_str(), "=" );
+                EXPECT_STREQ( Value::token( id ).c_str(), "equ" );
                 break;
             }
             case Value::NEQ_INSTRUCTION:
             {
-                EXPECT_STREQ( Value::token( id ).c_str(), "!=" );
+                EXPECT_STREQ( Value::token( id ).c_str(), "neq" );
                 break;
             }
             case Value::LTH_INSTRUCTION:
             {
-                EXPECT_STREQ( Value::token( id ).c_str(), "<" );
+                EXPECT_STREQ( Value::token( id ).c_str(), "lth" );
                 break;
             }
             case Value::LEQ_INSTRUCTION:
             {
-                EXPECT_STREQ( Value::token( id ).c_str(), "<=" );
+                EXPECT_STREQ( Value::token( id ).c_str(), "leq" );
                 break;
             }
             case Value::GTH_INSTRUCTION:
             {
-                EXPECT_STREQ( Value::token( id ).c_str(), ">" );
+                EXPECT_STREQ( Value::token( id ).c_str(), "gth" );
                 break;
             }
             case Value::GEQ_INSTRUCTION:
             {
-                EXPECT_STREQ( Value::token( id ).c_str(), ">=" );
+                EXPECT_STREQ( Value::token( id ).c_str(), "geq" );
                 break;
             }
 

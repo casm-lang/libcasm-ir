@@ -45,7 +45,7 @@
 #include <libcasm-ir/User>
 
 #include <libcasm-ir/Annotation>
-#include <libcasm-ir/Constant>
+#include <libcasm-ir/Operation>
 
 namespace libcasm_ir
 {
@@ -104,12 +104,25 @@ namespace libcasm_ir
     class UnaryInstruction
     {
       public:
+        virtual void execute( Constant& res, const Constant& lhs ) const = 0;
+
         static u1 classof( Value const* obj );
     };
 
     class BinaryInstruction
     {
       public:
+        virtual void execute( Constant& res, const Constant& lhs, const Constant& rhs ) const = 0;
+
+        static u1 classof( Value const* obj );
+    };
+
+    class NaryInstruction
+    {
+      public:
+        virtual void execute(
+            Constant& res, const Constant* reg, const std::size_t size ) const = 0;
+
         static u1 classof( Value const* obj );
     };
 
@@ -240,7 +253,9 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class CallInstruction final : public Instruction
+    class CallInstruction final
+    : public Instruction
+    , public NaryOperation
     {
       public:
         using Ptr = std::shared_ptr< CallInstruction >;
@@ -252,6 +267,8 @@ namespace libcasm_ir
         Value::Ptr callee( void ) const;
 
         void accept( Visitor& visitor ) override final;
+
+        void execute( Constant& res, const Constant* reg, const std::size_t size ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -323,7 +340,9 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class InvInstruction final : public ArithmeticInstruction
+    class InvInstruction final
+    : public ArithmeticInstruction
+    , public UnaryOperation
     {
       public:
         using Ptr = std::shared_ptr< InvInstruction >;
@@ -333,6 +352,8 @@ namespace libcasm_ir
         InvInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
+
+        void execute( Constant& res, const Constant& lhs ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -346,7 +367,9 @@ namespace libcasm_ir
         static const Annotation annotation;
     };
 
-    class AddInstruction final : public ArithmeticInstruction
+    class AddInstruction final
+    : public ArithmeticInstruction
+    , public BinaryOperation
     {
       public:
         using Ptr = std::shared_ptr< AddInstruction >;
@@ -356,6 +379,8 @@ namespace libcasm_ir
         AddInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
+
+        void execute( Constant& res, const Constant& lhs, const Constant& rhs ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -369,7 +394,9 @@ namespace libcasm_ir
         static const Annotation annotation;
     };
 
-    class SubInstruction final : public ArithmeticInstruction
+    class SubInstruction final
+    : public ArithmeticInstruction
+    , public BinaryOperation
     {
       public:
         using Ptr = std::shared_ptr< SubInstruction >;
@@ -379,6 +406,8 @@ namespace libcasm_ir
         SubInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
+
+        void execute( Constant& res, const Constant& lhs, const Constant& rhs ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -392,7 +421,9 @@ namespace libcasm_ir
         static const Annotation annotation;
     };
 
-    class MulInstruction final : public ArithmeticInstruction
+    class MulInstruction final
+    : public ArithmeticInstruction
+    , public BinaryOperation
     {
       public:
         using Ptr = std::shared_ptr< MulInstruction >;
@@ -402,6 +433,8 @@ namespace libcasm_ir
         MulInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
+
+        void execute( Constant& res, const Constant& lhs, const Constant& rhs ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -415,7 +448,9 @@ namespace libcasm_ir
         static const Annotation annotation;
     };
 
-    class ModInstruction final : public ArithmeticInstruction
+    class ModInstruction final
+    : public ArithmeticInstruction
+    , public BinaryOperation
     {
       public:
         using Ptr = std::shared_ptr< ModInstruction >;
@@ -425,6 +460,8 @@ namespace libcasm_ir
         ModInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
+
+        void execute( Constant& res, const Constant& lhs, const Constant& rhs ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -438,7 +475,9 @@ namespace libcasm_ir
         static const Annotation annotation;
     };
 
-    class DivInstruction final : public ArithmeticInstruction
+    class DivInstruction final
+    : public ArithmeticInstruction
+    , public BinaryOperation
     {
       public:
         using Ptr = std::shared_ptr< DivInstruction >;
@@ -448,6 +487,8 @@ namespace libcasm_ir
         DivInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
+
+        void execute( Constant& res, const Constant& lhs, const Constant& rhs ) const override;
 
         static const Annotation annotation;
 
@@ -459,7 +500,9 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class PowInstruction final : public ArithmeticInstruction
+    class PowInstruction final
+    : public ArithmeticInstruction
+    , public BinaryOperation
     {
       public:
         using Ptr = std::shared_ptr< PowInstruction >;
@@ -469,6 +512,8 @@ namespace libcasm_ir
         PowInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
+
+        void execute( Constant& res, const Constant& lhs, const Constant& rhs ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -505,7 +550,9 @@ namespace libcasm_ir
         static u1 classof( Value const* obj );
     };
 
-    class AndInstruction final : public LogicalInstruction
+    class AndInstruction final
+    : public LogicalInstruction
+    , public BinaryOperation
     {
       public:
         using Ptr = std::shared_ptr< AndInstruction >;
@@ -515,6 +562,8 @@ namespace libcasm_ir
         AndInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
+
+        void execute( Constant& res, const Constant& lhs, const Constant& rhs ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -528,7 +577,9 @@ namespace libcasm_ir
         static const Annotation annotation;
     };
 
-    class XorInstruction final : public LogicalInstruction
+    class XorInstruction final
+    : public LogicalInstruction
+    , public BinaryOperation
     {
       public:
         using Ptr = std::shared_ptr< XorInstruction >;
@@ -538,6 +589,8 @@ namespace libcasm_ir
         XorInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
+
+        void execute( Constant& res, const Constant& lhs, const Constant& rhs ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -551,7 +604,9 @@ namespace libcasm_ir
         static const Annotation annotation;
     };
 
-    class OrInstruction final : public LogicalInstruction
+    class OrInstruction final
+    : public LogicalInstruction
+    , public BinaryOperation
     {
       public:
         using Ptr = std::shared_ptr< OrInstruction >;
@@ -561,6 +616,8 @@ namespace libcasm_ir
         OrInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
+
+        void execute( Constant& res, const Constant& lhs, const Constant& rhs ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -574,7 +631,9 @@ namespace libcasm_ir
         static const Annotation annotation;
     };
 
-    class ImpInstruction final : public LogicalInstruction
+    class ImpInstruction final
+    : public LogicalInstruction
+    , public BinaryOperation
     {
       public:
         using Ptr = std::shared_ptr< ImpInstruction >;
@@ -584,6 +643,8 @@ namespace libcasm_ir
         ImpInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
+
+        void execute( Constant& res, const Constant& lhs, const Constant& rhs ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -597,7 +658,9 @@ namespace libcasm_ir
         static const Annotation annotation;
     };
 
-    class NotInstruction final : public LogicalInstruction
+    class NotInstruction final
+    : public LogicalInstruction
+    , public UnaryOperation
     {
       public:
         using Ptr = std::shared_ptr< NotInstruction >;
@@ -607,6 +670,8 @@ namespace libcasm_ir
         NotInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
+
+        void execute( Constant& res, const Constant& lhs ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -624,7 +689,9 @@ namespace libcasm_ir
     // Compare Instructions
     //
 
-    class CompareInstruction : public OperatorInstruction
+    class CompareInstruction
+    : public OperatorInstruction
+    , public BinaryOperation
     {
       public:
         using Ptr = std::shared_ptr< CompareInstruction >;
@@ -654,6 +721,8 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
+        void execute( Constant& res, const Constant& lhs, const Constant& rhs ) const override;
+
       public:
         static inline Value::ID classid( void )
         {
@@ -676,6 +745,8 @@ namespace libcasm_ir
         NeqInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
+
+        void execute( Constant& res, const Constant& lhs, const Constant& rhs ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -700,6 +771,8 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
+        void execute( Constant& res, const Constant& lhs, const Constant& rhs ) const override;
+
       public:
         static inline Value::ID classid( void )
         {
@@ -722,6 +795,8 @@ namespace libcasm_ir
         LeqInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
+
+        void execute( Constant& res, const Constant& lhs, const Constant& rhs ) const override;
 
       public:
         static inline Value::ID classid( void )
@@ -746,6 +821,8 @@ namespace libcasm_ir
 
         void accept( Visitor& visitor ) override final;
 
+        void execute( Constant& res, const Constant& lhs, const Constant& rhs ) const override;
+
       public:
         static inline Value::ID classid( void )
         {
@@ -768,6 +845,8 @@ namespace libcasm_ir
         GeqInstruction( const Type::Ptr& type );
 
         void accept( Visitor& visitor ) override final;
+
+        void execute( Constant& res, const Constant& lhs, const Constant& rhs ) const override;
 
       public:
         static inline Value::ID classid( void )

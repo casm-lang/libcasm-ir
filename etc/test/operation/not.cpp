@@ -39,45 +39,51 @@
 //  statement from your version.
 //
 
-#ifndef _LIBCASM_IR_H_
-#define _LIBCASM_IR_H_
+#include "../main.h"
 
-#include <libcasm-ir/Agent>
-#include <libcasm-ir/Annotation>
-#include <libcasm-ir/Block>
-#include <libcasm-ir/Builtin>
-#include <libcasm-ir/CasmIR>
-#include <libcasm-ir/Constant>
-#include <libcasm-ir/Derived>
-#include <libcasm-ir/Enumeration>
-#include <libcasm-ir/Exception>
-#include <libcasm-ir/Function>
-#include <libcasm-ir/Instruction>
-#include <libcasm-ir/List>
-#include <libcasm-ir/Operation>
-#include <libcasm-ir/Range>
-#include <libcasm-ir/Rule>
-#include <libcasm-ir/Specification>
-#include <libcasm-ir/Statement>
-#include <libcasm-ir/Tuple>
-#include <libcasm-ir/Type>
-#include <libcasm-ir/User>
-#include <libcasm-ir/Value>
-#include <libcasm-ir/Version>
-#include <libcasm-ir/Visitor>
+using namespace libcasm_ir;
 
-#include <libcasm-ir/analyze/ConsistencyCheckPass>
-#include <libcasm-ir/analyze/IRDumpDebugPass>
+// | NOT | undef | false | true  | sym  |
+// |-----+-------+-------+-------+------|
+// | -   | undef | true  | false | sym' |
 
-#include <libcasm-ir/transform/BranchEliminationPass>
-#include <libcasm-ir/transform/IRDumpDotPass>
-#include <libcasm-ir/transform/IRDumpSourcePass>
+static const auto targ =
+    libstdhl::List< libcasm_ir::Type >{ { libstdhl::Memory::get< IntegerType >() } };
+static const auto tres = libstdhl::Memory::get< BooleanType >();
+static const auto type = libstdhl::Memory::get< RelationType >( tres, targ );
 
-namespace libcasm_ir
+TEST( libcasm_ir__instruction_not, NotInstruction_0 )
 {
+    const auto a = IntegerConstant( 123 );
+
+    Constant r;
+    Operation::execute( Value::NOT_INSTRUCTION, *type, r, a );
+
+    EXPECT_TRUE( r.type().isBoolean() );
+    EXPECT_TRUE( r == BooleanConstant( false ) );
 }
 
-#endif  // _LIBCASM_IR_H_
+TEST( libcasm_ir__instruction_not, NotInstruction_1 )
+{
+    const auto a = IntegerConstant( 0 );
+
+    Constant r;
+    Operation::execute( Value::NOT_INSTRUCTION, *type, r, a );
+
+    EXPECT_TRUE( r.type().isBoolean() );
+    EXPECT_TRUE( r == BooleanConstant( true ) );
+}
+
+TEST( libcasm_ir__instruction_not, NotInstruction_2 )
+{
+    const auto a = IntegerConstant();
+
+    Constant r;
+    Operation::execute( Value::NOT_INSTRUCTION, *type, r, a );
+
+    EXPECT_TRUE( r.type().isBoolean() );
+    EXPECT_TRUE( r == BooleanConstant() );
+}
 
 //
 //  Local variables:

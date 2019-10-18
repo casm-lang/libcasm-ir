@@ -39,45 +39,55 @@
 //  statement from your version.
 //
 
-#ifndef _LIBCASM_IR_H_
-#define _LIBCASM_IR_H_
+#include "../../main.h"
 
-#include <libcasm-ir/Agent>
-#include <libcasm-ir/Annotation>
-#include <libcasm-ir/Block>
-#include <libcasm-ir/Builtin>
-#include <libcasm-ir/CasmIR>
-#include <libcasm-ir/Constant>
-#include <libcasm-ir/Derived>
-#include <libcasm-ir/Enumeration>
-#include <libcasm-ir/Exception>
-#include <libcasm-ir/Function>
-#include <libcasm-ir/Instruction>
-#include <libcasm-ir/List>
-#include <libcasm-ir/Operation>
-#include <libcasm-ir/Range>
-#include <libcasm-ir/Rule>
-#include <libcasm-ir/Specification>
-#include <libcasm-ir/Statement>
-#include <libcasm-ir/Tuple>
-#include <libcasm-ir/Type>
-#include <libcasm-ir/User>
-#include <libcasm-ir/Value>
-#include <libcasm-ir/Version>
-#include <libcasm-ir/Visitor>
+using namespace libcasm_ir;
 
-#include <libcasm-ir/analyze/ConsistencyCheckPass>
-#include <libcasm-ir/analyze/IRDumpDebugPass>
+static const auto id = Value::ID::SIZE_BUILTIN;
 
-#include <libcasm-ir/transform/BranchEliminationPass>
-#include <libcasm-ir/transform/IRDumpDotPass>
-#include <libcasm-ir/transform/IRDumpSourcePass>
-
-namespace libcasm_ir
+TEST( libcasm_ir__builtin_size, range_integer )
 {
+    const auto integerType = libstdhl::Memory::get< IntegerType >();
+    const auto rangeType = libstdhl::Memory::make< RangeType >( integerType );
+    const auto sizeBuiltinType = RelationType( integerType, Types( { rangeType } ) );
+
+    const Constant arg = RangeConstant( rangeType, IntegerConstant( -4 ), IntegerConstant( 13 ) );
+    Constant res;
+
+    Operation::execute( id, sizeBuiltinType, res, arg );
+    EXPECT_TRUE( res == IntegerConstant( ( 13 ) - ( -4 ) + 1 ) );
+
+    Operation::execute( id, sizeBuiltinType, res, arg );
+    EXPECT_FALSE( res == IntegerConstant( 0 ) );
+
+    Operation::execute( id, sizeBuiltinType, res, arg );
+    EXPECT_FALSE( res == IntegerConstant( 1234 ) );
+
+    Operation::execute( id, sizeBuiltinType, res, arg );
+    EXPECT_FALSE( res == IntegerConstant() );
 }
 
-#endif  // _LIBCASM_IR_H_
+TEST( libcasm_ir__builtin_size, range_undef )
+{
+    const auto integerType = libstdhl::Memory::get< IntegerType >();
+    const auto rangeType = libstdhl::Memory::make< RangeType >( integerType );
+    const auto sizeBuiltinType = RelationType( integerType, Types( { rangeType } ) );
+
+    const Constant arg = RangeConstant( rangeType );
+    Constant res;
+
+    Operation::execute( id, sizeBuiltinType, res, arg );
+    EXPECT_TRUE( res == IntegerConstant() );
+
+    Operation::execute( id, sizeBuiltinType, res, arg );
+    EXPECT_FALSE( res == IntegerConstant( -1234 ) );
+
+    Operation::execute( id, sizeBuiltinType, res, arg );
+    EXPECT_FALSE( res == IntegerConstant( 0 ) );
+
+    Operation::execute( id, sizeBuiltinType, res, arg );
+    EXPECT_FALSE( res == IntegerConstant( 1234 ) );
+}
 
 //
 //  Local variables:

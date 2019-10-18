@@ -39,45 +39,35 @@
 //  statement from your version.
 //
 
-#ifndef _LIBCASM_IR_H_
-#define _LIBCASM_IR_H_
+#include "../../main.h"
 
-#include <libcasm-ir/Agent>
-#include <libcasm-ir/Annotation>
-#include <libcasm-ir/Block>
-#include <libcasm-ir/Builtin>
-#include <libcasm-ir/CasmIR>
-#include <libcasm-ir/Constant>
-#include <libcasm-ir/Derived>
-#include <libcasm-ir/Enumeration>
-#include <libcasm-ir/Exception>
-#include <libcasm-ir/Function>
-#include <libcasm-ir/Instruction>
-#include <libcasm-ir/List>
-#include <libcasm-ir/Operation>
-#include <libcasm-ir/Range>
-#include <libcasm-ir/Rule>
-#include <libcasm-ir/Specification>
-#include <libcasm-ir/Statement>
-#include <libcasm-ir/Tuple>
-#include <libcasm-ir/Type>
-#include <libcasm-ir/User>
-#include <libcasm-ir/Value>
-#include <libcasm-ir/Version>
-#include <libcasm-ir/Visitor>
+using namespace libcasm_ir;
 
-#include <libcasm-ir/analyze/ConsistencyCheckPass>
-#include <libcasm-ir/analyze/IRDumpDebugPass>
+static const auto id = Value::ID::AT_BUILTIN;
 
-#include <libcasm-ir/transform/BranchEliminationPass>
-#include <libcasm-ir/transform/IRDumpDotPass>
-#include <libcasm-ir/transform/IRDumpSourcePass>
-
-namespace libcasm_ir
+TEST( libcasm_ir__builtin_at, list )
 {
-}
+    const auto integerType = libstdhl::Memory::get< IntegerType >();
+    const auto listType = libstdhl::Memory::make< ListType >( integerType );
+    const auto atBuiltinType = RelationType( integerType, Types( { listType, integerType } ) );
 
-#endif  // _LIBCASM_IR_H_
+    const std::vector< i32 > values = { -4, 13, 0, 20, 8 };
+
+    auto list = libstdhl::Memory::make< libcasm_ir::List >( listType );
+    for( const auto value : values )
+    {
+        list->append( libstdhl::Memory::make< IntegerConstant >( value ) );
+    }
+
+    for( std::size_t pos = 0; pos < values.size(); pos++ )
+    {
+        const std::vector< Constant > arg = { ListConstant( listType, list ),
+                                              IntegerConstant( pos + 1 ) };
+        Constant res;
+        Operation::execute( id, atBuiltinType, res, arg.data(), arg.size() );
+        EXPECT_TRUE( res == IntegerConstant( values[ pos ] ) );
+    }
+}
 
 //
 //  Local variables:

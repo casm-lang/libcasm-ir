@@ -39,45 +39,37 @@
 //  statement from your version.
 //
 
-#ifndef _LIBCASM_IR_H_
-#define _LIBCASM_IR_H_
+#include "../../main.h"
 
-#include <libcasm-ir/Agent>
-#include <libcasm-ir/Annotation>
-#include <libcasm-ir/Block>
-#include <libcasm-ir/Builtin>
-#include <libcasm-ir/CasmIR>
-#include <libcasm-ir/Constant>
-#include <libcasm-ir/Derived>
-#include <libcasm-ir/Enumeration>
-#include <libcasm-ir/Exception>
-#include <libcasm-ir/Function>
-#include <libcasm-ir/Instruction>
-#include <libcasm-ir/List>
-#include <libcasm-ir/Operation>
-#include <libcasm-ir/Range>
-#include <libcasm-ir/Rule>
-#include <libcasm-ir/Specification>
-#include <libcasm-ir/Statement>
-#include <libcasm-ir/Tuple>
-#include <libcasm-ir/Type>
-#include <libcasm-ir/User>
-#include <libcasm-ir/Value>
-#include <libcasm-ir/Version>
-#include <libcasm-ir/Visitor>
+using namespace libcasm_ir;
 
-#include <libcasm-ir/analyze/ConsistencyCheckPass>
-#include <libcasm-ir/analyze/IRDumpDebugPass>
+static const auto id = Value::ID::ADD_INSTRUCTION;
 
-#include <libcasm-ir/transform/BranchEliminationPass>
-#include <libcasm-ir/transform/IRDumpDotPass>
-#include <libcasm-ir/transform/IRDumpSourcePass>
+static const auto type = libstdhl::Memory::get< RelationType >(
+    libstdhl::Memory::get< StringType >(),
+    Types( { libstdhl::Memory::get< StringType >(), libstdhl::Memory::get< StringType >() } ) );
 
-namespace libcasm_ir
-{
-}
+#define TEST_( NAME, RES, LHS, RHS )                                           \
+    TEST( libcasm_ir__instruction_add_string_string, NAME )                    \
+    {                                                                          \
+        const auto lhs = StringConstant( LHS );                                \
+        const auto rhs = StringConstant( RHS );                                \
+        Constant res;                                                          \
+        Operation::execute( id, *type, res, lhs, rhs );                \
+        EXPECT_TRUE( res == StringConstant( RES ) );                           \
+        EXPECT_STREQ( res.description().c_str(),                               \
+            StringConstant( RES ).description().c_str() );                     \
+    }
 
-#endif  // _LIBCASM_IR_H_
+TEST_( undef__at__undef__undef, , , );
+TEST_( undef__at__empty__undef, , "", );
+TEST_( undef__at__undef__empty, , , "" );
+TEST_( undef__at__text___undef, , "foo", );
+TEST_( undef__at__undef__text_, , , "foo" );
+
+TEST_( empty__at__empty__empty, "", "", "" );
+TEST_( text2__at__text___text_, "foofoo", "foo", "foo" );
+TEST_( long___at__short__short, "foobar;bazqux", "foobar", ";bazqux" );
 
 //
 //  Local variables:

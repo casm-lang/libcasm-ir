@@ -39,45 +39,27 @@
 //  statement from your version.
 //
 
-#ifndef _LIBCASM_IR_H_
-#define _LIBCASM_IR_H_
+#include "../../../main.h"
 
-#include <libcasm-ir/Agent>
-#include <libcasm-ir/Annotation>
-#include <libcasm-ir/Block>
-#include <libcasm-ir/Builtin>
-#include <libcasm-ir/CasmIR>
-#include <libcasm-ir/Constant>
-#include <libcasm-ir/Derived>
-#include <libcasm-ir/Enumeration>
-#include <libcasm-ir/Exception>
-#include <libcasm-ir/Function>
-#include <libcasm-ir/Instruction>
-#include <libcasm-ir/List>
-#include <libcasm-ir/Operation>
-#include <libcasm-ir/Range>
-#include <libcasm-ir/Rule>
-#include <libcasm-ir/Specification>
-#include <libcasm-ir/Statement>
-#include <libcasm-ir/Tuple>
-#include <libcasm-ir/Type>
-#include <libcasm-ir/User>
-#include <libcasm-ir/Value>
-#include <libcasm-ir/Version>
-#include <libcasm-ir/Visitor>
+using namespace libcasm_ir;
 
-#include <libcasm-ir/analyze/ConsistencyCheckPass>
-#include <libcasm-ir/analyze/IRDumpDebugPass>
+static const auto id = Value::ID::AS_INTEGER_BUILTIN;
 
-#include <libcasm-ir/transform/BranchEliminationPass>
-#include <libcasm-ir/transform/IRDumpDotPass>
-#include <libcasm-ir/transform/IRDumpSourcePass>
+static const auto type = libstdhl::Memory::get< RelationType >(
+    libstdhl::Memory::get< IntegerType >(), Types( { libstdhl::Memory::get< BooleanType >() } ) );
 
-namespace libcasm_ir
-{
-}
+#define TEST_( NAME, TO, FROM )                            \
+    TEST( libcasm_ir__builtin_as_integer_boolean, NAME )   \
+    {                                                      \
+        const auto arg = BooleanConstant( FROM );          \
+        Constant res;                                      \
+        Operation::execute( id, *type, res, arg ); \
+        EXPECT_TRUE( res == IntegerConstant( TO ) );       \
+    }
 
-#endif  // _LIBCASM_IR_H_
+TEST_( undef_at_undef, , );
+TEST_( zero__at_false, 0, false );
+TEST_( one___at_true, 1, true );
 
 //
 //  Local variables:

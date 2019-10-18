@@ -39,45 +39,37 @@
 //  statement from your version.
 //
 
-#ifndef _LIBCASM_IR_H_
-#define _LIBCASM_IR_H_
+#include "../../../main.h"
 
-#include <libcasm-ir/Agent>
-#include <libcasm-ir/Annotation>
-#include <libcasm-ir/Block>
-#include <libcasm-ir/Builtin>
-#include <libcasm-ir/CasmIR>
-#include <libcasm-ir/Constant>
-#include <libcasm-ir/Derived>
-#include <libcasm-ir/Enumeration>
-#include <libcasm-ir/Exception>
-#include <libcasm-ir/Function>
-#include <libcasm-ir/Instruction>
-#include <libcasm-ir/List>
-#include <libcasm-ir/Operation>
-#include <libcasm-ir/Range>
-#include <libcasm-ir/Rule>
-#include <libcasm-ir/Specification>
-#include <libcasm-ir/Statement>
-#include <libcasm-ir/Tuple>
-#include <libcasm-ir/Type>
-#include <libcasm-ir/User>
-#include <libcasm-ir/Value>
-#include <libcasm-ir/Version>
-#include <libcasm-ir/Visitor>
+using namespace libcasm_ir;
 
-#include <libcasm-ir/analyze/ConsistencyCheckPass>
-#include <libcasm-ir/analyze/IRDumpDebugPass>
+static const auto id = Value::ID::AS_INTEGER_BUILTIN;
 
-#include <libcasm-ir/transform/BranchEliminationPass>
-#include <libcasm-ir/transform/IRDumpDotPass>
-#include <libcasm-ir/transform/IRDumpSourcePass>
+#define TEST_( NAME, SIZE, TO, FROM )                                   \
+    TEST( libcasm_ir__builtin_as_integer_binary, SIZE##NAME )           \
+    {                                                                   \
+        const auto arg = BinaryConstant FROM;                           \
+        const auto type = libstdhl::Memory::get< RelationType >(        \
+            libstdhl::Memory::get< IntegerType >(),                     \
+            Types( { libstdhl::Memory::get< BinaryType >( SIZE ) } ) ); \
+        Constant res;                                                   \
+        Operation::execute( id, *type, res, arg );              \
+        EXPECT_TRUE( res == IntegerConstant( TO ) );                    \
+    }
 
-namespace libcasm_ir
-{
-}
+TEST_( undef_at_undef, 1, , ( 1 ) );
+TEST_( zero__at_zero, 1, 0, ( 1, 0 ) );
+TEST_( one___at_one, 1, -1, ( 1, 1 ) );
 
-#endif  // _LIBCASM_IR_H_
+TEST_( undef_at_undef, 8, , ( 1 ) );
+TEST_( zero__at_zero, 8, 0, ( 8, 0 ) );
+TEST_( one___at_one, 8, 1, ( 8, 1 ) );
+TEST_( large_at_large, 8, 0x7f, ( 8, 0x7f ) );
+
+TEST_( undef_at_undef, 50, , ( 1 ) );
+TEST_( zero__at_zero, 50, 0, ( 50, 0 ) );
+TEST_( one___at_one, 50, 1, ( 50, 1 ) );
+TEST_( large_at_large, 50, 0xbeef, ( 50, 0xbeef ) );
 
 //
 //  Local variables:

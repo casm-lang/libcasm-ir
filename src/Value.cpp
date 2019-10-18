@@ -418,31 +418,31 @@ std::string Value::token( const Value::ID id )
         }
         case Value::INV_INSTRUCTION:
         {
-            return " -";
+            return "inv";
         }
         case Value::ADD_INSTRUCTION:
         {
-            return "+";
+            return "add";
         }
         case Value::SUB_INSTRUCTION:
         {
-            return "-";
+            return "sub";
         }
         case Value::MUL_INSTRUCTION:
         {
-            return "*";
+            return "mul";
         }
         case Value::DIV_INSTRUCTION:
         {
-            return "/";
+            return "div";
         }
         case Value::POW_INSTRUCTION:
         {
-            return "^";
+            return "pow";
         }
         case Value::MOD_INSTRUCTION:
         {
-            return "%";
+            return "mod";
         }
 
         case Value::COMPARE_INSTRUCTION:
@@ -451,27 +451,27 @@ std::string Value::token( const Value::ID id )
         }
         case Value::EQU_INSTRUCTION:
         {
-            return "=";
+            return "equ";
         }
         case Value::NEQ_INSTRUCTION:
         {
-            return "!=";
+            return "neq";
         }
         case Value::LTH_INSTRUCTION:
         {
-            return "<";
+            return "lth";
         }
         case Value::LEQ_INSTRUCTION:
         {
-            return "<=";
+            return "leq";
         }
         case Value::GTH_INSTRUCTION:
         {
-            return ">";
+            return "gth";
         }
         case Value::GEQ_INSTRUCTION:
         {
-            return ">=";
+            return "geq";
         }
 
         case Value::LOGICAL_INSTRUCTION:
