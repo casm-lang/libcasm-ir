@@ -52,11 +52,16 @@ set( CMAKE_MODULE_PATH ${${PROJECT}_SOURCE_DIR}/.cmake )
 include( LibPackage )
 
 package_git( ${PROJECT} )
-package_git_submodule( libstdhl master REQUIRED obj   ../stdhl lib/stdhl )
-package_git_submodule( libpass  master REQUIRED obj   ../pass  lib/pass  )
-package_git_submodule( libgtest master REQUIRED build ../gtest lib/gtest )
-package_git_submodule( libhayai master REQUIRED build ../hayai lib/hayai )
-package_git_deps( libstdhl>libpass )
+package_git_submodule( libstdhl   master REQUIRED obj   ../stdhl lib/stdhl )
+package_git_submodule( libpass    master REQUIRED obj   ../pass  lib/pass  )
+package_git_submodule( libtptp    master REQUIRED obj   ../tptp  lib/tptp  )
+package_git_submodule( libgtest   master REQUIRED build ../gtest lib/gtest )
+package_git_submodule( libhayai   master REQUIRED build ../hayai lib/hayai )
+package_git_submodule( libz3      master REQUIRED build ../z3    lib/z3    )
+package_git_deps(
+  libstdhl>libpass
+  libpass>libtptp
+  )
 
 find_package( Threads REQUIRED )
 
