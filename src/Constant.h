@@ -717,8 +717,6 @@ namespace libcasm_ir
 
         SymbolicConstant( const Type::Ptr& type );
 
-        ~SymbolicConstant();
-
         std::string toString( void ) const;
 
         void accept( Visitor& visitor ) override;
