@@ -41,18 +41,16 @@
 
 # https://help.github.com/en/articles/virtual-environments-for-github-actions#supported-virtual-environments
 #
-# |---------+---------------------------------------------|
-# | OS      | Version                                     |
-# |---------+---------------------------------------------|
-# | Linux   | ubuntu-18.04 (ubuntu-latest), ubuntu-16.04  |
-# | MacOSX  | macOS-10.14 (macOS-latest)                  |
-# | Windows | windows-2019 (windows-latest), windows-2016 |
+# |---------+----------------------------------------------|
+# | OS      | Version                                      |
+# |---------+----------------------------------------------|
+# | Linux   |  ubuntu-18.04 (ubuntu-latest), ubuntu-16.04  |
+# | MacOSX  |   macOS-10.14 (macOS-latest)                 |
+# | Windows | windows-2019  (windows-latest), windows-2016 |
 
 name: build
 
 on: [push]
-
-
 
 jobs:
   linux-clang-debug:
