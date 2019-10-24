@@ -61,10 +61,13 @@
 #include <libstdhl/data/type/Rational>
 #include <libstdhl/data/type/String>
 
+#include <libtptp/Node>
+
 #include <cassert>
 
 namespace libcasm_ir
 {
+    namespace TPTP = libtptp;
     class Constant;
 
     /**
@@ -683,6 +686,58 @@ namespace libcasm_ir
         }
 
         static u1 classof( Value const* obj );
+    };
+
+    class SymbolicConstant final : public Constant
+    {
+      private:
+        class SymbolicLayout final : public libstdhl::Type::Layout
+        {
+          private:
+            std::string m_name;
+            std::vector< TPTP::Node::Ptr > m_modifications;
+
+          public:
+            SymbolicLayout( const std::string& name );
+            SymbolicLayout(
+                const std::string& name, const std::vector< TPTP::Node::Ptr > modifications );
+            void addModification( const TPTP::Node::Ptr& value );
+
+            std::size_t hash( void ) const;
+            Layout* clone( void ) const;
+
+            const std::string& name() const;
+            const std::vector< TPTP::Node::Ptr >& modifications() const;
+        };
+
+      public:
+        using Ptr = std::shared_ptr< SymbolicConstant >;
+
+        SymbolicConstant( const Type::Ptr& type, const std::string& name );
+
+        SymbolicConstant( const Type::Ptr& type );
+
+        ~SymbolicConstant();
+
+        std::string toString( void ) const;
+
+        void accept( Visitor& visitor ) override;
+
+        std::size_t hash( void ) const override;
+
+        u1 operator==( const Value& rhs ) const override;
+
+        const std::vector< TPTP::Node::Ptr >& modifications() const;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::SYMBOLIC_CONSTANT;
+        }
+
+        static u1 classof( Value const* obj );
+
+      private:
+        const SymbolicLayout* value( void ) const;
     };
 
     class Identifier final : public Constant

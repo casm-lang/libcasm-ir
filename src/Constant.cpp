@@ -43,6 +43,7 @@
 
 #include <libcasm-ir/Instruction>
 #include <libstdhl/Random>
+#include <libstdhl/String>
 
 #include <cmath>
 
@@ -205,6 +206,10 @@ std::string Constant::name( void ) const
         {
             return static_cast< const DomainConstant* >( this )->toString();
         }
+        case Value::SYMBOLIC_CONSTANT:
+        {
+            return static_cast< const SymbolicConstant* >( this )->toString();
+        }
         case Value::RULE_REFERENCE_CONSTANT:
         {
             return static_cast< const RuleReferenceConstant* >( this )->toString();
@@ -278,6 +283,11 @@ void Constant::accept( Visitor& visitor )
         case Value::DOMAIN_CONSTANT:
         {
             static_cast< DomainConstant* >( this )->accept( visitor );
+            break;
+        }
+        case Value::SYMBOLIC_CONSTANT:
+        {
+            static_cast< SymbolicConstant* >( this )->accept( visitor );
             break;
         }
         case Value::RULE_REFERENCE_CONSTANT:
@@ -355,6 +365,11 @@ void Constant::foreach( const std::function< void( const Constant& constant ) >&
             static_cast< const DomainConstant* >( this )->foreach( callback );
             break;
         }
+        case Value::SYMBOLIC_CONSTANT:
+        {
+            callback( *this );
+            break;
+        }
         case Value::RULE_REFERENCE_CONSTANT:
         {
             callback( *this );
@@ -422,6 +437,10 @@ Constant Constant::choose( void ) const
         {
             return static_cast< const DomainConstant* >( this )->choose();
         }
+        case Value::SYMBOLIC_CONSTANT:
+        {
+            return *this;
+        }
         case Value::RULE_REFERENCE_CONSTANT:
         {
             return *this;
@@ -485,6 +504,10 @@ std::size_t Constant::hash( void ) const
         case Value::DOMAIN_CONSTANT:
         {
             return static_cast< const DomainConstant* >( this )->hash();
+        }
+        case Value::SYMBOLIC_CONSTANT:
+        {
+            return static_cast< const SymbolicConstant* >( this )->hash();
         }
         case Value::RULE_REFERENCE_CONSTANT:
         {
@@ -550,6 +573,10 @@ u1 Constant::operator==( const Value& rhs ) const
         {
             return static_cast< const DomainConstant* >( this )->operator==( rhs );
         }
+        case Value::SYMBOLIC_CONSTANT:
+        {
+            return static_cast< const SymbolicConstant* >( this )->operator==( rhs );
+        }
         case Value::RULE_REFERENCE_CONSTANT:
         {
             return static_cast< const RuleReferenceConstant* >( this )->operator==( rhs );
@@ -573,7 +600,8 @@ u1 Constant::classof( Value const* obj )
            BinaryConstant::classof( obj ) or StringConstant::classof( obj ) or
            DecimalConstant::classof( obj ) or RationalConstant::classof( obj ) or
            EnumerationConstant::classof( obj ) or DomainConstant::classof( obj ) or
-           RuleReferenceConstant::classof( obj ) or Identifier::classof( obj );
+           SymbolicConstant::classof( obj ) or RuleReferenceConstant::classof( obj ) or
+           Identifier::classof( obj );
 }
 
 Constant Constant::undef( const Type::Ptr& type )
@@ -1712,6 +1740,114 @@ u1 FunctionReferenceConstant::operator==( const Value& rhs ) const
 u1 FunctionReferenceConstant::classof( Value const* obj )
 {
     return obj->id() == classid();
+}
+
+//
+//
+// Symbolic Constant
+//
+
+SymbolicConstant::SymbolicLayout::SymbolicLayout( const std::string& name )
+: m_name( name )
+{
+}
+
+SymbolicConstant::SymbolicLayout::SymbolicLayout(
+    const std::string& name, const std::vector< TPTP::Node::Ptr > modifications )
+: m_name( name )
+, m_modifications( modifications )
+{
+}
+
+void SymbolicConstant::SymbolicLayout::addModification( const TPTP::Node::Ptr& value )
+{
+    m_modifications.push_back( value );
+}
+
+std::size_t SymbolicConstant::SymbolicLayout::hash( void ) const
+{
+    return libstdhl::String::value( name() );
+}
+
+libstdhl::Type::Layout* SymbolicConstant::SymbolicLayout::clone( void ) const
+{
+    return new SymbolicLayout( name(), modifications() );
+}
+
+const std::string& SymbolicConstant::SymbolicLayout::name() const
+{
+    return m_name;
+}
+
+const std::vector< TPTP::Node::Ptr >& SymbolicConstant::SymbolicLayout::modifications() const
+{
+    return m_modifications;
+}
+
+SymbolicConstant::SymbolicConstant( const Type::Ptr& type, const std::string& name )
+: Constant( type, libstdhl::Type::Data( new SymbolicLayout( name ) ), classid() )
+{
+}
+
+SymbolicConstant::SymbolicConstant( const Type::Ptr& type )
+: Constant( type, classid() )
+{
+}
+
+std::string SymbolicConstant::toString( void ) const
+{
+    return ( defined() ? value()->name() : undef_str );
+}
+
+void SymbolicConstant::accept( Visitor& visitor )
+{
+    // TODO: @moosbruggerj fix me
+    // visitor.visit( *this );
+}
+
+std::size_t SymbolicConstant::hash( void ) const
+{
+    const auto h = ( ( (std::size_t)classid() ) << 1 ) | defined();
+    return libstdhl::Hash::combine( h, value()->hash() );
+}
+
+u1 SymbolicConstant::operator==( const Value& rhs ) const
+{
+    if( this == &rhs )
+    {
+        return true;
+    }
+
+    if( not Value::operator==( rhs ) )
+    {
+        return false;
+    }
+    const auto& other = static_cast< const SymbolicConstant& >( rhs );
+    return ( this->defined() == other.defined() ) and
+           ( this->value()->name() == other.value()->name() );
+}
+
+const std::vector< TPTP::Node::Ptr >& SymbolicConstant::modifications() const
+{
+    if( defined() )
+    {
+        return value()->modifications();
+    }
+    else
+    {
+        static std::vector< TPTP::Node::Ptr > instance;
+        return instance;
+    }
+}
+
+u1 SymbolicConstant::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
+
+const SymbolicConstant::SymbolicLayout* SymbolicConstant::value( void ) const
+{
+    return static_cast< SymbolicLayout* >( m_data.ptr() );
 }
 
 //
