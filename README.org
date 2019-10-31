@@ -45,13 +45,12 @@
 
 * libcasm-ir: CASM Intermediate Representation Library
 
-[[https://gitter.im/casm-lang/libcasm-ir][https://badges.gitter.im/casm-lang/libcasm-ir.png]]
+[[https://gitter.im/casm-lang/libcasm-ir][https://img.shields.io/badge/gitter-chat-darkcyan.svg?logo=gitter]]
+[[https://github.com/casm-lang/libcasm-ir/actions][https://github.com/casm-lang/libcasm-ir/workflows/build/badge.svg]]
 [[https://ci.casm-lang.org/teams/main/pipelines/development/jobs/libcasm-ir-master][ @@html:<img src="https://ci.casm-lang.org/api/v1/teams/main/pipelines/development/jobs/libcasm-ir-master/badge">@@ ]]
-[[https://cirrus-ci.com/github/casm-lang/libcasm-ir][https://api.cirrus-ci.com/github/casm-lang/libcasm-ir.svg]]
 [[https://codecov.io/gh/casm-lang/libcasm-ir][https://codecov.io/gh/casm-lang/libcasm-ir/badge.svg]]
-[[https://github.com/casm-lang/libcasm-ir/tags][https://img.shields.io/github/tag/casm-lang/libcasm-ir.svg]]
-[[https://github.com/casm-lang/libcasm-ir/blob/master/LICENSE.txt][https://img.shields.io/badge/license-GPLv3%2BLE-blue.svg]]
-
+[[https://github.com/casm-lang/libcasm-ir/tags][https://img.shields.io/github/tag/casm-lang/libcasm-ir.svg?logo=github&sort=semver]]
+[[https://github.com/casm-lang/libcasm-ir/blob/master/LICENSE.txt][https://img.shields.io/badge/license-GPLv3%2BLE-blue.svg?logo=gnu]]
 
 
 TBD
