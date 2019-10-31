@@ -39,16 +39,6 @@
 #   statement from your version.
 #
 
-[submodule "lib/gtest"]
-	path = lib/gtest
-	url = https://github.com/casm-lang/libgtest
-	branch = master
-
-[submodule "lib/hayai"]
-	path = lib/hayai
-	url = https://github.com/casm-lang/libhayai
-	branch = master
-
 [submodule "lib/stdhl"]
 	path = lib/stdhl
 	url = https://github.com/casm-lang/libstdhl
@@ -62,6 +52,16 @@
 [submodule "lib/tptp"]
 	path = lib/tptp
 	url = https://github.com/casm-lang/libtptp
+
+[submodule "lib/gtest"]
+	path = lib/gtest
+	url = https://github.com/casm-lang/libgtest
+	branch = master
+
+[submodule "lib/hayai"]
+	path = lib/hayai
+	url = https://github.com/casm-lang/libhayai
+	branch = master
 
 [submodule "lib/z3"] # external
 	path = lib/z3
