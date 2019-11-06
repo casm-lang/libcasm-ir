@@ -54,24 +54,25 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Setup
-      run:  |
+      run: |
         sudo apt-get install -y libz3-dev
+        make C=gcc info-tools
     - name: Fetching
       env:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-      run:  |
+      run: |
         make C=clang debug-fetch
     - name: Dependencies
-      run:  |
+      run: |
         make C=clang debug-deps
     - name: Building
-      run:  |
+      run: |
         make C=clang debug-build
     - name: Tests
-      run:  |
+      run: |
         make C=clang debug-test
     - name: Benchmark
-      run:  |
+      run: |
         make C=clang debug-benchmark
 
   linux-gcc-coverage:
@@ -82,29 +83,30 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Setup
-      run:  |
+      run: |
         sudo apt-get install -y libz3-dev
+        make C=gcc info-tools
     - name: Fetching
       env:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-      run:  |
+      run: |
         make C=gcc debug-fetch
     - name: Dependencies
-      run:  |
+      run: |
         make C=gcc coverage-deps
     - name: Building
-      run:  |
+      run: |
         make C=gcc coverage-build
     - name: Tests
-      run:  |
+      run: |
         make C=gcc coverage-test
     - name: Benchmark
-      run:  |
+      run: |
         make C=gcc coverage-benchmark
     - name: Coverage
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-      run:  |
+      run: |
         wget https://codecov.io/bash
         chmod 755 bash
         ./bash
@@ -117,25 +119,26 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Setup
-      run:  |
-        brew --version
+      run: |
+        sudo xcode-select -s /Applications/Xcode_10.3.app
         brew install z3
+        make C=clang info-tools
     - name: Fetching
       env:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-      run:  |
+      run: |
         make C=clang debug-fetch
     - name: Dependencies
-      run:  |
+      run: |
         make C=clang debug-deps
     - name: Building
-      run:  |
+      run: |
         make C=clang debug-build
     - name: Tests
-      run:  |
+      run: |
         make C=clang debug-test
     - name: Benchmark
-      run:  |
+      run: |
         make C=clang debug-benchmark
 
   darwin-gcc-debug:
@@ -146,28 +149,29 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Setup
-      run:  |
-        brew --version
-        brew install z3
+      run: |
+        sudo installer -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg -target /
         brew install gcc@9
         ln -s /usr/local/bin/gcc-9 /usr/local/bin/gcc
         ln -s /usr/local/bin/g++-9 /usr/local/bin/g++
+        brew install z3
+        make C=gcc info-tools
     - name: Fetching
       env:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-      run:  |
+      run: |
         make C=gcc debug-fetch
     - name: Dependencies
-      run:  |
+      run: |
         make C=gcc debug-deps
     - name: Building
-      run:  |
+      run: |
         make C=gcc debug-build
     - name: Tests
-      run:  |
+      run: |
         make C=gcc debug-test
     - name: Benchmark
-      run:  |
+      run: |
         make C=gcc debug-benchmark
 
   windows-gcc-debug:
@@ -183,20 +187,21 @@ jobs:
         Expand-Archive    C:\z3-4.8.6-x64-win.zip     -DestinationPath C:\
         Copy-Item -Path   C:\z3-4.8.6-x64-win\bin     -Destination     C:\ProgramData\chocolatey -Recurse -Force
         Copy-Item -Path   C:\z3-4.8.6-x64-win\include -Destination     C:\ProgramData\chocolatey -Recurse -Force
+        make C=gcc info-tools
     - name: Fetching
       env:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-      run:  |
+      run: |
         make C=gcc debug-fetch
     - name: Dependencies
-      run:  |
+      run: |
         make C=gcc debug-deps
     - name: Building
-      run:  |
+      run: |
         make C=gcc debug-build
     - name: Tests
-      run:  |
+      run: |
         make C=gcc debug-test
     - name: Benchmark
-      run:  |
+      run: |
         make C=gcc debug-benchmark

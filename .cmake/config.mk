@@ -533,7 +533,7 @@ $(INSTA):%-install: %
 
 build: debug
 
-$(BUILD):%-build: %-sync
+$(BUILD):%-build: %
 
 
 deps: debug-deps
@@ -682,6 +682,19 @@ info-repo:
 		`git describe --tags --always --dirty` \
 		`git branch | grep "* " | sed "s/* //g" | sed "s/ /-/g"`' | sed '/Entering/d'
 
+info-tools:
+	@echo "-- Make"
+	@make --version
+	@echo ""
+	@echo "-- CMake"
+	@cmake --version
+	@echo ""
+	@echo "-- C Compiler"
+	@$(ENV_CC) --version
+	@echo ""
+	@echo "-- C++ Compiler"
+	@$(ENV_CXX) --version
+	@echo ""
 
 info-variables:
 	$(foreach v, $(.VARIABLES), $(info $(v) = $($(v))))
