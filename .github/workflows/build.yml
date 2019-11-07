@@ -46,162 +46,123 @@ name: build
 on: [push]
 
 jobs:
-  linux-clang-debug:
+  linux-x86_64:
+    runs-on: ubuntu-18.04
     strategy:
       matrix:
-        os: [ ubuntu-18.04 ]
-    runs-on: ${{ matrix.os }}
+        tool:
+        - build: debug
+          chain: clang
+        - build: coverage
+          chain: gcc
+    env:
+      B: ${{ matrix.tool.build }}
+      C: ${{ matrix.tool.chain }}
     steps:
     - uses: actions/checkout@v1
     - name: Setup
       run: |
+        make info
         sudo apt-get install -y libz3-dev
-        make C=gcc info-tools
+        make ci-tools
     - name: Fetching
       env:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
       run: |
-        make C=clang debug-fetch
+        make ci-fetch
     - name: Dependencies
       run: |
-        make C=clang debug-deps
+        make ci-deps
     - name: Building
       run: |
-        make C=clang debug-build
+        make ci-build
     - name: Tests
       run: |
-        make C=clang debug-test
+        make ci-test
     - name: Benchmark
       run: |
-        make C=clang debug-benchmark
-
-  linux-gcc-coverage:
-    strategy:
-      matrix:
-        os: [ ubuntu-18.04 ]
-    runs-on: ${{ matrix.os }}
-    steps:
-    - uses: actions/checkout@v1
-    - name: Setup
-      run: |
-        sudo apt-get install -y libz3-dev
-        make C=gcc info-tools
-    - name: Fetching
-      env:
-        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-      run: |
-        make C=gcc debug-fetch
-    - name: Dependencies
-      run: |
-        make C=gcc coverage-deps
-    - name: Building
-      run: |
-        make C=gcc coverage-build
-    - name: Tests
-      run: |
-        make C=gcc coverage-test
-    - name: Benchmark
-      run: |
-        make C=gcc coverage-benchmark
+        make ci-benchmark
     - name: Coverage
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      if: matrix.tool.build == 'coverage' && matrix.tool.chain == 'gcc'
       run: |
         wget https://codecov.io/bash
         chmod 755 bash
         ./bash
 
-  darwin-clang-debug:
+  darwin-x86_64:
+    runs-on: macos-latest
     strategy:
       matrix:
-        os: [ macOS-10.14 ]
-    runs-on: ${{ matrix.os }}
+        tool:
+        - build: debug
+          chain: gcc
+    env:
+      B: ${{ matrix.tool.build }}
+      C: ${{ matrix.tool.chain }}
     steps:
     - uses: actions/checkout@v1
     - name: Setup
       run: |
-        sudo xcode-select -s /Applications/Xcode_10.3.app
-        brew install z3
-        make C=clang info-tools
-    - name: Fetching
-      env:
-        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-      run: |
-        make C=clang debug-fetch
-    - name: Dependencies
-      run: |
-        make C=clang debug-deps
-    - name: Building
-      run: |
-        make C=clang debug-build
-    - name: Tests
-      run: |
-        make C=clang debug-test
-    - name: Benchmark
-      run: |
-        make C=clang debug-benchmark
-
-  darwin-gcc-debug:
-    strategy:
-      matrix:
-        os: [ macOS-10.14 ]
-    runs-on: ${{ matrix.os }}
-    steps:
-    - uses: actions/checkout@v1
-    - name: Setup
-      run: |
-        sudo installer -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg -target /
+        make info
         brew install gcc@9
         ln -s /usr/local/bin/gcc-9 /usr/local/bin/gcc
         ln -s /usr/local/bin/g++-9 /usr/local/bin/g++
         brew install z3
-        make C=gcc info-tools
+        make ci-tools
     - name: Fetching
       env:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
       run: |
-        make C=gcc debug-fetch
+        make ci-fetch
     - name: Dependencies
       run: |
-        make C=gcc debug-deps
+        make ci-deps
     - name: Building
       run: |
-        make C=gcc debug-build
+        make ci-build
     - name: Tests
       run: |
-        make C=gcc debug-test
+        make ci-test
     - name: Benchmark
       run: |
-        make C=gcc debug-benchmark
+        make ci-benchmark
 
-  windows-gcc-debug:
+  windows-x86_64:
+    runs-on: windows-2019
     strategy:
       matrix:
-        os: [ windows-2019 ]
-    runs-on: ${{ matrix.os }}
+        tool:
+        - build: debug
+          chain: gcc
+    env:
+      B: ${{ matrix.tool.build }}
+      C: ${{ matrix.tool.chain }}
     steps:
     - uses: actions/checkout@v1
     - name: Setup
       run: |
+        make info
         Invoke-WebRequest https://github.com/Z3Prover/z3/releases/download/z3-4.8.6/z3-4.8.6-x64-win.zip -O C:\z3-4.8.6-x64-win.zip
         Expand-Archive    C:\z3-4.8.6-x64-win.zip     -DestinationPath C:\
         Copy-Item -Path   C:\z3-4.8.6-x64-win\bin     -Destination     C:\ProgramData\chocolatey -Recurse -Force
         Copy-Item -Path   C:\z3-4.8.6-x64-win\include -Destination     C:\ProgramData\chocolatey -Recurse -Force
-        make C=gcc info-tools
+        make ci-tools
     - name: Fetching
       env:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
       run: |
-        make C=gcc debug-fetch
+        make ci-fetch
     - name: Dependencies
       run: |
-        make C=gcc debug-deps
+        make ci-deps
     - name: Building
       run: |
-        make C=gcc debug-build
+        make ci-build
     - name: Tests
       run: |
-        make C=gcc debug-test
+        make ci-test
     - name: Benchmark
       run: |
-        make C=gcc debug-benchmark
+        make ci-benchmark
