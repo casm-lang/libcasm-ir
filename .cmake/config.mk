@@ -806,6 +806,9 @@ $(FETCH):%-fetch: info-fetch
 	@$(MAKE) --no-print-directory info-repo
 
 
+ci-tools:
+	@$(MAKE) --no-print-directory I=$(I) C=$(C) info-tools
+
 ci-fetch:
 	@$(MAKE) --no-print-directory I=$(I) C=$(C) $(B)-fetch
 
