@@ -113,6 +113,7 @@ namespace libcasm_ir
             TUPLE,
             RECORD,
             LIST,
+            OBJECT,
             STRUCTURE,
             FEATURE,
 
@@ -258,6 +259,7 @@ namespace libcasm_ir
         u1 isTuple( void ) const;
         u1 isRecord( void ) const;
         u1 isList( void ) const;
+        u1 isObject( void ) const;
         u1 isStructure( void ) const;
         u1 isFeature( void ) const;
 
@@ -797,6 +799,35 @@ namespace libcasm_ir
 
       private:
         std::shared_ptr< List > m_list;
+    };
+
+    class ObjectType final : public SyntheticType
+    {
+      public:
+        using Ptr = std::shared_ptr< ObjectType >;
+
+        ObjectType( const std::string& name );
+
+        std::string name( void ) const override;
+
+        std::string description( void ) const override;
+
+        void foreach(
+            const std::function< void( const Constant& constant ) >& callback ) const override;
+
+        Constant choose( void ) const override;
+
+        void validate( const Constant& constant ) const override;
+
+        std::size_t hash( void ) const override;
+
+        static inline Type::Kind classid( void )
+        {
+            return Type::Kind::OBJECT;
+        }
+
+      private:
+        const std::string m_name;
     };
 
     class StructureType final : public ComposedType

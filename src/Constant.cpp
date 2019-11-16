@@ -665,9 +665,13 @@ Constant Constant::undef( const Type::Ptr& type )
         {
             return RecordConstant( std::static_pointer_cast< RecordType >( type ) );
         }
+        case Type::Kind::OBJECT:
+        {
+            return DomainConstant( std::static_pointer_cast< ObjectType >( type ) );
+        }
         case Type::Kind::STRUCTURE:
         {
-            return DomainConstant( std::static_pointer_cast< StructureType >( type ) );
+            break;
         }
         case Type::Kind::FEATURE:
         {
@@ -703,7 +707,7 @@ Constant Constant::undef( const Type::Ptr& type )
 
 //
 //
-// Constants
+// Void Constant
 //
 
 VoidConstant::VoidConstant( void )
