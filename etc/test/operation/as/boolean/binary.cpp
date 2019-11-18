@@ -54,7 +54,7 @@ static const auto id = Value::ID::AS_BOOLEAN_BUILTIN;
             Types( { libstdhl::Memory::get< BinaryType >( SIZE ) } ) ); \
                                                                         \
         Constant res;                                                   \
-        Operation::execute( id, *type, res, arg );              \
+        Operation::execute( id, *type, res, &arg, 1 );                  \
         EXPECT_TRUE( res == BooleanConstant( TO ) );                    \
     }
 

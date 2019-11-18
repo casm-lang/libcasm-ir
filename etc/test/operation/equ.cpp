@@ -49,59 +49,36 @@ using namespace libcasm_ir;
 // | y : Type | false | x == y   | sym' |
 // | sym      | sym'  | sym'     | sym' |
 
-static const auto targ =
-    libstdhl::List< libcasm_ir::Type >{ { libstdhl::Memory::get< IntegerType >(),
-                                          libstdhl::Memory::get< IntegerType >() } };
-static const auto tres = libstdhl::Memory::get< BooleanType >();
-static const auto type = libstdhl::Memory::get< RelationType >( tres, targ );
+static const auto id = Value::ID::EQU_INSTRUCTION;
 
-TEST( libcasm_ir__instruction_equ, EquInstruction_true )
-{
-    const auto a = IntegerConstant( 123 );
-    const auto b = IntegerConstant( 123 );
+static const auto type = libstdhl::Memory::get< RelationType >(
+    libstdhl::Memory::get< BooleanType >(),
+    Types( { libstdhl::Memory::get< IntegerType >(), libstdhl::Memory::get< IntegerType >() } ) );
 
-    Constant r;
-    Operation::execute( Value::EQU_INSTRUCTION, type->result(), r, a, b );
+#define CALC_( LHS, RHS )                                                         \
+    const Constant reg[ 2 ] = { IntegerConstant( LHS ), IntegerConstant( RHS ) }; \
+    Constant res;                                                                 \
+    Operation::execute( id, *type, res, reg, 2 );
 
-    EXPECT_TRUE( r.type().isBoolean() );
-    EXPECT_TRUE( r == BooleanConstant( true ) );
-}
+#define TEST_( NAME, RES, LHS, RHS )                                                             \
+    TEST( libcasm_ir__instruction_equ_integer_integer, NAME )                                    \
+    {                                                                                            \
+        CALC_( LHS, RHS );                                                                       \
+        EXPECT_TRUE( res == BooleanConstant( RES ) );                                            \
+        EXPECT_STREQ( res.description().c_str(), BooleanConstant( RES ).description().c_str() ); \
+    }
 
-TEST( libcasm_ir__instruction_equ, EquInstruction_false )
-{
-    const auto a = IntegerConstant( 0 );
-    const auto b = IntegerConstant( 10 );
+// BENCHMARK( // TODO: PPA: FIXME: move this to the benchmarks!!!
+//     libcasm_ir__instruction_or_boolean_boolean, one_word_no_wrap, 10, 10 )
+// {
+//     CALC_( true, false );
+// }
 
-    Constant r;
-    Operation::execute( Value::EQU_INSTRUCTION, type->result(), r, a, b );
-
-    EXPECT_TRUE( r.type().isBoolean() );
-    EXPECT_TRUE( r == BooleanConstant( false ) );
-}
-
-TEST( libcasm_ir__instruction_equ, EquInstruction_undef_true )
-{
-    const auto a = IntegerConstant();
-    const auto b = IntegerConstant();
-
-    Constant r;
-    Operation::execute( Value::EQU_INSTRUCTION, type->result(), r, a, b );
-
-    EXPECT_TRUE( r.type().isBoolean() );
-    EXPECT_TRUE( r == BooleanConstant( true ) );
-}
-
-TEST( libcasm_ir__instruction_equ, EquInstruction_undef_false )
-{
-    const auto a = IntegerConstant();
-    const auto b = IntegerConstant( 321 );
-
-    Constant r;
-    Operation::execute( Value::EQU_INSTRUCTION, type->result(), r, a, b );
-
-    EXPECT_TRUE( r.type().isBoolean() );
-    EXPECT_TRUE( r == BooleanConstant( false ) );
-}
+TEST_( true__at__undef__undef, true, , );
+TEST_( false_at__p123___true, false, 123, );
+TEST_( false_at__undef__p321, false, , 321 );
+TEST_( false_at__p0_____p10, false, 0, 10 );
+TEST_( true__at__p123___p123, true, 123, 123 );
 
 //
 //  Local variables:

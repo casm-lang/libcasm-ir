@@ -54,7 +54,7 @@ static const auto type = libstdhl::Memory::get< RelationType >(
         const auto arg = StringConstant( FROM );                    \
         testing::internal::CaptureStdout();                         \
         Constant res;                                               \
-        Operation::execute( id, *type, res, arg );                  \
+        Operation::execute( id, *type, res, &arg, 1 );              \
         const auto output = testing::internal::GetCapturedStdout(); \
         EXPECT_TRUE( res == VoidConstant() );                       \
         EXPECT_STREQ( output.c_str(), TO );                         \

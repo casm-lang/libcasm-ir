@@ -48,13 +48,13 @@ static const auto id = Value::ID::AS_INTEGER_BUILTIN;
 static const auto type = libstdhl::Memory::get< RelationType >(
     libstdhl::Memory::get< IntegerType >(), Types( { libstdhl::Memory::get< BooleanType >() } ) );
 
-#define TEST_( NAME, TO, FROM )                            \
-    TEST( libcasm_ir__builtin_as_integer_boolean, NAME )   \
-    {                                                      \
-        const auto arg = BooleanConstant( FROM );          \
-        Constant res;                                      \
-        Operation::execute( id, *type, res, arg ); \
-        EXPECT_TRUE( res == IntegerConstant( TO ) );       \
+#define TEST_( NAME, TO, FROM )                          \
+    TEST( libcasm_ir__builtin_as_integer_boolean, NAME ) \
+    {                                                    \
+        const auto arg = BooleanConstant( FROM );        \
+        Constant res;                                    \
+        Operation::execute( id, *type, res, &arg, 1 );   \
+        EXPECT_TRUE( res == IntegerConstant( TO ) );     \
     }
 
 TEST_( undef_at_undef, , );

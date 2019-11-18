@@ -57,19 +57,19 @@ TEST( libcasm_ir__builtin_size, enumeration )
     Constant arg = DomainConstant( enumerationType );
     Constant res;
 
-    Operation::execute( id, sizeBuiltinType, res, arg );
+    Operation::execute( id, sizeBuiltinType, res, &arg, 1 );
     EXPECT_TRUE( res == IntegerConstant( 3 ) );
 
-    Operation::execute( id, sizeBuiltinType, res, arg );
+    Operation::execute( id, sizeBuiltinType, res, &arg, 1 );
     EXPECT_FALSE( res == IntegerConstant( 0 ) );
 
-    Operation::execute( id, sizeBuiltinType, res, arg );
+    Operation::execute( id, sizeBuiltinType, res, &arg, 1 );
     EXPECT_FALSE( res == IntegerConstant( 123 ) );
 
-    Operation::execute( id, sizeBuiltinType, res, arg );
+    Operation::execute( id, sizeBuiltinType, res, &arg, 1 );
     EXPECT_FALSE( res == IntegerConstant( -123 ) );
 
-    Operation::execute( id, sizeBuiltinType, res, arg );
+    Operation::execute( id, sizeBuiltinType, res, &arg, 1 );
     EXPECT_FALSE( res == IntegerConstant() );
 }
 

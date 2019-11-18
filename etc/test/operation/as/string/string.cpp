@@ -53,7 +53,7 @@ static const auto type = libstdhl::Memory::get< RelationType >(
     {                                                                                             \
         const auto arg = StringConstant( VALUE );                                                 \
         Constant res;                                                                             \
-        Operation::execute( id, *type, res, arg );                                        \
+        Operation::execute( id, *type, res, &arg, 1 );                                            \
         EXPECT_STREQ( res.description().c_str(), StringConstant( VALUE ).description().c_str() ); \
     }
 

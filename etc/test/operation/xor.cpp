@@ -56,11 +56,10 @@ static const auto type = libstdhl::Memory::get< RelationType >(
     libstdhl::Memory::get< BooleanType >(),
     Types( { libstdhl::Memory::get< BooleanType >(), libstdhl::Memory::get< BooleanType >() } ) );
 
-#define CALC_( LHS, RHS )                    \
-    const auto lhs = BooleanConstant( LHS ); \
-    const auto rhs = BooleanConstant( RHS ); \
-    Constant res;                            \
-    Operation::execute( id, *type, res, lhs, rhs );
+#define CALC_( LHS, RHS )                                                         \
+    const Constant reg[ 2 ] = { BooleanConstant( LHS ), BooleanConstant( RHS ) }; \
+    Constant res;                                                                 \
+    Operation::execute( id, *type, res, reg, 2 );
 
 #define TEST_( NAME, RES, LHS, RHS )                                                             \
     TEST( libcasm_ir__instruction_xor_boolean_boolean, NAME )                                    \

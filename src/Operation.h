@@ -52,60 +52,97 @@ namespace libcasm_ir
     class Operation
     {
       public:
-        /**
-           0-ary call
-        */
-        static inline void execute( const Value::ID id, const Type::Ptr& type, Constant& res )
-        {
-            execute( id, type, res, nullptr, 0 );
-        }
-
-        /**
-           unary call
-        */
-        static void execute(
-            const Value::ID id, const Type::Ptr& type, Constant& res, const Constant& lhs );
-
-        /**
-           binary call
-        */
         static void execute(
             const Value::ID id,
             const Type::Ptr& type,
             Constant& res,
-            const Constant& lhs,
-            const Constant& rhs );
-
-        /**
-           n-ary call
-        */
-        static void execute(
-            const Value::ID id,
-            const Type::Ptr& type,
-            Constant& res,
-            const Constant* operands,
+            const Constant* reg,
             const std::size_t size );
 
-        /**
-           n-ary call with reference type
-        */
         template < typename... Args >
         static inline void execute(
-            const Value::ID id, const Type& reftype, Constant& res, Args&&... args )
+            const Value::ID id, const Type& refType, Constant& res, Args&&... args )
         {
-            const auto type = libstdhl::Memory::wrap( (Type&)reftype );
+            const auto type = libstdhl::Memory::wrap( (Type&)refType );
             execute( id, type, res, std::forward< Args >( args )... );
         }
 
-        /**
-           n-ary class-based call
-        */
         template < typename T, typename... Args >
         static inline void execute( const Type::Ptr& type, Constant& res, Args&&... args )
         {
             const T value( type );
             value.execute( res, std::forward< Args >( args )... );
         }
+
+        // /**
+        //    nullary call
+        // */
+        // static inline void execute( const Value::ID id, const Type& reftype, Constant& res )
+        // {
+        //     const auto type = libstdhl::Memory::wrap( (Type&)reftype );
+        //     execute( id, type, res, nullptr, 0 );
+        // }
+
+        // template < typename T >
+        // static inline void execute( const Type::Ptr& type, Constant& res )
+        // {
+        //     const T value( type );
+        //     value.execute( res );
+        // }
+
+        // /**
+        //    unary call
+        // */
+        // static inline void execute(
+        //     const Value::ID id, const Type& reftype, Constant& res, const Constant& lhs )
+        // {
+        //     const auto type = libstdhl::Memory::wrap( (Type&)reftype );
+        //     execute( id, type, res, &lhs, 1 );
+        // }
+
+        // template < typename T >
+        // static inline void execute( const Type::Ptr& type, Constant& res, const Constant& lhs )
+        // {
+        //     const T value( type );
+        //     value.execute( res, lhs );
+        // }
+
+        // /**
+        //    binary call
+        // */
+        // static inline void execute(
+        //     const Value::ID id,
+        //     const Type& reftype,
+        //     Constant& res,
+        //     const Constant& lhs,
+        //     const Constant& rhs )
+        // {
+        //     const auto type = libstdhl::Memory::wrap( (Type&)reftype );
+        //     const Constant reg[2] = { lhs, rhs };
+        //     execute( id, type, res, reg, 2 );
+        // }
+
+        // template < typename T >
+        // static inline void execute(
+        //     const Type::Ptr& type, Constant& res, const Constant& lhs, const Constant& rhs )
+        // {
+        //     const T value( type );
+        //     value.execute( res, lhs, rhs );
+        // }
+
+        // /**
+        //    n-ary call
+        // */
+        // static inline void execute(
+        //     const Value::ID id,
+        //     const Type& reftype,
+        //     Constant& res,
+        //     const Constant* reg,
+        //     const std::size_t size )
+        // {
+        //     const auto type = libstdhl::Memory::wrap( (Type&)reftype );
+        //     execute( type, res, reg, size );
+        // }
     };
 
     class NullaryOperation : public Operation

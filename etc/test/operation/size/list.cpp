@@ -57,16 +57,16 @@ TEST( libcasm_ir__builtin_size, list_integer )
     Constant arg = ListConstant( listType, list );
     Constant res;
 
-    Operation::execute( id, sizeBuiltinType, res, arg );
+    Operation::execute( id, sizeBuiltinType, res, &arg, 1 );
     EXPECT_TRUE( res == IntegerConstant( 0 ) );
 
-    Operation::execute( id, sizeBuiltinType, res, arg );
+    Operation::execute( id, sizeBuiltinType, res, &arg, 1 );
     EXPECT_FALSE( res == IntegerConstant( -1234 ) );
 
-    Operation::execute( id, sizeBuiltinType, res, arg );
+    Operation::execute( id, sizeBuiltinType, res, &arg, 1 );
     EXPECT_FALSE( res == IntegerConstant( 1234 ) );
 
-    Operation::execute( id, sizeBuiltinType, res, arg );
+    Operation::execute( id, sizeBuiltinType, res, &arg, 1 );
     EXPECT_FALSE( res == IntegerConstant() );
 
     for( const auto value : values )
@@ -74,16 +74,16 @@ TEST( libcasm_ir__builtin_size, list_integer )
         list->append( libstdhl::Memory::make< IntegerConstant >( value ) );
     }
 
-    Operation::execute( id, sizeBuiltinType, res, arg );
+    Operation::execute( id, sizeBuiltinType, res, &arg, 1 );
     EXPECT_TRUE( res == IntegerConstant( values.size() ) );
 
-    Operation::execute( id, sizeBuiltinType, res, arg );
+    Operation::execute( id, sizeBuiltinType, res, &arg, 1 );
     EXPECT_FALSE( res == IntegerConstant( -1234 ) );
 
-    Operation::execute( id, sizeBuiltinType, res, arg );
+    Operation::execute( id, sizeBuiltinType, res, &arg, 1 );
     EXPECT_FALSE( res == IntegerConstant( 1234 ) );
 
-    Operation::execute( id, sizeBuiltinType, res, arg );
+    Operation::execute( id, sizeBuiltinType, res, &arg, 1 );
     EXPECT_FALSE( res == IntegerConstant() );
 }
 

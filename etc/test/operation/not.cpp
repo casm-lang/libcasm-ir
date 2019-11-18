@@ -47,43 +47,28 @@ using namespace libcasm_ir;
 // |-----+-------+-------+-------+------|
 // | -   | undef | true  | false | sym' |
 
-static const auto targ =
-    libstdhl::List< libcasm_ir::Type >{ { libstdhl::Memory::get< IntegerType >() } };
-static const auto tres = libstdhl::Memory::get< BooleanType >();
-static const auto type = libstdhl::Memory::get< RelationType >( tres, targ );
+static const auto id = Value::ID::NOT_INSTRUCTION;
 
-TEST( libcasm_ir__instruction_not, NotInstruction_0 )
-{
-    const auto a = IntegerConstant( 123 );
+static const auto type = libstdhl::Memory::get< RelationType >(
+    libstdhl::Memory::get< BooleanType >(), Types( { libstdhl::Memory::get< BooleanType >() } ) );
 
-    Constant r;
-    Operation::execute( Value::NOT_INSTRUCTION, *type, r, a );
+#define CALC_( ARG )                                      \
+    const Constant reg[ 1 ] = { BooleanConstant( ARG ) }; \
+    Constant res;                                         \
+    Operation::execute( id, *type, res, reg, 1 );
 
-    EXPECT_TRUE( r.type().isBoolean() );
-    EXPECT_TRUE( r == BooleanConstant( false ) );
-}
+#define TEST_( NAME, RES, ARG )                                                                  \
+    TEST( libcasm_ir__instruction_not_boolean, NAME )                                            \
+    {                                                                                            \
+        CALC_( ARG );                                                                            \
+        EXPECT_TRUE( res == BooleanConstant( RES ) );                                            \
+        EXPECT_STREQ( res.description().c_str(), BooleanConstant( RES ).description().c_str() ); \
+    }
 
-TEST( libcasm_ir__instruction_not, NotInstruction_1 )
-{
-    const auto a = IntegerConstant( 0 );
-
-    Constant r;
-    Operation::execute( Value::NOT_INSTRUCTION, *type, r, a );
-
-    EXPECT_TRUE( r.type().isBoolean() );
-    EXPECT_TRUE( r == BooleanConstant( true ) );
-}
-
-TEST( libcasm_ir__instruction_not, NotInstruction_2 )
-{
-    const auto a = IntegerConstant();
-
-    Constant r;
-    Operation::execute( Value::NOT_INSTRUCTION, *type, r, a );
-
-    EXPECT_TRUE( r.type().isBoolean() );
-    EXPECT_TRUE( r == BooleanConstant() );
-}
+TEST_( false_at__p123, false, 123 );
+TEST_( false_at__p1, false, 1 );
+TEST_( true__at__p0, true, 0 );
+TEST_( undef_at__undef, , );
 
 //
 //  Local variables:
