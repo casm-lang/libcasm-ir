@@ -1706,7 +1706,7 @@ Constant ObjectType::choose( void ) const
 
 void ObjectType::validate( const Constant& constant ) const
 {
-    assert( isa< DomainConstant >( constant ) );
+    // omit, every constant can be an object
 }
 
 std::size_t ObjectType::hash( void ) const
