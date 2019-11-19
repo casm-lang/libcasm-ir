@@ -124,6 +124,4 @@ add_library( ${PROJECT}-test OBJECT
   type/relation.cpp
   type/tuple.cpp
   type/void.cpp
-  type/structure.cpp
-  type/feature.cpp
 )

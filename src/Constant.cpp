@@ -669,14 +669,6 @@ Constant Constant::undef( const Type::Ptr& type )
         {
             return DomainConstant( std::static_pointer_cast< ObjectType >( type ) );
         }
-        case Type::Kind::STRUCTURE:
-        {
-            break;
-        }
-        case Type::Kind::FEATURE:
-        {
-            break;
-        }
         case Type::Kind::RULE_REFERENCE:
         {
             return RuleReferenceConstant( type );

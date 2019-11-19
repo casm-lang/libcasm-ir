@@ -85,8 +85,6 @@ namespace libcasm_ir
             RANGE,
             TUPLE,
             LIST,
-            STRUCTURE,
-            FEATURE,
 
             BLOCK,
             EXECUTION_SEMANTICS_BLOCK,

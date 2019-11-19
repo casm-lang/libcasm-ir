@@ -72,10 +72,6 @@ namespace libcasm_ir
     class TupleType;
     class List;
     class ListType;
-    class Structure;
-    class StructureType;
-    class Feature;
-    class FeatureType;
 
     class Type;
     using Types = libstdhl::List< Type >;
@@ -114,8 +110,6 @@ namespace libcasm_ir
             RECORD,
             LIST,
             OBJECT,
-            STRUCTURE,
-            FEATURE,
 
             // reference
             RULE_REFERENCE,
@@ -260,8 +254,6 @@ namespace libcasm_ir
         u1 isRecord( void ) const;
         u1 isList( void ) const;
         u1 isObject( void ) const;
-        u1 isStructure( void ) const;
-        u1 isFeature( void ) const;
 
         u1 isReference( void ) const;
         u1 isRuleReference( void ) const;
@@ -828,72 +820,6 @@ namespace libcasm_ir
 
       private:
         const std::string m_name;
-    };
-
-    class StructureType final : public ComposedType
-    {
-      public:
-        using Ptr = std::shared_ptr< StructureType >;
-
-        StructureType( const std::shared_ptr< Structure >& structure );
-
-        Structure& structure( void ) const;
-
-        std::shared_ptr< Structure > ptr_structure( void ) const;
-
-        std::string name( void ) const override;
-
-        std::string description( void ) const override;
-
-        void foreach(
-            const std::function< void( const Constant& constant ) >& callback ) const override;
-
-        Constant choose( void ) const override;
-
-        void validate( const Constant& constant ) const override;
-
-        std::size_t hash( void ) const override;
-
-        static inline Type::Kind classid( void )
-        {
-            return Type::Kind::STRUCTURE;
-        }
-
-      private:
-        std::shared_ptr< Structure > m_structure;
-    };
-
-    class FeatureType final : public ComposedType
-    {
-      public:
-        using Ptr = std::shared_ptr< FeatureType >;
-
-        FeatureType( const std::shared_ptr< Feature >& feature );
-
-        Feature& feature( void ) const;
-
-        std::shared_ptr< Feature > ptr_feature( void ) const;
-
-        std::string name( void ) const override;
-
-        std::string description( void ) const override;
-
-        void foreach(
-            const std::function< void( const Constant& constant ) >& callback ) const override;
-
-        Constant choose( void ) const override;
-
-        void validate( const Constant& constant ) const override;
-
-        std::size_t hash( void ) const override;
-
-        static inline Type::Kind classid( void )
-        {
-            return Type::Kind::FEATURE;
-        }
-
-      private:
-        std::shared_ptr< Feature > m_feature;
     };
 
     class ReferenceType : public Type

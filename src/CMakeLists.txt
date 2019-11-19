@@ -55,7 +55,6 @@ add_library( ${PROJECT}-cpp OBJECT
   Derived.cpp
   Enumeration.cpp
   Exception.cpp
-  Feature.cpp
   Function.cpp
   Instruction.cpp
   Range.cpp
@@ -111,7 +110,6 @@ ecm_generate_headers( ${PROJECT}_HEADERS_CPP
     Derived
     Enumeration
     Exception
-    Feature
     Function
     Instruction
     libcasm-ir

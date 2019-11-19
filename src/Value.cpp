@@ -262,14 +262,6 @@ std::string Value::token( const Value::ID id )
         {
             return "List";
         }
-        case Value::STRUCTURE:
-        {
-            return "Structure";
-        }
-        case Value::FEATURE:
-        {
-            return "Feature";
-        }
 
         case Value::BLOCK:
         {

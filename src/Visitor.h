@@ -60,8 +60,6 @@ namespace libcasm_ir
     class Range;
     class Tuple;
     class List;
-    class Structure;
-    class Feature;
 
     class ParallelBlock;
     class SequentialBlock;
@@ -148,8 +146,6 @@ namespace libcasm_ir
         virtual void visit( Range& value ) = 0;
         virtual void visit( Tuple& value ) = 0;
         virtual void visit( List& value ) = 0;
-        virtual void visit( Structure& value ) = 0;
-        virtual void visit( Feature& value ) = 0;
 
         virtual void visit( ParallelBlock& value ) = 0;
         virtual void visit( SequentialBlock& value ) = 0;
@@ -236,8 +232,6 @@ namespace libcasm_ir
         void visit( Range& value ) override;
         void visit( Tuple& value ) override;
         void visit( List& value ) override;
-        void visit( Structure& value ) override;
-        void visit( Feature& value ) override;
 
         void visit( ParallelBlock& value ) override;
         void visit( SequentialBlock& value ) override;
@@ -336,8 +330,6 @@ namespace libcasm_ir
         void visit( Range& value ) override;
         void visit( Tuple& value ) override;
         void visit( List& value ) override;
-        void visit( Structure& value ) override;
-        void visit( Feature& value ) override;
 
         void visit( ParallelBlock& value ) override;
         void visit( SequentialBlock& value ) override;

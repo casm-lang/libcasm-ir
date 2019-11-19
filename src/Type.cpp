@@ -194,8 +194,7 @@ u1 Type::isString( void ) const
 
 u1 Type::isComposed( void ) const
 {
-    return isEnumeration() or isRange() or isTuple() or isRecord() or isList() or isObject() or
-           isStructure() or isFeature();
+    return isEnumeration() or isRange() or isTuple() or isRecord() or isList() or isObject();
 }
 
 u1 Type::isEnumeration( void ) const
@@ -226,16 +225,6 @@ u1 Type::isList( void ) const
 u1 Type::isObject( void ) const
 {
     return kind() == Type::Kind::OBJECT;
-}
-
-u1 Type::isStructure( void ) const
-{
-    return kind() == Type::Kind::STRUCTURE;
-}
-
-u1 Type::isFeature( void ) const
-{
-    return kind() == Type::Kind::FEATURE;
 }
 
 u1 Type::isReference( void ) const
@@ -331,8 +320,6 @@ Type::Ptr Type::fromID( const Type::ID id )
             case libcasm_ir::Type::Kind::TUPLE:               // [fallthrough]
             case libcasm_ir::Type::Kind::RECORD:              // [fallthrough]
             case libcasm_ir::Type::Kind::LIST:                // [fallthrough]
-            case libcasm_ir::Type::Kind::STRUCTURE:           // [fallthrough]
-            case libcasm_ir::Type::Kind::FEATURE:             // [fallthrough]
             case libcasm_ir::Type::Kind::RULE_REFERENCE:      // [fallthrough]
             case libcasm_ir::Type::Kind::FUNCTION_REFERENCE:  // [fallthrough]
             case libcasm_ir::Type::Kind::FILE:                // [fallthrough]
@@ -458,16 +445,6 @@ std::string Type::token( const Type::Kind kind )
         case Type::Kind::PORT:
         {
             return "Port";
-        }
-        // structure
-        case Type::Kind::STRUCTURE:
-        {
-            return "Structure";
-        }
-        // feature
-        case Type::Kind::FEATURE:
-        {
-            return "Feature";
         }
 
         case Type::Kind::_SIZE_:
@@ -1710,113 +1687,6 @@ void ObjectType::validate( const Constant& constant ) const
 }
 
 std::size_t ObjectType::hash( void ) const
-{
-    return std::hash< std::string >()( name() );
-}
-
-//
-//
-// Structure Type
-//
-
-StructureType::StructureType( const Structure::Ptr& structure )
-: ComposedType( classid() )
-, m_structure( structure )
-{
-}
-
-Structure& StructureType::structure( void ) const
-{
-    return *m_structure.get();
-}
-
-Structure::Ptr StructureType::ptr_structure( void ) const
-{
-    return m_structure;
-}
-
-std::string StructureType::name( void ) const
-{
-    return m_structure->name();
-}
-
-std::string StructureType::description( void ) const
-{
-    return m_structure->name();
-}
-
-void StructureType::foreach(
-    const std::function< void( const Constant& constant ) >& callback ) const
-{
-    // TODO
-}
-
-Constant StructureType::choose( void ) const
-{
-    // TODO
-    return VoidConstant();
-}
-
-void StructureType::validate( const Constant& constant ) const
-{
-    // assert( isa< StructureConstant >( constant ) );
-    // TODO
-}
-
-std::size_t StructureType::hash( void ) const
-{
-    return std::hash< std::string >()( name() );
-}
-
-//
-//
-// Feature Type
-//
-
-FeatureType::FeatureType( const Feature::Ptr& feature )
-: ComposedType( classid() )
-, m_feature( feature )
-{
-}
-
-Feature& FeatureType::feature( void ) const
-{
-    return *m_feature.get();
-}
-
-Feature::Ptr FeatureType::ptr_feature( void ) const
-{
-    return m_feature;
-}
-
-std::string FeatureType::name( void ) const
-{
-    return m_feature->name();
-}
-
-std::string FeatureType::description( void ) const
-{
-    return m_feature->name();
-}
-
-void FeatureType::foreach( const std::function< void( const Constant& constant ) >& callback ) const
-{
-    // TODO
-}
-
-Constant FeatureType::choose( void ) const
-{
-    // TODO
-    return VoidConstant();
-}
-
-void FeatureType::validate( const Constant& constant ) const
-{
-    // assert( isa< FeatureConstant >( constant ) );
-    // TODO
-}
-
-std::size_t FeatureType::hash( void ) const
 {
     return std::hash< std::string >()( name() );
 }

@@ -168,11 +168,6 @@ void ConsistencyCheckVisitor::visit( List& value )
     verify< List >( value );
 }
 
-void ConsistencyCheckVisitor::visit( Structure& value )
-{
-    verify< Structure >( value );
-}
-
 void ConsistencyCheckVisitor::visit( ParallelBlock& value )
 {
     verify< ParallelBlock >( value );
