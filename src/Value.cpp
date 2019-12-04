@@ -411,6 +411,11 @@ std::string Value::token( const Value::ID id )
             return "local";
         }
 
+        case Value::SELF_INSTRUCTION:
+        {
+            return "self";
+        }
+
         case Value::OPERATOR_INSTRUCTION:
         {
             return "OperatorInstruction";

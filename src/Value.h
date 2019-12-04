@@ -128,6 +128,8 @@ namespace libcasm_ir
             CALL_INSTRUCTION,
             LOCAL_INSTRUCTION,
 
+            SELF_INSTRUCTION,
+
             OPERATOR_INSTRUCTION,
             ARITHMETIC_INSTRUCTION,
             INV_INSTRUCTION,
