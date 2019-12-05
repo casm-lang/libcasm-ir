@@ -143,7 +143,6 @@ Builtin::Ptr Builtin::create( const Value::ID id, const Type::Ptr& type )
         case Value::FUNCTION:                     // [fallthrough]
         case Value::ENUMERATION:                  // [fallthrough]
         case Value::RANGE:                        // [fallthrough]
-        case Value::TUPLE:                        // [fallthrough]
         case Value::LIST:                         // [fallthrough]
         case Value::BLOCK:                        // [fallthrough]
         case Value::EXECUTION_SEMANTICS_BLOCK:    // [fallthrough]
@@ -181,6 +180,7 @@ Builtin::Ptr Builtin::create( const Value::ID id, const Type::Ptr& type )
         case Value::LOCATION_INSTRUCTION:         // [fallthrough]
         case Value::CALL_INSTRUCTION:             // [fallthrough]
         case Value::LOCAL_INSTRUCTION:            // [fallthrough]
+        case Value::SELF_INSTRUCTION:             // [fallthrough]
         case Value::OPERATOR_INSTRUCTION:         // [fallthrough]
         case Value::ARITHMETIC_INSTRUCTION:       // [fallthrough]
         case Value::INV_INSTRUCTION:              // [fallthrough]
@@ -842,7 +842,6 @@ void AtBuiltin::execute( Constant& res, const Constant* reg, const std::size_t s
     const auto& object = reg[ 0 ];
     const auto& index = reg[ 1 ];
 
-    assert( object.type().isList() );
     assert( index.type().isInteger() );
 
     if( not object.defined() or not index.defined() )
@@ -851,14 +850,14 @@ void AtBuiltin::execute( Constant& res, const Constant* reg, const std::size_t s
         return;
     }
 
-    const auto& list = static_cast< const ListConstant& >( object ).value();
-    const auto& pos = static_cast< const IntegerConstant& >( index ).value();
+    assert( object.type().isTuple() );
+    const auto& tuple = static_cast< const TupleConstant& >( object );
+    const auto& position = static_cast< const IntegerConstant& >( index ).value();
 
-    if( pos > 0 and pos <= list->elements().size() )
+    if( position >= 1 and position <= tuple.cardinality() )
     {
-        const auto element = list->at( pos.value() - 1 );
-        assert( isa< Constant >( element ) );
-        res = static_cast< const Constant& >( *element );
+        res = tuple.value( position.value() );
+        assert( isa< Constant >( res ) );
         return;
     }
 
