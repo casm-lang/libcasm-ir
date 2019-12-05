@@ -84,10 +84,6 @@ void RecursiveVisitor::visit( Range& value )
 {
 }
 
-void RecursiveVisitor::visit( Tuple& value )
-{
-}
-
 void RecursiveVisitor::visit( List& value )
 {
 }
@@ -206,11 +202,6 @@ void TraversalVisitor::visit( Range& value )
     callback()( value );
 }
 
-void TraversalVisitor::visit( Tuple& value )
-{
-    callback()( value );
-}
-
 void TraversalVisitor::visit( List& value )
 {
     callback()( value );
@@ -316,6 +307,11 @@ void TraversalVisitor::visit( CallInstruction& value )
 }
 
 void TraversalVisitor::visit( SelectInstruction& value )
+{
+    callback()( value );
+}
+
+void TraversalVisitor::visit( SelfInstruction& value )
 {
     callback()( value );
 }
