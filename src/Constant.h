@@ -512,6 +512,22 @@ namespace libcasm_ir
       public:
         using Ptr = std::shared_ptr< TupleConstant >;
 
+      private:
+        class TupleLayout final : public libstdhl::Type::Layout
+        {
+          private:
+            const std::vector< Constant > m_elements;
+
+          public:
+            TupleLayout( const std::vector< Constant >& elements );
+
+            const std::vector< Constant >& elements( void ) const;
+
+            std::size_t hash( void ) const override;
+
+            Layout* clone( void ) const override;
+        };
+
       public:
         TupleConstant( const TupleType::Ptr& type, const std::vector< Constant >& elements );
 
@@ -523,7 +539,9 @@ namespace libcasm_ir
 
         TupleConstant( const RecordType::Ptr& type );
 
-        const Tuple* value( void ) const;
+        const Constant& value( const std::size_t position ) const;
+
+        std::size_t cardinality( void ) const;
 
         std::string toString( void ) const;
 
@@ -537,6 +555,10 @@ namespace libcasm_ir
 
         u1 operator==( const Value& rhs ) const override;
 
+      private:
+        const TupleLayout* value( void ) const;
+
+      public:
         static inline Value::ID classid( void )
         {
             return Value::TUPLE_CONSTANT;
