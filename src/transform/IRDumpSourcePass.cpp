@@ -162,11 +162,6 @@ void IRDumpSourceVisitor::visit( Range& value )
     m_stream << ";; " << value.dump() << "\n";
 }
 
-void IRDumpSourceVisitor::visit( Tuple& value )
-{
-    m_stream << ";; " << value.dump() << "\n";
-}
-
 void IRDumpSourceVisitor::visit( List& value )
 {
     m_stream << ";; " << value.dump() << "\n";
@@ -224,6 +219,11 @@ void IRDumpSourceVisitor::visit( CallInstruction& value )
 }
 
 void IRDumpSourceVisitor::visit( SelectInstruction& value )
+{
+    dump( value );
+}
+
+void IRDumpSourceVisitor::visit( SelfInstruction& value )
 {
     dump( value );
 }
