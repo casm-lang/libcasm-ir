@@ -115,6 +115,7 @@ namespace libcasm_ir
     class DecimalConstant;
     class EnumerationConstant;
     class RangeConstant;
+    class TupleConstant;
     class ListConstant;
     class DomainConstant;
 

@@ -59,7 +59,6 @@
 #include <libcasm-ir/Rule>
 #include <libcasm-ir/Specification>
 #include <libcasm-ir/Statement>
-#include <libcasm-ir/Tuple>
 #include <libcasm-ir/Type>
 #include <libcasm-ir/User>
 #include <libcasm-ir/Value>
