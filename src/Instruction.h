@@ -318,6 +318,39 @@ namespace libcasm_ir
     };
 
     //
+    //
+    // Generic Instructions
+    //
+
+    class SelfInstruction final
+    : public Instruction
+    , public UnaryOperation
+    {
+      public:
+        using Ptr = std::shared_ptr< SelfInstruction >;
+
+        SelfInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs );
+
+        SelfInstruction( const Type::Ptr& type );
+
+        void accept( Visitor& visitor ) override final;
+
+        void execute( Constant& res, const Constant& lhs ) const override;
+
+      public:
+        static inline Value::ID classid( void )
+        {
+            return Value::SELF_INSTRUCTION;
+        }
+
+        static u1 classof( Value const* obj );
+
+      public:
+        static const Annotation annotation;
+    };
+
+    //
+    //
     // Arithmetic Instructions
     //
 
