@@ -67,7 +67,6 @@ void Operation::execute(
         case Value::FUNCTION:                     // [[fallthrough]]
         case Value::ENUMERATION:                  // [[fallthrough]]
         case Value::RANGE:                        // [[fallthrough]]
-        case Value::TUPLE:                        // [[fallthrough]]
         case Value::LIST:                         // [[fallthrough]]
         case Value::BLOCK:                        // [[fallthrough]]
         case Value::EXECUTION_SEMANTICS_BLOCK:    // [[fallthrough]]
@@ -103,9 +102,17 @@ void Operation::execute(
         case Value::UPDATE_INSTRUCTION:           // [[fallthrough]]
         case Value::LOCATION_INSTRUCTION:         // [[fallthrough]]
         case Value::CALL_INSTRUCTION:             // [[fallthrough]]
-        case Value::LOCAL_INSTRUCTION:            // [[fallthrough]]
-        case Value::OPERATOR_INSTRUCTION:         // [[fallthrough]]
-        case Value::ARITHMETIC_INSTRUCTION:       // [[fallthrough]]
+        case Value::LOCAL_INSTRUCTION:
+        {
+            break;
+        }
+        case Value::SELF_INSTRUCTION:
+        {
+            execute< SelfInstruction >( type, res, reg[ 0 ] );
+            return;
+        }
+        case Value::OPERATOR_INSTRUCTION:  // [[fallthrough]]
+        case Value::ARITHMETIC_INSTRUCTION:
         {
             break;
         }
