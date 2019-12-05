@@ -83,7 +83,6 @@ namespace libcasm_ir
             FUNCTION,
             ENUMERATION,
             RANGE,
-            TUPLE,
             LIST,
 
             BLOCK,

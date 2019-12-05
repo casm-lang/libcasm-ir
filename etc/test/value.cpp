@@ -102,11 +102,6 @@ TEST( libcasm_ir_Value, id_to_token_string )
                 EXPECT_STREQ( Value::token( id ).c_str(), "Range" );
                 break;
             }
-            case Value::TUPLE:
-            {
-                EXPECT_STREQ( Value::token( id ).c_str(), "Tuple" );
-                break;
-            }
             case Value::LIST:
             {
                 EXPECT_STREQ( Value::token( id ).c_str(), "List" );
@@ -294,6 +289,11 @@ TEST( libcasm_ir_Value, id_to_token_string )
             case Value::LOCAL_INSTRUCTION:
             {
                 EXPECT_STREQ( Value::token( id ).c_str(), "local" );
+                break;
+            }
+            case Value::SELF_INSTRUCTION:
+            {
+                EXPECT_STREQ( Value::token( id ).c_str(), "self" );
                 break;
             }
 

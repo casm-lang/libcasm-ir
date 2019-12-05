@@ -254,10 +254,6 @@ std::string Value::token( const Value::ID id )
         {
             return "Range";
         }
-        case Value::TUPLE:
-        {
-            return "Tuple";
-        }
         case Value::LIST:
         {
             return "List";
