@@ -51,6 +51,7 @@
 #include <libcasm-ir/List>
 #include <libcasm-ir/Range>
 #include <libcasm-ir/Rule>
+#include <libcasm-ir/SymbolicExecutionEnvironment>
 #include <libcasm-ir/Tuple>
 
 #include <libstdhl/data/type/Boolean>
@@ -694,26 +695,34 @@ namespace libcasm_ir
         class SymbolicLayout final : public libstdhl::Type::Layout
         {
           private:
-            std::string m_name;
+            const std::string m_name;
             std::vector< TPTP::Node::Ptr > m_modifications;
+            SymbolicExecutionEnvironment& m_environment;
 
           public:
-            SymbolicLayout( const std::string& name );
+            SymbolicLayout( const std::string& name, SymbolicExecutionEnvironment& environment );
             SymbolicLayout(
-                const std::string& name, const std::vector< TPTP::Node::Ptr > modifications );
+                const std::string& name,
+                const std::vector< TPTP::Node::Ptr >& modifications,
+                SymbolicExecutionEnvironment& environment );
+
             void addModification( const TPTP::Node::Ptr& value );
 
             std::size_t hash( void ) const;
             Layout* clone( void ) const;
 
-            const std::string& name() const;
-            const std::vector< TPTP::Node::Ptr >& modifications() const;
+            const std::string& name( void ) const;
+            const std::vector< TPTP::Node::Ptr >& modifications( void ) const;
+            SymbolicExecutionEnvironment& environment( void ) const;
         };
 
       public:
         using Ptr = std::shared_ptr< SymbolicConstant >;
 
-        SymbolicConstant( const Type::Ptr& type, const std::string& name );
+        SymbolicConstant(
+            const Type::Ptr& type,
+            const std::string& name,
+            SymbolicExecutionEnvironment& environment );
 
         SymbolicConstant( const Type::Ptr& type );
 
@@ -734,8 +743,14 @@ namespace libcasm_ir
 
         static u1 classof( Value const* obj );
 
+        SymbolicExecutionEnvironment& environment( void ) const;
+
+        TPTP::Logic::Ptr definition( void ) const;
+
       private:
         const SymbolicLayout* value( void ) const;
+
+        const TPTP::Type::Ptr getTPTPType( const Constant& constant ) const;
     };
 
     class Identifier final : public Constant

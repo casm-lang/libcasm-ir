@@ -41,11 +41,14 @@
 
 #include "Constant.h"
 
+#include <libcasm-ir/Exception>
 #include <libcasm-ir/Instruction>
 #include <libstdhl/Random>
 #include <libstdhl/String>
 
 #include <cmath>
+
+#include <libtptp/Type>
 
 using namespace libcasm_ir;
 
@@ -1747,15 +1750,20 @@ u1 FunctionReferenceConstant::classof( Value const* obj )
 // Symbolic Constant
 //
 
-SymbolicConstant::SymbolicLayout::SymbolicLayout( const std::string& name )
+SymbolicConstant::SymbolicLayout::SymbolicLayout(
+    const std::string& name, SymbolicExecutionEnvironment& environment )
 : m_name( name )
+, m_environment( environment )
 {
 }
 
 SymbolicConstant::SymbolicLayout::SymbolicLayout(
-    const std::string& name, const std::vector< TPTP::Node::Ptr > modifications )
+    const std::string& name,
+    const std::vector< TPTP::Node::Ptr >& modifications,
+    SymbolicExecutionEnvironment& environment )
 : m_name( name )
 , m_modifications( modifications )
+, m_environment( environment )
 {
 }
 
@@ -1771,7 +1779,7 @@ std::size_t SymbolicConstant::SymbolicLayout::hash( void ) const
 
 libstdhl::Type::Layout* SymbolicConstant::SymbolicLayout::clone( void ) const
 {
-    return new SymbolicLayout( name(), modifications() );
+    return new SymbolicLayout( name(), modifications(), environment() );
 }
 
 const std::string& SymbolicConstant::SymbolicLayout::name() const
@@ -1784,14 +1792,22 @@ const std::vector< TPTP::Node::Ptr >& SymbolicConstant::SymbolicLayout::modifica
     return m_modifications;
 }
 
-SymbolicConstant::SymbolicConstant( const Type::Ptr& type, const std::string& name )
-: Constant( type, libstdhl::Type::Data( new SymbolicLayout( name ) ), classid() )
+SymbolicExecutionEnvironment& SymbolicConstant::SymbolicLayout::environment( void ) const
 {
+    return m_environment;
+}
+
+SymbolicConstant::SymbolicConstant(
+    const Type::Ptr& type, const std::string& name, SymbolicExecutionEnvironment& environment )
+: Constant( type, libstdhl::Type::Data( new SymbolicLayout( name, environment ) ), classid() )
+{
+    environment.addSymbolDefinition( definition() );
 }
 
 SymbolicConstant::SymbolicConstant( const Type::Ptr& type )
 : Constant( type, classid() )
 {
+    // TODO: @moosbruggerj undef symbolic var
 }
 
 std::string SymbolicConstant::toString( void ) const
@@ -1845,9 +1861,36 @@ u1 SymbolicConstant::classof( Value const* obj )
     return obj->id() == classid();
 }
 
+SymbolicExecutionEnvironment& SymbolicConstant::environment( void ) const
+{
+    if( !defined() )
+    {
+        throw UndefinedConstantException(
+            "unable to get environment from undefined symbol constant." );
+    }
+    return value()->environment();
+}
+
+TPTP::Logic::Ptr SymbolicConstant::definition( void ) const
+{
+    if( !defined() )
+    {
+        throw UndefinedConstantException(
+            "unable to get tptp symbol definition from undefined symbol constant." );
+    }
+    TPTP::Type::Ptr TPTPtype = getTPTPType( *this );
+    return std::make_shared< TPTP::TypeAtom >(
+        std::make_shared< TPTP::Identifier >( name() ), TPTPtype );
+}
+
 const SymbolicConstant::SymbolicLayout* SymbolicConstant::value( void ) const
 {
     return static_cast< SymbolicLayout* >( m_data.ptr() );
+}
+
+const TPTP::Type::Ptr SymbolicConstant::getTPTPType( const Constant& constant ) const
+{
+    return environment().getTPTPType( constant.type() );
 }
 
 //
