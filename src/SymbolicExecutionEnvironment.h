@@ -42,6 +42,7 @@
 #ifndef _LIBCASM_IR_SYMBOLIC_EXECUTION_ENVIRONMENT_H
 #define _LIBCASM_IR_SYMBOLIC_EXECUTION_ENVIRONMENT_H
 
+#include <algorithm>
 #include <map>
 #include <string>
 
@@ -54,12 +55,36 @@
 namespace libcasm_ir
 {
     namespace TPTP = libtptp;
+    class SymbolicConstant;
+    class Constant;
 
     /**
      * @extends CasmIR
      */
     class SymbolicExecutionEnvironment
     {
+      private:
+        struct Location
+        {
+            const std::string varName;
+            const Type::Ptr type;
+            const std::vector< Constant > arguments;
+            class Comperator
+            {
+              public:
+                bool operator()( const Location& lhs, const Location& rhs );
+
+                template < class T >
+                bool operator()( const std::vector< T >& lhs, const std::vector< T >& rhs )
+                {
+                    return std::lexicographical_compare(
+                        lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), *this );
+                }
+
+                bool operator()( const Constant& lhs, const Constant& rhs );
+            };
+        };
+
       public:
         enum Semantics : u8
         {
@@ -69,24 +94,58 @@ namespace libcasm_ir
             DIVIDE,
         };
         SymbolicExecutionEnvironment( void );
+        SymbolicExecutionEnvironment( const SymbolicExecutionEnvironment& other ) = delete;
+        SymbolicExecutionEnvironment( const SymbolicExecutionEnvironment&& other ) = delete;
 
         std::string generateSymbolName( void );
         std::string generateFormulaName( void );
-        std::string generateFunction( const Value::Ptr& value );
+        std::string generateFunction( const Value& value );
+
+        SymbolicConstant get(
+            const std::string& name,
+            const Type::Ptr& functionType,
+            const std::vector< Constant >& arguments );
+
+        void set(
+            const std::string& varName,
+            const Type::Ptr& functionType,
+            const std::vector< Constant >& arguments,
+            const std::string& symName );
+        void set(
+            const std::string& varName,
+            const Type::Ptr& functionType,
+            const std::vector< Constant >& arguments,
+            const TPTP::Literal::Ptr& literal );
+        void set(
+            const std::string& varName,
+            const Type::Ptr& functionType,
+            const std::vector< Constant >& arguments,
+            const TPTP::Atom::Ptr& literal );
+
         void addFormula( const TPTP::Logic::Ptr& logic );
         void addFunctionDeclaration( const std::string& name, const Type& type );
         void addSymbolDefinition( const TPTP::Logic::Ptr& logic );
-        TPTP::Specification::Ptr finalize( void ) const;
+        TPTP::Specification::Ptr finalize( void );
         void incrementTime( void );
 
         const TPTP::Type::Ptr getTPTPType( const Type& type ) const;
+        const TPTP::Literal::Ptr tptpLiteralFromNumericConstant( const Constant& constant ) const;
+        TPTP::Atom::Ptr tptpAtomFromConstant( const Constant& constant ) const;
 
       private:
-        void generateFunctionDefinition( const Value::Ptr& value, const std::string& name );
+        void generateFunctionDefinition( const Value& value, const std::string& name );
+        std::string storeFunctionFromName( const std::string& name ) const;
+        void setAtTime(
+            const std::string& varName,
+            const std::vector< Constant >& arguments,
+            const TPTP::Atom::Ptr symbol,
+            int time );
 
         int m_symbolName;
         int m_formulaName;
         int m_time;
+
+        std::map< Location, int, Location::Comperator > m_symbolSetTimes;
 
         std::map< std::string, TPTP::FormulaDefinition::Ptr > m_functionDeclarations;
         std::vector< TPTP::FormulaDefinition::Ptr > m_functionDefinitons;
@@ -96,7 +155,7 @@ namespace libcasm_ir
 }
 
 #endif  //_LIBCASM_IR_SYMBOLIC_EXECUTION_ENVIRONMENT_H
-//
+
 //  Local variables:
 //  mode: c++
 //  indent-tabs-mode: nil

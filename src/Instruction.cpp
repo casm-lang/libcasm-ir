@@ -41,6 +41,7 @@
 
 #include "Instruction.h"
 
+#include <initializer_list>
 #include <libcasm-ir/Builtin>
 #include <libcasm-ir/Constant>
 #include <libcasm-ir/Derived>
@@ -60,32 +61,6 @@ namespace TPTP = libtptp;
 static const auto VOID = libstdhl::Memory::get< VoidType >();
 static const auto BOOLEAN = libstdhl::Memory::get< BooleanType >();
 static const auto INTEGER = libstdhl::Memory::get< IntegerType >();
-
-TPTP::Literal::Ptr tptpLiteralFromNumericConstant( const Constant& constant )
-{
-    switch( constant.typeId().kind() )
-    {
-        case Type::Kind::INTEGER:
-        {
-            auto& val = static_cast< const IntegerConstant& >( constant ).value();
-            return std::make_shared< TPTP::IntegerLiteral >( val.to_string() );
-        }
-        case Type::Kind::BINARY:
-        {
-            // TODO: @moosbruggerj fix me
-            throw InternalException( "unimplemented '" + constant.description() + "'" );
-        }
-        case Type::Kind::STRING:
-        {
-            auto& val = static_cast< const StringConstant& >( constant ).value();
-            return std::make_shared< TPTP::IntegerLiteral >( val.toString() );
-        }
-        default:
-        {
-            throw InternalException( "unimplemented '" + constant.description() + "'" );
-        }
-    }
-}
 
 //
 // Instruction
@@ -800,44 +775,21 @@ void AddInstruction::execute( Constant& res, const Constant& lhs, const Constant
         // TODO: FIXME: @ppaulweber: return here a symbolic constant and trace @moosbruggerj
         auto& env = lhs.symbolic() ? static_cast< const SymbolicConstant& >( lhs ).environment()
                                    : static_cast< const SymbolicConstant& >( rhs ).environment();
-        res = SymbolicConstant( lhs.type().ptr_result(), env.generateSymbolName(), env );
-        TPTP::Atom::Ptr lhsSym, rhsSym;
+        SymbolicConstant localRes( lhs.type().ptr_result(), env.generateSymbolName(), env );
+        auto lhsSym = env.tptpAtomFromConstant( lhs );
+        auto rhsSym = env.tptpAtomFromConstant( rhs );
 
-        if( lhs.symbolic() )
-        {
-            auto lsym = static_cast< const SymbolicConstant& >( lhs );
-            lhsSym = std::make_shared< TPTP::ConstantAtom >(
-                std::make_shared< TPTP::Identifier >( lsym.name() ), TPTP::Atom::Kind::PLAIN );
-        }
-        else
-        {
-            lhsSym = std::make_shared< TPTP::DefinedAtom >( tptpLiteralFromNumericConstant( lhs ) );
-        }
+        auto functionName = env.generateFunction( *this );
+        auto resSym =
+            std::make_shared< TPTP::ConstantAtom >( localRes.name(), TPTP::Atom::Kind::PLAIN );
 
-        if( rhs.symbolic() )
-        {
-            auto rsym = static_cast< const SymbolicConstant& >( rhs );
-            lhsSym = std::make_shared< TPTP::ConstantAtom >(
-                std::make_shared< TPTP::Identifier >( rsym.name() ), TPTP::Atom::Kind::PLAIN );
-        }
-        else
-        {
-            rhsSym = std::make_shared< TPTP::DefinedAtom >( tptpLiteralFromNumericConstant( rhs ) );
-        }
-
-        auto functionName = env.generateFunction( this->ptr_this< Value >() );
-        auto args = std::make_shared< TPTP::ListLogicElements >();
-        args->add( lhsSym );
-        args->add( rhsSym );
-        auto resSym = std::make_shared< TPTP::ConstantAtom >(
-            std::make_shared< TPTP::Identifier >( res.name() ), TPTP::Atom::Kind::PLAIN );
-        args->add( resSym );
-
-        auto funcName = std::make_shared< TPTP::Identifier >( functionName );
-        auto atom =
-            std::make_shared< TPTP::FunctorAtom >( funcName, args, TPTP::Atom::Kind::PLAIN );
+        auto atom = std::make_shared< TPTP::FunctorAtom >(
+            functionName,
+            std::initializer_list< TPTP::Logic::Ptr >{ lhsSym, rhsSym, resSym },
+            TPTP::Atom::Kind::PLAIN );
         env.addFormula( atom );
 
+        res = localRes;
         return;
     }
 

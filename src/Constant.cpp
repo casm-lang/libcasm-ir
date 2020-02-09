@@ -153,7 +153,7 @@ u1 Constant::defined( void ) const
 
 u1 Constant::symbolic( void ) const
 {
-    return false;  // PPA: TODO: FIXME:
+    return isa< SymbolicConstant >( *this );  // PPA: TODO: FIXME:
 }
 
 const libstdhl::Type::Data& Constant::data( void ) const
@@ -1757,21 +1757,6 @@ SymbolicConstant::SymbolicLayout::SymbolicLayout(
 {
 }
 
-SymbolicConstant::SymbolicLayout::SymbolicLayout(
-    const std::string& name,
-    const std::vector< TPTP::Node::Ptr >& modifications,
-    SymbolicExecutionEnvironment& environment )
-: m_name( name )
-, m_modifications( modifications )
-, m_environment( environment )
-{
-}
-
-void SymbolicConstant::SymbolicLayout::addModification( const TPTP::Node::Ptr& value )
-{
-    m_modifications.push_back( value );
-}
-
 std::size_t SymbolicConstant::SymbolicLayout::hash( void ) const
 {
     return libstdhl::String::value( name() );
@@ -1779,17 +1764,12 @@ std::size_t SymbolicConstant::SymbolicLayout::hash( void ) const
 
 libstdhl::Type::Layout* SymbolicConstant::SymbolicLayout::clone( void ) const
 {
-    return new SymbolicLayout( name(), modifications(), environment() );
+    return new SymbolicLayout( name(), environment() );
 }
 
 const std::string& SymbolicConstant::SymbolicLayout::name() const
 {
     return m_name;
-}
-
-const std::vector< TPTP::Node::Ptr >& SymbolicConstant::SymbolicLayout::modifications() const
-{
-    return m_modifications;
 }
 
 SymbolicExecutionEnvironment& SymbolicConstant::SymbolicLayout::environment( void ) const
@@ -1841,19 +1821,6 @@ u1 SymbolicConstant::operator==( const Value& rhs ) const
     const auto& other = static_cast< const SymbolicConstant& >( rhs );
     return ( this->defined() == other.defined() ) and
            ( this->value()->name() == other.value()->name() );
-}
-
-const std::vector< TPTP::Node::Ptr >& SymbolicConstant::modifications() const
-{
-    if( defined() )
-    {
-        return value()->modifications();
-    }
-    else
-    {
-        static std::vector< TPTP::Node::Ptr > instance;
-        return instance;
-    }
 }
 
 u1 SymbolicConstant::classof( Value const* obj )

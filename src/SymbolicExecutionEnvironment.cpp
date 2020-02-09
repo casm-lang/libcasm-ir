@@ -41,18 +41,36 @@
 
 #include "SymbolicExecutionEnvironment.h"
 
+#include <initializer_list>
+#include <libcasm-ir/Constant>
 #include <libcasm-ir/Exception>
+#include <libcasm-ir/Instruction>
 
 #include <libtptp/Definition>
 #include <libtptp/Type>
 
+#include <memory>
 #include <sstream>
 
 using namespace libcasm_ir;
 
+bool SymbolicExecutionEnvironment::Location::Comperator::operator()(
+    const Location& lhs, const Location& rhs )
+{
+    return lhs.varName == rhs.varName ? this->operator()( lhs.arguments, rhs.arguments )
+                                      : lhs.varName < rhs.varName;
+}
+
+bool SymbolicExecutionEnvironment::Location::Comperator::operator()(
+    const Constant& lhs, const Constant& rhs )
+{
+    return libstdhl::Hash::value( lhs ) < libstdhl::Hash::value( rhs );
+}
+
 SymbolicExecutionEnvironment::SymbolicExecutionEnvironment( void )
 : m_symbolName( 0 )
 , m_formulaName( 0 )
+, m_time( 1 )
 {
 }
 
@@ -70,19 +88,37 @@ std::string SymbolicExecutionEnvironment::generateFormulaName( void )
     return stream.str();
 }
 
-std::string SymbolicExecutionEnvironment::generateFunction( const Value::Ptr& value )
+std::string SymbolicExecutionEnvironment::generateFunction( const Value& value )
 {
     std::stringstream stream;
-    stream << "'#" << Value::token( value->id() ) << "#" << value->type().name() << "'";
+    stream << "'#" << Value::token( value.id() ) << "#" << value.type().name() << "'";
     auto functionName = stream.str();
     if( m_functionDeclarations.find( functionName ) == m_functionDeclarations.end() )
     {
-        auto args = std::make_shared< TPTP::ListTypeElements >();
-        for( auto& type : value->type().arguments() )
+        auto args = std::make_shared< TPTP::ListTypeElements< TPTP::TokenBuilder::STAR > >();
+
+        // TODO: @moosbruggerj remove dependency on isa conditions, use relation type arguments
+        /*
+        for( auto& type : value.type().arguments() )
         {
             args->add( getTPTPType( *type ) );
         }
-        args->add( getTPTPType( value->type().result() ) );
+        */
+        int numArgs = 0;
+        if( isa< UnaryInstruction >( value ) )
+        {
+            numArgs = 1;
+        }
+        else if( isa< BinaryInstruction >( value ) )
+        {
+            numArgs = 2;
+        }
+
+        for( int i = 0; i < numArgs; ++i )
+        {
+            args->add( getTPTPType( value.type() ) );
+        }
+        args->add( getTPTPType( value.type().result() ) );
 
         auto boolean = std::make_shared< TPTP::NamedType >( "$o" );
         auto typeArgs = std::make_shared< TPTP::RelationType >( args );
@@ -95,9 +131,71 @@ std::string SymbolicExecutionEnvironment::generateFunction( const Value::Ptr& va
             formulaName, TPTP::Role::hypothesis(), formula );
         m_functionDeclarations.emplace( functionName, definition );
 
-        generateFunctionDefinition( value, formulaName );
+        // generateFunctionDefinition( value, formulaName );
     }
     return functionName;
+}
+
+SymbolicConstant SymbolicExecutionEnvironment::get(
+    const std::string& constant,
+    const Type::Ptr& functionType,
+    const std::vector< Constant >& arguments )
+{
+    auto symName = generateSymbolName();
+    auto symConst = SymbolicConstant( functionType->ptr_result(), symName, *this );
+
+    auto time_it = m_symbolSetTimes.find( { constant, functionType->ptr_result(), arguments } );
+    int time;
+    if( time_it == m_symbolSetTimes.end() )
+    {
+        m_symbolSetTimes[ { constant, functionType->ptr_result(), arguments } ] = 1;
+        time = 1;
+    }
+    else
+    {
+        time = time_it->second;
+    }
+
+    setAtTime(
+        constant,
+        arguments,
+        std::make_shared< TPTP::ConstantAtom >( symName, TPTP::Atom::Kind::PLAIN ),
+        time );
+    return symConst;
+}
+
+void SymbolicExecutionEnvironment::set(
+    const std::string& varName,
+    const Type::Ptr& functionType,
+    const std::vector< Constant >& arguments,
+    const std::string& symName )
+{
+    setAtTime(
+        varName,
+        arguments,
+        std::make_shared< TPTP::ConstantAtom >( symName, TPTP::Atom::Kind::PLAIN ),
+        m_time );
+    m_symbolSetTimes[ { varName, functionType->ptr_result(), arguments } ] = m_time;
+}
+
+void SymbolicExecutionEnvironment::set(
+    const std::string& varName,
+    const Type::Ptr& functionType,
+    const std::vector< Constant >& arguments,
+    const TPTP::Literal::Ptr& literal )
+{
+    setAtTime( varName, arguments, std::make_shared< TPTP::DefinedAtom >( literal ), m_time );
+    m_symbolSetTimes[ { varName, functionType->ptr_result(), arguments } ] = m_time;
+}
+
+void SymbolicExecutionEnvironment::set(
+    const std::string& varName,
+    const Type::Ptr& functionType,
+    const std::vector< Constant >& arguments,
+    const TPTP::Atom::Ptr& atom )
+{
+    setAtTime( varName, arguments, atom, m_time );
+    m_symbolSetTimes[ { varName, functionType->ptr_result(), arguments } ] = m_time;
 }
 
 void SymbolicExecutionEnvironment::addFormula( const TPTP::Logic::Ptr& logic )
@@ -112,6 +210,22 @@ void SymbolicExecutionEnvironment::addFormula( const TPTP::Logic::Ptr& logic )
 void SymbolicExecutionEnvironment::addFunctionDeclaration(
     const std::string& name, const Type& type )
 {
+    auto args = std::make_shared< TPTP::ListTypeElements< TPTP::TokenBuilder::STAR > >();
+    args->add( std::make_shared< TPTP::NamedType >( "$int" ) );
+
+    for( auto& arg : type.arguments() )
+    {
+        args->add( getTPTPType( *arg ) );
+    }
+    args->add( getTPTPType( type.result() ) );
+    auto fName = storeFunctionFromName( name );
+    auto functionArgs = std::make_shared< TPTP::RelationType >( args );
+    auto mapping = std::make_shared< TPTP::BinaryType >(
+        functionArgs,
+        std::make_shared< TPTP::NamedType >( "$o" ),
+        TPTP::BinaryType::Kind::MAPPING );
+    auto atom = std::make_shared< TPTP::TypeAtom >( fName, mapping );
+    addFormula( atom );
 }
 
 void SymbolicExecutionEnvironment::addSymbolDefinition( const TPTP::Logic::Ptr& logic )
@@ -122,8 +236,22 @@ void SymbolicExecutionEnvironment::addSymbolDefinition( const TPTP::Logic::Ptr& 
     m_symbolDefinitions.push_back( formulaDef );
 }
 
-TPTP::Specification::Ptr SymbolicExecutionEnvironment::finalize( void ) const
+TPTP::Specification::Ptr SymbolicExecutionEnvironment::finalize( void )
 {
+    for( auto& loc : m_symbolSetTimes )
+    {
+        auto sym = get( loc.first.varName, loc.first.type, loc.first.arguments );
+
+        // set at 0
+        setAtTime(
+            loc.first.varName,
+            loc.first.arguments,
+            std::make_shared< TPTP::ConstantAtom >( sym.name(), TPTP::Atom::Kind::PLAIN ),
+            0 );
+    }
+
+	m_symbolSetTimes.clear();
+
     auto spec = std::make_shared< TPTP::Specification >();
     for( auto& def : m_symbolDefinitions )
     {
@@ -215,31 +343,72 @@ const TPTP::Type::Ptr SymbolicExecutionEnvironment::getTPTPType( const Type& typ
     }
 }
 
-void SymbolicExecutionEnvironment::generateFunctionDefinition(
-    const Value::Ptr& value, const std::string& formulaName )
+const TPTP::Literal::Ptr SymbolicExecutionEnvironment::tptpLiteralFromNumericConstant(
+    const Constant& constant ) const
 {
-    switch( value->id() )
+    switch( constant.typeId().kind() )
+    {
+        case Type::Kind::INTEGER:
+        {
+            auto& val = static_cast< const IntegerConstant& >( constant ).value();
+            return std::make_shared< TPTP::IntegerLiteral >( val.to_string() );
+        }
+        case Type::Kind::BINARY:
+        {
+            // TODO: @moosbruggerj fix me
+            throw InternalException( "unimplemented '" + constant.description() + "'" );
+        }
+        case Type::Kind::STRING:
+        {
+            auto& val = static_cast< const StringConstant& >( constant ).value();
+            return std::make_shared< TPTP::IntegerLiteral >( val.toString() );
+        }
+        default:
+        {
+            throw InternalException( "unimplemented '" + constant.description() + "'" );
+        }
+    }
+}
+
+TPTP::Atom::Ptr SymbolicExecutionEnvironment::tptpAtomFromConstant( const Constant& constant ) const
+{
+    if( constant.symbolic() )
+    {
+        assert( isa< SymbolicConstant >( constant ) );
+        return std::make_shared< TPTP::ConstantAtom >( constant.name(), TPTP::Atom::Kind::PLAIN );
+    }
+    else
+    {
+        auto literal = tptpLiteralFromNumericConstant( constant );
+        return std::make_shared< TPTP::DefinedAtom >( literal );
+    }
+}
+
+void SymbolicExecutionEnvironment::generateFunctionDefinition(
+    const Value& value, const std::string& formulaName )
+{
+    switch( value.id() )
     {
         case Value::ID::ADD_INSTRUCTION:
         {
-            auto& result = value->type().result();
+            auto& result = value.type().result();
             if( !( result.isDecimal() || result.isInteger() || result.isRational() ) )
             {
                 throw InternalException(
-                    "arguments for '" + Value::token( value->id() ) +
+                    "arguments for '" + Value::token( value.id() ) +
                     "' must be of arithmetic type." );
             }
-            if( value->type().arguments().size() != 2 )
+            if( value.type().arguments().size() != 2 )
             {
                 throw InternalException(
-                    "'" + Value::token( value->id() ) + "' must have 2 arguments." );
+                    "'" + Value::token( value.id() ) + "' must have 2 arguments." );
             }
             auto X = std::make_shared< TPTP::VariableTerm >(
-                "X", getTPTPType( *( value->type().arguments()[ 0 ] ) ) );
+                "X", getTPTPType( *( value.type().arguments()[ 0 ] ) ) );
             auto Y = std::make_shared< TPTP::VariableTerm >(
-                "Y", getTPTPType( *( value->type().arguments()[ 1 ] ) ) );
-            auto Z = std::make_shared< TPTP::VariableTerm >(
-                "Z", getTPTPType( value->type().result() ) );
+                "Y", getTPTPType( *( value.type().arguments()[ 1 ] ) ) );
+            auto Z =
+                std::make_shared< TPTP::VariableTerm >( "Z", getTPTPType( value.type().result() ) );
 
             auto funcCall = std::make_shared< TPTP::FunctorAtom >(
                 formulaName,
@@ -247,11 +416,10 @@ void SymbolicExecutionEnvironment::generateFunctionDefinition(
                 TPTP::Atom::Kind::PLAIN );
 
             X = std::make_shared< TPTP::VariableTerm >(
-                "X", getTPTPType( *( value->type().arguments()[ 0 ] ) ) );
+                "X", getTPTPType( *( value.type().arguments()[ 0 ] ) ) );
             Y = std::make_shared< TPTP::VariableTerm >(
-                "Y", getTPTPType( *( value->type().arguments()[ 1 ] ) ) );
-            Z = std::make_shared< TPTP::VariableTerm >(
-                "Z", getTPTPType( value->type().result() ) );
+                "Y", getTPTPType( *( value.type().arguments()[ 1 ] ) ) );
+            Z = std::make_shared< TPTP::VariableTerm >( "Z", getTPTPType( value.type().result() ) );
 
             auto sum = std::make_shared< TPTP::FunctorAtom >(
                 "$sum",
@@ -264,11 +432,10 @@ void SymbolicExecutionEnvironment::generateFunctionDefinition(
                 funcCall, TPTP::InfixLogic::Connective::EQUALITY, equals );
 
             X = std::make_shared< TPTP::VariableTerm >(
-                "X", getTPTPType( *( value->type().arguments()[ 0 ] ) ) );
+                "X", getTPTPType( *( value.type().arguments()[ 0 ] ) ) );
             Y = std::make_shared< TPTP::VariableTerm >(
-                "Y", getTPTPType( *( value->type().arguments()[ 1 ] ) ) );
-            Z = std::make_shared< TPTP::VariableTerm >(
-                "Z", getTPTPType( value->type().result() ) );
+                "Y", getTPTPType( *( value.type().arguments()[ 1 ] ) ) );
+            Z = std::make_shared< TPTP::VariableTerm >( "Z", getTPTPType( value.type().result() ) );
 
             auto quantified = std::make_shared< TPTP::QuantifiedLogic >(
                 TPTP::QuantifiedLogic::Quantifier::UNIVERSAL,
@@ -283,9 +450,35 @@ void SymbolicExecutionEnvironment::generateFunctionDefinition(
         default:
         {
             throw InternalException(
-                "behavior for '" + Value::token( value->id() ) + "' not defined.'" );
+                "behavior for '" + Value::token( value.id() ) + "' not defined.'" );
         }
     }
+}
+std::string SymbolicExecutionEnvironment::storeFunctionFromName( const std::string& name ) const
+{
+    return "'@" + name + "'";
+}
+
+void SymbolicExecutionEnvironment::setAtTime(
+    const std::string& varName,
+    const std::vector< Constant >& arguments,
+    const TPTP::Atom::Ptr symbol,
+    int time )
+{
+    auto fName = storeFunctionFromName( varName );
+    auto timeAtom = std::make_shared< TPTP::DefinedAtom >( time );
+    auto args =
+        std::make_shared< TPTP::ListLogicElements >( std::initializer_list< TPTP::Logic::Ptr >{
+            timeAtom,
+        } );
+
+    for( auto& arg : arguments )
+    {
+        args->add( tptpAtomFromConstant( arg ) );
+    }
+    args->add( symbol );
+    auto functor = std::make_shared< TPTP::FunctorAtom >( fName, args, TPTP::Atom::Kind::PLAIN );
+    addFormula( functor );
 }
 
 //

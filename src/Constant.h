@@ -696,23 +696,15 @@ namespace libcasm_ir
         {
           private:
             const std::string m_name;
-            std::vector< TPTP::Node::Ptr > m_modifications;
             SymbolicExecutionEnvironment& m_environment;
 
           public:
             SymbolicLayout( const std::string& name, SymbolicExecutionEnvironment& environment );
-            SymbolicLayout(
-                const std::string& name,
-                const std::vector< TPTP::Node::Ptr >& modifications,
-                SymbolicExecutionEnvironment& environment );
-
-            void addModification( const TPTP::Node::Ptr& value );
 
             std::size_t hash( void ) const;
             Layout* clone( void ) const;
 
             const std::string& name( void ) const;
-            const std::vector< TPTP::Node::Ptr >& modifications( void ) const;
             SymbolicExecutionEnvironment& environment( void ) const;
         };
 
@@ -733,8 +725,6 @@ namespace libcasm_ir
         std::size_t hash( void ) const override;
 
         u1 operator==( const Value& rhs ) const override;
-
-        const std::vector< TPTP::Node::Ptr >& modifications() const;
 
         static inline Value::ID classid( void )
         {
