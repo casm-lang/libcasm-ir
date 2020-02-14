@@ -81,14 +81,17 @@ jobs:
     - name: Benchmark
       run: |
         make ci-benchmark
-    - name: Coverage
-      env:
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-      if: matrix.tool.build == 'coverage' && matrix.tool.chain == 'gcc'
+    - name: Installation
       run: |
-        wget https://codecov.io/bash
-        chmod 755 bash
-        ./bash
+        make ci-install
+    - name: Bundling
+      run: |
+        make ci-bundle
+    - name: Persisting
+      uses: actions/upload-artifact@v1
+      with:
+        name: packages
+        path: obj/bundle
 
   darwin-x86_64:
     runs-on: macos-latest
@@ -126,6 +129,17 @@ jobs:
     - name: Benchmark
       run: |
         make ci-benchmark
+    - name: Installation
+      run: |
+        make ci-install
+    - name: Bundling
+      run: |
+        make ci-bundle
+    - name: Persisting
+      uses: actions/upload-artifact@v1
+      with:
+        name: packages
+        path: obj/bundle
 
   windows-x86_64:
     runs-on: windows-2019
@@ -142,6 +156,7 @@ jobs:
     - name: Setup
       run: |
         make info
+        choco install zip
         make ci-tools
     - name: Fetching
       env:
@@ -160,3 +175,14 @@ jobs:
     - name: Benchmark
       run: |
         make ci-benchmark
+    - name: Installation
+      run: |
+        make ci-install
+    - name: Bundling
+      run: |
+        make ci-bundle
+    - name: Persisting
+      uses: actions/upload-artifact@v1
+      with:
+        name: packages
+        path: obj/bundle
