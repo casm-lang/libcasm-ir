@@ -46,16 +46,7 @@
 
 namespace libcasm_ir
 {
-    class Exception : public std::exception
-    {
-      public:
-        Exception( const std::string& message );
-
-        const char* what( void ) const noexcept override;
-
-      private:
-        const std::string m_message;
-    };
+    using Exception = libstdhl::Exception;
 
     class TypeArgumentException : public Exception
     {

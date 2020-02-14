@@ -43,16 +43,6 @@
 
 using namespace libcasm_ir;
 
-Exception::Exception( const std::string& message )
-: m_message( message )
-{
-}
-
-const char* Exception::what( void ) const noexcept
-{
-    return m_message.c_str();
-}
-
 TypeArgumentException::TypeArgumentException(
     const std::string& message, const std::size_t position )
 : Exception( message )
