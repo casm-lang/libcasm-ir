@@ -460,7 +460,6 @@ ifeq (,$(findstring Visual,$(ENV_GEN)))
   ifeq ("$(TYPE)","release")
       ENV_CMAKE_FLAGS += -DCMAKE_EXE_LINKER_FLAGS="-s"
       ENV_CMAKE_FLAGS += -DCMAKE_SHARED_LINKER_FLAGS="-s"
-      ENV_CMAKE_FLAGS += -DCMAKE_STATIC_LINKER_FLAGS="-s"
   endif
 
   ifeq ($(ENV_OSYS),Windows)
