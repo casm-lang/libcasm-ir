@@ -47,6 +47,13 @@ FORMAT += etc
 FORMAT += etc/*
 FORMAT += etc/*/*
 
-UPDATE_ROOT = ../stdhl
+CONFIG  = ../stdhl
+ifeq ($(wildcard $(CONFIG)/.cmake/.*),)
+  CONFIG = lib/stdhl
+  ifeq ($(wildcard $(CONFIG)/.cmake/.*),)
+    $(shell git submodule update --init $(CONFIG) && git -C $(CONFIG) checkout master)
+  endif
+endif
 
-include .cmake/config.mk
+INCLUDE = $(CONFIG)/.cmake/config.mk
+include $(INCLUDE)
