@@ -60,6 +60,7 @@ package_git_submodule( libz3      master REQUIRED build ../z3    lib/z3    )
 package_git_deps(
   libstdhl>libpass
   libpass>libtptp
+  libz3>libtptp
   )
 
 find_package( Threads REQUIRED )
