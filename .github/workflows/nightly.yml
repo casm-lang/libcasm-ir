@@ -58,11 +58,13 @@ jobs:
     env:
       B: ${{ matrix.tool.build }}
       C: ${{ matrix.tool.chain }}
+      G: ninja
     steps:
     - uses: actions/checkout@v1
     - name: Setup
       run: |
         make info
+        sudo apt-get install ninja-build
         make ci-tools
     - name: Fetching
       env:
@@ -90,7 +92,7 @@ jobs:
     - name: Persisting
       uses: actions/upload-artifact@v1
       with:
-        name: packages
+        name: linux
         path: obj/bundle
 
   darwin-x86_64:
@@ -103,11 +105,13 @@ jobs:
     env:
       B: ${{ matrix.tool.build }}
       C: ${{ matrix.tool.chain }}
+      G: ninja
     steps:
     - uses: actions/checkout@v1
     - name: Setup
       run: |
         make info
+        brew install ninja
         brew install gcc@9
         ln -s /usr/local/bin/gcc-9 /usr/local/bin/gcc
         ln -s /usr/local/bin/g++-9 /usr/local/bin/g++
@@ -138,7 +142,7 @@ jobs:
     - name: Persisting
       uses: actions/upload-artifact@v1
       with:
-        name: packages
+        name: darwin
         path: obj/bundle
 
   windows-x86_64:
@@ -151,11 +155,13 @@ jobs:
     env:
       B: ${{ matrix.tool.build }}
       C: ${{ matrix.tool.chain }}
+      G: ninja
     steps:
     - uses: actions/checkout@v1
     - name: Setup
       run: |
         make info
+        choco install ninja
         choco install zip
         make ci-tools
     - name: Fetching
@@ -184,5 +190,5 @@ jobs:
     - name: Persisting
       uses: actions/upload-artifact@v1
       with:
-        name: packages
+        name: windows
         path: obj/bundle
