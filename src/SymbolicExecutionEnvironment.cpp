@@ -175,7 +175,7 @@ void SymbolicExecutionEnvironment::set(
         arguments,
         std::make_shared< TPTP::ConstantAtom >( symName, TPTP::Atom::Kind::PLAIN ),
         m_time );
-    m_symbolSetTimes[ { varName, functionType->ptr_result(), arguments } ] = m_time;
+    m_symbolUpdateSet[ { varName, functionType->ptr_result(), arguments } ] = m_time;
 }
 
 void SymbolicExecutionEnvironment::set(
@@ -185,7 +185,7 @@ void SymbolicExecutionEnvironment::set(
     const TPTP::Literal::Ptr& literal )
 {
     setAtTime( varName, arguments, std::make_shared< TPTP::DefinedAtom >( literal ), m_time );
-    m_symbolSetTimes[ { varName, functionType->ptr_result(), arguments } ] = m_time;
+    m_symbolUpdateSet[ { varName, functionType->ptr_result(), arguments } ] = m_time;
 }
 
 void SymbolicExecutionEnvironment::set(
@@ -195,7 +195,7 @@ void SymbolicExecutionEnvironment::set(
     const TPTP::Atom::Ptr& atom )
 {
     setAtTime( varName, arguments, atom, m_time );
-    m_symbolSetTimes[ { varName, functionType->ptr_result(), arguments } ] = m_time;
+    m_symbolUpdateSet[ { varName, functionType->ptr_result(), arguments } ] = m_time;
 }
 
 void SymbolicExecutionEnvironment::addFormula( const TPTP::Logic::Ptr& logic )
@@ -250,7 +250,7 @@ TPTP::Specification::Ptr SymbolicExecutionEnvironment::finalize( void )
             0 );
     }
 
-	m_symbolSetTimes.clear();
+    m_symbolSetTimes.clear();
 
     auto spec = std::make_shared< TPTP::Specification >();
     for( auto& def : m_symbolDefinitions )
@@ -274,6 +274,10 @@ TPTP::Specification::Ptr SymbolicExecutionEnvironment::finalize( void )
 
 void SymbolicExecutionEnvironment::incrementTime( void )
 {
+    for( auto& update : m_symbolUpdateSet )
+    {
+		m_symbolSetTimes[update.first] = update.second;
+    }
     ++m_time;
 }
 

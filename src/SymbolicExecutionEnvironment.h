@@ -146,6 +146,7 @@ namespace libcasm_ir
         int m_time;
 
         std::map< Location, int, Location::Comperator > m_symbolSetTimes;
+		std::map< Location, int, Location::Comperator > m_symbolUpdateSet;
 
         std::map< std::string, TPTP::FormulaDefinition::Ptr > m_functionDeclarations;
         std::vector< TPTP::FormulaDefinition::Ptr > m_functionDefinitons;
