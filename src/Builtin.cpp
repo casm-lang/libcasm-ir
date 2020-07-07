@@ -162,6 +162,7 @@ Builtin::Ptr Builtin::create( const Value::ID id, const Type::Ptr& type )
         case Value::STRING_CONSTANT:              // [fallthrough]
         case Value::DECIMAL_CONSTANT:             // [fallthrough]
         case Value::RATIONAL_CONSTANT:            // [fallthrough]
+        case Value::SYMBOLIC_CONSTANT:            // [fallthrough]
         case Value::ENUMERATION_CONSTANT:         // [fallthrough]
         case Value::RANGE_CONSTANT:               // [fallthrough]
         case Value::TUPLE_CONSTANT:               // [fallthrough]
