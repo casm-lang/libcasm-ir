@@ -62,6 +62,43 @@ static const auto VOID = libstdhl::Memory::get< VoidType >();
 static const auto BOOLEAN = libstdhl::Memory::get< BooleanType >();
 static const auto INTEGER = libstdhl::Memory::get< IntegerType >();
 
+SymbolicConstant symbolicInstruction(
+    const Constant& lhs,
+    const Constant& rhs,
+    const std::function< TPTP::Logic::Ptr(
+        SymbolicExecutionEnvironment& env,
+        const TPTP::Atom::Ptr&,
+        const TPTP::Atom::Ptr&,
+        const TPTP::Atom::Ptr& ) > callback )
+{
+    auto& env = lhs.symbolic() ? static_cast< const SymbolicConstant& >( lhs ).environment()
+                               : static_cast< const SymbolicConstant& >( rhs ).environment();
+    SymbolicConstant localRes( lhs.type().ptr_result(), env.generateSymbolName(), env );
+    auto lhsSym = env.tptpAtomFromConstant( lhs );
+    auto rhsSym = env.tptpAtomFromConstant( rhs );
+
+    auto resSym =
+        std::make_shared< TPTP::ConstantAtom >( localRes.name(), TPTP::Atom::Kind::PLAIN );
+
+    const auto atom = callback( env, lhsSym, rhsSym, resSym );
+    env.addFormula( atom );
+
+    return localRes;
+}
+
+SymbolicConstant symbolicArithmeticInstruction(
+    const Constant& lhs, const Constant& rhs, const Value& value )
+{
+    assert( ArithmeticInstruction::classof( &value ) );
+    return symbolicInstruction(
+        lhs, rhs, [ & ]( auto& env, const auto& lhsSym, const auto& rhsSym, const auto& resSym ) {
+            return std::make_shared< TPTP::FunctorAtom >(
+                env.generateOperatorFunction( value ),
+                std::initializer_list< TPTP::Logic::Ptr >{ lhsSym, rhsSym, resSym },
+                TPTP::Atom::Kind::PLAIN );
+        } );
+}
+
 //
 // Instruction
 //
@@ -132,7 +169,7 @@ void Instruction::replace( Value& from, const Value::Ptr& to )
     std::replace_if(
         m_operands.begin(),
         m_operands.end(),
-        [&]( const Value::Ptr& v ) { return *v.get() == from; },
+        [ & ]( const Value::Ptr& v ) { return *v.get() == from; },
         to );
 
     if( isa< User >( from ) )
@@ -772,24 +809,7 @@ void AddInstruction::execute( Constant& res, const Constant& lhs, const Constant
 
     if( lhs.symbolic() or rhs.symbolic() )
     {
-        // TODO: FIXME: @ppaulweber: return here a symbolic constant and trace @moosbruggerj
-        auto& env = lhs.symbolic() ? static_cast< const SymbolicConstant& >( lhs ).environment()
-                                   : static_cast< const SymbolicConstant& >( rhs ).environment();
-        SymbolicConstant localRes( lhs.type().ptr_result(), env.generateSymbolName(), env );
-        auto lhsSym = env.tptpAtomFromConstant( lhs );
-        auto rhsSym = env.tptpAtomFromConstant( rhs );
-
-        auto functionName = env.generateFunction( *this );
-        auto resSym =
-            std::make_shared< TPTP::ConstantAtom >( localRes.name(), TPTP::Atom::Kind::PLAIN );
-
-        auto atom = std::make_shared< TPTP::FunctorAtom >(
-            functionName,
-            std::initializer_list< TPTP::Logic::Ptr >{ lhsSym, rhsSym, resSym },
-            TPTP::Atom::Kind::PLAIN );
-        env.addFormula( atom );
-
-        res = localRes;
+        res = symbolicArithmeticInstruction( lhs, rhs, *this );
         return;
     }
 
@@ -942,9 +962,7 @@ void SubInstruction::execute( Constant& res, const Constant& lhs, const Constant
 
     if( lhs.symbolic() or rhs.symbolic() )
     {
-        // TODO: FIXME: @ppaulweber: return here a symbolic constant and trace @moosbruggerj
-        throw InternalException( "unimplemented '" + description() + "'" );
-        // res = SymbolicConstant( ... );
+        res = symbolicArithmeticInstruction( lhs, rhs, *this );
         return;
     }
 
@@ -1069,9 +1087,7 @@ void MulInstruction::execute( Constant& res, const Constant& lhs, const Constant
 
     if( lhs.symbolic() or rhs.symbolic() )
     {
-        // TODO: FIXME: @ppaulweber: return here a symbolic constant and trace @moosbruggerj
-        throw InternalException( "unimplemented '" + description() + "'" );
-        // res = SymbolicConstant( ... );
+        res = symbolicArithmeticInstruction( lhs, rhs, *this );
         return;
     }
 
@@ -1197,9 +1213,7 @@ void ModInstruction::execute( Constant& res, const Constant& lhs, const Constant
 
     if( lhs.symbolic() or rhs.symbolic() )
     {
-        // TODO: FIXME: @ppaulweber: return here a symbolic constant and trace @moosbruggerj
-        throw InternalException( "unimplemented '" + description() + "'" );
-        // res = SymbolicConstant( ... );
+        res = symbolicArithmeticInstruction( lhs, rhs, *this );
         return;
     }
 
@@ -1315,9 +1329,7 @@ void DivInstruction::execute( Constant& res, const Constant& lhs, const Constant
 
     if( lhs.symbolic() or rhs.symbolic() )
     {
-        // TODO: FIXME: @ppaulweber: return here a symbolic constant and trace @moosbruggerj
-        throw InternalException( "unimplemented '" + description() + "'" );
-        // res = SymbolicConstant( ... );
+        res = symbolicArithmeticInstruction( lhs, rhs, *this );
         return;
     }
 
@@ -1714,55 +1726,98 @@ void AndInstruction::execute( Constant& res, const Constant& lhs, const Constant
     // |    2 | true  | undef | false | true  | sym'  |
     // |    3 | sym   | sym'  | false | sym'  | sym'  |
 
-    // TODO: FIXME: @ppaulweber: symbolic constant and trace @moosbruggerj
-
-    switch( typeId().kind() )
+    if( lhs.symbolic() or rhs.symbolic() )
     {
-        case Type::Kind::BOOLEAN:
+        switch( typeId().kind() )
         {
-            const auto& lval = static_cast< const BooleanConstant& >( lhs ).value();
-            const auto& rval = static_cast< const BooleanConstant& >( rhs ).value();
-
-            if( lhs.defined() and rhs.defined() )
+            case Type::Kind::BOOLEAN:
             {
-                res = BooleanConstant( lval.value() and rval.value() );
-            }
-            else
-            {
-                if( ( lhs.defined() and ( not lval.value() ) ) or
-                    ( rhs.defined() and ( not rval.value() ) ) )
+                if( lhs.defined() and rhs.defined() )
                 {
-                    res = BooleanConstant( false );
+                    res = symbolicInstruction(
+                        lhs,
+                        rhs,
+                        [ & ](
+                            auto& env,
+                            const auto& lhsSym,
+                            const auto& rhsSym,
+                            const auto& resSym ) {
+                            using Connective = TPTP::BinaryLogic::Connective;
+
+                            auto equ = std::make_shared< TPTP::BinaryLogic >(
+                                lhsSym, Connective::CONJUNCTION, rhsSym );
+
+                            equ->setLeftDelimiter( TPTP::TokenBuilder::LPAREN() );
+                            equ->setRightDelimiter( TPTP::TokenBuilder::RPAREN() );
+
+                            return std::make_shared< TPTP::BinaryLogic >(
+                                resSym, Connective::EQUIVALENCE, equ );
+                        } );
+					return;
                 }
                 else
                 {
-                    res = BooleanConstant();
+                    throw InternalException( "unimplemented '" + description() + "'" );
+                    break;
                 }
             }
-            break;
-        }
-        case Type::Kind::BINARY:
-        {
-            const auto& lval = static_cast< const BinaryConstant& >( lhs ).value();
-            const auto& rval = static_cast< const BinaryConstant& >( rhs ).value();
-
-            assert( type().isBinary() );
-            const auto resultType = std::static_pointer_cast< BinaryType >( type().ptr_type() );
-
-            if( lhs.defined() and rhs.defined() )
+            default:
             {
-                res = BinaryConstant( resultType, lval.value() & rval.value() );
+                throw InternalException( "unimplemented '" + description() + "'" );
+                break;
             }
-            else
-            {
-                res = BinaryConstant( resultType );
-            }
-            break;
         }
-        default:
+    }
+    else
+    {
+        switch( typeId().kind() )
         {
-            throw InternalException( "unimplemented '" + description() + "'" );
-            break;
+            case Type::Kind::BOOLEAN:
+            {
+                const auto& lval = static_cast< const BooleanConstant& >( lhs ).value();
+                const auto& rval = static_cast< const BooleanConstant& >( rhs ).value();
+
+                if( lhs.defined() and rhs.defined() )
+                {
+                    res = BooleanConstant( lval.value() and rval.value() );
+                }
+                else
+                {
+                    if( ( lhs.defined() and ( not lval.value() ) ) or
+                        ( rhs.defined() and ( not rval.value() ) ) )
+                    {
+                        res = BooleanConstant( false );
+                    }
+                    else
+                    {
+                        res = BooleanConstant();
+                    }
+                }
+                break;
+            }
+            case Type::Kind::BINARY:
+            {
+                const auto& lval = static_cast< const BinaryConstant& >( lhs ).value();
+                const auto& rval = static_cast< const BinaryConstant& >( rhs ).value();
+
+                assert( type().isBinary() );
+                const auto resultType = std::static_pointer_cast< BinaryType >( type().ptr_type() );
+
+                if( lhs.defined() and rhs.defined() )
+                {
+                    res = BinaryConstant( resultType, lval.value() & rval.value() );
+                }
+                else
+                {
+                    res = BinaryConstant( resultType );
+                }
+                break;
+            }
+            default:
+            {
+                throw InternalException( "unimplemented '" + description() + "'" );
+                break;
+            }
         }
     }
 }
@@ -1849,47 +1904,90 @@ void XorInstruction::execute( Constant& res, const Constant& lhs, const Constant
     // |    2 | true  | undef | true  | false | sym' |
     // |    3 | sym   | sym'  | sym'  | sym'  | sym' |
 
-    // TODO: FIXME: @ppaulweber: symbolic constant and trace @moosbruggerj
-
-    switch( typeId().kind() )
+    if( lhs.symbolic() or rhs.symbolic() )
     {
-        case Type::Kind::BOOLEAN:
+        switch( typeId().kind() )
         {
-            const auto& lval = static_cast< const BooleanConstant& >( lhs ).value();
-            const auto& rval = static_cast< const BooleanConstant& >( rhs ).value();
+            case Type::Kind::BOOLEAN:
+            {
+                if( lhs.defined() and rhs.defined() )
+                {
+                    res = symbolicInstruction(
+                        lhs,
+                        rhs,
+                        [ & ](
+                            auto& env,
+                            const auto& lhsSym,
+                            const auto& rhsSym,
+                            const auto& resSym ) {
+                            using Connective = TPTP::BinaryLogic::Connective;
 
-            if( lhs.defined() and rhs.defined() )
-            {
-                res = BooleanConstant( lval.value() xor rval.value() );
+                            auto equ = std::make_shared< TPTP::BinaryLogic >(
+                                lhsSym, Connective::NON_EQUIVALENCE, rhsSym );
+
+                            equ->setLeftDelimiter( TPTP::TokenBuilder::LPAREN() );
+                            equ->setRightDelimiter( TPTP::TokenBuilder::RPAREN() );
+
+                            return std::make_shared< TPTP::BinaryLogic >(
+                                resSym, Connective::EQUIVALENCE, equ );
+                        } );
+					return;
+                }
+                else
+                {
+                    throw InternalException( "unimplemented '" + description() + "'" );
+                    break;
+                }
             }
-            else
+            default:
             {
-                res = BooleanConstant();
+                throw InternalException( "unimplemented '" + description() + "'" );
+                break;
             }
-            break;
         }
-        case Type::Kind::BINARY:
+    }
+    else
+    {
+        switch( typeId().kind() )
         {
-            const auto& lval = static_cast< const BinaryConstant& >( lhs ).value();
-            const auto& rval = static_cast< const BinaryConstant& >( rhs ).value();
-
-            assert( type().isBinary() );
-            const auto resultType = std::static_pointer_cast< BinaryType >( type().ptr_type() );
-
-            if( lhs.defined() and rhs.defined() )
+            case Type::Kind::BOOLEAN:
             {
-                res = BinaryConstant( resultType, lval.value() ^ rval.value() );
+                const auto& lval = static_cast< const BooleanConstant& >( lhs ).value();
+                const auto& rval = static_cast< const BooleanConstant& >( rhs ).value();
+
+                if( lhs.defined() and rhs.defined() )
+                {
+                    res = BooleanConstant( lval.value() xor rval.value() );
+                }
+                else
+                {
+                    res = BooleanConstant();
+                }
+                break;
             }
-            else
+            case Type::Kind::BINARY:
             {
-                res = BinaryConstant( resultType );
+                const auto& lval = static_cast< const BinaryConstant& >( lhs ).value();
+                const auto& rval = static_cast< const BinaryConstant& >( rhs ).value();
+
+                assert( type().isBinary() );
+                const auto resultType = std::static_pointer_cast< BinaryType >( type().ptr_type() );
+
+                if( lhs.defined() and rhs.defined() )
+                {
+                    res = BinaryConstant( resultType, lval.value() ^ rval.value() );
+                }
+                else
+                {
+                    res = BinaryConstant( resultType );
+                }
+                break;
             }
-            break;
-        }
-        default:
-        {
-            throw InternalException( "unimplemented '" + description() + "'" );
-            break;
+            default:
+            {
+                throw InternalException( "unimplemented '" + description() + "'" );
+                break;
+            }
         }
     }
 }
@@ -1976,54 +2074,97 @@ void OrInstruction::execute( Constant& res, const Constant& lhs, const Constant&
     // |    2 | true  | true  | true  | true | true |
     // |    3 | sym   | sym'  | sym'  | true | sym' |
 
-    // TODO: FIXME: @ppaulweber: symbolic constant and trace @moosbruggerj
-
-    switch( typeId().kind() )
+    if( lhs.symbolic() or rhs.symbolic() )
     {
-        case Type::Kind::BOOLEAN:
+        switch( typeId().kind() )
         {
-            const auto& lval = static_cast< const BooleanConstant& >( lhs ).value();
-            const auto& rval = static_cast< const BooleanConstant& >( rhs ).value();
-
-            if( lhs.defined() and rhs.defined() )
+            case Type::Kind::BOOLEAN:
             {
-                res = BooleanConstant( lval.value() or rval.value() );
-            }
-            else
-            {
-                if( ( lhs.defined() and lval.value() ) or ( rhs.defined() and rval.value() ) )
+                if( lhs.defined() and rhs.defined() )
                 {
-                    res = BooleanConstant( true );
+                    res = symbolicInstruction(
+                        lhs,
+                        rhs,
+                        [ & ](
+                            auto& env,
+                            const auto& lhsSym,
+                            const auto& rhsSym,
+                            const auto& resSym ) {
+                            using Connective = TPTP::BinaryLogic::Connective;
+
+                            auto equ = std::make_shared< TPTP::BinaryLogic >(
+                                lhsSym, Connective::DISJUNCTION, rhsSym );
+
+                            equ->setLeftDelimiter( TPTP::TokenBuilder::LPAREN() );
+                            equ->setRightDelimiter( TPTP::TokenBuilder::RPAREN() );
+
+                            return std::make_shared< TPTP::BinaryLogic >(
+                                resSym, Connective::EQUIVALENCE, equ );
+                        } );
+					return;
                 }
                 else
                 {
-                    res = BooleanConstant();
+                    throw InternalException( "unimplemented '" + description() + "'" );
+                    break;
                 }
             }
-            break;
-        }
-        case Type::Kind::BINARY:
-        {
-            const auto& lval = static_cast< const BinaryConstant& >( lhs ).value();
-            const auto& rval = static_cast< const BinaryConstant& >( rhs ).value();
-
-            assert( type().isBinary() );
-            const auto resultType = std::static_pointer_cast< BinaryType >( type().ptr_type() );
-
-            if( lhs.defined() and rhs.defined() )
+            default:
             {
-                res = BinaryConstant( resultType, lval.value() | rval.value() );
+                throw InternalException( "unimplemented '" + description() + "'" );
+                break;
             }
-            else
-            {
-                res = BinaryConstant( resultType );
-            }
-            break;
         }
-        default:
+    }
+    else
+    {
+        switch( typeId().kind() )
         {
-            throw InternalException( "unimplemented '" + description() + "'" );
-            break;
+            case Type::Kind::BOOLEAN:
+            {
+                const auto& lval = static_cast< const BooleanConstant& >( lhs ).value();
+                const auto& rval = static_cast< const BooleanConstant& >( rhs ).value();
+
+                if( lhs.defined() and rhs.defined() )
+                {
+                    res = BooleanConstant( lval.value() or rval.value() );
+                }
+                else
+                {
+                    if( ( lhs.defined() and lval.value() ) or ( rhs.defined() and rval.value() ) )
+                    {
+                        res = BooleanConstant( true );
+                    }
+                    else
+                    {
+                        res = BooleanConstant();
+                    }
+                }
+                break;
+            }
+            case Type::Kind::BINARY:
+            {
+                const auto& lval = static_cast< const BinaryConstant& >( lhs ).value();
+                const auto& rval = static_cast< const BinaryConstant& >( rhs ).value();
+
+                assert( type().isBinary() );
+                const auto resultType = std::static_pointer_cast< BinaryType >( type().ptr_type() );
+
+                if( lhs.defined() and rhs.defined() )
+                {
+                    res = BinaryConstant( resultType, lval.value() | rval.value() );
+                }
+                else
+                {
+                    res = BinaryConstant( resultType );
+                }
+                break;
+            }
+            default:
+            {
+                throw InternalException( "unimplemented '" + description() + "'" );
+                break;
+            }
         }
     }
 }
@@ -2110,24 +2251,50 @@ void ImpInstruction::execute( Constant& res, const Constant& lhs, const Constant
     // |    2 | true  | undef | false | true  | sym'  |
     // |    3 | sym   | sym'  | sym'  | true  | sym'  |
 
-    // TODO: FIXME: @ppaulweber: symbolic constant and trace @moosbruggerj
-
-    const auto& lval = static_cast< const BooleanConstant& >( lhs ).value();
-    const auto& rval = static_cast< const BooleanConstant& >( rhs ).value();
-
-    if( lhs.defined() and rhs.defined() )
+    if( lhs.symbolic() or rhs.symbolic() )
     {
-        res = BooleanConstant( ( not lval.value() ) or rval.value() );
-    }
-    else
-    {
-        if( ( lhs.defined() and ( not lval.value() ) ) or ( rhs.defined() and rval.value() ) )
+        if( lhs.defined() and rhs.defined() )
         {
-            res = BooleanConstant( true );
+            res = symbolicInstruction(
+                lhs,
+                rhs,
+                [ & ]( auto& env, const auto& lhsSym, const auto& rhsSym, const auto& resSym ) {
+                    using Connective = TPTP::BinaryLogic::Connective;
+
+                    auto equ = std::make_shared< TPTP::BinaryLogic >(
+                        lhsSym, Connective::IMPLICATION, rhsSym );
+
+                    equ->setLeftDelimiter( TPTP::TokenBuilder::LPAREN() );
+                    equ->setRightDelimiter( TPTP::TokenBuilder::RPAREN() );
+
+                    return std::make_shared< TPTP::BinaryLogic >(
+                        resSym, Connective::EQUIVALENCE, equ );
+                } );
         }
         else
         {
-            res = BooleanConstant();
+            throw InternalException( "unimplemented '" + description() + "'" );
+        }
+    }
+    else
+    {
+        const auto& lval = static_cast< const BooleanConstant& >( lhs ).value();
+        const auto& rval = static_cast< const BooleanConstant& >( rhs ).value();
+
+        if( lhs.defined() and rhs.defined() )
+        {
+            res = BooleanConstant( ( not lval.value() ) or rval.value() );
+        }
+        else
+        {
+            if( ( lhs.defined() and ( not lval.value() ) ) or ( rhs.defined() and rval.value() ) )
+            {
+                res = BooleanConstant( true );
+            }
+            else
+            {
+                res = BooleanConstant();
+            }
         }
     }
 }
@@ -2397,11 +2564,30 @@ void EquInstruction::execute( Constant& res, const Constant& lhs, const Constant
     // |    1 | lhs      | false | lhs == rhs | sym'  |
     // |    2 | sym      | sym'  | sym'       | sym'  |
 
-    // TODO: FIXME: @ppaulweber: symbolic constant and trace @moosbruggerj
-
     if( lhs.defined() and rhs.defined() )
     {
-        res = BooleanConstant( lhs == rhs );
+        if( lhs.symbolic() or rhs.symbolic() )
+        {
+            res = symbolicInstruction(
+                lhs,
+                rhs,
+                [ & ]( auto& env, const auto& lhsSym, const auto& rhsSym, const auto& resSym ) {
+                    using Connective = TPTP::BinaryLogic::Connective;
+
+                    auto equ = std::make_shared< TPTP::InfixLogic >(
+                        lhsSym, TPTP::InfixLogic::Connective::EQUALITY, rhsSym );
+
+                    equ->setLeftDelimiter( TPTP::TokenBuilder::LPAREN() );
+                    equ->setRightDelimiter( TPTP::TokenBuilder::RPAREN() );
+
+                    return std::make_shared< TPTP::BinaryLogic >(
+                        resSym, Connective::EQUIVALENCE, equ );
+                } );
+        }
+        else
+        {
+            res = BooleanConstant( lhs == rhs );
+        }
     }
     else if( lhs.defined() or rhs.defined() )
     {
@@ -2544,11 +2730,30 @@ void NeqInstruction::execute( Constant& res, const Constant& lhs, const Constant
     // |    1 | lhs      | true  | lhs != rhs | sym'  |
     // |    2 | sym      | sym'  | sym'       | sym'  |
 
-    // TODO: FIXME: @ppaulweber: symbolic constant and trace @moosbruggerj
-
     if( lhs.defined() and rhs.defined() )
     {
-        res = BooleanConstant( lhs != rhs );
+        if( lhs.symbolic() or rhs.symbolic() )
+        {
+            res = symbolicInstruction(
+                lhs,
+                rhs,
+                [ & ]( auto& env, const auto& lhsSym, const auto& rhsSym, const auto& resSym ) {
+                    using Connective = TPTP::InfixLogic::Connective;
+
+                    auto equ = std::make_shared< TPTP::InfixLogic >(
+                        lhsSym, Connective::INEQUALITY, rhsSym );
+
+                    equ->setLeftDelimiter( TPTP::TokenBuilder::LPAREN() );
+                    equ->setRightDelimiter( TPTP::TokenBuilder::RPAREN() );
+
+                    return std::make_shared< TPTP::BinaryLogic >(
+                        resSym, TPTP::BinaryLogic::Connective::EQUIVALENCE, equ );
+                } );
+        }
+        else
+        {
+            res = BooleanConstant( lhs != rhs );
+        }
     }
     else if( lhs.defined() or rhs.defined() )
     {
@@ -2686,8 +2891,6 @@ void LthInstruction::execute( Constant& res, const Constant& lhs, const Constant
     // |    1 | lhs     | undef | lhs < rhs | sym'  |
     // |    2 | sym     | undef | sym'      | sym'  |
 
-    // TODO: FIXME: @ppaulweber: symbolic constant and trace @moosbruggerj
-
     assert( lhs.type() == rhs.type() );
 
     if( not lhs.defined() or not rhs.defined() )
@@ -2696,20 +2899,53 @@ void LthInstruction::execute( Constant& res, const Constant& lhs, const Constant
         return;
     }
 
-    switch( lhs.typeId().kind() )
+    if( lhs.symbolic() or rhs.symbolic() )
     {
-        case Type::Kind::INTEGER:
+        switch( lhs.typeId().kind() )
         {
-            const auto& lval = static_cast< const IntegerConstant& >( lhs ).value();
-            const auto& rval = static_cast< const IntegerConstant& >( rhs ).value();
+            case Type::Kind::INTEGER:  // [fallthrough]
+            case Type::Kind::DECIMAL:  // [fallthrough]
+            case Type::Kind::RATIONAL:
+            {
+                res = symbolicInstruction(
+                    lhs,
+                    rhs,
+                    [ & ]( auto& env, const auto& lhsSym, const auto& rhsSym, const auto& resSym ) {
+                        auto equ = TPTP::FunctorAtom::less( lhsSym, rhsSym );
 
-            res = BooleanConstant( lval < rval );
-            break;
+                        equ->setLeftDelimiter( TPTP::TokenBuilder::LPAREN() );
+                        equ->setRightDelimiter( TPTP::TokenBuilder::RPAREN() );
+
+                        return std::make_shared< TPTP::BinaryLogic >(
+                            resSym, TPTP::BinaryLogic::Connective::EQUIVALENCE, equ );
+                    } );
+                return;
+            }
+            default:
+            {
+                throw InternalException( "unimplemented '" + description() + "'" );
+                break;
+            }
         }
-        default:
+        return;
+    }
+    else
+    {
+        switch( lhs.typeId().kind() )
         {
-            throw InternalException( "unimplemented '" + description() + "'" );
-            break;
+            case Type::Kind::INTEGER:
+            {
+                const auto& lval = static_cast< const IntegerConstant& >( lhs ).value();
+                const auto& rval = static_cast< const IntegerConstant& >( rhs ).value();
+
+                res = BooleanConstant( lval < rval );
+                break;
+            }
+            default:
+            {
+                throw InternalException( "unimplemented '" + description() + "'" );
+                break;
+            }
         }
     }
 }
@@ -2790,26 +3026,60 @@ void LeqInstruction::execute( Constant& res, const Constant& lhs, const Constant
     // |    1 | lhs      | undef | lhs <= rhs | sym'  |
     // |    2 | sym      | undef | sym'       | sym'  |
 
-    // TODO: FIXME: @ppaulweber: symbolic constant and trace @moosbruggerj
-
     assert( lhs.type() == rhs.type() );
 
     if( lhs.defined() and rhs.defined() )
     {
-        switch( lhs.typeId().kind() )
+        if( lhs.symbolic() or rhs.symbolic() )
         {
-            case Type::Kind::INTEGER:
+            switch( lhs.typeId().kind() )
             {
-                const auto& lval = static_cast< const IntegerConstant& >( lhs ).value();
-                const auto& rval = static_cast< const IntegerConstant& >( rhs ).value();
+                case Type::Kind::INTEGER:  // [fallthrough]
+                case Type::Kind::DECIMAL:  // [fallthrough]
+                case Type::Kind::RATIONAL:
+                {
+                    res = symbolicInstruction(
+                        lhs,
+                        rhs,
+                        [ & ](
+                            auto& env,
+                            const auto& lhsSym,
+                            const auto& rhsSym,
+                            const auto& resSym ) {
+                            auto equ = TPTP::FunctorAtom::less_eq( lhsSym, rhsSym );
 
-                res = BooleanConstant( lval <= rval );
-                break;
+                            equ->setLeftDelimiter( TPTP::TokenBuilder::LPAREN() );
+                            equ->setRightDelimiter( TPTP::TokenBuilder::RPAREN() );
+
+                            return std::make_shared< TPTP::BinaryLogic >(
+                                resSym, TPTP::BinaryLogic::Connective::EQUIVALENCE, equ );
+                        } );
+                    return;
+                }
+                default:
+                {
+                    throw InternalException( "unimplemented '" + description() + "'" );
+                    break;
+                }
             }
-            default:
+        }
+        else
+        {
+            switch( lhs.typeId().kind() )
             {
-                throw InternalException( "unimplemented '" + description() + "'" );
-                break;
+                case Type::Kind::INTEGER:
+                {
+                    const auto& lval = static_cast< const IntegerConstant& >( lhs ).value();
+                    const auto& rval = static_cast< const IntegerConstant& >( rhs ).value();
+
+                    res = BooleanConstant( lval <= rval );
+                    break;
+                }
+                default:
+                {
+                    throw InternalException( "unimplemented '" + description() + "'" );
+                    break;
+                }
             }
         }
     }
@@ -2894,8 +3164,6 @@ void GthInstruction::execute( Constant& res, const Constant& lhs, const Constant
     // |    1 | lhs     | undef | lhs > rhs | sym'  |
     // |    2 | sym     | undef | sym'      | sym'  |
 
-    // TODO: FIXME: @ppaulweber: symbolic constant and trace @moosbruggerj
-
     assert( lhs.type() == rhs.type() );
 
     if( not lhs.defined() or not rhs.defined() )
@@ -2904,20 +3172,52 @@ void GthInstruction::execute( Constant& res, const Constant& lhs, const Constant
         return;
     }
 
-    switch( lhs.typeId().kind() )
+    if( lhs.symbolic() or rhs.symbolic() )
     {
-        case Type::Kind::INTEGER:
+        switch( lhs.typeId().kind() )
         {
-            const auto& lval = static_cast< const IntegerConstant& >( lhs ).value();
-            const auto& rval = static_cast< const IntegerConstant& >( rhs ).value();
+            case Type::Kind::INTEGER:  // [fallthrough]
+            case Type::Kind::DECIMAL:  // [fallthrough]
+            case Type::Kind::RATIONAL:
+            {
+                res = symbolicInstruction(
+                    lhs,
+                    rhs,
+                    [ & ]( auto& env, const auto& lhsSym, const auto& rhsSym, const auto& resSym ) {
+                        auto equ = TPTP::FunctorAtom::greater( lhsSym, rhsSym );
 
-            res = BooleanConstant( lval > rval );
-            break;
+                        equ->setLeftDelimiter( TPTP::TokenBuilder::LPAREN() );
+                        equ->setRightDelimiter( TPTP::TokenBuilder::RPAREN() );
+
+                        return std::make_shared< TPTP::BinaryLogic >(
+                            resSym, TPTP::BinaryLogic::Connective::EQUIVALENCE, equ );
+                    } );
+                return;
+            }
+            default:
+            {
+                throw InternalException( "unimplemented '" + description() + "'" );
+                break;
+            }
         }
-        default:
+    }
+    else
+    {
+        switch( lhs.typeId().kind() )
         {
-            throw InternalException( "unimplemented '" + description() + "'" );
-            break;
+            case Type::Kind::INTEGER:
+            {
+                const auto& lval = static_cast< const IntegerConstant& >( lhs ).value();
+                const auto& rval = static_cast< const IntegerConstant& >( rhs ).value();
+
+                res = BooleanConstant( lval > rval );
+                break;
+            }
+            default:
+            {
+                throw InternalException( "unimplemented '" + description() + "'" );
+                break;
+            }
         }
     }
 }
@@ -2997,20 +3297,56 @@ void GeqInstruction::execute( Constant& res, const Constant& lhs, const Constant
 
     if( lhs.defined() and rhs.defined() )
     {
-        switch( lhs.typeId().kind() )
+        if( lhs.symbolic() or rhs.symbolic() )
         {
-            case Type::Kind::INTEGER:
+            switch( lhs.typeId().kind() )
             {
-                const auto& lval = static_cast< const IntegerConstant& >( lhs ).value();
-                const auto& rval = static_cast< const IntegerConstant& >( rhs ).value();
+                case Type::Kind::INTEGER:  // [fallthrough]
+                case Type::Kind::DECIMAL:  // [fallthrough]
+                case Type::Kind::RATIONAL:
+                {
+                    res = symbolicInstruction(
+                        lhs,
+                        rhs,
+                        [ & ](
+                            auto& env,
+                            const auto& lhsSym,
+                            const auto& rhsSym,
+                            const auto& resSym ) {
+                            auto equ = TPTP::FunctorAtom::greater_eq( lhsSym, rhsSym );
 
-                res = BooleanConstant( lval >= rval );
-                break;
+                            equ->setLeftDelimiter( TPTP::TokenBuilder::LPAREN() );
+                            equ->setRightDelimiter( TPTP::TokenBuilder::RPAREN() );
+
+                            return std::make_shared< TPTP::BinaryLogic >(
+                                resSym, TPTP::BinaryLogic::Connective::EQUIVALENCE, equ );
+                        } );
+                    return;
+                }
+                default:
+                {
+                    throw InternalException( "unimplemented '" + description() + "'" );
+                    break;
+                }
             }
-            default:
+        }
+        else
+        {
+            switch( lhs.typeId().kind() )
             {
-                throw InternalException( "unimplemented '" + description() + "'" );
-                break;
+                case Type::Kind::INTEGER:
+                {
+                    const auto& lval = static_cast< const IntegerConstant& >( lhs ).value();
+                    const auto& rval = static_cast< const IntegerConstant& >( rhs ).value();
+
+                    res = BooleanConstant( lval >= rval );
+                    break;
+                }
+                default:
+                {
+                    throw InternalException( "unimplemented '" + description() + "'" );
+                    break;
+                }
             }
         }
     }
