@@ -44,6 +44,7 @@
 
 #include <algorithm>
 #include <map>
+#include <memory>
 #include <string>
 
 #include <libtptp/Logic>
@@ -86,6 +87,23 @@ namespace libcasm_ir
         };
 
       public:
+        class ScopedEnvironment : public std::enable_shared_from_this< ScopedEnvironment >
+        {
+          public:
+            using Ptr = std::shared_ptr< ScopedEnvironment >;
+
+            ScopedEnvironment( SymbolicExecutionEnvironment* environment, const TPTP::Logic::Ptr& logic );
+            ~ScopedEnvironment( void );
+
+          private:
+            void invalidate( void );
+
+          private:
+            SymbolicExecutionEnvironment* m_environment;
+            friend class SymbolicExecutionEnvironment;
+        };
+        friend class ScopedEnvironment;
+
         enum Semantics : u8
         {
             ADD,
@@ -96,10 +114,11 @@ namespace libcasm_ir
         SymbolicExecutionEnvironment( void );
         SymbolicExecutionEnvironment( const SymbolicExecutionEnvironment& other ) = delete;
         SymbolicExecutionEnvironment( const SymbolicExecutionEnvironment&& other ) = delete;
+        ~SymbolicExecutionEnvironment( void );
 
         std::string generateSymbolName( void );
         std::string generateFormulaName( void );
-        std::string generateFunction( const Value& value );
+        std::string generateOperatorFunction( const Value& value );
 
         SymbolicConstant get(
             const std::string& name,
@@ -128,6 +147,8 @@ namespace libcasm_ir
         TPTP::Specification::Ptr finalize( void );
         void incrementTime( void );
 
+        ScopedEnvironment::Ptr makeEnvironment( const TPTP::Logic::Ptr& logic );
+
         const TPTP::Type::Ptr getTPTPType( const Type& type ) const;
         const TPTP::Literal::Ptr tptpLiteralFromNumericConstant( const Constant& constant ) const;
         TPTP::Atom::Ptr tptpAtomFromConstant( const Constant& constant ) const;
@@ -145,12 +166,16 @@ namespace libcasm_ir
         int m_formulaName;
         int m_time;
 
+        std::vector< TPTP::Logic::Ptr > m_environments;
+        std::vector< std::weak_ptr< ScopedEnvironment > > m_scoped_environments;
+
         std::map< Location, int, Location::Comperator > m_symbolSetTimes;
-		std::map< Location, int, Location::Comperator > m_symbolUpdateSet;
+        std::map< Location, int, Location::Comperator > m_symbolUpdateSet;
 
         std::map< std::string, TPTP::FormulaDefinition::Ptr > m_functionDeclarations;
         std::vector< TPTP::FormulaDefinition::Ptr > m_functionDefinitons;
         std::vector< TPTP::FormulaDefinition::Ptr > m_symbolDefinitions;
+        std::vector< TPTP::FormulaDefinition::Ptr > m_functions;
         std::vector< TPTP::FormulaDefinition::Ptr > m_formulae;
     };
 }

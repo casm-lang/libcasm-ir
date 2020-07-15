@@ -67,11 +67,42 @@ bool SymbolicExecutionEnvironment::Location::Comperator::operator()(
     return libstdhl::Hash::value( lhs ) < libstdhl::Hash::value( rhs );
 }
 
+SymbolicExecutionEnvironment::ScopedEnvironment::ScopedEnvironment(
+    SymbolicExecutionEnvironment* environment, const TPTP::Logic::Ptr& logic )
+: m_environment( environment )
+{
+    m_environment->m_environments.push_back( logic );
+}
+
+SymbolicExecutionEnvironment::ScopedEnvironment::~ScopedEnvironment( void )
+{
+    if( m_environment != nullptr )
+    {
+        m_environment->m_environments.pop_back();
+    }
+}
+
+void SymbolicExecutionEnvironment::ScopedEnvironment::invalidate( void )
+{
+    m_environment = nullptr;
+}
+
 SymbolicExecutionEnvironment::SymbolicExecutionEnvironment( void )
 : m_symbolName( 0 )
 , m_formulaName( 0 )
 , m_time( 1 )
 {
+}
+
+SymbolicExecutionEnvironment::~SymbolicExecutionEnvironment( void )
+{
+    for( auto env : m_scoped_environments )
+    {
+        if( auto env_ptr = env.lock() )
+        {
+            env_ptr->invalidate();
+        }
+    }
 }
 
 std::string SymbolicExecutionEnvironment::generateSymbolName( void )
@@ -88,7 +119,7 @@ std::string SymbolicExecutionEnvironment::generateFormulaName( void )
     return stream.str();
 }
 
-std::string SymbolicExecutionEnvironment::generateFunction( const Value& value )
+std::string SymbolicExecutionEnvironment::generateOperatorFunction( const Value& value )
 {
     std::stringstream stream;
     stream << "'#" << Value::token( value.id() ) << "#" << value.type().name() << "'";
@@ -200,7 +231,16 @@ void SymbolicExecutionEnvironment::set(
 
 void SymbolicExecutionEnvironment::addFormula( const TPTP::Logic::Ptr& logic )
 {
-    auto formula = std::make_shared< TPTP::TypedFirstOrderFormula >( logic );
+    TPTP::Logic::Ptr fLogic = logic;
+    for( auto it = m_environments.rbegin(); it != m_environments.rend(); ++it )
+    {
+        fLogic->setLeftDelimiter( TPTP::TokenBuilder::LPAREN() );
+        fLogic->setRightDelimiter( TPTP::TokenBuilder::RPAREN() );
+        const auto implication = std::make_shared< TPTP::BinaryLogic >(
+            *it, TPTP::BinaryLogic::Connective::IMPLICATION, fLogic );
+        fLogic = implication;
+    }
+    auto formula = std::make_shared< TPTP::TypedFirstOrderFormula >( fLogic );
     auto definition = std::make_shared< TPTP::FormulaDefinition >(
         generateFormulaName(), TPTP::Role::hypothesis(), formula );
 
@@ -225,7 +265,12 @@ void SymbolicExecutionEnvironment::addFunctionDeclaration(
         std::make_shared< TPTP::NamedType >( "$o" ),
         TPTP::BinaryType::Kind::MAPPING );
     auto atom = std::make_shared< TPTP::TypeAtom >( fName, mapping );
-    addFormula( atom );
+
+    auto formula = std::make_shared< TPTP::TypedFirstOrderFormula >( atom );
+    auto definition = std::make_shared< TPTP::FormulaDefinition >(
+        generateFormulaName(), TPTP::Role::hypothesis(), formula );
+
+    m_functions.push_back( definition );
 }
 
 void SymbolicExecutionEnvironment::addSymbolDefinition( const TPTP::Logic::Ptr& logic )
@@ -265,6 +310,10 @@ TPTP::Specification::Ptr SymbolicExecutionEnvironment::finalize( void )
     {
         spec->add( def );
     }
+    for( const auto& def : m_functions )
+    {
+        spec->add( def );
+    }
     for( auto& def : m_formulae )
     {
         spec->add( def );
@@ -276,9 +325,21 @@ void SymbolicExecutionEnvironment::incrementTime( void )
 {
     for( auto& update : m_symbolUpdateSet )
     {
-		m_symbolSetTimes[update.first] = update.second;
+        m_symbolSetTimes[ update.first ] = update.second;
     }
     ++m_time;
+}
+
+SymbolicExecutionEnvironment::ScopedEnvironment::Ptr SymbolicExecutionEnvironment::makeEnvironment(
+    const TPTP::Logic::Ptr& logic )
+{
+    const auto env = std::make_shared< ScopedEnvironment >( this, logic );
+    // m_scoped_environments fills with time, if memory problems occur, clear invalid pointers
+    // possible refactor: SymbolicExecutionEnvironment (this) needs to be shared_ptr ->
+    // ScopedEnvironments has weak_ptr reference to SymbolicExecutionEnvironment -> no need for
+    // m_scoped_environments
+    m_scoped_environments.push_back( env );
+    return env;
 }
 
 const TPTP::Type::Ptr SymbolicExecutionEnvironment::getTPTPType( const Type& type ) const
@@ -364,6 +425,7 @@ const TPTP::Literal::Ptr SymbolicExecutionEnvironment::tptpLiteralFromNumericCon
         }
         case Type::Kind::STRING:
         {
+            // TODO: @moosbruggerj fix me
             auto& val = static_cast< const StringConstant& >( constant ).value();
             return std::make_shared< TPTP::IntegerLiteral >( val.toString() );
         }
