@@ -54,6 +54,7 @@
 #include <libtptp/Identifier>
 #include <libtptp/Literal>
 #include <libtptp/Type>
+#include "libstdhl/Optional.h"
 
 using namespace libcasm_ir;
 namespace TPTP = libtptp;
@@ -69,11 +70,13 @@ SymbolicConstant symbolicInstruction(
         SymbolicExecutionEnvironment& env,
         const TPTP::Atom::Ptr&,
         const TPTP::Atom::Ptr&,
-        const TPTP::Atom::Ptr& ) > callback )
+        const TPTP::Atom::Ptr& ) > callback,
+    const libstdhl::Optional< Type::Ptr > resType = {} )
 {
     auto& env = lhs.symbolic() ? static_cast< const SymbolicConstant& >( lhs ).environment()
                                : static_cast< const SymbolicConstant& >( rhs ).environment();
-    SymbolicConstant localRes( lhs.type().ptr_result(), env.generateSymbolName(), env );
+    SymbolicConstant localRes(
+        resType ? *resType : lhs.type().ptr_result(), env.generateSymbolName(), env );
     auto lhsSym = env.tptpAtomFromConstant( lhs );
     auto rhsSym = env.tptpAtomFromConstant( rhs );
 
@@ -1753,7 +1756,7 @@ void AndInstruction::execute( Constant& res, const Constant& lhs, const Constant
                             return std::make_shared< TPTP::BinaryLogic >(
                                 resSym, Connective::EQUIVALENCE, equ );
                         } );
-					return;
+                    return;
                 }
                 else
                 {
@@ -1931,7 +1934,7 @@ void XorInstruction::execute( Constant& res, const Constant& lhs, const Constant
                             return std::make_shared< TPTP::BinaryLogic >(
                                 resSym, Connective::EQUIVALENCE, equ );
                         } );
-					return;
+                    return;
                 }
                 else
                 {
@@ -2101,7 +2104,7 @@ void OrInstruction::execute( Constant& res, const Constant& lhs, const Constant&
                             return std::make_shared< TPTP::BinaryLogic >(
                                 resSym, Connective::EQUIVALENCE, equ );
                         } );
-					return;
+                    return;
                 }
                 else
                 {
@@ -2582,7 +2585,8 @@ void EquInstruction::execute( Constant& res, const Constant& lhs, const Constant
 
                     return std::make_shared< TPTP::BinaryLogic >(
                         resSym, Connective::EQUIVALENCE, equ );
-                } );
+                },
+                Type::fromID( Type::Kind::BOOLEAN ) );
         }
         else
         {
@@ -2748,7 +2752,8 @@ void NeqInstruction::execute( Constant& res, const Constant& lhs, const Constant
 
                     return std::make_shared< TPTP::BinaryLogic >(
                         resSym, TPTP::BinaryLogic::Connective::EQUIVALENCE, equ );
-                } );
+                },
+                Type::fromID( Type::Kind::BOOLEAN ) );
         }
         else
         {
@@ -2918,7 +2923,8 @@ void LthInstruction::execute( Constant& res, const Constant& lhs, const Constant
 
                         return std::make_shared< TPTP::BinaryLogic >(
                             resSym, TPTP::BinaryLogic::Connective::EQUIVALENCE, equ );
-                    } );
+                    },
+                    Type::fromID( Type::Kind::BOOLEAN ) );
                 return;
             }
             default:
@@ -3053,7 +3059,8 @@ void LeqInstruction::execute( Constant& res, const Constant& lhs, const Constant
 
                             return std::make_shared< TPTP::BinaryLogic >(
                                 resSym, TPTP::BinaryLogic::Connective::EQUIVALENCE, equ );
-                        } );
+                        },
+                        Type::fromID( Type::Kind::BOOLEAN ) );
                     return;
                 }
                 default:
@@ -3191,7 +3198,8 @@ void GthInstruction::execute( Constant& res, const Constant& lhs, const Constant
 
                         return std::make_shared< TPTP::BinaryLogic >(
                             resSym, TPTP::BinaryLogic::Connective::EQUIVALENCE, equ );
-                    } );
+                    },
+                    Type::fromID( Type::Kind::BOOLEAN ) );
                 return;
             }
             default:
@@ -3320,7 +3328,8 @@ void GeqInstruction::execute( Constant& res, const Constant& lhs, const Constant
 
                             return std::make_shared< TPTP::BinaryLogic >(
                                 resSym, TPTP::BinaryLogic::Connective::EQUIVALENCE, equ );
-                        } );
+                        },
+                        Type::fromID( Type::Kind::BOOLEAN ) );
                     return;
                 }
                 default:
