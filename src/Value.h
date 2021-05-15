@@ -110,6 +110,7 @@ namespace libcasm_ir
             TUPLE_CONSTANT,
             LIST_CONSTANT,
             DOMAIN_CONSTANT,
+            SYMBOLIC_CONSTANT,
             IDENTIFIER,
 
             INSTRUCTION,

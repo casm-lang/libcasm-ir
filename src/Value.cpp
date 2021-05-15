@@ -352,6 +352,10 @@ std::string Value::token( const Value::ID id )
         {
             return "DomainConstant";
         }
+        case Value::SYMBOLIC_CONSTANT:
+        {
+            return "SymbolicConstant";
+        }
         case Value::IDENTIFIER:
         {
             return "Identifier";

@@ -41,6 +41,7 @@
 
 include_directories(
   ${PROJECT_BINARY_DIR}/src
+  ${LIBTPTP_INCLUDE_DIR}
   ${LIBSTDHL_INCLUDE_DIR}
   ${LIBPASS_INCLUDE_DIR}
 )
@@ -64,6 +65,7 @@ add_library( ${PROJECT}-cpp OBJECT
   Rule.cpp
   Specification.cpp
   Statement.cpp
+  SymbolicExecutionEnvironment.cpp
   Type.cpp
   User.cpp
   Value.cpp
@@ -118,6 +120,7 @@ ecm_generate_headers( ${PROJECT}_HEADERS_CPP
     Rule
     Specification
     Statement
+    SymbolicExecutionEnvironment
     Type
     User
     Value

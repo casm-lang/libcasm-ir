@@ -41,10 +41,14 @@
 
 #include "Constant.h"
 
+#include <libcasm-ir/Exception>
 #include <libcasm-ir/Instruction>
 #include <libstdhl/Random>
+#include <libstdhl/String>
 
 #include <cmath>
+
+#include <libtptp/Type>
 
 using namespace libcasm_ir;
 
@@ -149,7 +153,7 @@ u1 Constant::defined( void ) const
 
 u1 Constant::symbolic( void ) const
 {
-    return false;  // PPA: TODO: FIXME:
+    return isa< SymbolicConstant >( *this );  // PPA: TODO: FIXME:
 }
 
 const libstdhl::Type::Data& Constant::data( void ) const
@@ -204,6 +208,10 @@ std::string Constant::name( void ) const
         case Value::DOMAIN_CONSTANT:
         {
             return static_cast< const DomainConstant* >( this )->toString();
+        }
+        case Value::SYMBOLIC_CONSTANT:
+        {
+            return static_cast< const SymbolicConstant* >( this )->toString();
         }
         case Value::RULE_REFERENCE_CONSTANT:
         {
@@ -278,6 +286,11 @@ void Constant::accept( Visitor& visitor )
         case Value::DOMAIN_CONSTANT:
         {
             static_cast< DomainConstant* >( this )->accept( visitor );
+            break;
+        }
+        case Value::SYMBOLIC_CONSTANT:
+        {
+            static_cast< SymbolicConstant* >( this )->accept( visitor );
             break;
         }
         case Value::RULE_REFERENCE_CONSTANT:
@@ -355,6 +368,11 @@ void Constant::foreach( const std::function< void( const Constant& constant ) >&
             static_cast< const DomainConstant* >( this )->foreach( callback );
             break;
         }
+        case Value::SYMBOLIC_CONSTANT:
+        {
+            callback( *this );
+            break;
+        }
         case Value::RULE_REFERENCE_CONSTANT:
         {
             callback( *this );
@@ -422,6 +440,10 @@ Constant Constant::choose( void ) const
         {
             return static_cast< const DomainConstant* >( this )->choose();
         }
+        case Value::SYMBOLIC_CONSTANT:
+        {
+            return *this;
+        }
         case Value::RULE_REFERENCE_CONSTANT:
         {
             return *this;
@@ -485,6 +507,10 @@ std::size_t Constant::hash( void ) const
         case Value::DOMAIN_CONSTANT:
         {
             return static_cast< const DomainConstant* >( this )->hash();
+        }
+        case Value::SYMBOLIC_CONSTANT:
+        {
+            return static_cast< const SymbolicConstant* >( this )->hash();
         }
         case Value::RULE_REFERENCE_CONSTANT:
         {
@@ -550,6 +576,10 @@ u1 Constant::operator==( const Value& rhs ) const
         {
             return static_cast< const DomainConstant* >( this )->operator==( rhs );
         }
+        case Value::SYMBOLIC_CONSTANT:
+        {
+            return static_cast< const SymbolicConstant* >( this )->operator==( rhs );
+        }
         case Value::RULE_REFERENCE_CONSTANT:
         {
             return static_cast< const RuleReferenceConstant* >( this )->operator==( rhs );
@@ -573,7 +603,8 @@ u1 Constant::classof( Value const* obj )
            BinaryConstant::classof( obj ) or StringConstant::classof( obj ) or
            DecimalConstant::classof( obj ) or RationalConstant::classof( obj ) or
            EnumerationConstant::classof( obj ) or DomainConstant::classof( obj ) or
-           RuleReferenceConstant::classof( obj ) or Identifier::classof( obj );
+           SymbolicConstant::classof( obj ) or RuleReferenceConstant::classof( obj ) or
+           Identifier::classof( obj );
 }
 
 Constant Constant::undef( const Type::Ptr& type )
@@ -1712,6 +1743,121 @@ u1 FunctionReferenceConstant::operator==( const Value& rhs ) const
 u1 FunctionReferenceConstant::classof( Value const* obj )
 {
     return obj->id() == classid();
+}
+
+//
+//
+// Symbolic Constant
+//
+
+SymbolicConstant::SymbolicLayout::SymbolicLayout(
+    const std::string& name, SymbolicExecutionEnvironment& environment )
+: m_name( name )
+, m_environment( environment )
+{
+}
+
+std::size_t SymbolicConstant::SymbolicLayout::hash( void ) const
+{
+    return libstdhl::String::value( name() );
+}
+
+libstdhl::Type::Layout* SymbolicConstant::SymbolicLayout::clone( void ) const
+{
+    return new SymbolicLayout( name(), environment() );
+}
+
+const std::string& SymbolicConstant::SymbolicLayout::name() const
+{
+    return m_name;
+}
+
+SymbolicExecutionEnvironment& SymbolicConstant::SymbolicLayout::environment( void ) const
+{
+    return m_environment;
+}
+
+SymbolicConstant::SymbolicConstant(
+    const Type::Ptr& type, const std::string& name, SymbolicExecutionEnvironment& environment )
+: Constant( type, libstdhl::Type::Data( new SymbolicLayout( name, environment ) ), classid() )
+{
+    environment.addSymbolDefinition( definition() );
+}
+
+SymbolicConstant::SymbolicConstant( const Type::Ptr& type )
+: Constant( type, classid() )
+{
+    // TODO: @moosbruggerj undef symbolic var
+}
+
+std::string SymbolicConstant::toString( void ) const
+{
+    return ( defined() ? value()->name() : undef_str );
+}
+
+void SymbolicConstant::accept( Visitor& visitor )
+{
+    // TODO: @moosbruggerj fix me
+    // visitor.visit( *this );
+}
+
+std::size_t SymbolicConstant::hash( void ) const
+{
+    const auto h = ( ( (std::size_t)classid() ) << 1 ) | defined();
+    return libstdhl::Hash::combine( h, value()->hash() );
+}
+
+u1 SymbolicConstant::operator==( const Value& rhs ) const
+{
+    if( this == &rhs )
+    {
+        return true;
+    }
+
+    if( not Value::operator==( rhs ) )
+    {
+        return false;
+    }
+    const auto& other = static_cast< const SymbolicConstant& >( rhs );
+    return ( this->defined() == other.defined() ) and
+           ( this->value()->name() == other.value()->name() );
+}
+
+u1 SymbolicConstant::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
+
+SymbolicExecutionEnvironment& SymbolicConstant::environment( void ) const
+{
+    if( !defined() )
+    {
+        throw UndefinedConstantException(
+            "unable to get environment from undefined symbol constant." );
+    }
+    return value()->environment();
+}
+
+TPTP::Logic::Ptr SymbolicConstant::definition( void ) const
+{
+    if( !defined() )
+    {
+        throw UndefinedConstantException(
+            "unable to get tptp symbol definition from undefined symbol constant." );
+    }
+    TPTP::Type::Ptr TPTPtype = getTPTPType( *this );
+    return std::make_shared< TPTP::TypeAtom >(
+        std::make_shared< TPTP::Identifier >( name() ), TPTPtype );
+}
+
+const SymbolicConstant::SymbolicLayout* SymbolicConstant::value( void ) const
+{
+    return static_cast< SymbolicLayout* >( m_data.ptr() );
+}
+
+const TPTP::Type::Ptr SymbolicConstant::getTPTPType( const Constant& constant ) const
+{
+    return environment().getTPTPType( constant.type() );
 }
 
 //

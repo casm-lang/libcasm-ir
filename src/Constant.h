@@ -51,6 +51,7 @@
 #include <libcasm-ir/List>
 #include <libcasm-ir/Range>
 #include <libcasm-ir/Rule>
+#include <libcasm-ir/SymbolicExecutionEnvironment>
 #include <libcasm-ir/Tuple>
 
 #include <libstdhl/data/type/Boolean>
@@ -61,10 +62,13 @@
 #include <libstdhl/data/type/Rational>
 #include <libstdhl/data/type/String>
 
+#include <libtptp/Node>
+
 #include <cassert>
 
 namespace libcasm_ir
 {
+    namespace TPTP = libtptp;
     class Constant;
 
     /**
@@ -683,6 +687,60 @@ namespace libcasm_ir
         }
 
         static u1 classof( Value const* obj );
+    };
+
+    class SymbolicConstant final : public Constant
+    {
+      private:
+        class SymbolicLayout final : public libstdhl::Type::Layout
+        {
+          private:
+            const std::string m_name;
+            SymbolicExecutionEnvironment& m_environment;
+
+          public:
+            SymbolicLayout( const std::string& name, SymbolicExecutionEnvironment& environment );
+
+            std::size_t hash( void ) const;
+            Layout* clone( void ) const;
+
+            const std::string& name( void ) const;
+            SymbolicExecutionEnvironment& environment( void ) const;
+        };
+
+      public:
+        using Ptr = std::shared_ptr< SymbolicConstant >;
+
+        SymbolicConstant(
+            const Type::Ptr& type,
+            const std::string& name,
+            SymbolicExecutionEnvironment& environment );
+
+        SymbolicConstant( const Type::Ptr& type );
+
+        std::string toString( void ) const;
+
+        void accept( Visitor& visitor ) override;
+
+        std::size_t hash( void ) const override;
+
+        u1 operator==( const Value& rhs ) const override;
+
+        static inline Value::ID classid( void )
+        {
+            return Value::SYMBOLIC_CONSTANT;
+        }
+
+        static u1 classof( Value const* obj );
+
+        SymbolicExecutionEnvironment& environment( void ) const;
+
+        TPTP::Logic::Ptr definition( void ) const;
+
+      private:
+        const SymbolicLayout* value( void ) const;
+
+        const TPTP::Type::Ptr getTPTPType( const Constant& constant ) const;
     };
 
     class Identifier final : public Constant

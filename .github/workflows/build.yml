@@ -47,7 +47,7 @@ on: [push]
 
 jobs:
   linux-x86_64:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         tool:
@@ -96,7 +96,7 @@ jobs:
         ./bash
 
   darwin-x86_64:
-    runs-on: macos-latest
+    runs-on: macos-10.15
     strategy:
       matrix:
         tool:
@@ -156,10 +156,10 @@ jobs:
         choco install ninja
         make ci-tools
     - name: Install
-      uses: pavpanchekha/setup-z3@1.2.2
+      uses: ppaulweber/github-action-setup-z3@bug/url_fix
       with:
-        version: 4.8.8
-        architecture: x64
+        version: 4.8.10
+        architecture: x64-win
     - name: Fetching
       env:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
