@@ -154,7 +154,7 @@ jobs:
       matrix:
         tool:
         - build: release
-          chain: gcc
+          chain: clang
     env:
       B: ${{ matrix.tool.build }}
       C: ${{ matrix.tool.chain }}
@@ -165,6 +165,7 @@ jobs:
     - name: Setup
       run: |
         make info
+        echo "c:\msys64\mingw64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         choco install ninja
         choco install zip
         make ci-tools
