@@ -92,7 +92,8 @@ namespace libcasm_ir
           public:
             using Ptr = std::shared_ptr< ScopedEnvironment >;
 
-            ScopedEnvironment( SymbolicExecutionEnvironment* environment, const TPTP::Logic::Ptr& logic );
+            ScopedEnvironment(
+                SymbolicExecutionEnvironment* environment, const TPTP::Logic::Ptr& logic );
             ~ScopedEnvironment( void );
 
           private:
@@ -152,6 +153,11 @@ namespace libcasm_ir
         const TPTP::Type::Ptr getTPTPType( const Type& type ) const;
         const TPTP::Literal::Ptr tptpLiteralFromNumericConstant( const Constant& constant ) const;
         TPTP::Atom::Ptr tptpAtomFromConstant( const Constant& constant ) const;
+
+        SymbolicConstant mergeSymbolPaths(
+            const libtptp::Atom::Ptr& tptpCondition,
+            const Constant& thenValue,
+            const Constant& elseValue );
 
       private:
         void generateFunctionDefinition( const Value& value, const std::string& name );
