@@ -77,14 +77,17 @@ SymbolicConstant symbolicInstruction(
                                : static_cast< const SymbolicConstant& >( rhs ).environment();
     SymbolicConstant localRes(
         resType ? *resType : lhs.type().ptr_result(), env.generateSymbolName(), env );
-    auto lhsSym = env.tptpAtomFromConstant( lhs );
-    auto rhsSym = env.tptpAtomFromConstant( rhs );
+    if( lhs.defined() and rhs.defined() )
+    {
+        auto lhsSym = env.tptpAtomFromConstant( lhs );
+        auto rhsSym = env.tptpAtomFromConstant( rhs );
 
-    auto resSym =
-        std::make_shared< TPTP::ConstantAtom >( localRes.name(), TPTP::Atom::Kind::PLAIN );
+        auto resSym =
+            std::make_shared< TPTP::ConstantAtom >( localRes.name(), TPTP::Atom::Kind::PLAIN );
 
-    const auto atom = callback( env, lhsSym, rhsSym, resSym );
-    env.addFormula( atom );
+        const auto atom = callback( env, lhsSym, rhsSym, resSym );
+        env.addFormula( atom );
+    }
 
     return localRes;
 }
@@ -2567,39 +2570,39 @@ void EquInstruction::execute( Constant& res, const Constant& lhs, const Constant
     // |    1 | lhs      | false | lhs == rhs | sym'  |
     // |    2 | sym      | sym'  | sym'       | sym'  |
 
-    if( lhs.defined() and rhs.defined() )
+    if( lhs.symbolic() or rhs.symbolic() )
     {
-        if( lhs.symbolic() or rhs.symbolic() )
-        {
-            res = symbolicInstruction(
-                lhs,
-                rhs,
-                [ & ]( auto& env, const auto& lhsSym, const auto& rhsSym, const auto& resSym ) {
-                    using Connective = TPTP::BinaryLogic::Connective;
+        res = symbolicInstruction(
+            lhs,
+            rhs,
+            [ & ]( auto& env, const auto& lhsSym, const auto& rhsSym, const auto& resSym ) {
+                using Connective = TPTP::BinaryLogic::Connective;
 
-                    auto equ = std::make_shared< TPTP::InfixLogic >(
-                        lhsSym, TPTP::InfixLogic::Connective::EQUALITY, rhsSym );
+                auto equ = std::make_shared< TPTP::InfixLogic >(
+                    lhsSym, TPTP::InfixLogic::Connective::EQUALITY, rhsSym );
 
-                    equ->setLeftDelimiter( TPTP::TokenBuilder::LPAREN() );
-                    equ->setRightDelimiter( TPTP::TokenBuilder::RPAREN() );
+                equ->setLeftDelimiter( TPTP::TokenBuilder::LPAREN() );
+                equ->setRightDelimiter( TPTP::TokenBuilder::RPAREN() );
 
-                    return std::make_shared< TPTP::BinaryLogic >(
-                        resSym, Connective::EQUIVALENCE, equ );
-                },
-                Type::fromID( Type::Kind::BOOLEAN ) );
-        }
-        else
-        {
-            res = BooleanConstant( lhs == rhs );
-        }
-    }
-    else if( lhs.defined() or rhs.defined() )
-    {
-        res = BooleanConstant( false );
+                return std::make_shared< TPTP::BinaryLogic >(
+                    resSym, Connective::EQUIVALENCE, equ );
+            },
+            Type::fromID( Type::Kind::BOOLEAN ) );
     }
     else
     {
-        res = BooleanConstant( true );
+        if( lhs.defined() and rhs.defined() )
+        {
+            res = BooleanConstant( lhs == rhs );
+        }
+        else if( lhs.defined() or rhs.defined() )
+        {
+            res = BooleanConstant( false );
+        }
+        else
+        {
+            res = BooleanConstant( true );
+        }
     }
 }
 
@@ -2734,39 +2737,39 @@ void NeqInstruction::execute( Constant& res, const Constant& lhs, const Constant
     // |    1 | lhs      | true  | lhs != rhs | sym'  |
     // |    2 | sym      | sym'  | sym'       | sym'  |
 
-    if( lhs.defined() and rhs.defined() )
+    if( lhs.symbolic() or rhs.symbolic() )
     {
-        if( lhs.symbolic() or rhs.symbolic() )
-        {
-            res = symbolicInstruction(
-                lhs,
-                rhs,
-                [ & ]( auto& env, const auto& lhsSym, const auto& rhsSym, const auto& resSym ) {
-                    using Connective = TPTP::InfixLogic::Connective;
+        res = symbolicInstruction(
+            lhs,
+            rhs,
+            [ & ]( auto& env, const auto& lhsSym, const auto& rhsSym, const auto& resSym ) {
+                using Connective = TPTP::InfixLogic::Connective;
 
-                    auto equ = std::make_shared< TPTP::InfixLogic >(
-                        lhsSym, Connective::INEQUALITY, rhsSym );
+                auto equ =
+                    std::make_shared< TPTP::InfixLogic >( lhsSym, Connective::INEQUALITY, rhsSym );
 
-                    equ->setLeftDelimiter( TPTP::TokenBuilder::LPAREN() );
-                    equ->setRightDelimiter( TPTP::TokenBuilder::RPAREN() );
+                equ->setLeftDelimiter( TPTP::TokenBuilder::LPAREN() );
+                equ->setRightDelimiter( TPTP::TokenBuilder::RPAREN() );
 
-                    return std::make_shared< TPTP::BinaryLogic >(
-                        resSym, TPTP::BinaryLogic::Connective::EQUIVALENCE, equ );
-                },
-                Type::fromID( Type::Kind::BOOLEAN ) );
-        }
-        else
-        {
-            res = BooleanConstant( lhs != rhs );
-        }
-    }
-    else if( lhs.defined() or rhs.defined() )
-    {
-        res = BooleanConstant( true );
+                return std::make_shared< TPTP::BinaryLogic >(
+                    resSym, TPTP::BinaryLogic::Connective::EQUIVALENCE, equ );
+            },
+            Type::fromID( Type::Kind::BOOLEAN ) );
     }
     else
     {
-        res = BooleanConstant( false );
+        if( lhs.defined() and rhs.defined() )
+        {
+            res = BooleanConstant( lhs != rhs );
+        }
+        else if( lhs.defined() or rhs.defined() )
+        {
+            res = BooleanConstant( true );
+        }
+        else
+        {
+            res = BooleanConstant( false );
+        }
     }
 }
 

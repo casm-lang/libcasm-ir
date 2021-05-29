@@ -450,6 +450,50 @@ TPTP::Atom::Ptr SymbolicExecutionEnvironment::tptpAtomFromConstant( const Consta
     }
 }
 
+SymbolicConstant SymbolicExecutionEnvironment::mergeSymbolPaths(
+    const libtptp::Atom::Ptr& tptpCondition, const Constant& thenValue, const Constant& elseValue )
+{
+    using Connective = TPTP::InfixLogic::Connective;
+    using BConnective = TPTP::BinaryLogic::Connective;
+    assert( thenValue.type().ptr_result() == elseValue.type().ptr_result() );
+
+    SymbolicConstant localRes( thenValue.type().ptr_result(), generateSymbolName(), *this );
+
+    const auto thenSym = tptpAtomFromConstant( thenValue );
+    const auto elseSym = tptpAtomFromConstant( elseValue );
+    const auto resSym = tptpAtomFromConstant( localRes );
+
+    const auto thenEqu =
+        std::make_shared< TPTP::InfixLogic >( thenSym, Connective::EQUALITY, resSym );
+    thenEqu->setLeftDelimiter( TPTP::TokenBuilder::LPAREN() );
+    thenEqu->setRightDelimiter( TPTP::TokenBuilder::RPAREN() );
+
+    const auto elseEqu =
+        std::make_shared< TPTP::InfixLogic >( elseSym, Connective::EQUALITY, resSym );
+    elseEqu->setLeftDelimiter( TPTP::TokenBuilder::LPAREN() );
+    elseEqu->setRightDelimiter( TPTP::TokenBuilder::RPAREN() );
+
+    const auto thenImplication =
+        std::make_shared< TPTP::BinaryLogic >( tptpCondition, BConnective::IMPLICATION, thenEqu );
+    thenImplication->setLeftDelimiter( TPTP::TokenBuilder::LPAREN() );
+    thenImplication->setRightDelimiter( TPTP::TokenBuilder::RPAREN() );
+
+    const auto inverse = std::make_shared< libtptp::UnaryLogic >(
+        libtptp::UnaryLogic::Connective::NEGATION, tptpCondition );
+    inverse->setLeftDelimiter( TPTP::TokenBuilder::LPAREN() );
+    inverse->setRightDelimiter( TPTP::TokenBuilder::RPAREN() );
+    const auto elseImplication =
+        std::make_shared< TPTP::BinaryLogic >( inverse, BConnective::IMPLICATION, elseEqu );
+    elseImplication->setLeftDelimiter( TPTP::TokenBuilder::LPAREN() );
+    elseImplication->setRightDelimiter( TPTP::TokenBuilder::RPAREN() );
+    const auto formula = std::make_shared< TPTP::BinaryLogic >(
+        thenImplication, BConnective::CONJUNCTION, elseImplication );
+
+    addFormula( formula );
+
+    return localRes;
+}
+
 void SymbolicExecutionEnvironment::generateFunctionDefinition(
     const Value& value, const std::string& formulaName )
 {

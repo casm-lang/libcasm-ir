@@ -414,7 +414,7 @@ Builtin::Ptr Builtin::create( const Value::ID id, const Type::Ptr& type )
         }
     }
 
-    assert( not" invalid ID to create IR built-in " );
+    assert( not " invalid ID to create IR built-in " );
     return nullptr;
 }
 
@@ -579,6 +579,12 @@ AssertBuiltin::AssertBuiltin( const Type::Ptr& type )
 void AssertBuiltin::execute( Constant& res, const Constant* reg, const std::size_t size ) const
 {
     const auto& cond = reg[ 0 ];
+    if( cond.symbolic() )
+    {
+        // TODO: @moosbruggerj: add assert trace
+        res = VoidConstant();
+        return;
+    }
     assert( cond.type().isBoolean() );
     const auto& c = static_cast< const BooleanConstant& >( cond ).value();
 
