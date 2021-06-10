@@ -58,7 +58,6 @@ namespace libcasm_ir
 
     class Enumeration;
     class Range;
-    class Tuple;
     class List;
 
     class ParallelBlock;
@@ -81,6 +80,8 @@ namespace libcasm_ir
     class SelectInstruction;
 
     class CallInstruction;
+
+    class SelfInstruction;
 
     class InvInstruction;
     class AddInstruction;
@@ -144,7 +145,6 @@ namespace libcasm_ir
 
         virtual void visit( Enumeration& value ) = 0;
         virtual void visit( Range& value ) = 0;
-        virtual void visit( Tuple& value ) = 0;
         virtual void visit( List& value ) = 0;
 
         virtual void visit( ParallelBlock& value ) = 0;
@@ -170,6 +170,8 @@ namespace libcasm_ir
         virtual void visit( CallInstruction& value ) = 0;
 
         virtual void visit( SelectInstruction& value ) = 0;
+
+        virtual void visit( SelfInstruction& value ) = 0;
 
         virtual void visit( InvInstruction& value ) = 0;
         virtual void visit( AddInstruction& value ) = 0;
@@ -230,7 +232,6 @@ namespace libcasm_ir
 
         void visit( Enumeration& value ) override;
         void visit( Range& value ) override;
-        void visit( Tuple& value ) override;
         void visit( List& value ) override;
 
         void visit( ParallelBlock& value ) override;
@@ -256,6 +257,8 @@ namespace libcasm_ir
         virtual void visit( CallInstruction& value ) override = 0;
 
         virtual void visit( SelectInstruction& value ) override = 0;
+
+        virtual void visit( SelfInstruction& value ) override = 0;
 
         virtual void visit( InvInstruction& value ) override = 0;
         virtual void visit( AddInstruction& value ) override = 0;
@@ -328,7 +331,6 @@ namespace libcasm_ir
 
         void visit( Enumeration& value ) override;
         void visit( Range& value ) override;
-        void visit( Tuple& value ) override;
         void visit( List& value ) override;
 
         void visit( ParallelBlock& value ) override;
@@ -354,6 +356,8 @@ namespace libcasm_ir
         void visit( CallInstruction& value ) override;
 
         void visit( SelectInstruction& value ) override;
+
+        void visit( SelfInstruction& value ) override;
 
         void visit( InvInstruction& value ) override;
         void visit( AddInstruction& value ) override;

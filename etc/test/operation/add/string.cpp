@@ -49,16 +49,14 @@ static const auto type = libstdhl::Memory::get< RelationType >(
     libstdhl::Memory::get< StringType >(),
     Types( { libstdhl::Memory::get< StringType >(), libstdhl::Memory::get< StringType >() } ) );
 
-#define TEST_( NAME, RES, LHS, RHS )                                           \
-    TEST( libcasm_ir__instruction_add_string_string, NAME )                    \
-    {                                                                          \
-        const auto lhs = StringConstant( LHS );                                \
-        const auto rhs = StringConstant( RHS );                                \
-        Constant res;                                                          \
-        Operation::execute( id, *type, res, lhs, rhs );                \
-        EXPECT_TRUE( res == StringConstant( RES ) );                           \
-        EXPECT_STREQ( res.description().c_str(),                               \
-            StringConstant( RES ).description().c_str() );                     \
+#define TEST_( NAME, RES, LHS, RHS )                                                            \
+    TEST( libcasm_ir__instruction_add_string_string, NAME )                                     \
+    {                                                                                           \
+        const Constant reg[ 2 ] = { StringConstant( LHS ), StringConstant( RHS ) };             \
+        Constant res;                                                                           \
+        Operation::execute( id, *type, res, reg, 2 );                                           \
+        EXPECT_TRUE( res == StringConstant( RES ) );                                            \
+        EXPECT_STREQ( res.description().c_str(), StringConstant( RES ).description().c_str() ); \
     }
 
 TEST_( undef__at__undef__undef, , , );

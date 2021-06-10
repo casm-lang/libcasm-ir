@@ -1,5 +1,5 @@
 //
-//  Copyright (C) 2015-2021 CASM Organization <https://casm-lang.org>
+//  Copyright (C) 2015-2019 CASM Organization <https://casm-lang.org>
 //  All rights reserved.
 //
 //  Developed by: Philipp Paulweber
@@ -39,99 +39,36 @@
 //  statement from your version.
 //
 
-#include "Tuple.h"
-
-#include "Constant.h"
-
-#include <cstring>
+#include "../../main.h"
 
 using namespace libcasm_ir;
 
-Tuple::Tuple( const TupleType::Ptr& type, const std::vector< Constant >& elements )
-: Value( type, classid() )
-, m_elements( elements )
+static const auto id = Value::ID::AT_BUILTIN;
+
+TEST( libcasm_ir__builtin_at, tuple )
 {
-    assert( type->arguments().size() == elements.size() );
+    const auto integerType = libstdhl::Memory::get< IntegerType >();
+    const auto tupleTypes = Types( { integerType, integerType, integerType } );
+    const auto tupleType = libstdhl::Memory::make< TupleType >( tupleTypes );
+    const auto atBuiltinType = RelationType( integerType, Types( { tupleType, integerType } ) );
 
-    // TODO: PPA: check if vector of constants equal the tuple type!
-}
+    std::vector< Constant > tupleElements = { IntegerConstant( 123 ),
+                                              IntegerConstant( 231 ),
+                                              IntegerConstant( 321 ) };
 
-Tuple::Tuple(
-    const RecordType::Ptr& type, const std::unordered_map< std::string, Constant >& elements )
-: Value( type, classid() )
-, m_elements()
-{
-    assert( type->arguments().size() >= elements.size() and elements.size() > 0 );
-    assert( not type->elements().empty() );
-
-    for( std::size_t index = 0; index < type->arguments().size(); index++ )
+    for( std::size_t pos = 1; pos <= tupleElements.size(); pos++ )
     {
-        const auto& subTypeName = type->identifiers()[ index ];
+        const std::vector< Constant > arg = { TupleConstant( tupleType, tupleElements ),
+                                              IntegerConstant( pos ) };
+        Constant res;
+        Operation::execute( id, atBuiltinType, res, arg.data(), arg.size() );
 
-        const auto it = elements.find( subTypeName );
-        if( it != elements.cend() )
-        {
-            m_elements.emplace_back( it->second );
-        }
-        else
-        {
-            m_elements.emplace_back( Constant::undef( type->arguments()[ index ] ) );
-        }
+        std::cout << static_cast< const IntegerConstant& >( res ).toString() << " <=> "
+                  << static_cast< const IntegerConstant& >( tupleElements[ pos - 1 ] ).toString()
+                  << "\n";
+
+        EXPECT_TRUE( res == tupleElements[ pos - 1 ] );
     }
-}
-
-const std::vector< Constant >& Tuple::elements( void ) const
-{
-    return m_elements;
-}
-
-const Constant& Tuple::element( const std::size_t atIndex ) const
-{
-    assert( atIndex < m_elements.size() );
-    return m_elements[ atIndex ];
-}
-
-std::string Tuple::name( void ) const
-{
-    std::string n = "(";
-
-    for( auto element : m_elements )
-    {
-        n += element.name() + ", ";
-    }
-
-    return n + ")";
-}
-
-std::size_t Tuple::hash( void ) const
-{
-    return libstdhl::Hash::combine( classid(), std::hash< std::string >()( name() ) );
-}
-
-u1 Tuple::operator==( const Value& rhs ) const
-{
-    if( this == &rhs )
-    {
-        return true;
-    }
-
-    if( not Value::operator==( rhs ) )
-    {
-        return false;
-    }
-
-    const auto& other = static_cast< const Tuple& >( rhs );
-    return this->name() == other.name();
-}
-
-void Tuple::accept( Visitor& visitor )
-{
-    visitor.visit( *this );
-}
-
-u1 Tuple::classof( Value const* obj )
-{
-    return obj->id() == classid();
 }
 
 //

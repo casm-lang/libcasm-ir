@@ -49,404 +49,6 @@
 using namespace libcasm_ir;
 
 void Operation::execute(
-    const Value::ID id, const Type::Ptr& type, Constant& res, const Constant& lhs )
-{
-    switch( id )
-    {
-        //
-        // Arithmethic Instruction
-        //
-        case Value::ID::INV_INSTRUCTION:
-        {
-            execute< InvInstruction >( type, res, lhs );
-            break;
-        }
-
-        //
-        // Logical Instruction
-        //
-        case Value::ID::NOT_INSTRUCTION:
-        {
-            execute< NotInstruction >( type, res, lhs );
-            break;
-        }
-
-        //
-        // General Builtins
-        //
-        case Value::ID::IS_SYMBOLIC_BUILTIN:
-        {
-            execute< IsSymbolicBuiltin >( type, res, &lhs, 1 );
-            break;
-        }
-        case Value::ID::ASSERT_BUILTIN:
-        {
-            execute< AssertBuiltin >( type, res, &lhs, 1 );
-            break;
-        }
-        case Value::ID::ASSURE_BUILTIN:
-        {
-            execute< AssureBuiltin >( type, res, &lhs, 1 );
-            break;
-        }
-        case Value::ID::SIZE_BUILTIN:
-        {
-            execute< SizeBuiltin >( type, res, &lhs, 1 );
-            break;
-        }
-
-        //
-        // Output Builtins
-        //
-        case Value::ID::PRINT_BUILTIN:
-        {
-            execute< PrintBuiltin >( type, res, &lhs, 1 );
-            break;
-        }
-        case Value::ID::PRINTLN_BUILTIN:
-        {
-            execute< PrintLnBuiltin >( type, res, &lhs, 1 );
-            break;
-        }
-
-        //
-        // Casting Builtins
-        //
-        case Value::ID::AS_BOOLEAN_BUILTIN:
-        {
-            execute< AsBooleanBuiltin >( type, res, &lhs, 1 );
-            break;
-        }
-        case Value::ID::AS_INTEGER_BUILTIN:
-        {
-            execute< AsIntegerBuiltin >( type, res, &lhs, 1 );
-            break;
-        }
-        case Value::ID::AS_BINARY_BUILTIN:
-        {
-            execute< AsBinaryBuiltin >( type, res, &lhs, 1 );
-            break;
-        }
-        case Value::ID::AS_STRING_BUILTIN:
-        {
-            execute< AsStringBuiltin >( type, res, &lhs, 1 );
-            break;
-        }
-        case Value::ID::AS_DECIMAL_BUILTIN:
-        {
-            execute< AsDecimalBuiltin >( type, res, &lhs, 1 );
-            break;
-        }
-        case Value::ID::AS_RATIONAL_BUILTIN:
-        {
-            execute< AsRationalBuiltin >( type, res, &lhs, 1 );
-            break;
-        }
-        case Value::ID::AS_ENUMERATION_BUILTIN:
-        {
-            execute< AsEnumerationBuiltin >( type, res, &lhs, 1 );
-            break;
-        }
-
-        //
-        // Stringify Builtins
-        //
-        case Value::ID::DEC_BUILTIN:
-        {
-            execute< DecBuiltin >( type, res, &lhs, 1 );
-            break;
-        }
-        case Value::ID::HEX_BUILTIN:
-        {
-            execute< HexBuiltin >( type, res, &lhs, 1 );
-            break;
-        }
-        case Value::ID::OCT_BUILTIN:
-        {
-            execute< OctBuiltin >( type, res, &lhs, 1 );
-            break;
-        }
-        case Value::ID::BIN_BUILTIN:
-        {
-            execute< BinBuiltin >( type, res, &lhs, 1 );
-            break;
-        }
-
-        //
-        // Binary Builtins
-        //
-        case Value::ID::CLZ_BUILTIN:
-        {
-            execute< ClzBuiltin >( type, res, &lhs, 1 );
-            break;
-        }
-        case Value::ID::CLO_BUILTIN:
-        {
-            execute< CloBuiltin >( type, res, &lhs, 1 );
-            break;
-        }
-        case Value::ID::CLS_BUILTIN:
-        {
-            execute< ClsBuiltin >( type, res, &lhs, 1 );
-            break;
-        }
-
-        default:
-        {
-            throw InternalException(
-                "invalid ID '" + Value::token( id ) + "' to 'execute( res, lhs )'" );
-            break;
-        }
-    }
-}
-
-void Operation::execute(
-    const Value::ID id,
-    const Type::Ptr& type,
-    Constant& res,
-    const Constant& lhs,
-    const Constant& rhs )
-{
-    switch( id )
-    {
-        //
-        // Arithmetic Instruction
-        //
-        case Value::ID::ADD_INSTRUCTION:
-        {
-            execute< AddInstruction >( type, res, lhs, rhs );
-            break;
-        }
-        case Value::ID::SUB_INSTRUCTION:
-        {
-            execute< SubInstruction >( type, res, lhs, rhs );
-            break;
-        }
-        case Value::ID::MUL_INSTRUCTION:
-        {
-            execute< MulInstruction >( type, res, lhs, rhs );
-            break;
-        }
-        case Value::ID::DIV_INSTRUCTION:
-        {
-            execute< DivInstruction >( type, res, lhs, rhs );
-            break;
-        }
-        case Value::ID::POW_INSTRUCTION:
-        {
-            execute< PowInstruction >( type, res, lhs, rhs );
-            break;
-        }
-        case Value::ID::MOD_INSTRUCTION:
-        {
-            execute< ModInstruction >( type, res, lhs, rhs );
-            break;
-        }
-
-        //
-        // Compare Instruction
-        //
-        case Value::ID::EQU_INSTRUCTION:
-        {
-            execute< EquInstruction >( type, res, lhs, rhs );
-            break;
-        }
-        case Value::ID::NEQ_INSTRUCTION:
-        {
-            execute< NeqInstruction >( type, res, lhs, rhs );
-            break;
-        }
-        case Value::ID::LTH_INSTRUCTION:
-        {
-            execute< LthInstruction >( type, res, lhs, rhs );
-            break;
-        }
-        case Value::ID::LEQ_INSTRUCTION:
-        {
-            execute< LeqInstruction >( type, res, lhs, rhs );
-            break;
-        }
-        case Value::ID::GTH_INSTRUCTION:
-        {
-            execute< GthInstruction >( type, res, lhs, rhs );
-            break;
-        }
-        case Value::ID::GEQ_INSTRUCTION:
-        {
-            execute< GeqInstruction >( type, res, lhs, rhs );
-            break;
-        }
-
-        //
-        // Logical Instruction
-        //
-        case Value::ID::OR_INSTRUCTION:
-        {
-            execute< OrInstruction >( type, res, lhs, rhs );
-            break;
-        }
-        case Value::ID::IMP_INSTRUCTION:
-        {
-            execute< ImpInstruction >( type, res, lhs, rhs );
-            break;
-        }
-        case Value::ID::XOR_INSTRUCTION:
-        {
-            execute< XorInstruction >( type, res, lhs, rhs );
-            break;
-        }
-        case Value::ID::AND_INSTRUCTION:
-        {
-            execute< AndInstruction >( type, res, lhs, rhs );
-            break;
-        }
-
-        //
-        // General Builtins
-        //
-
-        //
-        // Arithmetic Builtins
-        //
-        case Value::ID::ADDU_BUILTIN:
-        {
-            const Constant reg[] = { lhs, rhs };
-            execute< AdduBuiltin >( type, res, reg, 2 );
-            break;
-        }
-        case Value::ID::ADDS_BUILTIN:
-        {
-            const Constant reg[] = { lhs, rhs };
-            execute< AddsBuiltin >( type, res, reg, 2 );
-            break;
-        }
-        case Value::ID::SUBU_BUILTIN:
-        {
-            const Constant reg[] = { lhs, rhs };
-            execute< SubuBuiltin >( type, res, reg, 2 );
-            break;
-        }
-        case Value::ID::SUBS_BUILTIN:
-        {
-            const Constant reg[] = { lhs, rhs };
-            execute< SubsBuiltin >( type, res, reg, 2 );
-            break;
-        }
-        case Value::ID::MULU_BUILTIN:
-        {
-            const Constant reg[] = { lhs, rhs };
-            execute< MuluBuiltin >( type, res, reg, 2 );
-            break;
-        }
-        case Value::ID::MULS_BUILTIN:
-        {
-            const Constant reg[] = { lhs, rhs };
-            execute< MulsBuiltin >( type, res, reg, 2 );
-            break;
-        }
-
-        //
-        // Compare Builtins
-        //
-        case Value::ID::LESU_BUILTIN:
-        {
-            const Constant reg[] = { lhs, rhs };
-            execute< LesuBuiltin >( type, res, reg, 2 );
-            break;
-        }
-        case Value::ID::LESS_BUILTIN:
-        {
-            const Constant reg[] = { lhs, rhs };
-            execute< LessBuiltin >( type, res, reg, 2 );
-            break;
-        }
-        case Value::ID::LEQU_BUILTIN:
-        {
-            const Constant reg[] = { lhs, rhs };
-            execute< LequBuiltin >( type, res, reg, 2 );
-            break;
-        }
-        case Value::ID::LEQS_BUILTIN:
-        {
-            const Constant reg[] = { lhs, rhs };
-            execute< LeqsBuiltin >( type, res, reg, 2 );
-            break;
-        }
-        case Value::ID::GREU_BUILTIN:
-        {
-            const Constant reg[] = { lhs, rhs };
-            execute< GreuBuiltin >( type, res, reg, 2 );
-            break;
-        }
-        case Value::ID::GRES_BUILTIN:
-        {
-            const Constant reg[] = { lhs, rhs };
-            execute< GresBuiltin >( type, res, reg, 2 );
-            break;
-        }
-        case Value::ID::GEQU_BUILTIN:
-        {
-            const Constant reg[] = { lhs, rhs };
-            execute< GequBuiltin >( type, res, reg, 2 );
-            break;
-        }
-        case Value::ID::GEQS_BUILTIN:
-        {
-            const Constant reg[] = { lhs, rhs };
-            execute< GeqsBuiltin >( type, res, reg, 2 );
-            break;
-        }
-
-        //
-        // Binary Builtins
-        //
-        case Value::ID::ZEXT_BUILTIN:
-        {
-            const Constant reg[] = { lhs, rhs };
-            execute< ZextBuiltin >( type, res, reg, 2 );
-            break;
-        }
-        case Value::ID::SEXT_BUILTIN:
-        {
-            const Constant reg[] = { lhs, rhs };
-            execute< SextBuiltin >( type, res, reg, 2 );
-            break;
-        }
-        case Value::ID::TRUNC_BUILTIN:
-        {
-            const Constant reg[] = { lhs, rhs };
-            execute< TruncBuiltin >( type, res, reg, 2 );
-            break;
-        }
-        case Value::ID::SHL_BUILTIN:
-        {
-            const Constant reg[] = { lhs, rhs };
-            execute< ShlBuiltin >( type, res, reg, 2 );
-            break;
-        }
-        case Value::ID::SHR_BUILTIN:
-        {
-            const Constant reg[] = { lhs, rhs };
-            execute< ShrBuiltin >( type, res, reg, 2 );
-            break;
-        }
-        case Value::ID::ASHR_BUILTIN:
-        {
-            const Constant reg[] = { lhs, rhs };
-            execute< AshrBuiltin >( type, res, reg, 2 );
-            break;
-        }
-
-        default:
-        {
-            throw InternalException(
-                "invalid ID '" + Value::token( id ) + "' to 'execute( res, lhs, rhs )'" );
-            break;
-        }
-    }
-}
-
-void Operation::execute(
     const Value::ID id,
     const Type::Ptr& type,
     Constant& res,
@@ -455,270 +57,390 @@ void Operation::execute(
 {
     switch( id )
     {
-        //
-        // General Builtins
-        //
-        case Value::ID::ABORT_BUILTIN:
+        case Value::VALUE:                        // [[fallthrough]]
+        case Value::VALUE_LIST:                   // [[fallthrough]]
+        case Value::USER:                         // [[fallthrough]]
+        case Value::SPECIFICATION:                // [[fallthrough]]
+        case Value::AGENT:                        // [[fallthrough]]
+        case Value::RULE:                         // [[fallthrough]]
+        case Value::DERIVED:                      // [[fallthrough]]
+        case Value::FUNCTION:                     // [[fallthrough]]
+        case Value::ENUMERATION:                  // [[fallthrough]]
+        case Value::RANGE:                        // [[fallthrough]]
+        case Value::LIST:                         // [[fallthrough]]
+        case Value::BLOCK:                        // [[fallthrough]]
+        case Value::EXECUTION_SEMANTICS_BLOCK:    // [[fallthrough]]
+        case Value::PARALLEL_BLOCK:               // [[fallthrough]]
+        case Value::SEQUENTIAL_BLOCK:             // [[fallthrough]]
+        case Value::STATEMENT:                    // [[fallthrough]]
+        case Value::TRIVIAL_STATEMENT:            // [[fallthrough]]
+        case Value::BRANCH_STATEMENT:             // [[fallthrough]]
+        case Value::CONSTANT:                     // [[fallthrough]]
+        case Value::VOID_CONSTANT:                // [[fallthrough]]
+        case Value::RULE_REFERENCE_CONSTANT:      // [[fallthrough]]
+        case Value::FUNCTION_REFERENCE_CONSTANT:  // [[fallthrough]]
+        case Value::BOOLEAN_CONSTANT:             // [[fallthrough]]
+        case Value::INTEGER_CONSTANT:             // [[fallthrough]]
+        case Value::BINARY_CONSTANT:              // [[fallthrough]]
+        case Value::STRING_CONSTANT:              // [[fallthrough]]
+        case Value::DECIMAL_CONSTANT:             // [[fallthrough]]
+        case Value::RATIONAL_CONSTANT:            // [[fallthrough]]
+        case Value::ENUMERATION_CONSTANT:         // [[fallthrough]]
+        case Value::RANGE_CONSTANT:               // [[fallthrough]]
+        case Value::TUPLE_CONSTANT:               // [[fallthrough]]
+        case Value::LIST_CONSTANT:                // [[fallthrough]]
+        case Value::DOMAIN_CONSTANT:              // [[fallthrough]]
+        case Value::IDENTIFIER:                   // [[fallthrough]]
+        case Value::INSTRUCTION:                  // [[fallthrough]]
+        case Value::UNARY_INSTRUCTION:            // [[fallthrough]]
+        case Value::BINARY_INSTRUCTION:           // [[fallthrough]]
+        case Value::SELECT_INSTRUCTION:           // [[fallthrough]]
+        case Value::SKIP_INSTRUCTION:             // [[fallthrough]]
+        case Value::FORK_INSTRUCTION:             // [[fallthrough]]
+        case Value::MERGE_INSTRUCTION:            // [[fallthrough]]
+        case Value::LOOKUP_INSTRUCTION:           // [[fallthrough]]
+        case Value::UPDATE_INSTRUCTION:           // [[fallthrough]]
+        case Value::LOCATION_INSTRUCTION:         // [[fallthrough]]
+        case Value::CALL_INSTRUCTION:             // [[fallthrough]]
+        case Value::LOCAL_INSTRUCTION:
         {
-            execute< AbortBuiltin >( type, res, reg, size );
             break;
         }
-        case Value::ID::IS_SYMBOLIC_BUILTIN:
+        case Value::SELF_INSTRUCTION:
+        {
+            execute< SelfInstruction >( type, res, reg[ 0 ] );
+            return;
+        }
+        case Value::OPERATOR_INSTRUCTION:  // [[fallthrough]]
+        case Value::ARITHMETIC_INSTRUCTION:
+        {
+            break;
+        }
+        case Value::INV_INSTRUCTION:
+        {
+            execute< InvInstruction >( type, res, reg[ 0 ] );
+            return;
+        }
+        case Value::ADD_INSTRUCTION:
+        {
+            execute< AddInstruction >( type, res, reg[ 0 ], reg[ 1 ] );
+            return;
+        }
+        case Value::SUB_INSTRUCTION:
+        {
+            execute< SubInstruction >( type, res, reg[ 0 ], reg[ 1 ] );
+            return;
+        }
+        case Value::MUL_INSTRUCTION:
+        {
+            execute< MulInstruction >( type, res, reg[ 0 ], reg[ 1 ] );
+            return;
+        }
+        case Value::DIV_INSTRUCTION:
+        {
+            execute< DivInstruction >( type, res, reg[ 0 ], reg[ 1 ] );
+            return;
+        }
+        case Value::POW_INSTRUCTION:
+        {
+            execute< PowInstruction >( type, res, reg[ 0 ], reg[ 1 ] );
+            return;
+        }
+        case Value::MOD_INSTRUCTION:
+        {
+            execute< ModInstruction >( type, res, reg[ 0 ], reg[ 1 ] );
+            return;
+        }
+        case Value::COMPARE_INSTRUCTION:
+        {
+            break;
+        }
+        case Value::EQU_INSTRUCTION:
+        {
+            execute< EquInstruction >( type, res, reg[ 0 ], reg[ 1 ] );
+            return;
+        }
+        case Value::NEQ_INSTRUCTION:
+        {
+            execute< NeqInstruction >( type, res, reg[ 0 ], reg[ 1 ] );
+            return;
+        }
+        case Value::LTH_INSTRUCTION:
+        {
+            execute< LthInstruction >( type, res, reg[ 0 ], reg[ 1 ] );
+            return;
+        }
+        case Value::LEQ_INSTRUCTION:
+        {
+            execute< LeqInstruction >( type, res, reg[ 0 ], reg[ 1 ] );
+            return;
+        }
+        case Value::GTH_INSTRUCTION:
+        {
+            execute< GthInstruction >( type, res, reg[ 0 ], reg[ 1 ] );
+            return;
+        }
+        case Value::GEQ_INSTRUCTION:
+        {
+            execute< GeqInstruction >( type, res, reg[ 0 ], reg[ 1 ] );
+            return;
+        }
+        case Value::LOGICAL_INSTRUCTION:
+        {
+            break;
+        }
+        case Value::OR_INSTRUCTION:
+        {
+            execute< OrInstruction >( type, res, reg[ 0 ], reg[ 1 ] );
+            return;
+        }
+        case Value::XOR_INSTRUCTION:
+        {
+            execute< XorInstruction >( type, res, reg[ 0 ], reg[ 1 ] );
+            return;
+        }
+        case Value::AND_INSTRUCTION:
+        {
+            execute< AndInstruction >( type, res, reg[ 0 ], reg[ 1 ] );
+            return;
+        }
+        case Value::IMP_INSTRUCTION:
+        {
+            execute< ImpInstruction >( type, res, reg[ 0 ], reg[ 1 ] );
+            return;
+        }
+        case Value::NOT_INSTRUCTION:
+        {
+            execute< NotInstruction >( type, res, reg[ 0 ] );
+            return;
+        }
+        case Value::BUILTIN:
+        case Value::GENERAL_BUILTIN:
+        case Value::IS_SYMBOLIC_BUILTIN:
         {
             execute< IsSymbolicBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::ASSERT_BUILTIN:
+        case Value::ABORT_BUILTIN:
+        {
+            execute< AbortBuiltin >( type, res, reg, size );
+            return;
+        }
+        case Value::ASSERT_BUILTIN:
         {
             execute< AssertBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::ASSURE_BUILTIN:
+        case Value::ASSURE_BUILTIN:
         {
             execute< AssureBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::SIZE_BUILTIN:
+        case Value::SIZE_BUILTIN:
         {
             execute< SizeBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::AT_BUILTIN:
+        case Value::AT_BUILTIN:
         {
             execute< AtBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-
-        //
-        // Output Builtins
-        //
-        case Value::ID::PRINT_BUILTIN:
+        case Value::OUTPUT_BUILTIN:
+        case Value::PRINT_BUILTIN:
         {
             execute< PrintBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::PRINTLN_BUILTIN:
+        case Value::PRINTLN_BUILTIN:
         {
             execute< PrintLnBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-
-        //
-        // Casting Builtins
-        //
-        case Value::ID::AS_BOOLEAN_BUILTIN:
+        case Value::CASTING_BUILTIN:
+        case Value::AS_BOOLEAN_BUILTIN:
         {
             execute< AsBooleanBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::AS_INTEGER_BUILTIN:
+        case Value::AS_INTEGER_BUILTIN:
         {
             execute< AsIntegerBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::AS_BINARY_BUILTIN:
+        case Value::AS_BINARY_BUILTIN:
         {
             execute< AsBinaryBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::AS_STRING_BUILTIN:
+        case Value::AS_STRING_BUILTIN:
         {
             execute< AsStringBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::AS_DECIMAL_BUILTIN:
+        case Value::AS_DECIMAL_BUILTIN:
         {
             execute< AsDecimalBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::AS_RATIONAL_BUILTIN:
+        case Value::AS_RATIONAL_BUILTIN:
         {
             execute< AsRationalBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::AS_ENUMERATION_BUILTIN:
+        case Value::AS_ENUMERATION_BUILTIN:
         {
             execute< AsEnumerationBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-
-        //
-        // Stringify Builtins
-        //
-        case Value::ID::DEC_BUILTIN:
+        case Value::STRINGIFY_BUILTIN:
+        case Value::DEC_BUILTIN:
         {
             execute< DecBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::HEX_BUILTIN:
+        case Value::HEX_BUILTIN:
         {
             execute< HexBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::OCT_BUILTIN:
+        case Value::OCT_BUILTIN:
         {
             execute< OctBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::BIN_BUILTIN:
+        case Value::BIN_BUILTIN:
         {
             execute< BinBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-
-        //
-        // Arithmetic Builtins
-        //
-        case Value::ID::ADDU_BUILTIN:
+        case Value::OPERATOR_BUILTIN:
+        case Value::ARITHMETIC_BUILTIN:
+        case Value::ADDU_BUILTIN:
         {
             execute< AdduBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::ADDS_BUILTIN:
+        case Value::ADDS_BUILTIN:
         {
             execute< AddsBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::SUBU_BUILTIN:
+        case Value::SUBU_BUILTIN:
         {
             execute< SubuBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::SUBS_BUILTIN:
+        case Value::SUBS_BUILTIN:
         {
             execute< SubsBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::MULU_BUILTIN:
+        case Value::MULU_BUILTIN:
         {
             execute< MuluBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::MULS_BUILTIN:
+        case Value::MULS_BUILTIN:
         {
             execute< MulsBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-
-        //
-        // Compare Builtins
-        //
-        case Value::ID::LESU_BUILTIN:
+        case Value::COMPARE_BUILTIN:
+        case Value::LESU_BUILTIN:
         {
             execute< LesuBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::LESS_BUILTIN:
+        case Value::LESS_BUILTIN:
         {
             execute< LessBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::LEQU_BUILTIN:
+        case Value::LEQU_BUILTIN:
         {
             execute< LequBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::LEQS_BUILTIN:
+        case Value::LEQS_BUILTIN:
         {
             execute< LeqsBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::GREU_BUILTIN:
+        case Value::GREU_BUILTIN:
         {
             execute< GreuBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::GRES_BUILTIN:
+        case Value::GRES_BUILTIN:
         {
             execute< GresBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::GEQU_BUILTIN:
+        case Value::GEQU_BUILTIN:
         {
             execute< GequBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::GEQS_BUILTIN:
+        case Value::GEQS_BUILTIN:
         {
             execute< GeqsBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-
-        //
-        // Binary Builtins
-        //
-        case Value::ID::ZEXT_BUILTIN:
+        case Value::BINARY_BUILTIN:
+        case Value::ZEXT_BUILTIN:
         {
             execute< ZextBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::SEXT_BUILTIN:
+        case Value::SEXT_BUILTIN:
         {
             execute< SextBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::TRUNC_BUILTIN:
+        case Value::TRUNC_BUILTIN:
         {
             execute< TruncBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::SHL_BUILTIN:
+        case Value::SHL_BUILTIN:
         {
             execute< ShlBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::SHR_BUILTIN:
+        case Value::SHR_BUILTIN:
         {
             execute< ShrBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::ASHR_BUILTIN:
+        case Value::ASHR_BUILTIN:
         {
             execute< AshrBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::CLZ_BUILTIN:
+        case Value::CLZ_BUILTIN:
         {
             execute< ClzBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::CLO_BUILTIN:
+        case Value::CLO_BUILTIN:
         {
             execute< CloBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-        case Value::ID::CLS_BUILTIN:
+        case Value::CLS_BUILTIN:
         {
             execute< ClsBuiltin >( type, res, reg, size );
-            break;
+            return;
         }
-
-            // //
-            // // Math Builtins
-            // //
-
-            // case Value::ID::POW_BUILTIN:
-            // {
-            //     //execute< PowBuiltin
-            //     >(
-            //         type, res, reg, size );
-            // break;
-            // }
-            // case Value::ID::RAND_BUILTIN:
-            // {
-            //     //execute< RandBuiltin
-            //     >(
-            //         type, res, reg, size );
-            // break;
-            // }
-
-        default:
+        case Value::_SIZE_:
         {
-            throw InternalException(
-                "invalid ID '" + Value::token( id ) + "' to 'execute( res, reg*, size )'" );
             break;
         }
     }
+
+    throw InternalException(
+        "invalid ID '" + Value::token( id ) + "' to 'execute( res, reg*, size )'" );
 }
 
 //

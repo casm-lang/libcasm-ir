@@ -45,25 +45,24 @@ using namespace libcasm_ir;
 
 static const auto id = Value::ID::INV_INSTRUCTION;
 
-static const auto type
-    = libstdhl::Memory::get< RelationType >( libstdhl::Memory::get< IntegerType >(),
-        Types( { libstdhl::Memory::get< IntegerType >() } ) );
+static const auto type = libstdhl::Memory::get< RelationType >(
+    libstdhl::Memory::get< IntegerType >(), Types( { libstdhl::Memory::get< IntegerType >() } ) );
 
-#define CALC_( ARG )                                                           \
-    const auto arg = IntegerConstant( ARG );                                   \
-    Constant res;                                                              \
-    Operation::execute( id, *type, res, arg );
+#define CALC_( ARG )                         \
+    const auto arg = IntegerConstant( ARG ); \
+    Constant res;                            \
+    Operation::execute( id, *type, res, &arg, 1 );
 
-#define TEST_( NAME, RES, ARG )                                                \
-    TEST( libcasm_ir__instruction_inv_integer, NAME )                          \
-    {                                                                          \
-        CALC_( ARG );                                                          \
-        EXPECT_TRUE( res == IntegerConstant( RES ) );                          \
-        EXPECT_STREQ( res.description().c_str(),                               \
-            IntegerConstant( RES ).description().c_str() );                    \
+#define TEST_( NAME, RES, ARG )                                                                  \
+    TEST( libcasm_ir__instruction_inv_integer, NAME )                                            \
+    {                                                                                            \
+        CALC_( ARG );                                                                            \
+        EXPECT_TRUE( res == IntegerConstant( RES ) );                                            \
+        EXPECT_STREQ( res.description().c_str(), IntegerConstant( RES ).description().c_str() ); \
     }
 
-// BENCHMARK( libcasm_ir__instruction_inv_integer, example, 10, 10 ) // TODO: PPA: FIXME: move this to the benchmarks!!!
+// BENCHMARK( libcasm_ir__instruction_inv_integer, example, 10, 10 ) // TODO: PPA: FIXME: move this
+// to the benchmarks!!!
 // {
 //     CALC_( 123 );
 // }

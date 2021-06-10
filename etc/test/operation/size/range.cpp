@@ -54,16 +54,16 @@ TEST( libcasm_ir__builtin_size, range_integer )
     const Constant arg = RangeConstant( rangeType, IntegerConstant( -4 ), IntegerConstant( 13 ) );
     Constant res;
 
-    Operation::execute( id, sizeBuiltinType, res, arg );
+    Operation::execute( id, sizeBuiltinType, res, &arg, 1 );
     EXPECT_TRUE( res == IntegerConstant( ( 13 ) - ( -4 ) + 1 ) );
 
-    Operation::execute( id, sizeBuiltinType, res, arg );
+    Operation::execute( id, sizeBuiltinType, res, &arg, 1 );
     EXPECT_FALSE( res == IntegerConstant( 0 ) );
 
-    Operation::execute( id, sizeBuiltinType, res, arg );
+    Operation::execute( id, sizeBuiltinType, res, &arg, 1 );
     EXPECT_FALSE( res == IntegerConstant( 1234 ) );
 
-    Operation::execute( id, sizeBuiltinType, res, arg );
+    Operation::execute( id, sizeBuiltinType, res, &arg, 1 );
     EXPECT_FALSE( res == IntegerConstant() );
 }
 
@@ -76,16 +76,16 @@ TEST( libcasm_ir__builtin_size, range_undef )
     const Constant arg = RangeConstant( rangeType );
     Constant res;
 
-    Operation::execute( id, sizeBuiltinType, res, arg );
+    Operation::execute( id, sizeBuiltinType, res, &arg, 1 );
     EXPECT_TRUE( res == IntegerConstant() );
 
-    Operation::execute( id, sizeBuiltinType, res, arg );
+    Operation::execute( id, sizeBuiltinType, res, &arg, 1 );
     EXPECT_FALSE( res == IntegerConstant( -1234 ) );
 
-    Operation::execute( id, sizeBuiltinType, res, arg );
+    Operation::execute( id, sizeBuiltinType, res, &arg, 1 );
     EXPECT_FALSE( res == IntegerConstant( 0 ) );
 
-    Operation::execute( id, sizeBuiltinType, res, arg );
+    Operation::execute( id, sizeBuiltinType, res, &arg, 1 );
     EXPECT_FALSE( res == IntegerConstant( 1234 ) );
 }
 

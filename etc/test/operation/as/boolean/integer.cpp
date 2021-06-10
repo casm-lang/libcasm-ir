@@ -46,16 +46,15 @@ using namespace libcasm_ir;
 static const auto id = Value::ID::AS_BOOLEAN_BUILTIN;
 
 static const auto type = libstdhl::Memory::get< RelationType >(
-    libstdhl::Memory::get< BooleanType >(),
-    Types( { libstdhl::Memory::get< IntegerType >() } ) );
+    libstdhl::Memory::get< BooleanType >(), Types( { libstdhl::Memory::get< IntegerType >() } ) );
 
-#define TEST_( NAME, FROM, TO )                                                \
-    TEST( libcasm_ir__builtin_as_boolean_integer, NAME )                       \
-    {                                                                          \
-        const auto arg = IntegerConstant( FROM );                              \
-        Constant res;                                                          \
-        Operation::execute( id, *type, res, arg );                     \
-        EXPECT_TRUE( res == BooleanConstant( TO ) );                           \
+#define TEST_( NAME, FROM, TO )                          \
+    TEST( libcasm_ir__builtin_as_boolean_integer, NAME ) \
+    {                                                    \
+        const auto arg = IntegerConstant( FROM );        \
+        Constant res;                                    \
+        Operation::execute( id, *type, res, &arg, 1 );   \
+        EXPECT_TRUE( res == BooleanConstant( TO ) );     \
     }
 
 TEST_( undef_at_undef, , );

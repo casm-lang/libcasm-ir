@@ -194,7 +194,7 @@ u1 Type::isString( void ) const
 
 u1 Type::isComposed( void ) const
 {
-    return isEnumeration() or isRange() or isTuple() or isRecord() or isList();
+    return isEnumeration() or isRange() or isTuple() or isRecord() or isList() or isObject();
 }
 
 u1 Type::isEnumeration( void ) const
@@ -220,6 +220,11 @@ u1 Type::isRecord( void ) const
 u1 Type::isList( void ) const
 {
     return kind() == Type::Kind::LIST;
+}
+
+u1 Type::isObject( void ) const
+{
+    return kind() == Type::Kind::OBJECT;
 }
 
 u1 Type::isReference( void ) const
@@ -276,6 +281,11 @@ Type::Ptr Type::fromID( const Type::ID id )
                 return TYPE_LOCATION;
             }
             case libcasm_ir::Type::Kind::RELATION:
+            {
+                assert( !" invalid ID!" );
+                break;
+            }
+            case libcasm_ir::Type::Kind::OBJECT:
             {
                 assert( !" invalid ID!" );
                 break;
@@ -413,6 +423,10 @@ std::string Type::token( const Type::Kind kind )
         case Type::Kind::LIST:
         {
             return "List";
+        }
+        case Type::Kind::OBJECT:
+        {
+            return "Object";
         }
         // reference
         case Type::Kind::RULE_REFERENCE:
@@ -1632,6 +1646,47 @@ void ListType::validate( const Constant& constant ) const
 }
 
 std::size_t ListType::hash( void ) const
+{
+    return std::hash< std::string >()( name() );
+}
+
+//
+//
+// Object Type
+//
+
+ObjectType::ObjectType( const std::string& name )
+: SyntheticType( classid() )
+, m_name( name )
+{
+}
+
+std::string ObjectType::name( void ) const
+{
+    return m_name;
+}
+
+std::string ObjectType::description( void ) const
+{
+    return m_name;
+}
+
+void ObjectType::foreach( const std::function< void( const Constant& constant ) >& callback ) const
+{
+    // this type has no range to process
+}
+
+Constant ObjectType::choose( void ) const
+{
+    return DomainConstant( ptr_this< Type >() );
+}
+
+void ObjectType::validate( const Constant& constant ) const
+{
+    // omit, every constant can be an object
+}
+
+std::size_t ObjectType::hash( void ) const
 {
     return std::hash< std::string >()( name() );
 }

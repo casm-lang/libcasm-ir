@@ -524,6 +524,7 @@ u1 CallInstruction::classof( Value const* obj )
 }
 
 //
+//
 // Select Instruction
 //
 
@@ -543,6 +544,37 @@ u1 SelectInstruction::classof( Value const* obj )
     return obj->id() == classid();
 }
 
+//
+//
+// Self Instruction
+//
+
+SelfInstruction::SelfInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
+: Instruction( lhs->type().ptr_type(), classid(), { lhs } )
+{
+}
+
+SelfInstruction::SelfInstruction( const Type::Ptr& type )
+: Instruction( type->ptr_result(), classid() )
+{
+}
+
+void SelfInstruction::accept( Visitor& visitor )
+{
+    visitor.visit( *this );
+}
+
+void SelfInstruction::execute( Constant& res, const Constant& lhs ) const
+{
+    throw InternalException( "WTF!" );
+}
+
+u1 SelfInstruction::classof( Value const* obj )
+{
+    return obj->id() == classid();
+}
+
+//
 //
 // Operator Instruction
 //
@@ -2550,7 +2582,7 @@ EquInstruction::EquInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 EquInstruction::EquInstruction( const Type::Ptr& type )
 : CompareInstruction( BOOLEAN, classid() )
 {
-    assert( type->isBoolean() );
+    assert( type->result().isBoolean() );
 }
 
 void EquInstruction::accept( Visitor& visitor )
@@ -2717,7 +2749,7 @@ NeqInstruction::NeqInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 NeqInstruction::NeqInstruction( const Type::Ptr& type )
 : CompareInstruction( BOOLEAN, classid() )
 {
-    assert( type->isBoolean() );
+    assert( type->result().isBoolean() );
 }
 
 void NeqInstruction::accept( Visitor& visitor )
@@ -2884,7 +2916,7 @@ LthInstruction::LthInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 LthInstruction::LthInstruction( const Type::Ptr& type )
 : CompareInstruction( BOOLEAN, classid() )
 {
-    assert( type->isBoolean() );
+    assert( type->result().isBoolean() );
 }
 
 void LthInstruction::execute( Constant& res, const Constant& lhs, const Constant& rhs ) const
@@ -3015,7 +3047,7 @@ LeqInstruction::LeqInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 LeqInstruction::LeqInstruction( const Type::Ptr& type )
 : CompareInstruction( BOOLEAN, classid() )
 {
-    assert( type->isBoolean() );
+    assert( type->result().isBoolean() );
 }
 
 void LeqInstruction::accept( Visitor& visitor )
@@ -3154,7 +3186,7 @@ GthInstruction::GthInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 GthInstruction::GthInstruction( const Type::Ptr& type )
 : CompareInstruction( BOOLEAN, classid() )
 {
-    assert( type->isBoolean() );
+    assert( type->result().isBoolean() );
 }
 
 void GthInstruction::accept( Visitor& visitor )
@@ -3284,7 +3316,7 @@ GeqInstruction::GeqInstruction( const Value::Ptr& lhs, const Value::Ptr& rhs )
 GeqInstruction::GeqInstruction( const Type::Ptr& type )
 : CompareInstruction( BOOLEAN, classid() )
 {
-    assert( type->isBoolean() );
+    assert( type->result().isBoolean() );
 }
 
 void GeqInstruction::accept( Visitor& visitor )

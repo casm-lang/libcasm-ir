@@ -52,14 +52,13 @@ static const auto type = libstdhl::Memory::get< RelationType >(
     libstdhl::Memory::get< StringType >(),
     Types( { libstdhl::Memory::make< EnumerationType >( definition ) } ) );
 
-#define TEST_( NAME, TO, FROM )                                                \
-    TEST( libcasm_ir__builtin_as_string_enumeration, NAME )                    \
-    {                                                                          \
-        const auto arg = EnumerationConstant FROM;                             \
-        Constant res;                                                          \
-        Operation::execute( id, *type, res, arg );                     \
-        EXPECT_STREQ( res.description().c_str(),                               \
-            StringConstant( TO ).description().c_str() );                      \
+#define TEST_( NAME, TO, FROM )                                                                \
+    TEST( libcasm_ir__builtin_as_string_enumeration, NAME )                                    \
+    {                                                                                          \
+        const auto arg = EnumerationConstant FROM;                                             \
+        Constant res;                                                                          \
+        Operation::execute( id, *type, res, &arg, 1 );                                         \
+        EXPECT_STREQ( res.description().c_str(), StringConstant( TO ).description().c_str() ); \
     }
 
 TEST_( undef_at_undef, , ( definition ) );

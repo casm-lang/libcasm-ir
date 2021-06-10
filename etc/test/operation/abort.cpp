@@ -53,7 +53,7 @@ static const auto type =
 TEST( libcasm_ir__builtin_abort, call )
 {
     Constant res;
-    EXPECT_THROW( Operation::execute( id, *type, res );, AbortException );
+    EXPECT_THROW( Operation::execute( id, *type, res, nullptr, 0 );, AbortException );
 }
 
 //

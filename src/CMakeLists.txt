@@ -58,7 +58,6 @@ add_library( ${PROJECT}-cpp OBJECT
   Function.cpp
   Instruction.cpp
   Range.cpp
-  Tuple.cpp
   List.cpp
   Property.cpp
   Operation.cpp
@@ -114,7 +113,6 @@ ecm_generate_headers( ${PROJECT}_HEADERS_CPP
     libcasm-ir
     Property
     Range
-    Tuple
     List
     Operation
     Rule

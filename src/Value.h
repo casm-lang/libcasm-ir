@@ -83,7 +83,6 @@ namespace libcasm_ir
             FUNCTION,
             ENUMERATION,
             RANGE,
-            TUPLE,
             LIST,
 
             BLOCK,
@@ -127,6 +126,8 @@ namespace libcasm_ir
             LOCATION_INSTRUCTION,
             CALL_INSTRUCTION,
             LOCAL_INSTRUCTION,
+
+            SELF_INSTRUCTION,
 
             OPERATOR_INSTRUCTION,
             ARITHMETIC_INSTRUCTION,

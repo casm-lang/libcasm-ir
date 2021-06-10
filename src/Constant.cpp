@@ -201,6 +201,10 @@ std::string Constant::name( void ) const
         {
             return static_cast< const RangeConstant* >( this )->toString();
         }
+        case Value::TUPLE_CONSTANT:
+        {
+            return static_cast< const TupleConstant* >( this )->toString();
+        }
         case Value::LIST_CONSTANT:
         {
             return static_cast< const ListConstant* >( this )->toString();
@@ -665,6 +669,10 @@ Constant Constant::undef( const Type::Ptr& type )
         {
             return RecordConstant( std::static_pointer_cast< RecordType >( type ) );
         }
+        case Type::Kind::OBJECT:
+        {
+            return DomainConstant( std::static_pointer_cast< ObjectType >( type ) );
+        }
         case Type::Kind::RULE_REFERENCE:
         {
             return RuleReferenceConstant( type );
@@ -695,7 +703,7 @@ Constant Constant::undef( const Type::Ptr& type )
 
 //
 //
-// Constants
+// Void Constant
 //
 
 VoidConstant::VoidConstant( void )
@@ -1368,14 +1376,44 @@ u1 RangeConstant::classof( Value const* obj )
 }
 
 //
+//
+// Tuple Constant (Layout)
+//
+
+TupleConstant::TupleLayout::TupleLayout( const std::vector< Constant >& elements )
+: m_elements( elements )
+{
+}
+
+const std::vector< Constant >& TupleConstant::TupleLayout::elements( void ) const
+{
+    return m_elements;
+}
+
+std::size_t TupleConstant::TupleLayout::hash( void ) const
+{
+    std::size_t hashSum = 0;
+
+    for( const auto& element : elements() )
+    {
+        hashSum = libstdhl::Hash::combine( hashSum, element.hash() );
+    }
+
+    return hashSum;
+}
+
+libstdhl::Type::Layout* TupleConstant::TupleLayout::clone( void ) const
+{
+    return new TupleLayout( elements() );
+}
+
+//
+//
 // Tuple Constant
 //
 
 TupleConstant::TupleConstant( const TupleType::Ptr& type, const std::vector< Constant >& elements )
-: Constant(
-      type,
-      libstdhl::Type::Data( ( u64 )( std::make_shared< Tuple >( type, elements ) ).get(), false ),
-      classid() )
+: Constant( type, libstdhl::Type::Data( new TupleLayout( elements ) ), classid() )
 {
     assert( type );
 }
@@ -1388,12 +1426,31 @@ TupleConstant::TupleConstant( const TupleType::Ptr& type )
 
 TupleConstant::TupleConstant(
     const RecordType::Ptr& type, const std::unordered_map< std::string, Constant >& elements )
-: Constant(
-      type,
-      libstdhl::Type::Data( ( u64 )( std::make_shared< Tuple >( type, elements ) ).get(), false ),
-      classid() )
+: Constant( type, classid() )
 {
     assert( type );
+    assert( type->arguments().size() >= elements.size() and elements.size() > 0 );
+    assert( not type->elements().empty() );
+
+    std::vector< Constant > tupleElements;
+    tupleElements.reserve( elements.size() );
+
+    for( std::size_t index = 0; index < type->arguments().size(); index++ )
+    {
+        const auto& subTypeName = type->identifiers()[ index ];
+
+        const auto it = elements.find( subTypeName );
+        if( it != elements.cend() )
+        {
+            tupleElements.emplace_back( it->second );
+        }
+        else
+        {
+            tupleElements.emplace_back( Constant::undef( type->arguments()[ index ] ) );
+        }
+    }
+
+    m_data = libstdhl::Type::Data( new TupleLayout( tupleElements ) );
 }
 
 TupleConstant::TupleConstant( const RecordType::Ptr& type )
@@ -1402,22 +1459,41 @@ TupleConstant::TupleConstant( const RecordType::Ptr& type )
     assert( type );
 }
 
-const Tuple* TupleConstant::value( void ) const
+const Constant& TupleConstant::value( const std::size_t position ) const
 {
-    return (Tuple*)m_data.value();
+    assert( position >= 1 and position <= cardinality() );
+    return value()->elements()[ position - 1 ];
+}
+
+std::size_t TupleConstant::cardinality( void ) const
+{
+    if( not defined() )
+    {
+        return 0;
+    }
+
+    return value()->elements().size();
 }
 
 std::string TupleConstant::toString( void ) const
 {
-    const auto& v = value();
-    if( v )
-    {
-        return v->name();
-    }
-    else
+    if( not defined() )
     {
         return undef_str;
     }
+
+    std::stringstream stream;
+    stream << "(";
+
+    for( const auto& element : value()->elements() )
+    {
+        stream << element.name() << ", ";
+    }
+
+    stream.seekp( -1, stream.cur );
+    stream << ")";
+
+    return stream.str();
 }
 
 void TupleConstant::accept( Visitor& visitor )
@@ -1441,6 +1517,11 @@ std::size_t TupleConstant::hash( void ) const
 {
     const auto h = ( ( (std::size_t)classid() ) << 1 ) | defined();
     return libstdhl::Hash::combine( h, value()->hash() );
+}
+
+const TupleConstant::TupleLayout* TupleConstant::value( void ) const
+{
+    return static_cast< TupleLayout* >( m_data.ptr() );
 }
 
 u1 TupleConstant::operator==( const Value& rhs ) const

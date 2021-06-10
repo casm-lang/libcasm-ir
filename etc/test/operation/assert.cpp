@@ -54,21 +54,21 @@ TEST( libcasm_ir__builtin_assert, undef )
 {
     const auto arg = BooleanConstant();
     Constant res;
-    EXPECT_THROW( Operation::execute( id, *type, res, arg );, UndefinedConstantException );
+    EXPECT_THROW( Operation::execute( id, *type, res, &arg, 1 );, UndefinedConstantException );
 }
 
 TEST( libcasm_ir__builtin_assert, false )
 {
     const auto arg = BooleanConstant( false );
     Constant res;
-    EXPECT_THROW( Operation::execute( id, *type, res, arg );, AssertionException );
+    EXPECT_THROW( Operation::execute( id, *type, res, &arg, 1 );, AssertionException );
 }
 
 TEST( libcasm_ir__builtin_assert, true )
 {
     const auto arg = BooleanConstant( true );
     Constant res;
-    Operation::execute( id, *type, res, arg );
+    Operation::execute( id, *type, res, &arg, 1 );
     EXPECT_TRUE( res == VoidConstant() );
 }
 

@@ -102,7 +102,6 @@ namespace libcasm_ir
 
         void visit( Enumeration& value ) override;
         void visit( Range& value ) override;
-        void visit( Tuple& value ) override;
         void visit( List& value ) override;
 
         void visit( ParallelBlock& value ) override;
@@ -128,6 +127,8 @@ namespace libcasm_ir
         void visit( CallInstruction& value ) override;
 
         void visit( SelectInstruction& value ) override;
+
+        void visit( SelfInstruction& value ) override;
 
         void visit( InvInstruction& value ) override;
         void visit( AddInstruction& value ) override;

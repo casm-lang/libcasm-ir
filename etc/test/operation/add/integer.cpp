@@ -47,22 +47,19 @@ static const auto id = Value::ID::ADD_INSTRUCTION;
 
 static const auto type = libstdhl::Memory::get< RelationType >(
     libstdhl::Memory::get< IntegerType >(),
-    Types(
-        { libstdhl::Memory::get< IntegerType >(), libstdhl::Memory::get< IntegerType >() } ) );
+    Types( { libstdhl::Memory::get< IntegerType >(), libstdhl::Memory::get< IntegerType >() } ) );
 
-#define CALC_( LHS, RHS )                                                      \
-    const auto lhs = IntegerConstant( LHS );                                   \
-    const auto rhs = IntegerConstant( RHS );                                   \
-    Constant res;                                                              \
-    Operation::execute( id, *type, res, lhs, rhs );
+#define CALC_( LHS, RHS )                                                         \
+    const Constant reg[ 2 ] = { IntegerConstant( LHS ), IntegerConstant( RHS ) }; \
+    Constant res;                                                                 \
+    Operation::execute( id, *type, res, reg, 2 );
 
-#define TEST_( NAME, RES, LHS, RHS )                                           \
-    TEST( libcasm_ir__instruction_add_integer_integer, NAME )                  \
-    {                                                                          \
-        CALC_( LHS, RHS );                                                     \
-        EXPECT_TRUE( res == IntegerConstant( RES ) );                          \
-        EXPECT_STREQ( res.description().c_str(),                               \
-            IntegerConstant( RES ).description().c_str() );                    \
+#define TEST_( NAME, RES, LHS, RHS )                                                             \
+    TEST( libcasm_ir__instruction_add_integer_integer, NAME )                                    \
+    {                                                                                            \
+        CALC_( LHS, RHS );                                                                       \
+        EXPECT_TRUE( res == IntegerConstant( RES ) );                                            \
+        EXPECT_STREQ( res.description().c_str(), IntegerConstant( RES ).description().c_str() ); \
     }
 
 // BENCHMARK( // TODO: PPA: FIXME: move this to the benchmarks!!!

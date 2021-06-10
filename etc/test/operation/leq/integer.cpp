@@ -49,76 +49,31 @@ using namespace libcasm_ir;
 // | y : Integer | undef | x >= y      | sym' |
 // | sym         | sym'  | sym'        | sym' |
 
-static const auto targ = libstdhl::List< libcasm_ir::Type >{
-    { libstdhl::Memory::get< IntegerType >(), libstdhl::Memory::get< IntegerType >() }
-};
-static const auto tres = libstdhl::Memory::get< BooleanType >();
-static const auto type = libstdhl::Memory::get< RelationType >( tres, targ );
+static const auto id = Value::ID::LEQ_INSTRUCTION;
 
-TEST( libcasm_ir__instruction_leq, LeqInstruction_true )
-{
-    const auto a = IntegerConstant( -123 );
-    const auto b = IntegerConstant( 123 );
+static const auto type = libstdhl::Memory::get< RelationType >(
+    libstdhl::Memory::get< BooleanType >(),
+    Types( { libstdhl::Memory::get< IntegerType >(), libstdhl::Memory::get< IntegerType >() } ) );
 
-    Constant r;
-    Operation::execute(
-        Value::LEQ_INSTRUCTION, type->result(), r, a, b );
+#define CALC_( LHS, RHS )                                                         \
+    const Constant reg[ 2 ] = { IntegerConstant( LHS ), IntegerConstant( RHS ) }; \
+    Constant res;                                                                 \
+    Operation::execute( id, *type, res, reg, 2 );
 
-    EXPECT_TRUE( r.type().isBoolean() );
-    EXPECT_TRUE( r == BooleanConstant( true ) );
-}
+#define TEST_( NAME, RES, LHS, RHS )                                                             \
+    TEST( libcasm_ir__instruction_leq_integer_integer, NAME )                                    \
+    {                                                                                            \
+        CALC_( LHS, RHS );                                                                       \
+        EXPECT_TRUE( res == BooleanConstant( RES ) );                                            \
+        EXPECT_STREQ( res.description().c_str(), BooleanConstant( RES ).description().c_str() ); \
+    }
 
-TEST( libcasm_ir__instruction_leq, LeqInstruction_false )
-{
-    const auto a = IntegerConstant( 123 );
-    const auto b = IntegerConstant( -123 );
-
-    Constant r;
-    Operation::execute(
-        Value::LEQ_INSTRUCTION, type->result(), r, a, b );
-
-    EXPECT_TRUE( r.type().isBoolean() );
-    EXPECT_TRUE( r == BooleanConstant( false ) );
-}
-
-TEST( libcasm_ir__instruction_leq, LeqInstruction_undef_lhs )
-{
-    const auto a = IntegerConstant( 123 );
-    const auto b = IntegerConstant();
-
-    Constant r;
-    Operation::execute(
-        Value::LEQ_INSTRUCTION, type->result(), r, a, b );
-
-    EXPECT_TRUE( r.type().isBoolean() );
-    EXPECT_TRUE( r == BooleanConstant() );
-}
-
-TEST( libcasm_ir__instruction_leq, LeqInstruction_undef_rhs )
-{
-    const auto a = IntegerConstant();
-    const auto b = IntegerConstant( 123 );
-
-    Constant r;
-    Operation::execute(
-        Value::LEQ_INSTRUCTION, type->result(), r, a, b );
-
-    EXPECT_TRUE( r.type().isBoolean() );
-    EXPECT_TRUE( r == BooleanConstant() );
-}
-
-TEST( libcasm_ir__instruction_leq, LeqInstruction_undef_both )
-{
-    const auto a = IntegerConstant();
-    const auto b = IntegerConstant();
-
-    Constant r;
-    Operation::execute(
-        Value::LEQ_INSTRUCTION, type->result(), r, a, b );
-
-    EXPECT_TRUE( r.type().isBoolean() );
-    EXPECT_TRUE( r == BooleanConstant( true ) );
-}
+TEST_( true__at__n123___p123, true, -123, 123 );
+TEST_( true__at__p123___p123, true, 123, 123 );
+TEST_( false_at__p123___n123, false, 123, -123 );
+TEST_( undef_at__p123___undef, , 123, );
+TEST_( undef_at__undef__p123, , , 123 );
+TEST_( true__at__undef__undef, true, , );
 
 //
 //  Local variables:

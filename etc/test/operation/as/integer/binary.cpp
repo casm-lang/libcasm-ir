@@ -53,7 +53,7 @@ static const auto id = Value::ID::AS_INTEGER_BUILTIN;
             libstdhl::Memory::get< IntegerType >(),                     \
             Types( { libstdhl::Memory::get< BinaryType >( SIZE ) } ) ); \
         Constant res;                                                   \
-        Operation::execute( id, *type, res, arg );              \
+        Operation::execute( id, *type, res, &arg, 1 );                  \
         EXPECT_TRUE( res == IntegerConstant( TO ) );                    \
     }
 

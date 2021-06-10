@@ -1,5 +1,5 @@
 //
-//  Copyright (C) 2015-2021 CASM Organization <https://casm-lang.org>
+//  Copyright (C) 2015-2019 CASM Organization <https://casm-lang.org>
 //  All rights reserved.
 //
 //  Developed by: Philipp Paulweber
@@ -39,53 +39,36 @@
 //  statement from your version.
 //
 
-#ifndef _LIBCASM_IR_TUPLE_H_
-#define _LIBCASM_IR_TUPLE_H_
+#include "../main.h"
 
-#include <libcasm-ir/Value>
+using namespace libcasm_ir;
 
-namespace libcasm_ir
+TEST( libcasm_ir__type_object, make_valid )
 {
-    class Constant;
+    auto v = libstdhl::Memory::make< ObjectType >( "Object" );
+    ASSERT_TRUE( v != nullptr );
 
-    class Tuple final : public Value
-    {
-      public:
-        using Ptr = std::shared_ptr< Tuple >;
+    EXPECT_STREQ( v->name().c_str(), "Object" );
+    EXPECT_STREQ( v->description().c_str(), "Object" );
 
-        Tuple( const TupleType::Ptr& type, const std::vector< Constant >& elements );
+    auto w = libstdhl::Memory::make< ObjectType >( "Object" );
+    ASSERT_TRUE( w != nullptr );
 
-        Tuple(
-            const RecordType::Ptr& type,
-            const std::unordered_map< std::string, Constant >& elements );
+    EXPECT_TRUE( v != w );
+    EXPECT_TRUE( *v == *w );
 
-        ~Tuple( void ) = default;
+    auto a = libstdhl::Memory::get< ObjectType >( "Object" );
+    auto b = libstdhl::Memory::get< ObjectType >( "Object" );
+    ASSERT_TRUE( a != nullptr );
+    ASSERT_TRUE( b != nullptr );
 
-        const std::vector< Constant >& elements( void ) const;
+    EXPECT_TRUE( a == b );
+    EXPECT_TRUE( *a == *b );
 
-        const Constant& element( const std::size_t atIndex ) const;
+    v->foreach( []( const Constant& constant ) { std::cerr << constant.name() << "\n"; } );
 
-        std::string name( void ) const override;
-
-        std::size_t hash( void ) const override;
-
-        u1 operator==( const Value& rhs ) const override;
-
-        void accept( Visitor& visitor ) override;
-
-        static inline Value::ID classid( void )
-        {
-            return Value::TUPLE;
-        }
-
-        static u1 classof( Value const* obj );
-
-      private:
-        std::vector< Constant > m_elements;
-    };
+    std::cerr << v->choose().name() << "\n";    
 }
-
-#endif  // _LIBCASM_IR_TUPLE_H_
 
 //
 //  Local variables:

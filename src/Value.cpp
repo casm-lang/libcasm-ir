@@ -254,10 +254,6 @@ std::string Value::token( const Value::ID id )
         {
             return "Range";
         }
-        case Value::TUPLE:
-        {
-            return "Tuple";
-        }
         case Value::LIST:
         {
             return "List";
@@ -409,6 +405,11 @@ std::string Value::token( const Value::ID id )
         case Value::LOCAL_INSTRUCTION:
         {
             return "local";
+        }
+
+        case Value::SELF_INSTRUCTION:
+        {
+            return "self";
         }
 
         case Value::OPERATOR_INSTRUCTION:

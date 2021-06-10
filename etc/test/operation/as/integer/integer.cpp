@@ -48,13 +48,13 @@ static const auto id = Value::ID::AS_INTEGER_BUILTIN;
 static const auto type = libstdhl::Memory::get< RelationType >(
     libstdhl::Memory::get< IntegerType >(), Types( { libstdhl::Memory::get< IntegerType >() } ) );
 
-#define TEST_( NAME, VALUE )                               \
-    TEST( libcasm_ir__builtin_as_integer_integer, NAME )   \
-    {                                                      \
-        const auto arg = IntegerConstant( VALUE );         \
-        Constant res;                                      \
-        Operation::execute( id, *type, res, arg ); \
-        EXPECT_TRUE( res == IntegerConstant( VALUE ) );    \
+#define TEST_( NAME, VALUE )                             \
+    TEST( libcasm_ir__builtin_as_integer_integer, NAME ) \
+    {                                                    \
+        const auto arg = IntegerConstant( VALUE );       \
+        Constant res;                                    \
+        Operation::execute( id, *type, res, &arg, 1 );   \
+        EXPECT_TRUE( res == IntegerConstant( VALUE ) );  \
     }
 
 TEST_( undef_at_undef, );

@@ -158,11 +158,6 @@ void ConsistencyCheckVisitor::visit( Range& value )
     verify< Range >( value );
 }
 
-void ConsistencyCheckVisitor::visit( Tuple& value )
-{
-    verify< Tuple >( value );
-}
-
 void ConsistencyCheckVisitor::visit( List& value )
 {
     verify< List >( value );
@@ -290,6 +285,11 @@ void ConsistencyCheckVisitor::visit( SelectInstruction& value )
             "select statement is only allowed to reside in 'BranchStatement' "
             "blocks" );
     }
+}
+
+void ConsistencyCheckVisitor::visit( SelfInstruction& value )
+{
+    verify< SelfInstruction >( value );
 }
 
 void ConsistencyCheckVisitor::visit( InvInstruction& value )
