@@ -51,9 +51,7 @@
 #include <libcasm-ir/List>
 #include <libcasm-ir/Range>
 #include <libcasm-ir/Rule>
-#include <libcasm-ir/Structure>
 #include <libcasm-ir/SymbolicExecutionEnvironment>
-#include <libcasm-ir/Tuple>
 
 #include <libstdhl/data/type/Boolean>
 #include <libstdhl/data/type/Data>

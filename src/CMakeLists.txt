@@ -64,7 +64,6 @@ add_library( ${PROJECT}-cpp OBJECT
   Rule.cpp
   Specification.cpp
   Statement.cpp
-  Structure.cpp
   SymbolicExecutionEnvironment.cpp
   Type.cpp
   User.cpp
@@ -119,7 +118,6 @@ ecm_generate_headers( ${PROJECT}_HEADERS_CPP
     Rule
     Specification
     Statement
-    Structure
     SymbolicExecutionEnvironment
     Type
     User
