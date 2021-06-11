@@ -350,6 +350,7 @@ const TPTP::Type::Ptr SymbolicExecutionEnvironment::getTPTPType( const Type& typ
         case Type::Kind::LABEL:
         case Type::Kind::LOCATION:
         case Type::Kind::RELATION:
+        case Type::Kind::OBJECT:
         {
             // assert
         }
@@ -406,6 +407,8 @@ const TPTP::Type::Ptr SymbolicExecutionEnvironment::getTPTPType( const Type& typ
             return std::make_shared< TPTP::NamedType >( "$int" );
         }
     }
+
+    return nullptr;
 }
 
 const TPTP::Literal::Ptr SymbolicExecutionEnvironment::tptpLiteralFromNumericConstant(
