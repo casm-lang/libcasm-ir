@@ -90,6 +90,7 @@ void Operation::execute(
         case Value::TUPLE_CONSTANT:               // [[fallthrough]]
         case Value::LIST_CONSTANT:                // [[fallthrough]]
         case Value::DOMAIN_CONSTANT:              // [[fallthrough]]
+        case Value::SYMBOLIC_CONSTANT:            // [[fallthrough]]
         case Value::IDENTIFIER:                   // [[fallthrough]]
         case Value::INSTRUCTION:                  // [[fallthrough]]
         case Value::UNARY_INSTRUCTION:            // [[fallthrough]]
