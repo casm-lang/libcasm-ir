@@ -1,9 +1,9 @@
 #
-#   Copyright (C) 2015-2021 CASM Organization <https://casm-lang.org>
+#   Copyright (C) 2015-2022 CASM Organization <https://casm-lang.org>
 #   All rights reserved.
 #
-#   Developed by: Philipp Paulweber
-#                 <https://github.com/casm-lang/libcasm-ir>
+#   Developed by: Philipp Paulweber et al.
+#                 <https://github.com/casm-lang/libcasm-ir/graphs/contributors>
 #
 #   This file is part of libcasm-ir.
 #
