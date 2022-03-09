@@ -566,7 +566,7 @@ void SelfInstruction::accept( Visitor& visitor )
 
 void SelfInstruction::execute( Constant& res, const Constant& lhs ) const
 {
-    throw InternalException( "WTF!" );
+    throw InternalException( "invalid implementation state for self instruction" );
 }
 
 u1 SelfInstruction::classof( Value const* obj )
