@@ -55,6 +55,7 @@
 #include <libtptp/Literal>
 #include <libtptp/Type>
 #include "libstdhl/Optional.h"
+#include "libtptp/Logic.h"
 
 using namespace libcasm_ir;
 namespace TPTP = libtptp;
@@ -2437,6 +2438,23 @@ void NotInstruction::execute( Constant& res, const Constant& lhs ) const
     {
         case Type::Kind::BOOLEAN:
         {
+            if( lhs.symbolic() )
+            {
+                auto& env = static_cast< const SymbolicConstant& >( lhs ).environment();
+                SymbolicConstant localRes( lhs.type().ptr_result(), env.generateSymbolName(), env );
+                auto lhsSym = env.tptpAtomFromConstant( lhs );
+
+                auto atom = std::make_shared< TPTP::UnaryLogic >(
+                    TPTP::UnaryLogic::Connective::NEGATION, lhsSym );
+                auto resSym = std::make_shared< TPTP::ConstantAtom >(
+                    localRes.name(), TPTP::Atom::Kind::PLAIN );
+                auto formula = std::make_shared< TPTP::BinaryLogic >(
+                    resSym, TPTP::BinaryLogic::Connective::EQUIVALENCE, atom );
+
+                env.addFormula( formula );
+				res = localRes;
+				break;
+            }
             const auto& val = static_cast< const BooleanConstant& >( lhs ).value();
 
             res = BooleanConstant( not val.value() );
