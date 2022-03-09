@@ -843,6 +843,7 @@ void AtBuiltin::execute( Constant& res, const Constant* reg, const std::size_t s
     const auto& index = reg[ 1 ];
 
     assert( index.type().isInteger() );
+    const auto& position = static_cast< const IntegerConstant& >( index ).value();
 
     if( not object.defined() or not index.defined() )
     {
@@ -850,9 +851,24 @@ void AtBuiltin::execute( Constant& res, const Constant* reg, const std::size_t s
         return;
     }
 
+    if( object.type().isString() )
+    {
+        const auto& data = static_cast< const StringConstant& >( object ).value().toString();
+        if( position >= 1 and position <= data.size() )
+        {
+            const auto value = position.value() - 1;
+            const auto& character = data.at( value );
+            res = StringConstant( std::string( 1, character ) );
+        }
+        else
+        {
+            res = StringConstant();
+        }
+        return;
+    }
+
     assert( object.type().isTuple() );
     const auto& tuple = static_cast< const TupleConstant& >( object );
-    const auto& position = static_cast< const IntegerConstant& >( index ).value();
 
     if( position >= 1 and position <= tuple.cardinality() )
     {
