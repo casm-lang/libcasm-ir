@@ -65,7 +65,7 @@ void User::removeUse( const User& user )
 {
     fprintf( stderr, "removeUse: %s in %s\n", user.name().c_str(), name().c_str() );
 
-    std::remove_if( m_uses.begin(), m_uses.end(), [&user]( const Use::Ptr& element ) {
+    std::remove_if( m_uses.begin(), m_uses.end(), [ &user ]( const Use::Ptr& element ) {
         return element->use() == user;
     } );
 }

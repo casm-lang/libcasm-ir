@@ -157,7 +157,7 @@ namespace libcasm_ir
 
             std::size_t hash( void ) const
             {
-                return std::hash< u64 >()( ( ( u64 )( m_flavor ) << 8 ) | (u64)m_kind );
+                return std::hash< u64 >()( ( (u64)( m_flavor ) << 8 ) | (u64)m_kind );
             }
 
             inline u1 operator==( const ID& rhs ) const

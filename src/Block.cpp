@@ -203,7 +203,7 @@ void ExecutionSemanticsBlock::replace( Block& from, const Block::Ptr to )
     std::replace_if(
         m_blocks.begin(),
         m_blocks.end(),
-        [&]( const Block::Ptr& v ) { return *v.get() == from; },
+        [ & ]( const Block::Ptr& v ) { return *v.get() == from; },
         to );
 
     from.clear();

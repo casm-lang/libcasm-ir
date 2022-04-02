@@ -225,7 +225,7 @@ std::string Constant::name( void ) const
         {
             std::string result;
             ConstantHandlerManager::instance().processConstantHandlers(
-                [this, &result]( const ConstantHandler& constantHandler ) -> u1 {
+                [ this, &result ]( const ConstantHandler& constantHandler ) -> u1 {
                     return constantHandler.name( *this, result );
                 } );
             return result;
@@ -385,7 +385,7 @@ void Constant::foreach( const std::function< void( const Constant& constant ) >&
         default:
         {
             ConstantHandlerManager::instance().processConstantHandlers(
-                [this, &callback]( const ConstantHandler& constantHandler ) -> u1 {
+                [ this, &callback ]( const ConstantHandler& constantHandler ) -> u1 {
                     return constantHandler.foreach( *this, callback );
                 } );
         }
@@ -456,7 +456,7 @@ Constant Constant::choose( void ) const
         {
             Constant result;
             ConstantHandlerManager::instance().processConstantHandlers(
-                [this, &result]( const ConstantHandler& constantHandler ) -> u1 {
+                [ this, &result ]( const ConstantHandler& constantHandler ) -> u1 {
                     return constantHandler.choose( *this, result );
                 } );
             return result;
@@ -524,7 +524,7 @@ std::size_t Constant::hash( void ) const
         {
             std::size_t result = 0;
             ConstantHandlerManager::instance().processConstantHandlers(
-                [this, &result]( const ConstantHandler& constantHandler ) -> u1 {
+                [ this, &result ]( const ConstantHandler& constantHandler ) -> u1 {
                     return constantHandler.hash( *this, result );
                 } );
             return result;
@@ -592,7 +592,7 @@ u1 Constant::operator==( const Value& rhs ) const
         {
             u1 result = false;
             ConstantHandlerManager::instance().processConstantHandlers(
-                [this, &rhs, &result]( const ConstantHandler& constantHandler ) -> u1 {
+                [ this, &rhs, &result ]( const ConstantHandler& constantHandler ) -> u1 {
                     return constantHandler.compare( *this, rhs, result );
                 } );
             return result;
@@ -841,7 +841,7 @@ IntegerConstant::IntegerConstant( const libstdhl::Type::Natural& value, const u1
 {
 }
 
-IntegerConstant::IntegerConstant( const i64 value )
+IntegerConstant::IntegerConstant( const int value )
 : Constant( INTEGER, libstdhl::Type::createInteger( value ), classid() )
 {
 }

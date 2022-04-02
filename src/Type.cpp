@@ -721,7 +721,7 @@ void BooleanType::foreach( const std::function< void( const Constant& constant )
 
 Constant BooleanType::choose( void ) const
 {
-    auto const value = ( u1 )( libstdhl::Random::uniform< u64 >() % 2 );
+    auto const value = (u1)( libstdhl::Random::uniform< u64 >() % 2 );
     return BooleanConstant( value );
 }
 
@@ -874,9 +874,9 @@ void RationalType::foreach(
 
 Constant RationalType::choose( void ) const
 {
-    const auto n = libstdhl::Type::createInteger( libstdhl::Random::uniform< i64 >() );
+    const auto n = libstdhl::Type::createInteger( libstdhl::Random::uniform< int >() );
 
-    const auto d = libstdhl::Type::createInteger( libstdhl::Random::uniform< i64 >() + 1 );
+    const auto d = libstdhl::Type::createInteger( libstdhl::Random::uniform< int >() + 1 );
     // d = randomvalue + 1 to avoid that the denominator is zero!
 
     return RationalConstant( libstdhl::Type::createRational( n, d ) );

@@ -46,6 +46,7 @@
 #include <libcasm-ir/Instruction>
 
 #include <cassert>
+#include <iostream>
 
 using namespace libcasm_ir;
 
@@ -1773,7 +1774,7 @@ void AsRationalBuiltin::execute( Constant& res, const Constant* reg, const std::
             {
                 const auto& c = static_cast< const BooleanConstant& >( arg ).value();
                 res = RationalConstant( libstdhl::Type::createRational(
-                    libstdhl::Type::createInteger( ( libstdhl::u64 )( c == true ? 1 : 0 ) ) ) );
+                    libstdhl::Type::createInteger( (unsigned int)( c == true ? 1 : 0 ) ) ) );
                 break;
             }
             case Type::Kind::INTEGER:

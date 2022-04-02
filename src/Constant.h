@@ -276,7 +276,7 @@ namespace libcasm_ir
 
         IntegerConstant( const libstdhl::Type::Natural& value, const u1 sign );
 
-        IntegerConstant( const i64 value );
+        IntegerConstant( const int value );
 
         IntegerConstant( void );
 
@@ -638,7 +638,7 @@ namespace libcasm_ir
 
       protected:
         inline ReferenceConstant( const Type::Ptr& type, const T* value, Value::ID id )
-        : Constant( type, libstdhl::Type::Data( ( u64 )( value ), false ), id )
+        : Constant( type, libstdhl::Type::Data( (u64)( value ), false ), id )
         {
         }
 

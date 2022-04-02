@@ -75,7 +75,7 @@ Annotation::Annotation(
 
     const auto firstRelationArgSize = m_relations.at( 0 ).argument.size();
     const auto haveSameArgumentSize =
-        [firstRelationArgSize]( const Annotation::Relation& relation ) -> u1 {
+        [ firstRelationArgSize ]( const Annotation::Relation& relation ) -> u1 {
         return relation.argument.size() == firstRelationArgSize;
     };
 
