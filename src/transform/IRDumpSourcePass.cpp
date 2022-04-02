@@ -49,6 +49,8 @@
 #include <libpass/PassResult>
 #include <libpass/PassUsage>
 
+#include <iostream>
+
 using namespace libcasm_ir;
 
 char IRDumpSourcePass::id = 0;
@@ -371,9 +373,9 @@ void IRDumpSourceVisitor::visit( Identifier& value )
 
 void IRDumpSourceVisitor::dump( Statement& value ) const
 {
-    const char* nline = "\n";
-    const char* label = &value.label().c_str()[ 1 ];
-    const char* scope = value.scope()->label().c_str();
+    std::string nline = "\n";
+    std::string label = value.label();
+    std::string scope = value.scope()->label();
 
     if( value.scope()->entry().get() == &value )
     {

@@ -49,6 +49,8 @@
 #include <libpass/PassResult>
 #include <libpass/PassUsage>
 
+#include <iostream>
+
 using namespace libcasm_ir;
 
 char IRDumpDotPass::id = 0;
