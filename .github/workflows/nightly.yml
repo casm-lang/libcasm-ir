@@ -56,6 +56,8 @@ jobs:
         tool:
         - build: release
           chain: gcc-10
+        - build: release
+          chain: emcc
     env:
       B: ${{ matrix.tool.build }}
       C: ${{ matrix.tool.chain }}
@@ -63,6 +65,12 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v1
+    - name: Install
+      uses: mymindstorm/setup-emsdk@v11
+      if:   matrix.tool.chain == 'emcc'
+      with:
+        version: 3.1.2
+        actions-cache-folder: '.attic/emsdk'
     - name: Setup
       run: |
         make info
