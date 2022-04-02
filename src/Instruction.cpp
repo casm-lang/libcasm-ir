@@ -56,6 +56,8 @@
 #include <libtptp/Type>
 #include "libstdhl/Optional.h"
 
+#include <iostream>
+
 using namespace libcasm_ir;
 namespace TPTP = libtptp;
 
