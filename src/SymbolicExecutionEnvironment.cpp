@@ -55,14 +55,14 @@
 using namespace libcasm_ir;
 
 bool SymbolicExecutionEnvironment::Location::Comperator::operator()(
-    const Location& lhs, const Location& rhs )
+    const Location& lhs, const Location& rhs ) const
 {
     return lhs.varName == rhs.varName ? this->operator()( lhs.arguments, rhs.arguments )
                                       : lhs.varName < rhs.varName;
 }
 
 bool SymbolicExecutionEnvironment::Location::Comperator::operator()(
-    const Constant& lhs, const Constant& rhs )
+    const Constant& lhs, const Constant& rhs ) const
 {
     return libstdhl::Hash::value( lhs ) < libstdhl::Hash::value( rhs );
 }
@@ -91,6 +91,15 @@ SymbolicExecutionEnvironment::SymbolicExecutionEnvironment( void )
 : m_symbolName( 0 )
 , m_formulaName( 0 )
 , m_time( 1 )
+, m_environments()
+, m_scoped_environments()
+, m_symbolSetTimes()
+, m_symbolUpdateSet()
+, m_functionDeclarations()
+, m_functionDefinitons()
+, m_symbolDefinitions()
+, m_functions()
+, m_formulae()
 {
 }
 

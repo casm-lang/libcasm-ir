@@ -73,16 +73,16 @@ namespace libcasm_ir
             class Comperator
             {
               public:
-                bool operator()( const Location& lhs, const Location& rhs );
+                bool operator()( const Location& lhs, const Location& rhs ) const;
 
                 template < class T >
-                bool operator()( const std::vector< T >& lhs, const std::vector< T >& rhs )
+                bool operator()( const std::vector< T >& lhs, const std::vector< T >& rhs ) const
                 {
                     return std::lexicographical_compare(
                         lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), *this );
                 }
 
-                bool operator()( const Constant& lhs, const Constant& rhs );
+                bool operator()( const Constant& lhs, const Constant& rhs ) const;
             };
         };
 
