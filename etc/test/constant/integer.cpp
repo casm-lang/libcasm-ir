@@ -43,7 +43,7 @@
 
 using namespace libcasm_ir;
 
-static void libcasm_ir__constant_integer_test( i64 i )
+static void libcasm_ir__constant_integer_test( int i )
 {
     auto v = libstdhl::Memory::make< IntegerConstant >( i );
     ASSERT_TRUE( v != nullptr );
@@ -70,7 +70,7 @@ static void libcasm_ir__constant_integer_test( i64 i )
 
 TEST( libcasm_ir__constant_integer, create_range )
 {
-    for( i64 i = -128; i < 128; i++ )
+    for( int i = -128; i < 128; i++ )
     {
         libcasm_ir__constant_integer_test( i );
     }
@@ -80,7 +80,7 @@ TEST( libcasm_ir__constant_integer, create_random )
 {
     for( u32 c = 0; c < 256; c++ )
     {
-        i64 i = libstdhl::Random::uniform< i64 >();
+        int i = libstdhl::Random::uniform< int >();
 
         libcasm_ir__constant_integer_test( i );
     }

@@ -43,7 +43,7 @@
 
 using namespace libcasm_ir;
 
-static void libcasm_ir__constant_binary_test( u16 bitsize, u64 c )
+static void libcasm_ir__constant_binary_test( u16 bitsize, std::size_t c )
 {
     auto v = libstdhl::Memory::make< BinaryConstant >( bitsize, c );
     ASSERT_TRUE( v != nullptr );
@@ -79,11 +79,12 @@ TEST( libcasm_ir__constant_binary, create_range_from_1_to_size_max )
 
 TEST( libcasm_ir__constant_binary, create_random )
 {
-    for( u64 c = 1; c <= BinaryType::SizeMax; c++ )
+    for( std::size_t c = 1; c <= BinaryType::SizeMax; c++ )
     {
-        for( u64 i = 0; i < 100; i++ )
+        for( std::size_t i = 0; i < 100; i++ )
         {
-            u64 value = libstdhl::Random::uniform< u64 >() % ( (u64)1 << c );
+            std::size_t value =
+                libstdhl::Random::uniform< std::size_t >() % ( (std::size_t)1 << c );
 
             libcasm_ir__constant_binary_test( c, value );
         }

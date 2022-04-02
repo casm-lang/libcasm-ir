@@ -67,7 +67,7 @@ TEST( libcasm_ir__type_object, make_valid )
 
     v->foreach( []( const Constant& constant ) { std::cerr << constant.name() << "\n"; } );
 
-    std::cerr << v->choose().name() << "\n";    
+    std::cerr << v->choose().name() << "\n";
 }
 
 //
