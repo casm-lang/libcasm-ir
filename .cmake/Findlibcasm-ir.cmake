@@ -53,7 +53,7 @@ find_path( LIBCASM_IR_INCLUDE_DIR
 )
 
 find_library( LIBCASM_IR_LIBRARY
-  NAMES libcasm-ir.so libcasm-ir.dylib libcasm-ir.dll libcasm-ir.a
+  NAMES libcasm-ir.a casm-ir
   PATHS ${LIBCASM_IR_PKGCONF_LIBRARY_DIRS}
 )
 
