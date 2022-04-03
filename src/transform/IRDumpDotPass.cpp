@@ -543,8 +543,9 @@ void IRDumpDotVisitor::dump( ExecutionSemanticsBlock& value ) const
 
 void IRDumpDotVisitor::dump( Statement& value ) const
 {
-    const char* label = &value.label().c_str()[ 1 ];
-    const char* scope = value.scope()->label().c_str();
+    const auto valueLabel = value.label();
+    const char* label = &valueLabel.c_str()[ 1 ];
+    std::string scope = value.scope()->label();
 
     if( value.scope()->entry().get() == &value )
     {
