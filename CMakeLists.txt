@@ -152,7 +152,7 @@ if( ${LIBGTEST_FOUND} )
     )
 endif()
 
-if( LIBSTDHL_FOUND AND CMAKE_CXX_EMSCRIPTEN )
+if( TARGET_LIBRARY AND LIBSTDHL_FOUND AND CMAKE_CXX_EMSCRIPTEN )
   set( EMCC_TARGET "${PROJECT}-check" )
   configure_file(
     ${LIBSTDHL_INCLUDE_DIR}/libstdhl/emcc.in.js
