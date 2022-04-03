@@ -40,6 +40,9 @@
 #
 
 # https://help.github.com/en/articles/virtual-environments-for-github-actions
+# https://github.com/actions/virtual-environments/blob/main/images/linux
+# https://github.com/actions/virtual-environments/blob/main/images/macos
+# https://github.com/actions/virtual-environments/blob/main/images/win
 
 name: nightly
 
@@ -48,132 +51,55 @@ on:
     - cron: '12 0 * * *'
 
 jobs:
-  # https://github.com/actions/virtual-environments/blob/main/images/linux
-  linux-x86_64:
-    runs-on: ubuntu-20.04
+  build:
+    name: ${{ matrix.job.os }} (${{ matrix.job.vm }}, ${{ matrix.job.isa }}, ${{ matrix.job.tool }}, ${{ matrix.job.build }})
+    runs-on: ${{ matrix.job.vm }}
     strategy:
+      fail-fast: false
       matrix:
-        tool:
-        - build: release
-          chain: gcc-10
-        - build: release
-          chain: emcc
+        job:
+        - { vm: ubuntu-20.04, os: linux,   isa: x86_64, tool: gcc,   build: release }
+        - { vm: ubuntu-20.04, os: linux,   isa: x86_64, tool: emcc,  build: release }
+        - { vm: macos-10.15,  os: darwin,  isa: x86_64, tool: gcc,   build: release }
+        - { vm: windows-2019, os: windows, isa: x86_64, tool: clang, build: release }
     env:
-      B: ${{ matrix.tool.build }}
-      C: ${{ matrix.tool.chain }}
+      B: ${{ matrix.job.build }}
+      C: ${{ matrix.job.tool }}
+      #I: ${{ github.workspace }}/.attic/install
       G: ninja
+      H: sccache
     steps:
     - name: Checkout
       uses: actions/checkout@v1
-    - name: Install
+    - name: Install 'sccache'
+      uses: hendrikmuhs/ccache-action@v1.2.1
+      with:
+        variant: sccache
+        key: ${{ matrix.job.os }}-${{ matrix.job.isa }}-${{ matrix.job.tool }}-${{ matrix.job.build }}
+    - name: Install 'emcc'
+      if:   matrix.job.tool == 'emcc'
       uses: mymindstorm/setup-emsdk@v11
-      if:   matrix.tool.chain == 'emcc'
       with:
         version: 3.1.2
         actions-cache-folder: '.attic/emsdk'
-    - name: Setup
+    - name: Setup 'linux'
+      if:   matrix.job.os == 'linux'
       run: |
         make info
         sudo apt-get update
         sudo apt-get install -y ninja-build
         make ci-tools
-    - name: Fetching
-      env:
-        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-      run: |
-        make ci-fetch
-    - name: Dependencies
-      run: |
-        make ci-deps
-    - name: Building
-      run: |
-        make ci-build
-    - name: Tests
-      run: |
-        make ci-test
-    - name: Benchmark
-      run: |
-        make ci-benchmark
-    - name: Installation
-      run: |
-        make ci-install
-    - name: Bundling
-      run: |
-        make ci-bundle
-    - name: Persisting
-      uses: actions/upload-artifact@v1
-      with:
-        name: linux
-        path: obj/bundle
-
-  # https://github.com/actions/virtual-environments/blob/main/images/macos
-  darwin-x86_64:
-    runs-on: macos-10.15
-    strategy:
-      matrix:
-        tool:
-        - build: release
-          chain: gcc-11
-    env:
-      B: ${{ matrix.tool.build }}
-      C: ${{ matrix.tool.chain }}
-      G: ninja
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v1
-    - name: Setup
+    - name: Setup 'darwin'
+      if:   matrix.job.os == 'darwin'
       run: |
         make info
         brew install ninja
         make ci-tools
-    - name: Fetching
-      env:
-        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-      run: |
-        make ci-fetch
-    - name: Dependencies
-      run: |
-        make ci-deps
-    - name: Building
-      run: |
-        make ci-build
-    - name: Tests
-      run: |
-        make ci-test
-    - name: Benchmark
-      run: |
-        make ci-benchmark
-    - name: Installation
-      run: |
-        make ci-install
-    - name: Bundling
-      run: |
-        make ci-bundle
-    - name: Persisting
-      uses: actions/upload-artifact@v1
-      with:
-        name: darwin
-        path: obj/bundle
-
-  # https://github.com/actions/virtual-environments/blob/main/images/win
-  windows-x86_64:
-    runs-on: windows-2019
-    strategy:
-      matrix:
-        tool:
-        - build: release
-          chain: clang-12
-    env:
-      B: ${{ matrix.tool.build }}
-      C: clang # ${{ matrix.tool.chain }}
-      G: ninja
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v1
-    - name: Setup
+    - name: Setup 'windows'
+      if:   matrix.job.os == 'windows'
       run: |
         make info
-        echo "c:\msys64\mingw64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        echo "C:\msys64\mingw64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         choco install ninja
         choco install zip
         make ci-tools
@@ -203,5 +129,5 @@ jobs:
     - name: Persisting
       uses: actions/upload-artifact@v1
       with:
-        name: windows
+        name: {{matrix.job.os}}
         path: obj/bundle
