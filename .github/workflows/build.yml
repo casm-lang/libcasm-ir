@@ -71,29 +71,32 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v1
-    - name: Install 'sccache'
-      uses: hendrikmuhs/ccache-action@v1.2.1
+    - name: Cache
+      uses: actions/cache@v3
       with:
-        variant: sccache
+        path: |
+          .attic/sccache/
         key: ${{ matrix.job.os }}-${{ matrix.job.isa }}-${{ matrix.job.tool }}-${{ matrix.job.build }}
-    - name: Install 'emcc'
-      if:   matrix.job.tool == 'emcc'
-      uses: mymindstorm/setup-emsdk@v11
-      with:
-        version: 3.1.2
-        actions-cache-folder: '.attic/emsdk'
     - name: Setup 'linux'
       if:   matrix.job.os == 'linux'
+      env:
+        SCCACHE_URL: https://github.com/mozilla/sccache/releases/download/v0.2.15/sccache-v0.2.15-x86_64-unknown-linux-musl.tar.gz
       run: |
         make info
         sudo apt-get update
         sudo apt-get install -y ninja-build
+        wget -qO  /tmp/archive.tar.gz --no-check-certificate $SCCACHE_URL
+        tar  -xf  /tmp/archive.tar.gz -C /tmp
+        rm   -f   /tmp/archive.tar.gz
+        sudo mv  /tmp/sccache-*/sccache /usr/local/bin/
+        sudo chmod +x  /usr/local/bin/sccache
         make ci-tools
     - name: Setup 'darwin'
       if:   matrix.job.os == 'darwin'
       run: |
         make info
         brew install ninja
+        brew install sccache
         make ci-tools
     - name: Setup 'windows'
       if:   matrix.job.os == 'windows'
@@ -101,7 +104,23 @@ jobs:
         make info
         echo "C:\msys64\mingw64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         choco install ninja
+        choco install sccache
         make ci-tools
+    - name: Setup 'emcc'
+      if:   matrix.job.tool == 'emcc'
+      uses: mymindstorm/setup-emsdk@v11
+      with:
+        version: 3.1.2
+        actions-cache-folder: '.attic/emsdk'
+    - name: Setup 'sccache'
+      env:
+        SCCACHE_DIR: ${{ github.workspace }}/.attic/sccache
+        SCCACHE_MAX_FRAME_LENGTH: 104857600
+      run: sccache --start-server && sccache --show-stats
+    - name: Setup 'sccache'
+      uses: webiny/action-post-run@2.0.1
+      with:
+        run: sccache --show-stats && sccache --stop-server
     - name: Fetching
       env:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
