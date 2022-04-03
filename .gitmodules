@@ -63,6 +63,6 @@
 	url = https://github.com/casm-lang/libhayai
 	branch = master
 
-[submodule "lib/z3"] # external
+[submodule "lib/z3"]
 	path = lib/z3
 	url = https://github.com/casm-lang/libz3
