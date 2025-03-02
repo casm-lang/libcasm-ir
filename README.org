@@ -38,6 +38,16 @@
 #   not obliged to do so. If you do not wish to do so, delete this exception
 #   statement from your version.
 # 
+
+#+begin_html
+<h4>
+⚠️
+This repository has been archived and its development work moved to the
+<a href="https://github.com/sealangdotorg/sea">SEA language</a> project.
+<hr>
+</h4>
+#+end_html
+
 [[https://github.com/casm-lang/casm-lang.logo/raw/master/etc/headline.png]]
 
 #+options: toc:nil
